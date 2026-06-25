@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Science Explorers</title>
+<!-- Comic Sans MS (local) with self-hosted Comic Neue fallback (works offline) -->
+<style>
+  @font-face{font-family:'Comic Neue';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/ComicNeue-400.woff2') format('woff2');}
+  @font-face{font-family:'Comic Neue';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/ComicNeue-700.woff2') format('woff2');}
+  :root{
+    --ink:#1f2a37; --muted:#5b6877; --line:#e4e8ee; --bg:#f7f9fc; --card:#fff;
+    /* --blue / --blue-d are the live theme accent — re-set per unit by setTheme() */
+    --blue:#2563eb; --blue-d:#1d4ed8; --teal:#0d9488;
+    --theme-deep:#0c2a78; --theme-soft:#eef3fb;
+    --bronze:#b07a2e; --bronze-bg:#f6ecd9; --silver:#6b7280; --silver-bg:#eef1f4; --gold:#b8860b; --gold-bg:#fbf3d3; --gt:#7c3aed; --gt-bg:#efe8fe;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:'Comic Sans MS','Comic Neue',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+  h1,h2,h3,h4{margin:0;line-height:1.2}
+  a{color:var(--blue)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}
+  .nav{max-width:1080px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+  .brand{font-weight:900;font-size:1.25rem;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer}
+  .brand .l{width:32px;height:32px;border-radius:9px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:1rem}
+  .nav .sp{flex:1}
+  .crumb{color:var(--muted);font-weight:700;font-size:.9rem;cursor:pointer}
+  .crumb:hover{color:var(--ink)}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font:inherit;font-weight:800;
+    background:var(--blue);color:#fff;padding:11px 18px;border-radius:11px;transition:filter .12s,transform .08s;text-decoration:none}
+  .btn:hover{filter:brightness(1.06)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:#fff;color:var(--blue);box-shadow:inset 0 0 0 2px var(--line)}
+  .btn.sm{padding:7px 13px;font-size:.85rem;border-radius:9px}
+  .btn.gray{background:#eef1f5;color:var(--ink)}
+
+  section{padding:34px 0}
+  .home-hero{position:relative;overflow:hidden;border-radius:24px;margin:24px 0;padding:66px 28px;text-align:center;color:#fff;
+    background:radial-gradient(900px 460px at 18% -25%, #2247c0 0%, transparent 60%), radial-gradient(760px 380px at 102% 120%, #0ea5e9 0%, transparent 55%), linear-gradient(160deg,#081640,#0c2a78 58%,#081842);
+    box-shadow:0 24px 60px rgba(8,20,60,.4)}
+  .home-hero .hero-inner{position:relative;z-index:2}
+  .home-hero .eyebrow{color:#9cc2ff}
+  .home-hero h1{font-size:clamp(2.2rem,6vw,3.6rem);color:#ffe24d;text-shadow:0 4px 22px rgba(0,0,0,.4)}
+  .home-hero p{color:#ffe24d;max-width:640px;margin:16px auto 26px;font-weight:600;font-size:1.12rem}
+  .home-hero p b{color:inherit;font-weight:inherit}
+  .home-hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .home-hero .cta .btn{background:#38bdf8;color:#062a45;box-shadow:0 5px 0 #0e8ed0}
+  .home-hero .cta .btn:hover{filter:brightness(1.05)}
+  .home-hero .cta .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0e8ed0}
+  .home-hero .cta .btn.ghost{background:#38bdf8;color:#062a45;box-shadow:0 5px 0 #0e8ed0}
+  .home-hero .float{position:absolute;z-index:1;opacity:.4;animation:floaty 7s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-22px) rotate(4deg)}}
+  .unit-slideshow{margin-top:26px;min-height:64px;display:flex;justify-content:center}
+  .us-slide{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .us-slide.anim{animation:usIn .6s cubic-bezier(.2,.7,.2,1)}
+  @keyframes usIn{0%{opacity:0;transform:translateY(14px) scale(.97)}100%{opacity:1;transform:none}}
+  .us-badge{font-weight:800;color:#7fb3ff;text-transform:uppercase;letter-spacing:.1em;font-size:.8rem}
+  .us-title{font-weight:800;font-size:1.4rem;color:#ffe24d;text-align:center}
+  .us-dots{display:flex;gap:6px;justify-content:center;margin-top:12px}
+  .us-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}
+  .us-dot.on{background:#38bdf8}
+  @media(prefers-reduced-motion:reduce){.us-slide.anim{animation:none}}
+  @media (prefers-reduced-motion:reduce){.home-hero .float{animation:none}}
+  @media (max-width:760px){.home-hero .float{display:none}}
+
+  .eyebrow{color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;margin-bottom:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:18px}
+  .ucard{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--uc,var(--line));border-radius:var(--radius);padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px}
+  .ucard .u-n{color:var(--ucd,var(--muted));font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+  .ucard h3{font-size:1.15rem}
+  .ucard p{color:var(--muted);font-weight:600;margin:2px 0 10px;flex:1;font-size:.95rem}
+  .ucard.live{cursor:pointer}
+  .ucard.live:hover{border-color:var(--uc,var(--blue));box-shadow:0 8px 20px rgba(15,23,42,.1)}
+  .pill{align-self:flex-start;font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:99px}
+  .pill.live{background:var(--ucs,#e7f6ee);color:var(--ucd,#0f7a44)}.pill.soon{background:#f0f2f5;color:var(--silver)}
+
+  /* single-page standard layout (the sketch) */
+  .std{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+  @media(max-width:820px){.std{grid-template-columns:1fr}}
+  .std-left{position:sticky;top:74px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  @media(max-width:820px){.std-left{position:static}}
+  .std-left h2{font-size:1.15rem;margin-bottom:4px}
+  .std-left .topic-sub{color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:14px}
+  .std-left h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 8px}
+  .std-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .std-list li{font-weight:600;font-size:.92rem;color:var(--ink);padding-left:24px;position:relative}
+  .std-list li b{display:inline-grid;place-items:center;position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:.7rem}
+  .std-list li.dim{color:var(--muted)} .std-list li.dim b{background:var(--silver)}
+
+  .lesson{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+  .lesson .lhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lesson .lhead h3{font-size:1.18rem;flex:1;min-width:200px}
+  .lesson .lo{margin:12px 0 6px}
+  .lesson .lo b{color:var(--blue-d)}
+  .sc{margin:8px 0;border-left:3px solid var(--line);padding-left:14px}
+  .sc .band{font-weight:800;color:var(--blue-d);margin-top:10px;margin-bottom:1px}
+  .sc .band .d{color:var(--blue)}
+  .sc ul{margin:2px 0 0;padding-left:20px;color:var(--muted);font-weight:600;line-height:1.5}
+  .sc ul li{margin:2px 0}
+  .sc .sc-row{margin:8px 0;color:var(--muted);font-weight:600;line-height:1.5}
+  .sc .sc-row .d{color:var(--blue);margin-right:4px}
+  .sc .sc-row b{color:var(--blue-d)}
+  .tasks{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+  .tasks .lbl{font-weight:800;color:var(--muted);font-size:.9rem;margin-right:2px}
+  .medal{cursor:pointer;border:none;font:inherit;font-weight:800;font-size:.82rem;padding:7px 13px;border-radius:9px}
+  .medal.b{background:var(--bronze-bg);color:var(--bronze)} .medal.s{background:var(--silver-bg);color:var(--silver)}
+  .medal.g{background:var(--gold-bg);color:var(--gold)} .medal.gt{background:var(--gt-bg);color:var(--gt)}
+  .lesson .lfoot{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+
+  /* lesson detail: slide deck */
+  .deck{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .slide{padding:30px;min-height:300px}
+  .slide .stag{display:inline-block;background:var(--blue);color:#fff;font-weight:800;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:99px;margin-bottom:14px}
+  .slide h3{font-size:1.5rem;margin-bottom:12px}
+  .slide ul{padding-left:20px;line-height:1.7} .slide li{margin:3px 0}
+  .slide .twocol{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+  @media(max-width:680px){.slide .twocol{grid-template-columns:1fr}}
+  .anchor{border:1px solid var(--line);border-radius:10px;padding:12px}
+  .anchor h4{color:var(--blue);margin-bottom:6px}
+  .deck-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding:12px 18px;background:#fafbfd}
+  .deck-bar .dots{flex:1;display:flex;gap:6px;justify-content:center}
+  .deck-bar .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .deck-bar .dot.on{background:var(--blue)}
+  .detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+
+  /* MCQ */
+  .quiz .q{margin-bottom:14px}
+  .quiz .qt{font-weight:800;margin-bottom:8px}
+  .quiz .opt{display:block;width:100%;text-align:left;background:#f4f7fb;border:2px solid transparent;border-radius:10px;padding:10px 13px;margin:6px 0;cursor:pointer;font:inherit;font-weight:600}
+  .quiz .opt:hover{background:#eaf0f9}
+  .quiz .opt.correct{background:#e7f6ee;border-color:#46b377;color:#0f7a44}
+  .quiz .opt.wrong{background:#fdeaea;border-color:#e88;color:#b23}
+  .quiz .opt.lock{pointer-events:none}
+  .scoreline{font-weight:800;color:var(--muted);margin-top:6px}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px}
+  .panel h3{margin-bottom:10px}
+  .vocab{display:flex;flex-wrap:wrap;gap:8px}
+  .vocab span{background:var(--theme-soft);color:var(--blue-d);font-weight:700;padding:6px 12px;border-radius:99px;font-size:.9rem}
+  .vhead{color:var(--muted);font-weight:700;font-size:.9rem;margin:2px 0 10px}
+  .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .vcard{perspective:900px;height:128px;cursor:pointer}
+  .vinner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+  .vcard.flip .vinner{transform:rotateY(180deg)}
+  .vface{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center;border:1px solid var(--line)}
+  .vfront{background:var(--theme-soft)}
+  .vfront .ve{font-size:1.9rem;animation:vfloat 4s ease-in-out infinite}
+  .vfront .vw{font-weight:800;color:var(--blue-d);margin-top:4px}
+  .vfront .vhint{font-size:.68rem;color:var(--muted);margin-top:3px}
+  .vback{background:linear-gradient(160deg,var(--blue),var(--theme-deep));color:#fff;transform:rotateY(180deg);font-weight:600;font-size:.86rem;line-height:1.35}
+  /* realistic icons */
+  .sci-ico{width:38px;height:38px;vertical-align:middle;margin-right:8px;display:inline-block}
+  .slide li .sci-ico{width:34px;height:34px}
+  .anchor h4 .sci-ico{width:42px;height:42px;margin-right:6px}
+  .vfront .sci-ico{width:58px;height:58px;margin:0 0 2px;animation:vfloat 4s ease-in-out infinite}
+  .ico-list{list-style:none;padding-left:0}
+  .ico-list li{display:flex;align-items:center;gap:2px;margin:10px 0;font-size:1.05rem}
+  /* interactive slide widgets */
+  .widget{margin-top:18px;border-top:1px dashed var(--line);padding-top:16px}
+  .w-title{font-weight:800;color:var(--blue-d);margin-bottom:10px}
+  .w-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .w-card{perspective:900px;height:140px;cursor:pointer}
+  .w-card .vinner{height:100%}
+  .w-card.flip .vinner{transform:rotateY(180deg)}
+  .w-card .vfront,.w-card .vback{flex-direction:column;padding:12px}
+  .w-card .vfront{background:var(--theme-soft)}
+  .w-card .wl{font-weight:800;color:var(--blue-d);margin-top:4px}
+  .obs{width:100%;border-collapse:collapse}
+  .obs th,.obs td{border:1px solid var(--line);padding:8px;text-align:center;font-weight:700}
+  .obs th{background:#f4f7fb;font-size:.85rem}
+  .obs td.lab{text-align:left} .obs td.lab .sci-ico{width:26px;height:26px;margin-right:4px}
+  .obs .cell{cursor:pointer;font-size:1.2rem;display:inline-block;min-width:44px;user-select:none}
+  .obs .cell.ans{outline:2px solid #46b377;border-radius:6px;color:#0f7a44}
+  .w-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:10px}
+  .w-bin{border:2px dashed var(--line);border-radius:10px;padding:8px;text-align:center;cursor:pointer;font-weight:800}
+  .w-bin .drop{min-height:38px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center}
+  .w-bin .drop .sci-ico{width:26px;height:26px;margin:0}
+  .w-bin.pop{border-color:#46b377;background:#eef9f1}.w-bin.shake{animation:wshake .4s}
+  @keyframes wshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .w-tray{display:flex;flex-wrap:wrap;gap:8px}
+  .w-chip{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:2px}
+  .w-chip .sci-ico{width:24px;height:24px;margin:0}
+  .w-chip.sel{outline:3px solid var(--blue)} .w-chip.done{opacity:.35;cursor:default}
+  .w-fb{font-weight:800;margin-top:8px;min-height:22px}
+  .w-cls{text-align:center}
+  .w-cls .item{font-size:1.15rem;font-weight:800;margin:10px 0;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .w-cls .item .sci-ico{width:54px;height:54px;margin:0}
+  .w-cats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  @keyframes vfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @media (prefers-reduced-motion:reduce){.vfront .ve{animation:none}.vinner{transition:none}}
+
+  /* clickable standards (sketch: tap a standard → see its lessons) */
+  .std-list li.click{cursor:pointer;padding-top:6px;padding-bottom:6px;border-radius:9px;transition:background .12s}
+  .std-list li.click b{top:7px}
+  .std-list li.click:hover{background:var(--theme-soft)}
+  .std-list li.sel{background:var(--theme-soft);color:var(--blue-d);font-weight:800}
+  .std-list li.sel b{background:var(--blue-d)}
+  .std-head{font-weight:800;color:var(--blue-d);font-size:1.05rem;margin:0 0 14px;line-height:1.4}
+  .std-head .sn{display:inline-block;background:var(--blue);color:#fff;border-radius:8px;padding:2px 11px;margin-right:9px;font-size:.85rem;vertical-align:2px}
+
+  /* expand slide to full screen */
+  .deck{position:relative}
+  .expandbtn{position:absolute;top:9px;right:9px;z-index:6;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:9px;cursor:pointer;font:inherit;font-weight:800;font-size:.78rem;padding:6px 11px;color:var(--blue-d)}
+  .expandbtn:hover{background:#fff}
+  body.deck-fs{overflow:hidden}
+  .deck.fs{position:fixed;inset:14px;z-index:80;display:flex;flex-direction:column;box-shadow:0 0 0 9999px rgba(8,16,40,.62);overflow:auto;margin:0}
+  .deck.fs .slide{flex:1;min-height:auto;padding:34px clamp(26px,6vw,88px);font-size:1.12rem}
+  .deck.fs .slide h3{font-size:clamp(1.6rem,3.2vw,2.2rem)}
+  .deck.fs .deck-bar{position:sticky;bottom:0}
+
+  /* AFL — assessment-for-learning check (interactive) */
+  .afl{margin-top:4px}
+  .afl-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--theme-soft);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:9px 0}
+  .afl-row .at{flex:1;min-width:170px;font-weight:700}
+  .afl-btns{display:flex;gap:6px}
+  .afl-b{cursor:pointer;border:2px solid var(--line);background:#fff;border-radius:10px;font:inherit;font-weight:800;font-size:.82rem;padding:7px 11px;display:inline-flex;align-items:center;gap:5px;transition:transform .08s,background .12s}
+  .afl-b:hover{transform:translateY(-1px)}
+  .afl-b.sel{color:#fff}
+  .afl-b.g.sel,.afl-b.ok.sel{background:#2aa45a;border-color:#2aa45a}
+  .afl-b.y.sel{background:#e0a32e;border-color:#e0a32e}
+  .afl-b.r.sel,.afl-b.no.sel{background:#d8503e;border-color:#d8503e}
+  .afl-fb{font-weight:800;min-width:80px}
+
+  /* printable sheet */
+  .ws{background:#fff;color:#111;padding:6px 4px}
+  .ws h1{font-size:1.5rem;margin-bottom:2px}.ws h2{font-size:1.15rem;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}
+  .ws .meta{font-weight:700;color:#444;margin-bottom:8px}
+  .ws ol,.ws ul{line-height:2}
+  .ws .lines{border-bottom:1px solid #bbb;height:26px;margin:6px 0}
+  .cut-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0}
+  .cut-card{border:2px dashed #888;border-radius:10px;padding:12px 8px;text-align:center;background:#fff;break-inside:avoid}
+  .cut-card .sci-ico{width:56px;height:56px;margin:0}
+  .cut-card .cl{font-weight:800;margin-top:6px;color:#111}
+  .sort-board{display:grid;grid-template-columns:repeat(var(--cols,3),1fr);gap:12px;margin-top:10px}
+  .sort-col{border:1.5px solid #888;border-radius:8px;min-height:170px}
+  .sort-col h3{background:#eee;margin:0;padding:7px;text-align:center;font-size:1rem;border-bottom:1.5px solid #888}
+  .ws-table{width:100%;border-collapse:collapse;margin:10px 0}
+  .ws-table th,.ws-table td{border:1px solid #888;padding:10px;text-align:center;font-size:1rem}
+  .ws-table th{background:#eef3fb;color:#1d4ed8}
+  .ws-table td.lab{font-weight:800} .ws-table td.lab .sci-ico{width:40px;height:40px;margin:0 6px 0 0}
+  .ws-in{width:88%;border:none;border-bottom:1.5px solid #888;font:inherit;font-size:1rem;text-align:center;padding:4px;background:transparent}
+  .ws-in:focus{outline:none;border-bottom-color:#2563eb}
+  .ws-area{width:100%;min-height:70px;border:1.5px solid #888;border-radius:8px;font:inherit;font-size:1rem;padding:8px;margin-top:6px}
+  .assess-q li{margin-bottom:14px;font-size:1.05rem}
+  .assess-q .ws-area{min-height:46px}
+  .checklist{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .chk{display:flex;align-items:center;gap:10px;background:#f4f7fb;border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;font:inherit;font-weight:700;text-align:left;color:#111}
+  .chk .box{width:22px;height:22px;border:2px solid #888;border-radius:6px;flex:0 0 auto;position:relative}
+  .chk.on{background:#e7f6ee;border-color:#46b377}
+  .chk.on .box{background:#46b377;border-color:#46b377}
+  .chk.on .box::after{content:'✓';color:#fff;position:absolute;inset:0;display:grid;place-items:center;font-size:.85rem;font-weight:800}
+  .no-print{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .pic-bank{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+  .pic{border:1px solid #ccc;border-radius:10px;padding:8px;background:#fff}
+  .pic .sci-ico{width:46px;height:46px;margin:0}
+  .sheet-page{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;color:#111}
+  @media print{header,footer,.no-print,.deck-bar,.detail-actions{display:none!important}body{background:#fff}.sheet-page{border:none;border-radius:0;margin:0;break-after:page;break-inside:avoid}.sheet-page:last-child{break-after:auto}}
+
+  footer{border-top:1px solid var(--line);padding:24px 20px;text-align:center;color:var(--muted);font-weight:700;font-size:.9rem}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand" onclick="go('home')"><span class="l">🔬</span> Science Explorers</div>
+    <div class="sp"></div>
+    <span class="crumb" id="crumb" onclick="go('units')"></span>
+  </div>
+</header>
+
+<main id="app" class="wrap"></main>
+<footer>Science Explorers · A Grade 5 science classroom by Deenish Ramdial</footer>
+
+<script>
+/* =====================================================================
+   CONTENT — built from Deenish Ramdial's lesson outline
+   ===================================================================== */
+// helper to make a 5-slide deck from the 5E flow
+function deck(arr){return arr;}
+
+const MATTER_S1=[
+{
+  id:'m1', title:'Lesson 1: Introduction to Solids, Liquids and Gases',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to identify and describe the properties of solids, liquids, and gases using observations.',
+  sc:[
+    {band:'Remembering',items:['I can list the characteristics of solids, liquids, and gases.']},
+    {band:'Understanding',items:['I can explain how solids, liquids, and gases are different from each other.']},
+    {band:'Applying',items:['I can classify everyday objects as solids, liquids, or gases based on their properties.']}
+  ],
+  vocab:['Solid','Liquid','Gas','Property'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Mystery Matter',body:'<p><b>Show three objects:</b></p><ul class="ico-list"><li>[[rock]] A rock (solid)</li><li>[[water]] Water in a bottle (liquid)</li><li>[[balloon]] An inflated balloon (gas)</li></ul><p><b>Ask:</b> What do these have in common? How are they different? Can you see all three types of matter?</p><p><b>Think–Pair–Share:</b> Which keeps its shape? Which can be poured? Which fills the balloon?</p>'},
+    {tag:'Explore · 15 min',h:'Matter Investigation Stations',body:'<p>Students rotate through stations and observe: ice cube · water · air-filled balloon · wooden block · juice · empty syringe with trapped air.</p><p><b>Record for each:</b> What shape is it? Can it flow? Can it be poured?</p><p><b>Teacher questions:</b> What do you notice? Which materials keep their shape? Which take the shape of their container?</p>'},
+    {tag:'Explain · 10 min',h:'States of Matter Anchor Chart',body:'<div class="twocol"><div class="anchor"><h4>[[ice]] Solid</h4><ul><li>Keeps its shape</li><li>Fixed volume</li><li>Does not flow easily</li></ul></div><div class="anchor"><h4>[[water]] Liquid</h4><ul><li>Takes shape of container</li><li>Fixed volume</li><li>Flows</li></ul></div><div class="anchor"><h4>[[air]] Gas</h4><ul><li>Fills available space</li><li>No fixed shape</li><li>Spreads out</li></ul></div></div><p style="margin-top:10px">Students identify examples of each state of matter.</p>'},
+    {tag:'AFL · 5 min',h:'Quick Self-Check',body:'<p>Before the challenge tasks, show me how you are doing with today\'s goals. Tap the face that matches you for each one.</p>'},
+    {tag:'Elaborate · 15 min',h:'Differentiated Tasks',body:'<p>Students work at their level — open the printable task sheets:</p><ul><li>🥉 <b>Bronze</b> — Sort picture cards into Solid / Liquid / Gas.</li><li>🥈 <b>Silver</b> — Complete a comparison table.</li><li>🥇 <b>Gold</b> — Classify six objects and explain using scientific vocabulary.</li><li>⭐ <b>G&T</b> — "Air is not matter because we cannot see it" — agree or disagree, with evidence.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>List one characteristic of a solid.</li><li>Explain one difference between a liquid and a gas.</li><li>Classify: Water → ___ · Air → ___ · Rock → ___</li></ol><p><b>Plenary:</b> "How can we use observations to identify whether something is a solid, liquid, or gas?"</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Sort the Matter',items:['Cut out the picture cards below.','Sort them into the three columns: SOLID, LIQUID, GAS.','Glue each card under the correct heading.','Draw one more example of your own for each state.'],cards:[{i:'milk',l:'Milk'},{i:'steam',l:'Steam'},{i:'football',l:'Football'},{i:'juice',l:'Juice'},{i:'air',l:'Air'},{i:'pencil',l:'Pencil'}],columns:['SOLID','LIQUID','GAS']},
+    silver:{title:'Silver — Comparison Table',items:['Look at the pictures, then complete the comparison table by typing in each box.'],table:{cols:['State of Matter','Shape','Example'],rows:[{icon:'ice',label:'Solid'},{icon:'water',label:'Liquid'},{icon:'air',label:'Gas'}]},question:'Write one sentence: How is a solid different from a liquid?'},
+    gold:{title:'Gold — Classify & Explain',items:['Choose SIX classroom or household objects (use the pictures below for ideas, or your own).','Classify each as a solid, liquid or gas.','For each one, explain your reasoning using scientific vocabulary (shape, volume, flow, particles).'],bank:['rock','water','balloon','ice','block','juice','milk','football','pencil','syringe','steam','air'],table:{cols:['Object','State (solid / liquid / gas)','Why I know — my evidence'],rows:6}},
+    gt:{title:'G&T Challenge — Matter Detective',items:['A scientist claims: "Air is not matter because we cannot see it."','Look at the evidence pictures below.','Decide whether you agree or disagree.','Explain why, using scientific vocabulary.','Present your evidence to the class. Use the syringe and the balloon as evidence.'],bank:['syringe','balloon','air'],question:'Do you agree or disagree? Write your answer and your evidence.'}
+  },
+  assessment:{
+    title:'Lesson 1 — Assessment',pics:['ice','water','air'],
+    items:['1. List one characteristic of a solid.','2. Explain one difference between a liquid and a gas.','3. Classify each: Water → _______ · Air → _______ · Rock → _______'],
+    check:['I can list characteristics of solids, liquids, and gases.','I can explain how they are different.','I can classify everyday objects correctly.']
+  },
+  mcqs:[
+    {q:'Which of these is a solid?',options:['Milk','A rock','Air','Juice'],answer:1},
+    {q:'Which of these can be poured into a cup?',options:['A pencil','A rock','Water','An ice cube'],answer:2},
+    {q:'A gas, like the air in a balloon, will…',options:['keep its own shape','fill all the space it is in','always sink to the floor','turn into a rock'],answer:1},
+    {q:'Which property describes a liquid?',options:['Keeps a fixed shape','Takes the shape of its container','Cannot be poured','Has no volume'],answer:1},
+    {q:'Matter is anything that has mass and…',options:['is alive','glows in the dark','takes up space','can be eaten'],answer:2},
+    {q:'Which is the BEST example of a gas?',options:['Wooden block','Steam','Juice','Ice'],answer:1},
+    {q:'A solid is different from a liquid because a solid…',options:['flows easily','keeps its own shape','always floats','has no mass'],answer:1},
+    {q:'In the syringe station, trapped air shows that a gas…',options:['has no mass','can be squashed into a smaller space','is not matter','is a liquid'],answer:1},
+    {q:'Which list shows solid, liquid, gas IN ORDER?',options:['Water, rock, steam','Rock, water, steam','Steam, rock, water','Air, ice, pencil'],answer:1},
+    {q:'You observe something that keeps its shape and does not flow. It is most likely a…',options:['gas','liquid','solid','it cannot be matter'],answer:2}
+  ]
+},
+{
+  id:'m2', title:'Lesson 2: Investigating the Properties of Solids and Liquids',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to investigate and compare the properties of solids and liquids through simple experiments.',
+  sc:[
+    {band:'Observing',items:['I can observe how solids and liquids behave in different containers.']},
+    {band:'Comparing',items:['I can compare the properties of solids and liquids using evidence.']},
+    {band:'Analyzing',items:['I can analyze my observations to explain similarities and differences between solids and liquids.']}
+  ],
+  vocab:['Investigate','Compare','Evidence','Flexible','Rigid','Flow','Container','Property','Observation'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Starter & Hook',body:'<p><b>Display</b> a bottle of water and a wooden block.</p><p><b>Ask:</b> What happens if I pour the water into a different container? What happens if I place the block into a different container? Why do they behave differently?</p><p><b>Think–Pair–Share:</b> Which object can change shape? Which keeps its shape?</p><p><b>Hook:</b> Pour water into different shaped containers while the block stays unchanged.</p>'},
+    {tag:'Explore · 20 min',h:'What Happens in Different Containers?',body:'<p><b>Materials:</b> water · sand · building blocks · clay · 4 containers · observation sheet.</p><p><b>Procedure:</b> place each material into different containers, observe, and record.</p><p><b>Observation table</b> (Material · Keeps shape? · Flows? · Takes shape of container?): Water · Sand · Block · Clay.</p><p><b>Teacher questions:</b> Which materials flow? Which keep their shape? What evidence do you have?</p>'},
+    {tag:'Explain · 10 min',h:'Anchor Chart: Solids vs Liquids',body:'<div class="twocol" style="grid-template-columns:1fr 1fr"><div class="anchor"><h4>[[ice]] Solids</h4><ul><li>Keep their shape</li><li>Do not flow easily</li><li>Can be rigid or flexible</li></ul></div><div class="anchor"><h4>[[water]] Liquids</h4><ul><li>Take the shape of their container</li><li>Flow easily</li><li>Can be poured</li></ul></div></div><p style="margin-top:10px"><b>Key points:</b> solids have a definite shape; liquids flow and take the shape of their container; observations provide evidence in science.</p>'},
+    {tag:'AFL · 5 min',h:'Quick Self-Check',body:'<p>Before the challenge tasks, show me how you are doing with today\'s goals. Tap the face that matches you for each one.</p>'},
+    {tag:'Elaborate · 15 min',h:'Mystery Materials Challenge',body:'<p>Present mystery materials: <b>honey · rice · jelly · juice</b>. In pairs:</p><ol><li>Predict whether each is more like a solid or a liquid.</li><li>Explain your reasoning.</li><li>Test if possible.</li></ol><p><b>Extension:</b> Can some materials have properties of both solids and liquids? What evidence supports your thinking? (Open the task sheets for Bronze / Silver / Gold.)</p>'},
+    {tag:'Evaluate · 5 min',h:'Exit Ticket & Plenary',body:'<ol><li>Name one property of a solid.</li><li>Name one property of a liquid.</li><li>Explain one difference between a solid and a liquid using evidence from today\'s investigation.</li></ol><p><b>Plenary:</b> "How did our observations help us decide whether a material was a solid or a liquid?"</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Picture Vocabulary Sort',items:['Match each picture-word to the correct group: SOLID or LIQUID.','Words: water · sand · block · clay · juice · rock','Use the sentence stems: "I observed ____." · "The evidence shows ____."']},
+    silver:{title:'Silver — Observation Record',items:['Complete the observation table from the investigation.','Material | Keeps shape? | Flows? | Takes shape of container?','Water | __ | __ | __','Sand | __ | __ | __','Block | __ | __ | __','Clay | __ | __ | __','Write one sentence comparing a solid and a liquid using evidence.']},
+    gold:{title:'Gold — Compare with Evidence',items:['Write a short paragraph comparing solids and liquids.','Use at least THREE observations as evidence.','Use the words: property, evidence, observation, flow, container.']},
+    gt:{title:'G&T Challenge — Tricky Materials',items:['Explain why SAND can be difficult to classify as a solid or a liquid.','Design a simple test to determine whether an unknown material is a solid or a liquid.','Write the steps of your test and what evidence you would look for.']}
+  },
+  assessment:{title:'Lesson 2 — Assessment',
+    items:['1. Name one property of a solid.','2. Name one property of a liquid.','3. Explain one difference between a solid and a liquid using evidence.'],
+    check:['I can observe materials carefully.','I can compare solids and liquids using evidence.','I can explain similarities and differences using scientific vocabulary.']}
+},
+{
+  id:'m3', title:'Lesson 3: Testing Claims About Matter',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to ask questions and use observations to test claims about whether materials are solids or liquids.',
+  sc:[
+    {band:'Questioning',items:['I can question whether a material is a solid or liquid based on its behavior.']},
+    {band:'Evaluating',items:['I can evaluate evidence gathered from observations and investigations.']},
+    {band:'Justifying',items:['I can justify conclusions using scientific vocabulary.']}
+  ],
+  vocab:['Claim','Test','Evidence','Conclusion'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Claim of the Day',body:'<p><b>Display the claim:</b> "Every material is either a solid or a liquid."</p><p><b>Show:</b> honey · toothpaste · slime · sand.</p><p><b>Ask:</b> Do you agree with the claim? How could we test it?</p>'},
+    {tag:'Explore · 20 min',h:'Investigate Mystery Materials',body:'<p>For each material, students:</p><ol><li>Ask questions.</li><li>Make predictions.</li><li>Observe the behavior.</li><li>Record evidence.</li></ol><p><b>Observation table:</b> Material · Flows? · Keeps shape? · Evidence.</p>'},
+    {tag:'Explain · 10 min',h:'Claim · Evidence · Conclusion',body:'<p><b>Class discussion:</b> Which materials were easy to classify? Which were difficult? What evidence helped you decide?</p><p><b>Review the science words:</b> Claim · Evidence · Conclusion.</p>'},
+    {tag:'AFL · 5 min',h:'Quick Self-Check',body:'<p>Before the challenge tasks, show me how you are doing with today\'s goals. Tap the face that matches you for each one.</p>'},
+    {tag:'Elaborate · 15 min',h:'Differentiated Tasks',body:'<ul><li>🥉 <b>Bronze</b> — Match evidence to the correct material.</li><li>🥈 <b>Silver</b> — Write a conclusion for each mystery material using evidence.</li><li>🥇 <b>Gold</b> — Evaluate the claim and write a paragraph on whether it is supported.</li><li>⭐ <b>G&T</b> — Research why slime, toothpaste or quicksand are hard to classify; present findings.</li></ul>'},
+    {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>What claim did you test today?</li><li>What evidence did you collect?</li><li>What conclusion did you reach?</li></ol><p><b>Final question:</b> "How do scientists use observations and evidence to test claims about matter?"</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Match the Evidence',items:['Draw a line to match each piece of evidence to the correct material.','Material: honey · toothpaste · slime · sand','Evidence: "It flowed slowly" · "It held its shape then spread" · "It poured like a liquid" · "Grains kept their shape"']},
+    silver:{title:'Silver — Write Conclusions',items:['For each mystery material, write a conclusion using your evidence.','Honey → conclusion: ____________________','Toothpaste → conclusion: ____________________','Slime → conclusion: ____________________','Sand → conclusion: ____________________']},
+    gold:{title:'Gold — Evaluate the Claim',items:['The claim was: "Every material is either a solid or a liquid."','Write a paragraph explaining whether your investigation supports the claim.','Use the words: claim, evidence, conclusion. Give at least two pieces of evidence.']},
+    gt:{title:'G&T Challenge — Hard-to-Classify Materials',items:['Research and explain why materials such as slime, toothpaste or quicksand are difficult to classify as solids or liquids.','Prepare to present your findings to the class.','Use scientific vocabulary and at least two pieces of evidence.']}
+  },
+  assessment:{title:'Lesson 3 — Assessment',
+    items:['1. What claim did you test today?','2. What evidence did you collect?','3. What conclusion did you reach?'],
+    check:['I can question whether a material is a solid or liquid.','I can evaluate evidence from observations.','I can justify my conclusion using scientific vocabulary.']}
+}
+];
+
+/* realistic shaded SVG icons (replace flat emoji) */
+const ICONS={
+ rock:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="rk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9aa3ad"/><stop offset="1" stop-color="#566069"/></linearGradient></defs><path d="M9 45 L20 23 L41 17 L55 34 L49 49 L17 51 Z" fill="url(#rk)" stroke="#454e57" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 23 L41 17 L34 35 Z" fill="#bcc4cc" opacity=".55"/></svg>',
+ water:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="wd" cx="40%" cy="34%" r="72%"><stop offset="0" stop-color="#86cbff"/><stop offset="1" stop-color="#1f7ad6"/></radialGradient></defs><path d="M32 7 C32 7 50 30 50 42 a18 18 0 0 1 -36 0 C14 30 32 7 32 7 Z" fill="url(#wd)"/><ellipse cx="25" cy="41" rx="5" ry="9" fill="#d6efff" opacity=".6"/></svg>',
+ balloon:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="bl" cx="38%" cy="30%" r="72%"><stop offset="0" stop-color="#ff9a9a"/><stop offset="1" stop-color="#d62828"/></radialGradient></defs><ellipse cx="32" cy="25" rx="18" ry="22" fill="url(#bl)"/><path d="M32 47 l-3 5 h6 z" fill="#c81f1f"/><path d="M32 52 q5 6 0 11" stroke="#9aa" stroke-width="1.5" fill="none"/><ellipse cx="25" cy="17" rx="4" ry="6.5" fill="#ffd4d4" opacity=".75"/></svg>',
+ ice:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="ic" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eaf8ff"/><stop offset="1" stop-color="#9bd3f0"/></linearGradient></defs><path d="M15 21 L40 14 L49 22 L49 46 L24 53 L15 45 Z" fill="url(#ic)" stroke="#7fb8d6" stroke-width="1.5" stroke-linejoin="round"/><path d="M15 21 L40 14 L49 22 L24 29 Z" fill="#fff" opacity=".65"/><path d="M24 29 L24 53" stroke="#bfe3f5" stroke-width="1.5"/></svg>',
+ air:'<svg class="sci-ico" viewBox="0 0 64 64"><g fill="#cdd9e8"><circle cx="23" cy="35" r="12"/><circle cx="38" cy="30" r="15"/><circle cx="47" cy="39" r="10"/><rect x="19" y="39" width="32" height="11" rx="5.5"/></g><circle cx="19" cy="30" r="3" fill="#fff" opacity=".75"/></svg>',
+ block:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="wb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cb9d5e"/><stop offset="1" stop-color="#9c6b34"/></linearGradient></defs><path d="M14 25 L38 16 L50 22 L50 44 L26 53 L14 47 Z" fill="url(#wb)" stroke="#7c5326" stroke-width="1.5" stroke-linejoin="round"/><path d="M14 25 L38 16 L50 22 L26 31 Z" fill="#e0bc83"/><path d="M18 33 h7 M18 39 h9" stroke="#7c5326" stroke-width="1" opacity=".5"/></svg>',
+ juice:'<svg class="sci-ico" viewBox="0 0 64 64"><path d="M22 13 h20 l-3 39 h-14 z" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/><path d="M24.5 30 h15 l-2.1 21 h-10.8 z" fill="#ffb020"/><ellipse cx="28" cy="20" rx="2" ry="4.5" fill="#fff" opacity=".7"/></svg>',
+ syringe:'<svg class="sci-ico" viewBox="0 0 64 64"><g stroke="#7f8a99" stroke-width="2" fill="#eef3f9"><rect x="16" y="26" width="30" height="12" rx="2"/></g><rect x="44" y="29.5" width="8" height="5" fill="#bcd6ef"/><line x1="52" y1="32" x2="60" y2="32" stroke="#7f8a99" stroke-width="2"/><line x1="16" y1="32" x2="8" y2="32" stroke="#7f8a99" stroke-width="3"/><rect x="20" y="26" width="14" height="12" fill="#bfe0ff" opacity=".7"/></svg>',
+ milk:'<svg class="sci-ico" viewBox="0 0 64 64"><path d="M22 13 h20 l-3 39 h-14 z" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/><path d="M24.6 26 h14.8 l-2.4 26 h-10 z" fill="#f4f7fc" stroke="#e2e8f0" stroke-width="1"/><ellipse cx="28" cy="20" rx="2" ry="4.5" fill="#fff"/></svg>',
+ steam:'<svg class="sci-ico" viewBox="0 0 64 64"><g fill="none" stroke="#bcdcf0" stroke-width="4.5" stroke-linecap="round"><path d="M24 52 q-7 -9 0 -18 q7 -9 0 -18"/><path d="M40 52 q-7 -9 0 -18 q7 -9 0 -18"/></g></svg>',
+ football:'<svg class="sci-ico" viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="#fff" stroke="#333" stroke-width="2"/><path d="M32 19 l9.5 7 -3.6 11.3 h-11.8 l-3.6 -11.3 z" fill="#333"/><path d="M32 19 V12 M41.5 26 l6 -3 M27.8 37.3 l-4 6 M36.2 37.3 l4 6 M22.5 26 l-6 -3" stroke="#333" stroke-width="2"/></svg>',
+ pencil:'<svg class="sci-ico" viewBox="0 0 64 64"><g transform="rotate(45 32 32)"><rect x="26" y="13" width="12" height="6" fill="#ff8aa0"/><rect x="26" y="19" width="12" height="27" fill="#ffc94d" stroke="#caa83a" stroke-width="1"/><path d="M26 46 h12 l-6 9 z" fill="#f0d9a8" stroke="#caa83a" stroke-width="1"/><path d="M30 53 l2 4 2 -4 z" fill="#333"/></g></svg>',
+ apple:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_apple1" cx="38%" cy="30%" r="65%"><stop offset="0" stop-color="#ff8a8a"/><stop offset="1" stop-color="#cc1a1a"/></radialGradient><radialGradient id="grad_apple2" cx="30%" cy="25%" r="40%"><stop offset="0" stop-color="#ffcccc" stop-opacity="0.7"/><stop offset="1" stop-color="#ffcccc" stop-opacity="0"/></radialGradient></defs><path d="M32 16 C18 16 11 27 11 37 C11 50 20 57 32 57 C44 57 53 50 53 37 C53 27 46 16 32 16 Z" fill="url(#grad_apple1)"/><ellipse cx="27" cy="28" rx="6" ry="10" fill="url(#grad_apple2)"/><path d="M32 16 C32 10 35 7 35 7" stroke="#7a4e2d" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M35 9 C38 4 45 5 44 10 C41 9 37 10 35 9 Z" fill="#4caf50"/><path d="M36 9 C39 7 43 7.5 42.5 10" stroke="#388e3c" stroke-width="1" fill="none"/></svg>',
+ leaf:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_leaf1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#a5d86e"/><stop offset="1" stop-color="#2e7d32"/></linearGradient></defs><path d="M32 56 C32 56 10 40 12 22 C14 10 24 8 32 8 C40 8 50 10 52 22 C54 40 32 56 32 56 Z" fill="url(#grad_leaf1)"/><line x1="32" y1="56" x2="32" y2="10" stroke="#1b5e20" stroke-width="1.5"/><line x1="32" y1="22" x2="20" y2="16" stroke="#1b5e20" stroke-width="1"/><line x1="32" y1="30" x2="17" y2="26" stroke="#1b5e20" stroke-width="1"/><line x1="32" y1="38" x2="19" y2="36" stroke="#1b5e20" stroke-width="1"/><line x1="32" y1="22" x2="44" y2="16" stroke="#1b5e20" stroke-width="1"/><line x1="32" y1="30" x2="47" y2="26" stroke="#1b5e20" stroke-width="1"/><line x1="32" y1="38" x2="45" y2="36" stroke="#1b5e20" stroke-width="1"/></svg>',
+ feather:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_feather1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#f5f5f5"/><stop offset="1" stop-color="#b0bec5"/></linearGradient></defs><path d="M16 54 C22 40 28 28 44 10 C50 14 54 22 48 34 C42 44 30 50 16 54 Z" fill="url(#grad_feather1)" stroke="#cfd8dc" stroke-width="0.5"/><path d="M16 54 L44 10" stroke="#90a4ae" stroke-width="1.2" stroke-linecap="round"/><line x1="38" y1="18" x2="28" y2="28" stroke="#cfd8dc" stroke-width="0.8"/><line x1="42" y1="22" x2="30" y2="34" stroke="#cfd8dc" stroke-width="0.8"/><line x1="46" y1="27" x2="32" y2="40" stroke="#cfd8dc" stroke-width="0.8"/><line x1="44" y1="33" x2="28" y2="46" stroke="#cfd8dc" stroke-width="0.8"/><path d="M16 54 C17 51 18 48 20 46" stroke="#78909c" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>',
+ book:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_book1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0" stop-color="#1565c0"/><stop offset="1" stop-color="#1e88e5"/></linearGradient><linearGradient id="grad_book2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0" stop-color="#0d47a1"/><stop offset="1" stop-color="#1565c0"/></linearGradient></defs><rect x="14" y="12" width="36" height="42" rx="2" fill="url(#grad_book1)"/><rect x="14" y="12" width="7" height="42" fill="url(#grad_book2)"/><rect x="21" y="12" width="1.5" height="42" fill="#0a3880"/><rect x="24" y="20" width="20" height="2.5" rx="1" fill="#90caf9" opacity="0.8"/><rect x="24" y="26" width="16" height="2" rx="1" fill="#90caf9" opacity="0.6"/><rect x="24" y="31" width="18" height="2" rx="1" fill="#90caf9" opacity="0.6"/><rect x="24" y="36" width="14" height="2" rx="1" fill="#90caf9" opacity="0.5"/><path d="M14 54 Q17.5 56 21 54" stroke="#0d47a1" stroke-width="1" fill="none"/></svg>',
+ ball:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_ball1" cx="38%" cy="32%" r="65%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.3" stop-color="#ffeb3b"/><stop offset="1" stop-color="#f57f17"/></radialGradient><radialGradient id="grad_ball2" cx="35%" cy="28%" r="35%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.8"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="32" cy="32" r="24" fill="url(#grad_ball1)"/><path d="M10 26 Q22 22 32 32 Q42 42 54 38" stroke="#ff6f00" stroke-width="2" fill="none" opacity="0.5"/><path d="M12 38 Q22 42 32 32 Q42 22 52 26" stroke="#ff6f00" stroke-width="2" fill="none" opacity="0.5"/><ellipse cx="26" cy="25" rx="7" ry="5" fill="url(#grad_ball2)"/></svg>',
+ cloud:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_cloud1" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd8dc"/></radialGradient></defs><circle cx="22" cy="38" r="11" fill="url(#grad_cloud1)"/><circle cx="34" cy="32" r="14" fill="url(#grad_cloud1)"/><circle cx="46" cy="37" r="10" fill="url(#grad_cloud1)"/><rect x="12" y="37" width="42" height="12" rx="5" fill="url(#grad_cloud1)"/><ellipse cx="28" cy="33" rx="5" ry="4" fill="#ffffff" opacity="0.7"/></svg>',
+ rain:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_rain1" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#b0bec5"/><stop offset="1" stop-color="#607d8b"/></radialGradient><linearGradient id="grad_rain2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#64b5f6"/><stop offset="1" stop-color="#1565c0"/></linearGradient></defs><circle cx="21" cy="26" r="9" fill="url(#grad_rain1)"/><circle cx="32" cy="21" r="11" fill="url(#grad_rain1)"/><circle cx="43" cy="26" r="8" fill="url(#grad_rain1)"/><rect x="13" y="25" width="38" height="10" rx="4" fill="url(#grad_rain1)"/><path d="M22 40 Q21 44 22 48" stroke="url(#grad_rain2)" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M32 42 Q31 46 32 50" stroke="url(#grad_rain2)" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M42 40 Q41 44 42 48" stroke="url(#grad_rain2)" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M27 44 Q26 48 27 52" stroke="url(#grad_rain2)" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>',
+ kite:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_kite1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#ef5350"/><stop offset="1" stop-color="#b71c1c"/></linearGradient><linearGradient id="grad_kite2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#fff176"/><stop offset="1" stop-color="#f9a825"/></linearGradient></defs><path d="M32 6 L54 28 L32 44 L10 28 Z" fill="url(#grad_kite1)"/><path d="M32 6 L54 28 L32 44 L10 28 Z" clip-path="url(#grad_kite_clip)"/><path d="M32 6 L32 44" stroke="#fff" stroke-width="1" opacity="0.5"/><path d="M10 28 L54 28" stroke="#fff" stroke-width="1" opacity="0.5"/><path d="M32 6 L54 28" fill="url(#grad_kite2)"/><path d="M54 28 L32 44 L10 28 L32 6 Z" fill="none"/><path d="M32 6 L54 28 L32 25 Z" fill="url(#grad_kite2)"/><path d="M32 44 C33 48 31 52 33 55 C31 56 33 59 31 60" stroke="#795548" stroke-width="1.5" stroke-linecap="round" fill="none"/><ellipse cx="29" cy="50" rx="3" ry="2" fill="#ef9a9a" transform="rotate(-20 29 50)"/><ellipse cx="33" cy="57" rx="3" ry="2" fill="#fff176" transform="rotate(15 33 57)"/></svg>',
+ bird:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_bird1" cx="40%" cy="35%" r="60%"><stop offset="0" stop-color="#64b5f6"/><stop offset="1" stop-color="#1565c0"/></radialGradient></defs><ellipse cx="34" cy="36" rx="16" ry="11" fill="url(#grad_bird1)"/><circle cx="46" cy="26" r="9" fill="url(#grad_bird1)"/><path d="M52 24 L60 22 L56 27 Z" fill="#ffcc02"/><circle cx="49" cy="24" r="1.5" fill="#1a237e"/><circle cx="49.5" cy="23.5" r="0.5" fill="#ffffff"/><path d="M18 35 C12 28 10 18 18 16 C22 22 22 30 26 34 Z" fill="#1976d2"/><path d="M34 47 C30 52 28 55 32 58 C36 55 38 52 34 47 Z" fill="#ff8f00"/><path d="M38 47 C42 52 44 55 40 57 C36 54 35 51 38 47 Z" fill="#ff8f00"/></svg>',
+ plane:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_plane1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#f5f5f5"/><stop offset="1" stop-color="#b0bec5"/></linearGradient><linearGradient id="grad_plane2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#1e88e5"/><stop offset="1" stop-color="#0d47a1"/></linearGradient></defs><path d="M8 35 L48 20 C54 18 58 22 56 27 L36 35 L42 50 L36 50 L28 36 L18 38 L20 46 L14 46 L10 37 Z" fill="url(#grad_plane1)"/><path d="M36 35 L56 27 C58 22 54 18 48 20 Z" fill="#e0e0e0"/><rect x="24" y="24" width="6" height="4" rx="1" fill="url(#grad_plane2)" opacity="0.9"/><rect x="32" y="22" width="6" height="4" rx="1" fill="url(#grad_plane2)" opacity="0.9"/><path d="M8 35 L18 38 L14 35 Z" fill="#cfd8dc"/></svg>',
+ astronaut:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_astro1" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#f5f5f5"/><stop offset="1" stop-color="#cfd8dc"/></radialGradient><radialGradient id="grad_astro2" cx="35%" cy="30%" r="60%"><stop offset="0" stop-color="#90caf9"/><stop offset="0.5" stop-color="#1565c0"/><stop offset="1" stop-color="#0d47a1"/></radialGradient><radialGradient id="grad_astro3" cx="30%" cy="25%" r="45%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.6"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><rect x="14" y="36" width="36" height="22" rx="8" fill="url(#grad_astro1)"/><circle cx="32" cy="26" r="18" fill="url(#grad_astro1)"/><circle cx="32" cy="26" r="13" fill="url(#grad_astro2)"/><ellipse cx="28" cy="22" rx="5" ry="4" fill="url(#grad_astro3)"/><rect x="26" y="42" width="12" height="6" rx="2" fill="#e0e0e0" stroke="#b0bec5" stroke-width="1"/><rect x="14" y="44" width="7" height="5" rx="2" fill="#e0e0e0"/><rect x="43" y="44" width="7" height="5" rx="2" fill="#e0e0e0"/><circle cx="32" cy="26" r="13" fill="none" stroke="#b0bec5" stroke-width="1.5"/></svg>',
+ earth:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_earth1" cx="38%" cy="32%" r="65%"><stop offset="0" stop-color="#64b5f6"/><stop offset="1" stop-color="#0d47a1"/></radialGradient><radialGradient id="grad_earth2" cx="35%" cy="28%" r="38%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="32" cy="32" r="25" fill="url(#grad_earth1)"/><path d="M18 18 C22 14 28 13 30 18 C32 22 28 24 26 26 C24 28 22 32 26 34 C30 36 32 34 34 36 C36 38 34 44 30 46 C26 48 20 44 18 40 C14 34 14 24 18 18 Z" fill="#4caf50" opacity="0.9"/><path d="M38 14 C42 12 48 14 50 18 C52 22 50 26 46 26 C44 24 40 22 38 18 Z" fill="#4caf50" opacity="0.9"/><path d="M44 32 C46 30 50 32 50 36 C50 40 47 42 44 40 C42 38 42 34 44 32 Z" fill="#4caf50" opacity="0.9"/><circle cx="32" cy="32" r="25" fill="url(#grad_earth2)"/><circle cx="32" cy="32" r="25" fill="none" stroke="#1565c0" stroke-width="0.5"/></svg>',
+ sun:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_sun1" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff9c4"/><stop offset="0.5" stop-color="#ffca28"/><stop offset="1" stop-color="#ff8f00"/></radialGradient><radialGradient id="grad_sun2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.8"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><line x1="32" y1="4" x2="32" y2="12" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="52" x2="32" y2="60" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="4" y1="32" x2="12" y2="32" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="52" y1="32" x2="60" y2="32" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="10" y1="10" x2="16" y2="16" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="48" y1="48" x2="54" y2="54" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="54" y1="10" x2="48" y2="16" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><line x1="10" y1="54" x2="16" y2="48" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="16" fill="url(#grad_sun1)"/><circle cx="32" cy="32" r="10" fill="url(#grad_sun2)"/></svg>',
+ magnet:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_magnet1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4444"/><stop offset="1" stop-color="#cc1111"/></linearGradient><linearGradient id="grad_magnet2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#cccccc"/><stop offset="1" stop-color="#888888"/></linearGradient></defs><path d="M18 10 A14 14 0 0 1 46 10 L46 28 Q46 34 40 34 L40 26 Q40 22 36 22 L28 22 Q24 22 24 26 L24 34 Q18 34 18 28 Z" fill="url(#grad_magnet1)" stroke="#991111" stroke-width="1.2"/><rect x="18" y="28" width="6" height="12" rx="2" fill="url(#grad_magnet2)" stroke="#666" stroke-width="1"/><rect x="40" y="28" width="6" height="12" rx="2" fill="url(#grad_magnet2)" stroke="#666" stroke-width="1"/><rect x="18" y="38" width="6" height="4" rx="1" fill="#aaaaee"/><rect x="40" y="38" width="6" height="4" rx="1" fill="#eeaaaa"/></svg>',
+ bulb:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_bulb1" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#fffde0"/><stop offset="0.6" stop-color="#ffe066"/><stop offset="1" stop-color="#e6a800"/></radialGradient><radialGradient id="grad_bulb_glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffaaa" stop-opacity="0.7"/><stop offset="1" stop-color="#ffe066" stop-opacity="0"/></radialGradient><linearGradient id="grad_bulb2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bbbbbb"/><stop offset="0.5" stop-color="#eeeeee"/><stop offset="1" stop-color="#999999"/></linearGradient></defs><ellipse cx="32" cy="32" rx="22" ry="22" fill="url(#grad_bulb_glow)"/><path d="M22 30 A10 12 0 0 1 42 30 Q42 38 38 43 L26 43 Q22 38 22 30 Z" fill="url(#grad_bulb1)" stroke="#ccaa00" stroke-width="1.2"/><rect x="26" y="43" width="12" height="4" rx="1" fill="url(#grad_bulb2)"/><rect x="27" y="47" width="10" height="3" rx="1" fill="url(#grad_bulb2)"/><rect x="28" y="50" width="8" height="3" rx="1.5" fill="url(#grad_bulb2)"/><line x1="32" y1="20" x2="32" y2="16" stroke="#ffe066" stroke-width="2" stroke-linecap="round" opacity="0.7"/><line x1="40" y1="23" x2="43" y2="20" stroke="#ffe066" stroke-width="2" stroke-linecap="round" opacity="0.6"/><line x1="24" y1="23" x2="21" y2="20" stroke="#ffe066" stroke-width="2" stroke-linecap="round" opacity="0.6"/></svg>',
+ speaker:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_spk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#555555"/><stop offset="1" stop-color="#222222"/></linearGradient><radialGradient id="grad_spk2" cx="40%" cy="38%" r="60%"><stop offset="0" stop-color="#888888"/><stop offset="1" stop-color="#333333"/></radialGradient><radialGradient id="grad_spk3" cx="40%" cy="38%" r="60%"><stop offset="0" stop-color="#777777"/><stop offset="1" stop-color="#2a2a2a"/></radialGradient></defs><rect x="10" y="8" width="44" height="48" rx="4" fill="url(#grad_spk1)" stroke="#111" stroke-width="1.2"/><circle cx="32" cy="26" r="11" fill="url(#grad_spk2)" stroke="#111" stroke-width="1"/><circle cx="32" cy="26" r="6" fill="#444" stroke="#222" stroke-width="0.8"/><circle cx="32" cy="26" r="2.5" fill="#666"/><circle cx="32" cy="46" r="7" fill="url(#grad_spk3)" stroke="#111" stroke-width="1"/><circle cx="32" cy="46" r="3.5" fill="#444" stroke="#222" stroke-width="0.8"/><circle cx="32" cy="46" r="1.5" fill="#666"/><circle cx="17" cy="13" r="2" fill="#ff4444"/></svg>',
+ tv:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_tv1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#444444"/><stop offset="1" stop-color="#1a1a1a"/></linearGradient><linearGradient id="grad_tv2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6bd4ff"/><stop offset="0.5" stop-color="#2a7fc4"/><stop offset="1" stop-color="#0a3a6e"/></linearGradient><radialGradient id="grad_tv3" cx="35%" cy="30%" r="55%"><stop offset="0" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><rect x="8" y="10" width="48" height="36" rx="3" fill="url(#grad_tv1)" stroke="#111" stroke-width="1.2"/><rect x="11" y="13" width="42" height="30" rx="2" fill="url(#grad_tv2)"/><rect x="11" y="13" width="42" height="30" rx="2" fill="url(#grad_tv3)"/><rect x="26" y="46" width="12" height="4" rx="1" fill="#333"/><rect x="20" y="50" width="24" height="4" rx="2" fill="#2a2a2a" stroke="#111" stroke-width="0.8"/><circle cx="54" cy="28" r="1.8" fill="#33ff33" opacity="0.9"/></svg>',
+ bike:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_bike1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6633"/><stop offset="1" stop-color="#cc3300"/></linearGradient><linearGradient id="grad_bike2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cccccc"/><stop offset="1" stop-color="#888888"/></linearGradient></defs><circle cx="16" cy="44" r="11" fill="none" stroke="url(#grad_bike2)" stroke-width="3"/><circle cx="48" cy="44" r="11" fill="none" stroke="url(#grad_bike2)" stroke-width="3"/><circle cx="16" cy="44" r="2.5" fill="#aaaaaa"/><circle cx="48" cy="44" r="2.5" fill="#aaaaaa"/><line x1="16" y1="44" x2="32" y2="26" stroke="url(#grad_bike1)" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="26" x2="48" y2="44" stroke="url(#grad_bike1)" stroke-width="2.5" stroke-linecap="round"/><line x1="16" y1="44" x2="28" y2="44" stroke="url(#grad_bike1)" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="44" x2="32" y2="26" stroke="url(#grad_bike1)" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="20" x2="36" y2="20" stroke="#888" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="20" x2="32" y2="26" stroke="#888" stroke-width="2" stroke-linecap="round"/><line x1="44" y1="32" x2="52" y2="30" stroke="#888" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="48" cy="29" rx="4" ry="1.5" fill="#777" transform="rotate(-10 48 29)"/></svg>',
+ paper:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_paper1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e8e8"/></linearGradient><linearGradient id="grad_paper2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cccccc"/><stop offset="1" stop-color="#aaaaaa"/></linearGradient></defs><path d="M12 8 L48 8 L48 54 L12 54 Z" fill="url(#grad_paper1)" stroke="#cccccc" stroke-width="1"/><path d="M40 8 L48 8 L48 16 L40 8 Z" fill="url(#grad_paper2)"/><path d="M40 8 L40 16 L48 16" fill="none" stroke="#aaaaaa" stroke-width="0.8"/><line x1="18" y1="22" x2="42" y2="22" stroke="#cccccc" stroke-width="1.2"/><line x1="18" y1="28" x2="42" y2="28" stroke="#cccccc" stroke-width="1.2"/><line x1="18" y1="34" x2="42" y2="34" stroke="#cccccc" stroke-width="1.2"/><line x1="18" y1="40" x2="36" y2="40" stroke="#cccccc" stroke-width="1.2"/></svg>',
+ bottle:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_bottle1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#aaddff" stop-opacity="0.5"/><stop offset="0.4" stop-color="#ddf4ff" stop-opacity="0.8"/><stop offset="1" stop-color="#88bbdd" stop-opacity="0.6"/></linearGradient><linearGradient id="grad_bottle2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5599cc"/><stop offset="1" stop-color="#2266aa"/></linearGradient><linearGradient id="grad_bottle3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#44aaee" stop-opacity="0.7"/><stop offset="1" stop-color="#1166bb" stop-opacity="0.5"/></linearGradient></defs><rect x="24" y="6" width="16" height="8" rx="3" fill="url(#grad_bottle2)"/><path d="M22 14 Q18 18 18 24 L18 54 Q18 58 32 58 Q46 58 46 54 L46 24 Q46 18 42 14 Z" fill="url(#grad_bottle1)" stroke="#88bbdd" stroke-width="1"/><rect x="18" y="36" width="28" height="18" rx="0" fill="url(#grad_bottle3)"/><path d="M22 14 Q18 18 18 24 L18 36 Q22 32 32 32 Q42 32 46 36 L46 24 Q46 18 42 14 Z" fill="url(#grad_bottle1)"/><line x1="26" y1="20" x2="26" y2="50" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>',
+ spoon:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_spoon1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#aaaaaa"/><stop offset="0.4" stop-color="#eeeeee"/><stop offset="0.7" stop-color="#cccccc"/><stop offset="1" stop-color="#888888"/></linearGradient><radialGradient id="grad_spoon2" cx="40%" cy="35%" r="55%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#aaaaaa"/></radialGradient></defs><ellipse cx="32" cy="14" rx="10" ry="12" fill="url(#grad_spoon2)" stroke="#888" stroke-width="1"/><path d="M28 24 Q30 36 31 56" stroke="url(#grad_spoon1)" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M36 24 Q34 36 33 56" stroke="url(#grad_spoon1)" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M29 54 Q32 58 35 54" stroke="#888" stroke-width="1" fill="none"/></svg>',
+ ruler:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_ruler1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ccaa00"/></linearGradient></defs><rect x="8" y="22" width="48" height="20" rx="3" fill="url(#grad_ruler1)" stroke="#aa8800" stroke-width="1.2"/><line x1="14" y1="22" x2="14" y2="30" stroke="#aa8800" stroke-width="1.2"/><line x1="20" y1="22" x2="20" y2="28" stroke="#aa8800" stroke-width="1"/><line x1="26" y1="22" x2="26" y2="30" stroke="#aa8800" stroke-width="1.2"/><line x1="32" y1="22" x2="32" y2="28" stroke="#aa8800" stroke-width="1"/><line x1="38" y1="22" x2="38" y2="30" stroke="#aa8800" stroke-width="1.2"/><line x1="44" y1="22" x2="44" y2="28" stroke="#aa8800" stroke-width="1"/><line x1="50" y1="22" x2="50" y2="30" stroke="#aa8800" stroke-width="1.2"/><circle cx="12" cy="36" r="2" fill="#aa8800" opacity="0.5"/></svg>',
+ cloth:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_cloth1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9999"/><stop offset="1" stop-color="#cc4466"/></linearGradient><linearGradient id="grad_cloth2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffbbbb"/><stop offset="1" stop-color="#dd6688"/></linearGradient></defs><path d="M10 20 Q16 14 28 18 Q32 20 36 18 Q48 14 54 20 L52 44 Q46 50 32 48 Q18 50 12 44 Z" fill="url(#grad_cloth1)" stroke="#aa3355" stroke-width="1"/><path d="M10 20 Q16 14 28 18 Q32 20 36 18" fill="none" stroke="#ffcccc" stroke-width="1.5"/><path d="M20 22 Q22 30 20 38" fill="none" stroke="url(#grad_cloth2)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/><path d="M32 20 Q34 30 32 42" fill="none" stroke="url(#grad_cloth2)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/><path d="M44 22 Q46 30 44 38" fill="none" stroke="url(#grad_cloth2)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/></svg>',
+ foil:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_foil1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8e8e8"/><stop offset="0.3" stop-color="#ffffff"/><stop offset="0.6" stop-color="#aaaaaa"/><stop offset="1" stop-color="#cccccc"/></linearGradient><linearGradient id="grad_foil2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bbbbbb"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#999999"/></linearGradient></defs><path d="M10 18 Q16 12 22 20 Q28 10 34 18 Q40 8 46 16 Q52 10 56 20 L54 48 Q48 56 40 50 Q34 56 28 50 Q20 56 14 48 Q8 44 10 18 Z" fill="url(#grad_foil1)" stroke="#aaaaaa" stroke-width="1"/><path d="M10 18 Q16 12 22 20 Q28 10 34 18 Q40 8 46 16 Q52 10 56 20" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.8"/><path d="M14 30 Q22 26 30 32 Q38 26 46 30" fill="none" stroke="url(#grad_foil2)" stroke-width="1.5" opacity="0.7"/><path d="M12 40 Q20 36 28 42 Q36 36 44 40 Q50 38 54 44" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.6"/></svg>',
+ cup:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_cup1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dddddd"/><stop offset="0.4" stop-color="#ffffff"/><stop offset="1" stop-color="#bbbbbb"/></linearGradient><linearGradient id="grad_cup2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#aaddff" stop-opacity="0.5"/><stop offset="1" stop-color="#4499cc" stop-opacity="0.4"/></linearGradient></defs><path d="M18 12 L22 54 Q22 58 32 58 Q42 58 42 54 L46 12 Z" fill="url(#grad_cup1)" stroke="#aaaaaa" stroke-width="1.2"/><line x1="18" y1="12" x2="46" y2="12" stroke="#aaaaaa" stroke-width="1.5"/><path d="M23 36 L23.5 54 Q23.5 57 32 57 Q40.5 57 40.5 54 L41 36 Z" fill="url(#grad_cup2)"/><line x1="22" y1="20" x2="44" y2="20" stroke="#cccccc" stroke-width="0.8"/><line x1="20" y1="14" x2="20" y2="18" stroke="#bbbbbb" stroke-width="1"/></svg>',
+ sponge:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_sponge1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe44d"/><stop offset="1" stop-color="#ccaa00"/></linearGradient><linearGradient id="grad_sponge2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#44bb44"/><stop offset="1" stop-color="#227722"/></linearGradient></defs><rect x="10" y="14" width="44" height="28" rx="5" fill="url(#grad_sponge1)" stroke="#aa8800" stroke-width="1.2"/><rect x="10" y="36" width="44" height="14" rx="4" fill="url(#grad_sponge2)" stroke="#1a5e1a" stroke-width="1.2"/><circle cx="20" cy="22" r="2.5" fill="#ccaa00" opacity="0.5"/><circle cx="30" cy="19" r="2" fill="#ccaa00" opacity="0.5"/><circle cx="40" cy="23" r="2.5" fill="#ccaa00" opacity="0.5"/><circle cx="25" cy="28" r="2" fill="#ccaa00" opacity="0.5"/><circle cx="45" cy="27" r="2" fill="#ccaa00" opacity="0.5"/><circle cx="35" cy="30" r="1.8" fill="#ccaa00" opacity="0.5"/><line x1="16" y1="40" x2="16" y2="48" stroke="#1a5e1a" stroke-width="1" opacity="0.5"/><line x1="24" y1="39" x2="24" y2="49" stroke="#1a5e1a" stroke-width="1" opacity="0.5"/><line x1="32" y1="40" x2="32" y2="49" stroke="#1a5e1a" stroke-width="1" opacity="0.5"/><line x1="40" y1="39" x2="40" y2="48" stroke="#1a5e1a" stroke-width="1" opacity="0.5"/><line x1="48" y1="40" x2="48" y2="48" stroke="#1a5e1a" stroke-width="1" opacity="0.5"/></svg>',
+ grass:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_grass1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#6dd63b"/><stop offset="1" stop-color="#2e8b0e"/></linearGradient><linearGradient id="grad_grass2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#8fe84e"/><stop offset="1" stop-color="#3a9e18"/></linearGradient><linearGradient id="grad_grassground" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#a0724a"/><stop offset="1" stop-color="#7a5030"/></linearGradient></defs><ellipse cx="32" cy="56" rx="26" ry="6" fill="url(#grad_grassground)"/><path d="M18 52 C17 40 14 28 16 14 C17 22 20 34 21 52 Z" fill="url(#grad_grass1)"/><path d="M24 52 C22 38 24 22 20 8 C23 18 27 36 27 52 Z" fill="url(#grad_grass2)"/><path d="M30 52 C30 40 28 26 32 12 C33 26 34 40 33 52 Z" fill="url(#grad_grass1)"/><path d="M36 52 C37 38 40 22 44 10 C41 22 38 36 37 52 Z" fill="url(#grad_grass2)"/><path d="M42 52 C44 40 46 28 48 16 C47 26 44 38 44 52 Z" fill="url(#grad_grass1)"/></svg>',
+ tree:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_treecanopy" cx="45%" cy="35%" r="60%"><stop offset="0" stop-color="#8ee84a"/><stop offset="1" stop-color="#2c7a0a"/></radialGradient><linearGradient id="grad_treetrunk" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0" stop-color="#7a4a1e"/><stop offset="0.5" stop-color="#b06828"/><stop offset="1" stop-color="#7a4a1e"/></linearGradient></defs><rect x="27" y="42" width="10" height="18" rx="2" fill="url(#grad_treetrunk)"/><circle cx="32" cy="26" r="20" fill="url(#grad_treecanopy)"/><circle cx="20" cy="32" r="13" fill="url(#grad_treecanopy)"/><circle cx="44" cy="32" r="13" fill="url(#grad_treecanopy)"/><circle cx="32" cy="18" r="13" fill="url(#grad_treecanopy)"/><ellipse cx="26" cy="24" rx="5" ry="7" fill="#b4f060" opacity="0.45"/></svg>',
+ carrot:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_carrotbody" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#ffb84d"/><stop offset="1" stop-color="#e05e00"/></linearGradient><linearGradient id="grad_carrottop" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0" stop-color="#3cb820"/><stop offset="1" stop-color="#80e040"/></linearGradient></defs><path d="M26 18 C22 24 16 36 20 52 C23 60 41 60 44 52 C48 36 42 24 38 18 Z" fill="url(#grad_carrotbody)"/><path d="M30 20 C30 14 26 8 22 4 C26 8 28 14 30 18 Z" fill="url(#grad_carrottop)"/><path d="M32 20 C32 12 32 6 32 2 C32 8 32 14 32 18 Z" fill="url(#grad_carrottop)"/><path d="M34 20 C34 14 38 8 42 4 C38 8 36 14 34 18 Z" fill="url(#grad_carrottop)"/><path d="M28 22 C24 18 18 16 14 14 C18 16 24 20 28 24 Z" fill="url(#grad_carrottop)"/><path d="M36 22 C40 18 46 16 50 14 C46 16 40 20 36 24 Z" fill="url(#grad_carrottop)"/><ellipse cx="30" cy="34" rx="3" ry="7" fill="#ffda80" opacity="0.4" transform="rotate(-15 30 34)"/></svg>',
+ corn:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_cornbody" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0" stop-color="#f5c518"/><stop offset="0.5" stop-color="#ffe566"/><stop offset="1" stop-color="#d4a010"/></linearGradient><linearGradient id="grad_cornhusk" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#7acc30"/><stop offset="1" stop-color="#3a8010"/></linearGradient><radialGradient id="grad_cornkernel" cx="40%" cy="35%" r="60%"><stop offset="0" stop-color="#fff176"/><stop offset="1" stop-color="#e6a800"/></radialGradient></defs><path d="M36 14 C44 18 48 30 46 46 C48 36 54 26 54 16 Z" fill="url(#grad_cornhusk)"/><path d="M28 14 C20 18 16 30 18 46 C16 36 10 26 10 16 Z" fill="url(#grad_cornhusk)"/><rect x="22" y="12" width="20" height="38" rx="10" fill="url(#grad_cornbody)"/><line x1="27" y1="13" x2="27" y2="49" stroke="#d4a010" stroke-width="1.5"/><line x1="32" y1="12" x2="32" y2="50" stroke="#d4a010" stroke-width="1.5"/><line x1="37" y1="13" x2="37" y2="49" stroke="#d4a010" stroke-width="1.5"/><line x1="22" y1="20" x2="42" y2="20" stroke="#d4a010" stroke-width="1"/><line x1="22" y1="26" x2="42" y2="26" stroke="#d4a010" stroke-width="1"/><line x1="22" y1="32" x2="42" y2="32" stroke="#d4a010" stroke-width="1"/><line x1="22" y1="38" x2="42" y2="38" stroke="#d4a010" stroke-width="1"/><line x1="22" y1="44" x2="42" y2="44" stroke="#d4a010" stroke-width="1"/><path d="M32 8 C30 10 30 12 32 12 C34 12 34 10 32 8 Z" fill="url(#grad_cornhusk)"/><path d="M28 6 C24 8 26 12 30 12 C28 10 28 8 28 6 Z" fill="url(#grad_cornhusk)"/><path d="M36 6 C40 8 38 12 34 12 C36 10 36 8 36 6 Z" fill="url(#grad_cornhusk)"/></svg>',
+ bread:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_breadtop" cx="50%" cy="30%" r="65%"><stop offset="0" stop-color="#f5d080"/><stop offset="1" stop-color="#c07820"/></radialGradient><linearGradient id="grad_breadside" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#d4922a"/><stop offset="1" stop-color="#a06018"/></linearGradient><linearGradient id="grad_breadcrumb" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0" stop-color="#f5e0a0"/><stop offset="1" stop-color="#e8c870"/></linearGradient></defs><rect x="10" y="36" width="44" height="22" rx="4" fill="url(#grad_breadside)"/><ellipse cx="32" cy="36" rx="22" ry="12" fill="url(#grad_breadtop)"/><ellipse cx="26" cy="35" rx="7" ry="5" fill="#f8e8a0" opacity="0.45"/><rect x="14" y="40" width="36" height="14" rx="2" fill="url(#grad_breadcrumb)" opacity="0.3"/><line x1="20" y1="42" x2="20" y2="54" stroke="#c07820" stroke-width="1" opacity="0.5"/><line x1="44" y1="42" x2="44" y2="54" stroke="#c07820" stroke-width="1" opacity="0.5"/></svg>',
+ rabbit:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_rabbitbody" cx="45%" cy="35%" r="65%"><stop offset="0" stop-color="#d8d0c8"/><stop offset="1" stop-color="#9a8e80"/></radialGradient><radialGradient id="grad_rabbitear" cx="40%" cy="25%" r="65%"><stop offset="0" stop-color="#e8e0d8"/><stop offset="1" stop-color="#b0a090"/></radialGradient><radialGradient id="grad_rabbitbelly" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#f4f0ec"/><stop offset="1" stop-color="#d0c8be"/></radialGradient></defs><ellipse cx="26" cy="14" rx="5" ry="13" fill="url(#grad_rabbitear)"/><ellipse cx="38" cy="14" rx="5" ry="13" fill="url(#grad_rabbitear)"/><ellipse cx="26" cy="14" rx="2.5" ry="10" fill="#e8a0a8" opacity="0.7"/><ellipse cx="38" cy="14" rx="2.5" ry="10" fill="#e8a0a8" opacity="0.7"/><ellipse cx="32" cy="36" rx="18" ry="20" fill="url(#grad_rabbitbody)"/><circle cx="32" cy="28" r="13" fill="url(#grad_rabbitbody)"/><ellipse cx="32" cy="36" rx="10" ry="13" fill="url(#grad_rabbitbelly)"/><circle cx="27" cy="26" r="2.5" fill="#2a2020"/><circle cx="37" cy="26" r="2.5" fill="#2a2020"/><circle cx="27.8" cy="25.2" r="0.8" fill="white"/><circle cx="37.8" cy="25.2" r="0.8" fill="white"/><ellipse cx="32" cy="31" rx="3" ry="2" fill="#e8a0a8" opacity="0.8"/><path d="M29 33 C30 35 34 35 35 33" stroke="#9a8e80" stroke-width="1" fill="none"/><line x1="20" y1="31" x2="12" y2="30" stroke="#9a8e80" stroke-width="1"/><line x1="20" y1="33" x2="12" y2="34" stroke="#9a8e80" stroke-width="1"/><line x1="44" y1="31" x2="52" y2="30" stroke="#9a8e80" stroke-width="1"/><line x1="44" y1="33" x2="52" y2="34" stroke="#9a8e80" stroke-width="1"/></svg>',
+ mouse:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="grad_mousebody" cx="42%" cy="35%" r="65%"><stop offset="0" stop-color="#c8c4be"/><stop offset="1" stop-color="#7a7670"/></radialGradient><radialGradient id="grad_mouseear" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#dcd8d0"/><stop offset="1" stop-color="#a0988e"/></radialGradient><radialGradient id="grad_mousebelly" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#f0ece6"/><stop offset="1" stop-color="#c8c0b4"/></radialGradient></defs><ellipse cx="32" cy="42" rx="20" ry="14" fill="url(#grad_mousebody)"/><circle cx="32" cy="30" r="13" fill="url(#grad_mousebody)"/><ellipse cx="21" cy="22" rx="7" ry="7" fill="url(#grad_mouseear)"/><ellipse cx="43" cy="22" rx="7" ry="7" fill="url(#grad_mouseear)"/><ellipse cx="21" cy="22" rx="4.5" ry="4.5" fill="#e8a0b0" opacity="0.7"/><ellipse cx="43" cy="22" rx="4.5" ry="4.5" fill="#e8a0b0" opacity="0.7"/><ellipse cx="32" cy="38" rx="10" ry="8" fill="url(#grad_mousebelly)"/><circle cx="27" cy="28" r="2.5" fill="#1a1818"/><circle cx="37" cy="28" r="2.5" fill="#1a1818"/><circle cx="27.8" cy="27.2" r="0.8" fill="white"/><circle cx="37.8" cy="27.2" r="0.8" fill="white"/><ellipse cx="32" cy="33" rx="2.5" ry="1.5" fill="#e8a0b0" opacity="0.9"/><path d="M30 35 C30 37 34 37 34 35" stroke="#7a7670" stroke-width="1" fill="none"/><line x1="20" y1="33" x2="10" y2="31" stroke="#9a9690" stroke-width="1"/><line x1="20" y1="35" x2="10" y2="36" stroke="#9a9690" stroke-width="1"/><line x1="44" y1="33" x2="54" y2="31" stroke="#9a9690" stroke-width="1"/><line x1="44" y1="35" x2="54" y2="36" stroke="#9a9690" stroke-width="1"/><path d="M50 50 Q56 46 58 54 Q56 52 50 54 Z" fill="url(#grad_mousebody)"/></svg>',
+ grasshopper:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_ghbody" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#80cc30"/><stop offset="1" stop-color="#3a8010"/></linearGradient><linearGradient id="grad_ghhead" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#9ad840"/><stop offset="1" stop-color="#4a9818"/></linearGradient><linearGradient id="grad_ghwing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#c8f080"/><stop offset="1" stop-color="#80c840"/></linearGradient></defs><ellipse cx="22" cy="36" rx="10" ry="7" fill="url(#grad_ghhead)"/><circle cx="17" cy="32" r="3" fill="#1a3008"/><circle cx="16.2" cy="31.2" r="1" fill="white"/><line x1="17" y1="29" x2="14" y2="22" stroke="#3a8010" stroke-width="1.2"/><line x1="19" y1="29" x2="18" y2="21" stroke="#3a8010" stroke-width="1.2"/><ellipse cx="38" cy="34" rx="16" ry="8" fill="url(#grad_ghbody)"/><ellipse cx="54" cy="36" rx="5" ry="4" fill="url(#grad_ghbody)"/><path d="M28 30 C32 20 44 18 50 26" stroke="#c8f080" stroke-width="1" fill="none" opacity="0.6"/><path d="M26 28 Q36 16 52 24" fill="url(#grad_ghwing)" opacity="0.7"/><path d="M26 30 Q36 20 52 28" fill="url(#grad_ghwing)" opacity="0.5"/><line x1="30" y1="40" x2="22" y2="52" stroke="#3a8010" stroke-width="2"/><line x1="22" y1="52" x2="14" y2="58" stroke="#3a8010" stroke-width="2"/><line x1="38" y1="40" x2="34" y2="50" stroke="#3a8010" stroke-width="2"/><line x1="34" y1="50" x2="24" y2="58" stroke="#4a9818" stroke-width="2.5"/><line x1="44" y1="40" x2="42" y2="50" stroke="#3a8010" stroke-width="1.5"/><line x1="42" y1="50" x2="34" y2="56" stroke="#3a8010" stroke-width="1.5"/><line x1="28" y1="38" x2="22" y2="46" stroke="#3a8010" stroke-width="1.2"/><line x1="34" y1="38" x2="30" y2="46" stroke="#3a8010" stroke-width="1.2"/></svg>',
+ cow:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="cow_bg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e8e8"/></radialGradient><radialGradient id="cow_nose" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#f9c8c8"/><stop offset="1" stop-color="#e89090"/></radialGradient></defs><ellipse cx="32" cy="36" rx="22" ry="18" fill="url(#cow_bg)" stroke="#333" stroke-width="1.2"/><ellipse cx="32" cy="50" rx="14" ry="7" fill="url(#cow_bg)" stroke="#333" stroke-width="1"/><ellipse cx="32" cy="52" rx="9" ry="4" fill="url(#cow_nose)"/><circle cx="29" cy="53" r="1.5" fill="#b05050"/><circle cx="35" cy="53" r="1.5" fill="#b05050"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="url(#cow_bg)" stroke="#333" stroke-width="1"/><ellipse cx="44" cy="22" rx="7" ry="9" fill="url(#cow_bg)" stroke="#333" stroke-width="1"/><path d="M17 18 Q20 12 23 18" fill="#f9b0b0" stroke="#c07070" stroke-width="0.8"/><path d="M41 18 Q44 12 47 18" fill="#f9b0b0" stroke="#c07070" stroke-width="0.8"/><circle cx="25" cy="32" r="6" fill="#222"/><circle cx="39" cy="30" r="8" fill="#222"/><circle cx="32" cy="42" r="4" fill="#222"/><circle cx="26" cy="36" r="5" fill="#fff"/><circle cx="26" cy="36" r="3" fill="#3a3a3a"/><circle cx="25" cy="35" r="1" fill="#fff" opacity=".8"/><circle cx="38" cy="36" r="3" fill="#3a3a3a"/><circle cx="37" cy="35" r="1" fill="#fff" opacity=".8"/><ellipse cx="38" cy="36" rx="5" ry="4" fill="#fff" stroke="#555" stroke-width="0.6"/></svg>',
+ chicken:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="chk_body" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff8f0"/><stop offset="1" stop-color="#d4b896"/></radialGradient><radialGradient id="chk_head" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#fff8f0"/><stop offset="1" stop-color="#c8a87a"/></radialGradient></defs><ellipse cx="32" cy="42" rx="20" ry="16" fill="url(#chk_body)" stroke="#8B6340" stroke-width="1.2"/><circle cx="32" cy="22" r="11" fill="url(#chk_head)" stroke="#8B6340" stroke-width="1.2"/><path d="M28 13 Q32 7 36 13 Q34 16 32 15 Q30 16 28 13 Z" fill="#e03030"/><path d="M25 14 Q22 10 20 14 Q23 17 25 14 Z" fill="#e03030"/><path d="M36 26 Q42 24 44 28 Q40 30 36 26 Z" fill="#f0a030"/><circle cx="29" cy="21" r="2.5" fill="#1a1a1a"/><circle cx="28.5" cy="20.5" r="0.8" fill="#fff"/><circle cx="35" cy="21" r="2.5" fill="#1a1a1a"/><circle cx="34.5" cy="20.5" r="0.8" fill="#fff"/><path d="M18 52 L14 62 L18 62 L20 56 Z" fill="#f0a030" stroke="#c07820" stroke-width="0.8"/><path d="M22 54 L19 62 L23 62 L24 57 Z" fill="#f0a030" stroke="#c07820" stroke-width="0.8"/><path d="M46 52 L50 62 L46 62 L44 56 Z" fill="#f0a030" stroke="#c07820" stroke-width="0.8"/><ellipse cx="32" cy="38" rx="8" ry="6" fill="#fff" opacity=".5"/></svg>',
+ fish:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="fish_body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#ffb347"/><stop offset="0.5" stop-color="#ff7e00"/><stop offset="1" stop-color="#c94e00"/></linearGradient><radialGradient id="fish_belly" cx="50%" cy="60%" r="50%"><stop offset="0" stop-color="#fff3cc" stop-opacity=".8"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient><linearGradient id="fish_tail" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0" stop-color="#c94e00"/><stop offset="1" stop-color="#ff9933"/></linearGradient></defs><ellipse cx="30" cy="32" rx="22" ry="14" fill="url(#fish_body)"/><ellipse cx="30" cy="32" rx="22" ry="14" fill="url(#fish_belly)"/><path d="M50 32 L62 20 L58 32 L62 44 Z" fill="url(#fish_tail)" stroke="#c94e00" stroke-width="0.8"/><path d="M35 22 Q44 18 48 22 Q44 26 35 22" fill="#ff9933" opacity=".7"/><circle cx="18" cy="29" r="4" fill="#fff" stroke="#ff7e00" stroke-width="0.8"/><circle cx="17" cy="28.5" r="2" fill="#1a1a1a"/><circle cx="16.5" cy="28" r="0.7" fill="#fff"/><path d="M10 32 Q12 27 14 32" fill="none" stroke="#ff7e00" stroke-width="1.2"/><path d="M20 38 Q30 44 40 38" fill="none" stroke="#c94e00" stroke-width="1" stroke-dasharray="3 2"/><path d="M22 24 Q32 20 42 24" fill="none" stroke="#ffcc88" stroke-width="1" opacity=".6"/></svg>',
+ fox:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="fox_body" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ffaa44"/><stop offset="1" stop-color="#cc5500"/></radialGradient><radialGradient id="fox_chest" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff8f0"/><stop offset="1" stop-color="#f0d0b0"/></radialGradient><radialGradient id="fox_tail" cx="30%" cy="30%" r="70%"><stop offset="0" stop-color="#ffbb55"/><stop offset="1" stop-color="#dd6600"/></radialGradient></defs><path d="M44 56 Q52 40 50 28 Q46 44 32 46 Q18 44 14 28 Q12 40 20 56 Z" fill="url(#fox_body)" stroke="#994400" stroke-width="1"/><path d="M44 56 Q52 40 50 28 Q46 44 32 46 Q18 44 14 28 Q12 40 20 56 Z" fill="url(#fox_chest)" opacity=".5"/><ellipse cx="32" cy="44" rx="10" ry="6" fill="url(#fox_chest)"/><ellipse cx="32" cy="24" rx="15" ry="14" fill="url(#fox_body)" stroke="#994400" stroke-width="1"/><path d="M20 14 L16 4 L24 12 Z" fill="url(#fox_body)" stroke="#994400" stroke-width="1"/><path d="M44 14 L48 4 L40 12 Z" fill="url(#fox_body)" stroke="#994400" stroke-width="1"/><path d="M20 14 L17 6 L23 12 Z" fill="#222"/><path d="M44 14 L47 6 L41 12 Z" fill="#222"/><ellipse cx="26" cy="24" rx="4" ry="4.5" fill="#fff" stroke="#994400" stroke-width="0.6"/><ellipse cx="38" cy="24" rx="4" ry="4.5" fill="#fff" stroke="#994400" stroke-width="0.6"/><circle cx="26" cy="24" r="2.5" fill="#1a1a1a"/><circle cx="25.4" cy="23.4" r="0.8" fill="#fff"/><circle cx="38" cy="24" r="2.5" fill="#1a1a1a"/><circle cx="37.4" cy="23.4" r="0.8" fill="#fff"/><ellipse cx="32" cy="30" rx="5" ry="3" fill="#f0c090"/><path d="M30 31 Q32 34 34 31" fill="none" stroke="#994400" stroke-width="1"/><circle cx="32" cy="30" r="1.5" fill="#cc5566"/><path d="M54 50 Q62 38 58 30 Q54 22 48 28 Q56 38 50 52 Z" fill="url(#fox_tail)" stroke="#994400" stroke-width="1"/><ellipse cx="56" cy="46" rx="4" ry="6" fill="#fff" opacity=".8" transform="rotate(-20 56 46)"/></svg>',
+ frog:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="frg_body" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#88dd44"/><stop offset="1" stop-color="#228822"/></radialGradient><radialGradient id="frg_belly" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#ccff88"/><stop offset="1" stop-color="#88cc44" stop-opacity="0"/></radialGradient><radialGradient id="frg_eye" cx="35%" cy="35%" r="65%"><stop offset="0" stop-color="#ffffaa"/><stop offset="1" stop-color="#aadd00"/></radialGradient></defs><ellipse cx="32" cy="40" rx="22" ry="18" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1.2"/><ellipse cx="32" cy="44" rx="15" ry="11" fill="url(#frg_belly)"/><circle cx="32" cy="20" r="6" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1"/><ellipse cx="20" cy="17" rx="7" ry="6" fill="url(#frg_eye)" stroke="#1a6610" stroke-width="1.2"/><ellipse cx="44" cy="17" rx="7" ry="6" fill="url(#frg_eye)" stroke="#1a6610" stroke-width="1.2"/><circle cx="20" cy="17" r="4" fill="#1a1a1a"/><circle cx="19" cy="16" r="1.5" fill="#fff"/><circle cx="44" cy="17" r="4" fill="#1a1a1a"/><circle cx="43" cy="16" r="1.5" fill="#fff"/><path d="M24 52 Q20 58 10 60 Q14 54 18 52 Z" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1"/><path d="M40 52 Q44 58 54 60 Q50 54 46 52 Z" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1"/><path d="M26 48 Q32 52 38 48" fill="none" stroke="#1a6610" stroke-width="1.5"/><ellipse cx="14" cy="44" rx="8" ry="5" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1"/><ellipse cx="50" cy="44" rx="8" ry="5" fill="url(#frg_body)" stroke="#1a6610" stroke-width="1"/></svg>',
+ snake:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="snk_body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#66cc44"/><stop offset="0.5" stop-color="#228833"/><stop offset="1" stop-color="#115522"/></linearGradient><radialGradient id="snk_head" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#88dd55"/><stop offset="1" stop-color="#336622"/></radialGradient></defs><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="url(#snk_body)" stroke-width="9" stroke-linecap="round"/><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="#aaeebb" stroke-width="4" stroke-linecap="round" opacity=".35"/><ellipse cx="34" cy="8" rx="8" ry="6" fill="url(#snk_head)" stroke="#225511" stroke-width="1.2" transform="rotate(-10 34 8)"/><circle cx="31" cy="6" r="2" fill="#1a1a1a"/><circle cx="30.5" cy="5.5" r="0.7" fill="#fff"/><circle cx="38" cy="6" r="2" fill="#1a1a1a"/><circle cx="37.5" cy="5.5" r="0.7" fill="#fff"/><path d="M36 11 L40 13 M36 11 L40 10" stroke="#cc2222" stroke-width="1.2" stroke-linecap="round"/><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="#338844" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 10" opacity=".5"/></svg>',
+ deer:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="der_body" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#cc8844"/><stop offset="1" stop-color="#8B5520"/></radialGradient><radialGradient id="der_face" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ddaa66"/><stop offset="1" stop-color="#aa7733"/></radialGradient><radialGradient id="der_nose" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ffcccc"/><stop offset="1" stop-color="#cc7777"/></radialGradient></defs><path d="M12 64 Q14 50 20 46 Q26 42 32 42 Q38 42 44 46 Q50 50 52 64 Z" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><ellipse cx="32" cy="34" rx="16" ry="18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1.2"/><ellipse cx="32" cy="30" rx="11" ry="13" fill="url(#der_face)"/><path d="M18 22 Q14 10 10 6 Q16 8 18 14 Q20 10 18 4 Q24 8 22 18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><path d="M46 22 Q50 10 54 6 Q48 8 46 14 Q44 10 46 4 Q40 8 42 18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><ellipse cx="26" cy="28" rx="3.5" ry="4" fill="#fff"/><ellipse cx="38" cy="28" rx="3.5" ry="4" fill="#fff"/><circle cx="26" cy="28" r="2.5" fill="#1a1a1a"/><circle cx="25.4" cy="27.4" r="0.8" fill="#fff"/><circle cx="38" cy="28" r="2.5" fill="#1a1a1a"/><circle cx="37.4" cy="27.4" r="0.8" fill="#fff"/><ellipse cx="32" cy="36" rx="5" ry="3.5" fill="url(#der_nose)"/><circle cx="30.5" cy="36" r="1.2" fill="#8B4040"/><circle cx="33.5" cy="36" r="1.2" fill="#8B4040"/><path d="M29 39 Q32 42 35 39" fill="none" stroke="#8B5520" stroke-width="1"/><ellipse cx="24" cy="22" rx="4" ry="3" fill="#f0c090" opacity=".6"/><ellipse cx="40" cy="22" rx="4" ry="3" fill="#f0c090" opacity=".6"/></svg>',
+ person:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="per_skin" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ffcc99"/><stop offset="1" stop-color="#e8a060"/></radialGradient><radialGradient id="per_shirt" cx="50%" cy="35%" r="65%"><stop offset="0" stop-color="#66aaff"/><stop offset="1" stop-color="#2255cc"/></radialGradient><radialGradient id="per_hair" cx="50%" cy="30%" r="65%"><stop offset="0" stop-color="#8B5520"/><stop offset="1" stop-color="#4a2a08"/></radialGradient></defs><circle cx="32" cy="18" r="13" fill="url(#per_skin)" stroke="#c07830" stroke-width="1"/><ellipse cx="32" cy="10" rx="13" ry="8" fill="url(#per_hair)"/><ellipse cx="20" cy="14" rx="4" ry="6" fill="url(#per_hair)"/><ellipse cx="44" cy="14" rx="4" ry="6" fill="url(#per_hair)"/><circle cx="27" cy="18" r="2.5" fill="#1a1a1a"/><circle cx="26.4" cy="17.4" r="0.8" fill="#fff"/><circle cx="37" cy="18" r="2.5" fill="#1a1a1a"/><circle cx="36.4" cy="17.4" r="0.8" fill="#fff"/><ellipse cx="32" cy="22" rx="4" ry="2" fill="#cc8855" opacity=".6"/><path d="M29 24 Q32 27 35 24" fill="none" stroke="#c07030" stroke-width="1.2"/><path d="M16 36 Q14 28 18 28 Q22 28 32 31 Q42 28 46 28 Q50 28 48 36 Q46 50 32 52 Q18 50 16 36 Z" fill="url(#per_shirt)" stroke="#1a44aa" stroke-width="1"/><ellipse cx="32" cy="31" rx="6" ry="3" fill="#fff" opacity=".3"/><path d="M18 30 Q10 32 8 42 Q12 44 16 36" fill="url(#per_skin)" stroke="#c07830" stroke-width="0.8"/><path d="M46 30 Q54 32 56 42 Q52 44 48 36" fill="url(#per_skin)" stroke="#c07830" stroke-width="0.8"/><path d="M8 42 Q10 50 14 52" stroke="#c07830" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M56 42 Q54 50 50 52" stroke="#c07830" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+};
+function withIcons(html){return String(html).replace(/\[\[(\w+)\]\]/g,(m,k)=>ICONS[k]||'');}
+const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'juice',Rigid:'block',
+ Material:'block',Texture:'sponge',Hardness:'rock',Classify:'ruler',Gravity:'apple',Force:'magnet',Earth:'earth',Pull:'magnet','Air Resistance':'feather',
+ Energy:'sun',Sun:'sun',Producer:'grass',Consumer:'rabbit',Photosynthesis:'leaf','Food Chain':'grass',Predator:'fox',Prey:'mouse'};
+const GLOSSARY={
+ 'Solid':{e:'🧊',m:'Matter that keeps its own shape and does not flow — like a rock or an ice cube.'},
+ 'Liquid':{e:'💧',m:'Matter that flows and takes the shape of its container — like water or juice.'},
+ 'Gas':{e:'💨',m:'Matter that spreads out to fill all the space it is in — like the air in a balloon.'},
+ 'Property':{e:'🔎',m:'A feature of a material you can observe — its shape, whether it flows, or if it can be poured.'},
+ 'Investigate':{e:'🔬',m:'To explore a question carefully by observing and testing.'},
+ 'Compare':{e:'⚖️',m:'To look at two or more things to see how they are the same and different.'},
+ 'Evidence':{e:'🧾',m:'What you observe that helps show whether something is true.'},
+ 'Flexible':{e:'🤸',m:'Able to bend or change shape without breaking.'},
+ 'Rigid':{e:'🧱',m:'Stiff and hard — it keeps its shape and does not bend.'},
+ 'Flow':{e:'🌊',m:'To move and spread like a liquid, taking the shape of its container.'},
+ 'Container':{e:'🥤',m:'The object that holds a material — a cup, bottle or box.'},
+ 'Observation':{e:'👀',m:'Something you notice using your senses, especially your eyes.'},
+ 'Claim':{e:'💬',m:'A statement that says something is true — one you can test.'},
+ 'Test':{e:'🧪',m:'A fair way to find out whether a claim is true.'},
+ 'Conclusion':{e:'✅',m:'What you decide is true after looking at your evidence.'},
+ 'Material':{e:'🧱',m:'What an object is made of — like plastic, wood, metal or fabric.'},
+ 'Texture':{e:'🪵',m:'How a material feels when you touch it — smooth or rough.'},
+ 'Hardness':{e:'🪨',m:'How hard or soft a material is — can you scratch or dent it?'},
+ 'Classify':{e:'🗂️',m:'To sort things into groups by their properties.'},
+ 'Gravity':{e:'🌍',m:'A force that pulls objects toward the Earth.'},
+ 'Force':{e:'💪',m:'A push or a pull on an object.'},
+ 'Earth':{e:'🌎',m:'The planet we live on — gravity pulls everything toward it.'},
+ 'Pull':{e:'🧲',m:'To move something toward you. Gravity pulls objects down.'},
+ 'Observe':{e:'👀',m:'To watch carefully and notice what happens.'},
+ 'Investigation':{e:'🔬',m:'A fair test we carry out to answer a science question.'},
+ 'Air Resistance':{e:'🪶',m:'A force from the air that pushes up and slows down falling objects.'},
+ 'Energy':{e:'⚡',m:'The power that makes things move, grow and work.'},
+ 'Sun':{e:'☀️',m:'A star — our main source of light and heat energy.'},
+ 'Producer':{e:'🌱',m:'A living thing, like a plant, that makes its own food using sunlight.'},
+ 'Consumer':{e:'🐰',m:'A living thing that gets energy by eating plants or other animals.'},
+ 'Photosynthesis':{e:'🍃',m:'How green plants use sunlight to make their own food.'},
+ 'Food Chain':{e:'🔗',m:'A way to show how energy passes from one living thing to another.'},
+ 'Predator':{e:'🦊',m:'An animal that hunts and eats other animals.'},
+ 'Prey':{e:'🐭',m:'An animal that is hunted and eaten by another animal.'},
+ 'Model':{e:'🧩',m:'A simple way to show how something works.'},
+ 'Transfer':{e:'➡️',m:'To pass energy from one thing to another.'}
+};
+/* ---- Unit 1 · Standard 2 : Physical properties of materials ---- */
+const MATTER_S2=[
+{
+  id:'s2l1', title:'Lesson 1: Investigating the Physical Properties of Materials',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to investigate and describe the physical properties of materials and sort them into groups.',
+  sc:[
+    {band:'Remembering',items:['I can identify different materials and their physical properties.']},
+    {band:'Understanding',items:['I can explain how materials are similar and different based on their properties.']},
+    {band:'Applying',items:['I can investigate and sort materials into groups using their physical properties.']}
+  ],
+  vocab:['Material','Property','Texture','Flexible','Rigid','Hardness'],
+  slides:[
+    {tag:'Engage · 10 min',h:'What do you notice?',body:'<p><b>Look at these everyday objects:</b></p><ul class="ico-list"><li>[[bottle]] Plastic bottle</li><li>[[spoon]] Metal spoon</li><li>[[ruler]] Wooden ruler</li><li>[[cloth]] Fabric</li><li>[[sponge]] Sponge</li></ul><p><b>Ask:</b> What do you notice about these objects? How are they different? How could we describe each one? Talk with a partner.</p>'},
+    {tag:'Explore · 15 min',h:'Material Detective',body:'<p><b>Investigation: Material Detective.</b> In groups, examine a collection of materials. For each one, observe its <b>colour, texture, hardness</b> and <b>flexibility</b>, and record what you find in your chart.</p>'},
+    {tag:'Explain · 10 min',h:'Physical Properties',body:'<p>A <b>physical property</b> is something about a material you can <b>observe or measure</b> — like its colour, texture, hardness or flexibility.</p><p><b>Discuss:</b> Which materials felt rough? Which were flexible? Why can we group materials together?</p>'},
+    {tag:'AFL · 5 min',h:'Property Sorting Cards',body:'<p><b>Property Sorting Cards.</b> Is each object <b>hard</b> or <b>soft</b>? Tap a card, then tap the bin it belongs in.</p>'},
+    {tag:'Elaborate · 15 min',h:'Sort & Classify',body:'<p>Sort and classify materials at your level — open the printable task sheets:</p><ul><li>🥉 <b>Bronze</b> — Sort 6 objects into hard / soft.</li><li>🥈 <b>Silver</b> — Sort 10 objects using two properties and explain.</li><li>🥇 <b>Gold</b> — Design your own classification system using three properties.</li><li>⭐ <b>G&T</b> — Invent a brand-new material and describe its properties.</li></ul>'},
+    {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name one physical property of wood.</li><li>Which material was the most flexible?</li><li>Why do scientists classify materials into groups?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Sort by Property',items:['Cut out the object cards below.','Sort them into two groups: HARD and SOFT.','Glue each card under the correct heading.','Draw one more object of your own for each group.'],cards:[{i:'spoon',l:'Metal spoon'},{i:'ruler',l:'Wooden ruler'},{i:'bottle',l:'Plastic bottle'},{i:'sponge',l:'Sponge'},{i:'cloth',l:'Fabric'},{i:'foil',l:'Foil'}],columns:['HARD','SOFT']},
+    silver:{title:'Silver — Sort Two Ways',items:['Look at the 10 pictures below.','Sort them by HARD / SOFT, then again by FLEXIBLE / RIGID, in the table.'],bank:['spoon','ruler','bottle','sponge','cloth','foil','paper','cup','block','rock'],table:{cols:['Object','Hard or soft?','Flexible or rigid?'],rows:5},question:'Explain two of your choices: why does each object belong in that group?'},
+    gold:{title:'Gold — Design a Classification System',items:['Choose THREE physical properties (for example: colour, texture, hardness, flexibility, waterproof).','Sort at least 6 materials using your three properties.','Fill in the table, then justify your grouping.'],table:{cols:['Material','Property 1','Property 2','Property 3'],rows:6},question:'Why did you group the materials this way? Use the word evidence.'},
+    gt:{title:'G&T Challenge — Invent a Material',items:['Invent a brand-new material and give it a name.','Describe its physical properties: colour, texture, hardness, flexibility — is it waterproof?','Explain ONE job your new material would be perfect for, and why.'],question:'Describe your new material and the job it is best for:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['spoon','sponge','bottle'],
+    items:['1. Name one physical property of wood.','2. Which material was the most flexible?','3. Why do scientists classify materials into groups?'],
+    check:['I can name physical properties of a material.','I can explain how materials are similar and different.','I can sort materials into groups using their properties.']}
+},
+{
+  id:'s2l2', title:'Lesson 2: Planning and Conducting Material Investigations',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to plan and carry out an investigation to compare materials and sort them by their physical properties.',
+  sc:[
+    {band:'Remembering',items:['I can list physical properties that can be observed and measured.']},
+    {band:'Analysing',items:['I can compare materials using my investigation results.']},
+    {band:'Evaluating',items:['I can justify how materials should be grouped using evidence.']}
+  ],
+  vocab:['Investigate','Compare','Classify','Evidence'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Which cup is best?',body:'<p><b>Look at three cups</b> made from different materials:</p><ul class="ico-list"><li>[[cup]] Paper cup</li><li>[[bottle]] Plastic cup</li><li>[[foil]] Metal cup</li></ul><p><b>Ask:</b> Which cup would be best for carrying water? Why? Make a prediction with your partner.</p>'},
+    {tag:'Explore · 20 min',h:'Which Material Works Best?',body:'<p><b>Investigation:</b> Test these materials for <b>strength, flexibility</b> and <b>water resistance</b>:</p><ul class="ico-list"><li>[[paper]] Paper</li><li>[[bottle]] Plastic</li><li>[[cloth]] Fabric</li><li>[[foil]] Foil</li></ul><p><b>Plan:</b> What will you test? How will you test it fairly? What evidence will you collect?</p>'},
+    {tag:'Explain · 10 min',h:'Share the Evidence',body:'<p><b>Share your results.</b> Which material was the <b>strongest</b>? Which one <b>absorbed water</b>? Which would be best for making a <b>raincoat</b>?</p><p>Use the <b>evidence</b> from your investigation to explain your thinking.</p>'},
+    {tag:'AFL · 5 min',h:'Think · Pair · Share',body:'<p><b>Think · Pair · Share.</b> Which material would be best for an <b>umbrella</b>? Vote below, then tell your partner why — use evidence from your testing.</p>'},
+    {tag:'Elaborate · 15 min',h:'Materials Engineer',body:'<p>Be a materials engineer — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Choose the best material for a shopping bag.</li><li>🥈 <b>Silver</b> — Compare two materials for a lunchbox and pick the winner.</li><li>🥇 <b>Gold</b> — Design a product and justify it with Claim–Evidence–Reasoning.</li><li>⭐ <b>G&T</b> — Redesign an everyday product by swapping its material.</li></ul>'},
+    {tag:'Evaluate · 5 min',h:'Reflection',body:'<ol><li>What physical properties did you test today?</li><li>How did your investigation help you classify materials?</li><li>Why is evidence important when scientists make decisions?</li></ol><p><b>Finish the sentence:</b> "I can classify materials by their properties because…"</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Material Match Challenge',items:['Look at the material pictures below.','Choose the BEST material for a shopping bag and tick it.','Finish the sentence to explain your choice.'],bank:['paper','bottle','cloth','foil'],question:'I chose ________ for the shopping bag because ________________________.'},
+    silver:{title:'Silver — Lunchbox Material Debate',items:['Compare two materials for a lunchbox: PLASTIC and METAL.','Write one strength and one weakness for each in the table.','Then choose the better material below.'],table:{cols:['Material','A strength','A weakness'],rows:[{icon:'bottle',label:'Plastic'},{icon:'foil',label:'Metal'}]},question:'I think ________ is the better lunchbox material because ________________.'},
+    gold:{title:'Gold — Inventor\'s Design Studio',items:['Choose a product to design: a raincoat, a backpack, or a water bottle.','Pick the best material(s) using your test results from the bank below.','Fill in the Claim – Evidence – Reasoning organizer.'],bank:['paper','bottle','cloth','foil'],table:{cols:['Part','Write your answer'],rows:[{label:'Claim — My product should be made from…'},{label:'Evidence — Our investigation showed…'},{label:'Reasoning — So this material is the best choice because…'}]}},
+    gt:{title:'G&T Challenge — Redesign a Product',items:['Choose an everyday product (a raincoat, a tent, a drink bottle…).','Swap one of its materials for a better one based on physical properties.','Explain the science: which property makes your new material better, and what is your evidence?'],question:'My product, my new material, and the science behind my choice:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['paper','bottle','foil'],
+    items:['1. Name one property you can test in a material.','2. Which material would be best for a raincoat? Give your evidence.','3. Why is evidence important when scientists choose materials?'],
+    check:['I can list properties I can observe and measure.','I can compare materials using my results.','I can justify how to group materials using evidence.']}
+}
+];
+
+/* ---- Unit 2 · Forces : Gravity (Standard 1) ---- */
+const FORCES=[
+{
+  id:'f1', title:'Lesson 1: What is Gravity?',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to identify gravity as a force that pulls objects toward Earth.',
+  sc:[
+    {band:'Remembering',items:['I can define gravity.']},
+    {band:'Understanding',items:['I can explain that gravity pulls objects toward Earth.']},
+    {band:'Applying',items:['I can identify examples of gravity in everyday life.']}
+  ],
+  vocab:['Gravity','Force','Earth','Pull'],
+  slides:[
+    {tag:'Engage · 10 min',h:'What will happen?',body:'<p><b>Watch closely!</b> I am holding three objects:</p><ul class="ico-list"><li>[[ball]] A ball</li><li>[[pencil]] A pencil</li><li>[[apple]] An apple</li></ul><p><b>Predict:</b> What will happen if I let go of these objects? Write your prediction on a sticky note, then share with a partner.</p>'},
+    {tag:'Explore · 15 min',h:'Drop & Observe',body:'<p><b>Investigation:</b> Drop different classroom objects from the <b>same height</b>. Watch what happens to each one and record your observations.</p><p><b>Question:</b> Which way did every object move — up, down or sideways?</p>'},
+    {tag:'Explain · 10 min',h:'Gravity Pulls Down',body:'<p><b>Gravity</b> is a <b>force</b> that <b>pulls</b> objects toward the <b>Earth</b>. That is why everything you drop falls <b>down</b>.</p><p>We can see gravity all around us:</p><ul class="ico-list"><li>[[leaf]] Leaves falling from a tree</li><li>[[rain]] Rain falling from clouds</li><li>[[ball]] A ball coming back down when you throw it up</li></ul>'},
+    {tag:'AFL · 5 min',h:'Thumbs Up or Down?',body:'<p><b>Thumbs Up or Thumbs Down!</b> Is each statement <b>true</b> or <b>false</b>? Tap your answer.</p>'},
+    {tag:'Elaborate · 15 min',h:'Show What You Know',body:'<p>Show what you know about gravity — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Find the objects gravity pulls toward Earth.</li><li>🥈 <b>Silver</b> — Sort pictures into "Gravity" and "Not gravity".</li><li>🥇 <b>Gold</b> — Be a Science Reporter: explain how gravity affects an activity.</li><li>⭐ <b>G&T</b> — "A Day Without Gravity!" — draw a comic strip and explain the science.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>What is gravity?</li><li>Give one example of gravity in action.</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Gravity Hunt',items:['Look at the picture cards below.','Tick or colour every object that FALLS to the ground because of gravity.','Then draw THREE more objects of your own that gravity pulls down.'],cards:[{i:'apple',l:'Apple'},{i:'bird',l:'Bird'},{i:'plane',l:'Airplane'},{i:'kite',l:'Kite'},{i:'ball',l:'Ball'},{i:'cloud',l:'Cloud'},{i:'leaf',l:'Leaf'},{i:'astronaut',l:'Astronaut'}],columns:['Falls to the ground','Stays up in the sky']},
+    silver:{title:'Silver — Gravity or Not?',items:['Cut out the cards (or draw a line).','Sort each one into "Example of gravity" or "Not gravity".','Defend ONE choice using the stem: "This is an example / non-example of gravity because…"'],cards:[{i:'apple',l:'Apple falling'},{i:'ball',l:'Ball dropping'},{i:'leaf',l:'Leaf falling'},{i:'magnet',l:'Magnet & paper clip'},{i:'bulb',l:'Light switch on'},{i:'speaker',l:'Sound from a speaker'}],columns:['Example of gravity','Not gravity']},
+    gold:{title:'Gold — Gravity Reporter',items:['Choose an everyday activity (playing football, pouring water, riding a bike, dropping a pencil).','Write a short news report explaining how gravity affects the activity.','Then explain: what would happen if gravity did NOT exist?'],bank:['ball','water','bike','pencil'],question:'My Gravity News Report:'},
+    gt:{title:'G&T Challenge — A Day Without Gravity',items:['Imagine a whole day with NO gravity.','Draw a short comic strip titled "A Day Without Gravity!"','Under each picture, explain the science: what is gravity doing, or not doing?'],question:'Describe three things that would happen on a day without gravity:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['apple','leaf','rain'],
+    items:['1. What is gravity?','2. Which way does gravity pull objects?','3. Give one example of gravity in everyday life.'],
+    check:['I can define gravity.','I can explain that gravity pulls objects toward Earth.','I can give examples of gravity in everyday life.']}
+},
+{
+  id:'f2', title:'Lesson 2: Investigating Gravity',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to investigate how gravity affects different objects.',
+  sc:[
+    {band:'Remembering',items:['I can identify objects affected by gravity.']},
+    {band:'Understanding',items:['I can describe what happens when objects fall.']},
+    {band:'Applying',items:['I can carry out an investigation to observe gravity.']}
+  ],
+  vocab:['Gravity','Observe','Investigation','Air Resistance'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Which lands first?',body:'<p><b>Which will land first?</b></p><ul class="ico-list"><li>[[feather]] A feather</li><li>[[book]] A book</li></ul><p><b>Predict:</b> If I drop them at the same time, which one hits the ground first? Why do you think so?</p>'},
+    {tag:'Explore · 20 min',h:'Test & Record',body:'<p><b>Your investigation — follow these steps:</b></p><ol><li>Choose 4 objects to test.</li><li>Hold each one at the same height.</li><li>Predict, then drop it and watch carefully.</li><li>Record what happens in your table.</li></ol>'},
+    {tag:'Explain · 10 min',h:'Gravity & Air Resistance',body:'<p>Gravity pulls on <b>every</b> object, so everything falls <b>down</b>. But objects do not always fall at the same speed.</p><p><b>Air resistance</b> is a force from the air that <b>pushes up</b> against falling objects and slows them down. A feather has lots of air resistance, so it falls slowly. A book has little, so it falls fast.</p>'},
+    {tag:'AFL · 5 min',h:'Traffic Lights',body:'<p><b>Traffic Lights!</b> How are you doing with today\'s goals? Tap a colour for each one.</p>'},
+    {tag:'Elaborate · 15 min',h:'Investigate Gravity',body:'<p>Investigate gravity at your level — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort pictures: "Falls because of gravity" vs "Does not show gravity".</li><li>🥈 <b>Silver</b> — Predict and record results in a gravity observation chart.</li><li>🥇 <b>Gold</b> — Design your own gravity test and write a CER conclusion.</li><li>⭐ <b>G&T</b> — Plan a fair test comparing how two objects fall, and explain air resistance.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'What did you find?',body:'<ol><li>What happened during your investigation?</li><li>How do you know gravity was acting on the objects?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Gravity Picture Sort',items:['Cut out the picture cards below.','Sort each card into "Falls because of gravity" or "Does not show gravity".','Finish the sentence for ONE card: "I placed ____ in the gravity group because ____."'],cards:[{i:'apple',l:'Apple falling'},{i:'ball',l:'Ball dropped'},{i:'leaf',l:'Leaf falling'},{i:'rain',l:'Raindrops'},{i:'bulb',l:'Light bulb on'},{i:'magnet',l:'Magnet & clip'},{i:'speaker',l:'Speaker playing'},{i:'tv',l:'TV showing a show'}],columns:['Falls because of gravity','Does not show gravity']},
+    silver:{title:'Silver — Gravity Observation Chart',items:['Drop each object and complete the chart.','Write your prediction first, then your observation, then tick if it showed gravity.'],table:{cols:['Object','Prediction','What happened','Gravity? (Yes/No)'],rows:[{icon:'ball',label:'Tennis ball'},{icon:'feather',label:'Feather'},{icon:'pencil',label:'Eraser'},{icon:'paper',label:'Crumpled paper'}]}},
+    gold:{title:'Gold — Design Your Own Gravity Test',items:['Write a question you want to find out about gravity.','List the objects you will test and your prediction.','Record your results, then write a conclusion using Claim – Evidence – Reasoning.'],table:{cols:['Object','What happened','Evidence of gravity'],rows:4},question:'My conclusion — Claim, Evidence, Reasoning:'},
+    gt:{title:'G&T Challenge — Fair Test & Air Resistance',items:['Plan a FAIR test to compare how two objects fall (for example a flat sheet vs a crumpled sheet of paper).','What will you keep the same? What will you change?','Explain how air resistance changes your results.'],question:'My fair-test plan and what air resistance does:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['feather','book','ball'],
+    items:['1. Name one object that gravity pulls down.','2. What happens to objects when you drop them?','3. What is air resistance, and what does it do to a falling object?'],
+    check:['I can identify objects affected by gravity.','I can describe what happens when objects fall.','I can carry out an investigation to observe gravity.']}
+},
+{
+  id:'f3', title:'Lesson 3: Using Evidence to Support the Idea of Gravity',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use observations and evidence to support the claim that gravity pulls objects toward Earth.',
+  sc:[
+    {band:'Remembering',items:['I can identify evidence of gravity.']},
+    {band:'Understanding',items:['I can explain how observations give us evidence.']},
+    {band:'Applying',items:['I can use evidence to support the idea that gravity pulls objects toward Earth.']}
+  ],
+  vocab:['Gravity','Evidence','Claim','Observation'],
+  slides:[
+    {tag:'Engage · 10 min',h:'What do they share?',body:'<p><b>Watch these three things happen:</b></p><ul class="ico-list"><li>[[ball]] A ball falling</li><li>[[apple]] An apple dropping from a tree</li><li>[[rain]] Rain falling from the sky</li></ul><p><b>Ask:</b> What do all of these have in common?</p>'},
+    {tag:'Explore · 15 min',h:'Evidence Stations',body:'<p><b>Evidence stations.</b> Move around the picture stations showing examples of gravity. At each one, record what you <b>observe</b> and the <b>evidence</b> it gives you.</p><p>(Printable station pictures are in the <b>Unit Resources</b>.)</p>'},
+    {tag:'Explain · 10 min',h:'Claim & Evidence',body:'<p>A <b>claim</b> is a statement we think is true. <b>Evidence</b> is what we <b>observe</b> that supports the claim.</p><p><b>Model it together:</b></p><ul><li><b>Claim:</b> Gravity pulls objects toward Earth.</li><li><b>Evidence:</b> The ball fell down when I let it go.</li></ul>'},
+    {tag:'AFL · 5 min',h:'Claim or Evidence?',body:'<p><b>Claim or Evidence?</b> Tap each card, then drop it into the right box.</p>'},
+    {tag:'Elaborate · 15 min',h:'Build an Explanation',body:'<p>Build your scientific explanation — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each picture to the evidence it shows.</li><li>🥈 <b>Silver</b> — Complete a Claim–Evidence–Reasoning organizer.</li><li>🥇 <b>Gold</b> — Choose 3 pieces of evidence and write a full scientific explanation.</li><li>⭐ <b>G&T</b> — Convince a friend who says "gravity is not real" using evidence.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Evidence Detective',body:'<p><b>Evidence Detective!</b> Is each statement <b>evidence</b> that gravity pulls objects toward Earth? Tap True or False.</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Match Picture to Evidence',items:['Draw a line, or write the matching letter, to link each picture to its evidence.','Evidence: A) moved down toward Earth · B) water fell to the ground · C) moved down when released · D) was pulled to the floor'],bank:['apple','rain','ball','book'],table:{cols:['Picture','Matching evidence (A–D)'],rows:[{icon:'apple',label:'Apple'},{icon:'rain',label:'Rain'},{icon:'ball',label:'Ball'},{icon:'book',label:'Book'}]}},
+    silver:{title:'Silver — Claim · Evidence · Reasoning',items:['Watch the objects fall, then complete the organizer below.'],table:{cols:['Part','Write your answer'],rows:[{label:'Claim'},{label:'Evidence 1'},{label:'Evidence 2'},{label:'Evidence 3'},{label:'Reasoning — the evidence supports my claim because…'}]}},
+    gold:{title:'Gold — Scientific Explanation Builder',items:['Choose at least THREE pieces of evidence from the bank below.','Evidence bank: a ball falls when dropped · rain falls from clouds · leaves fall from trees · a pencil drops to the floor · a skydiver moves toward Earth · a book falls off a desk.','Write a full scientific explanation: your Claim, your 3 pieces of Evidence, and your Reasoning.'],bank:['ball','rain','leaf','pencil','astronaut','book'],table:{cols:['Part','Write your answer'],rows:[{label:'Claim'},{label:'Evidence 1'},{label:'Evidence 2'},{label:'Evidence 3'},{label:'Reasoning'}]}},
+    gt:{title:'G&T Challenge — Convince the Doubter',items:['A friend says: "Gravity is not real — things just fall on their own."','Write an argument to convince them, using at least THREE pieces of evidence.','Use the words claim, evidence and observation.'],question:'My argument that gravity is real:'}
+  },
+  assessment:{title:'Lesson 3 — Assessment',pics:['apple','rain','book'],
+    items:['1. What is one piece of evidence that gravity pulls objects toward Earth?','2. What is the difference between a claim and a piece of evidence?','3. Use evidence to explain that gravity pulls objects down.'],
+    check:['I can identify evidence of gravity.','I can explain how observations give us evidence.','I can use evidence to support the idea that gravity pulls objects toward Earth.']}
+}
+];
+
+/* ---- Unit 3 · Energy : Energy from the Sun (Standard 1) ---- */
+const ENERGY=[
+{
+  id:'e1', title:'Lesson 1: Energy from the Sun',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to explain that the Sun is the main source of energy for living things.',
+  sc:[
+    {band:'Remembering',items:['I can name the Sun as the main source of energy.']},
+    {band:'Understanding',items:['I can explain how plants use sunlight to make their own food.']},
+    {band:'Applying',items:['I can show how the energy in food began as energy from the Sun.']}
+  ],
+  vocab:['Energy','Sun','Producer','Photosynthesis'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Where does our energy come from?',body:'<p><b>Big question:</b> Where does the energy in your body come from?</p><ul class="ico-list"><li>[[sun]] The Sun</li><li>[[grass]] Green plants</li><li>[[apple]] The food we eat</li></ul><p><b>Predict:</b> How might these three things be connected? Talk with a partner.</p>'},
+    {tag:'Explore · 15 min',h:'What do plants need?',body:'<p><b>Investigation:</b> Two plants — one on a sunny windowsill, one in a dark cupboard. Observe them over a week.</p><p><b>Predict &amp; record:</b> Which plant stays green and healthy? Which one turns pale and weak? What does this tell us plants need to grow?</p>'},
+    {tag:'Explain · 10 min',h:'Producers & Photosynthesis',body:'<p>Plants are called <b>producers</b> because they make their own food. They use <b>energy from the Sun</b>, together with water and air, to make food in their leaves. We call this <b>photosynthesis</b>.</p><p>Animals cannot make their own food — they get energy by eating plants, or by eating animals that ate plants. So <b>all the energy in food began as energy from the Sun.</b></p>'},
+    {tag:'AFL · 5 min',h:'Thumbs Up or Down?',body:'<p><b>Thumbs Up or Thumbs Down!</b> Is each statement <b>true</b> or <b>false</b>? Tap your answer.</p>'},
+    {tag:'Elaborate · 15 min',h:'Show What You Know',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Label the Sun, a plant and an animal in the energy picture.</li><li>🥈 <b>Silver</b> — Sort living things into producers and consumers.</li><li>🥇 <b>Gold</b> — Explain how the energy in your lunch began at the Sun.</li><li>⭐ <b>G&T</b> — What would happen to living things if the Sun stopped shining?</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>What is the main source of energy for living things?</li><li>Why are plants called producers?</li><li>Where did the energy in an apple first come from?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Where Does Energy Come From?',items:['Look at the energy picture below.','Label the SUN, the PLANT (producer) and the ANIMAL.','Draw an arrow from the Sun to the plant, and from the plant to the animal.'],bank:['sun','grass','rabbit'],question:'The energy starts at the ________ and travels to the plant, then to the animal.'},
+    silver:{title:'Silver — Producer or Consumer?',items:['Cut out the cards below.','Sort each living thing into PRODUCERS (make their own food) or CONSUMERS (eat other living things).','Draw one more example of your own for each group.'],cards:[{i:'grass',l:'Grass'},{i:'tree',l:'Tree'},{i:'carrot',l:'Carrot'},{i:'rabbit',l:'Rabbit'},{i:'fox',l:'Fox'},{i:'cow',l:'Cow'}],columns:['Producers','Consumers']},
+    gold:{title:'Gold — Trace the Energy',items:['Choose something from your lunch (for example bread, an apple, or milk).','Explain, step by step, how the energy in it began as energy from the Sun.','Use the words: energy, Sun, producer, photosynthesis.'],bank:['sun','grass','apple','bread'],question:'How the energy in my lunch began at the Sun:'},
+    gt:{title:'G&T Challenge — A World Without the Sun',items:['Imagine the Sun stopped shining.','Explain what would happen first to plants, then to animals, then to people.','Use the idea that all food energy begins at the Sun.'],question:'What would happen to living things without the Sun:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['sun','grass','apple'],
+    items:['1. What is the main source of energy for living things?','2. Why are plants called producers?','3. Where did the energy in your food first come from?'],
+    check:['I can name the Sun as the main source of energy.','I can explain how plants use sunlight to make food.','I can show how the energy in food began at the Sun.']}
+},
+{
+  id:'e2', title:'Lesson 2: Food Chains',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use a food chain to show how energy passes from the Sun to plants and animals.',
+  sc:[
+    {band:'Remembering',items:['I can name the parts of a food chain.']},
+    {band:'Understanding',items:['I can explain which way the arrows in a food chain point.']},
+    {band:'Applying',items:['I can build a food chain that starts with the Sun.']}
+  ],
+  vocab:['Food Chain','Producer','Consumer','Predator','Prey'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Who eats what?',body:'<p><b>Who eats what?</b></p><ul class="ico-list"><li>[[grass]] Grass</li><li>[[rabbit]] Rabbit</li><li>[[fox]] Fox</li></ul><p><b>Predict:</b> Can you put these in order to show who eats whom? Where does the energy start?</p>'},
+    {tag:'Explore · 20 min',h:'Build a Food Chain',body:'<p><b>Investigation:</b> Use the picture cards to build food chains. Start each chain with the <b>Sun</b>, then a <b>plant</b>, then the animals.</p><p><b>Remember:</b> the arrows point the way the <b>energy flows</b> — from the living thing that is eaten, to the one that eats it.</p>'},
+    {tag:'Explain · 10 min',h:'Parts of a Food Chain',body:'<p>A <b>food chain</b> shows how energy passes from one living thing to another.</p><ul><li>It starts with the <b>Sun</b>.</li><li>Then a <b>producer</b> (a green plant).</li><li>Then <b>consumers</b> (animals that eat).</li></ul><p>The <b>arrows</b> point towards the eater, showing the way the <b>energy flows</b>. A <b>predator</b> hunts and eats its <b>prey</b>.</p><p><b>Example:</b> [[sun]] → [[grass]] → [[rabbit]] → [[fox]]</p>'},
+    {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer for each statement about food chains.</p>'},
+    {tag:'Elaborate · 15 min',h:'Build & Explain Chains',body:'<p>Build and explain food chains — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Put the pictures in order to make a food chain.</li><li>🥈 <b>Silver</b> — Build two food chains and add the arrows.</li><li>🥇 <b>Gold</b> — Explain what happens to the chain if one animal disappears.</li><li>⭐ <b>G&T</b> — Design a food chain with four links and explain the energy flow.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>What does a food chain start with?</li><li>Which way do the arrows in a food chain point?</li><li>Build a food chain using grass, a fox and a rabbit.</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Order the Food Chain',items:['Cut out the picture cards below.','Put them in the correct order to make a food chain, starting with the Sun.','Glue them in order and draw arrows between them.'],cards:[{i:'sun',l:'Sun'},{i:'grass',l:'Grass'},{i:'rabbit',l:'Rabbit'},{i:'fox',l:'Fox'}],columns:['1st','2nd','3rd','4th']},
+    silver:{title:'Silver — Build Two Food Chains',items:['Use the picture bank to build TWO different food chains.','Write each chain in order and draw arrows ( → ) to show the energy flow.','Remember: every chain starts with the Sun.'],bank:['sun','grass','carrot','rabbit','mouse','fox','snake'],table:{cols:['Food chain (use arrows →)'],rows:2}},
+    gold:{title:'Gold — A Broken Chain',items:['Look at the food chain: Sun → grass → rabbit → fox.','Explain what would happen to the rabbits and the foxes if all the grass died.','Use the words energy, producer and consumer.'],bank:['sun','grass','rabbit','fox'],question:'What would happen to the food chain if the grass died:'},
+    gt:{title:'G&T Challenge — A Four-Link Chain',items:['Design a food chain with FOUR living things (plus the Sun).','Write it out with arrows, then explain how energy flows along it.','Name the producer, a herbivore and a predator in your chain.'],question:'My four-link food chain and how energy flows:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['grass','rabbit','fox'],
+    items:['1. What does every food chain start with?','2. Which way do the arrows in a food chain point?','3. Build a food chain using grass, a rabbit and a fox (use arrows).'],
+    check:['I can name the parts of a food chain.','I can explain which way the arrows point.','I can build a food chain that starts with the Sun.']}
+},
+{
+  id:'e3', title:'Lesson 3: Modelling Energy from the Sun to Animals',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use a model to show that the energy animals need began as energy from the Sun.',
+  sc:[
+    {band:'Remembering',items:['I can name energy as what animals need to move and grow.']},
+    {band:'Understanding',items:['I can explain how energy is transferred from the Sun to animals.']},
+    {band:'Applying',items:['I can make a model that traces an animal\'s energy back to the Sun.']}
+  ],
+  vocab:['Energy','Model','Transfer','Sun'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Where did the energy come from?',body:'<p><b>Think about this:</b> A child runs in a race. [[person]] Running uses lots of <b>energy</b>.</p><p><b>Ask:</b> Where did that energy come from? Could we trace it all the way back to the Sun?</p>'},
+    {tag:'Explore · 20 min',h:'Build an Energy Model',body:'<p><b>Build a model.</b> Use arrows to trace the energy a runner uses back to the Sun:</p><p>[[sun]] Sun → [[grass]] wheat plant → [[bread]] bread → [[person]] child running</p><p>At each step, the energy is <b>transferred</b> from one thing to the next.</p>'},
+    {tag:'Explain · 10 min',h:'Energy is Transferred',body:'<p>Animals need <b>energy</b> for everything they do — moving, growing, keeping warm and staying alive.</p><p>A <b>model</b> is a simple way to show an idea. Our model shows energy being <b>transferred</b> from the Sun, to plants, to animals.</p><p>So the energy a lion, a rabbit or a person uses today <b>began as energy from the Sun.</b></p>'},
+    {tag:'AFL · 5 min',h:'Traffic Lights',body:'<p><b>Traffic Lights!</b> How are you doing with today\'s goals? Tap a colour for each one.</p>'},
+    {tag:'Elaborate · 15 min',h:'Make Your Model',body:'<p>Make your energy model — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Put the energy model in order: Sun → plant → animal.</li><li>🥈 <b>Silver</b> — Make a model showing how a cow gets its energy from the Sun.</li><li>🥇 <b>Gold</b> — Trace your own energy back to the Sun and explain each step.</li><li>⭐ <b>G&T</b> — Make a model for a meat-eater (e.g. a fox) and explain the extra step.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>Name two things animals need energy for.</li><li>How does energy get from the Sun to a fox?</li><li>Why do we say all energy began at the Sun?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Order the Energy Model',items:['Cut out the cards below.','Put them in order to show how energy travels: Sun → plant → animal.','Glue them in order and draw arrows.'],cards:[{i:'sun',l:'Sun'},{i:'grass',l:'Plant'},{i:'cow',l:'Cow'}],columns:['1st','2nd','3rd']},
+    silver:{title:'Silver — A Cow\'s Energy',items:['Make a model showing how a COW gets its energy.','Draw or write each step from the Sun to the cow, with arrows.','Explain where the cow\'s energy first came from.'],bank:['sun','grass','cow'],question:'How a cow gets its energy from the Sun:'},
+    gold:{title:'Gold — Trace Your Own Energy',items:['Choose a food you ate today.','Make a model that traces YOUR energy back to the Sun, step by step.','Explain how the energy is transferred at each step.'],bank:['sun','grass','bread','apple','person'],table:{cols:['Step','My energy model'],rows:[{label:'1. Where the energy started'},{label:'2. The plant (producer)'},{label:'3. The food I ate'},{label:'4. Me using the energy'}]}},
+    gt:{title:'G&T Challenge — A Meat-Eater\'s Energy',items:['Make an energy model for a PREDATOR, such as a fox.','Show the extra step (the animal it eats) and explain why the chain is longer.','Explain how the energy still began at the Sun.'],bank:['sun','grass','rabbit','fox'],question:'How a fox\'s energy began at the Sun (with the extra step):'}
+  },
+  assessment:{title:'Lesson 3 — Assessment',pics:['sun','grass','cow'],
+    items:['1. Name two things animals need energy for.','2. How does energy get from the Sun to an animal?','3. Why do we say the energy animals use began at the Sun?'],
+    check:['I can say what animals need energy for.','I can explain how energy is transferred from the Sun to animals.','I can make a model tracing energy back to the Sun.']}
+}
+];
+
+const UNITS=[
+  {n:1,id:'matter',title:'Matter: Properties and Interactions',live:true,
+   standards:[
+     {n:1,text:'Explore and gather evidence through questions and observations to determine if matter exists as a solid, liquid or gas.',lessons:MATTER_S1},
+     {n:2,text:'Plan and perform investigations to explore, describe, and categorize materials based on their physical properties.',lessons:MATTER_S2},
+     {n:3,text:'Explain, using a model, that matter is composed of particles that are too small to be seen.',lessons:[]},
+     {n:4,text:'Use measurements and graphs to investigate how the total amount of matter stays constant during physical changes.',lessons:[]}
+   ]},
+  {n:2,id:'forces',title:'Forces',live:true,standards:[{n:1,text:'Support the idea that gravity is a force that pulls objects toward the Earth.',lessons:FORCES}]},
+  {n:3,id:'energy',title:'Energy',live:true,standards:[{n:1,text:'Use models to demonstrate that the energy animals need for body functions, growth and movement began as energy from the Sun.',lessons:ENERGY}]},
+  {n:4,id:'sound',title:'Sound Waves',live:false,standards:[]},
+  {n:5,id:'organisms',title:'Organisms and Processes',live:false,standards:[]},
+  {n:6,id:'ecosystems',title:'Ecosystems and Sustainability',live:false,standards:[]},
+  {n:7,id:'earth',title:"Earth's Interactions",live:false,standards:[]}
+];
+
+/* =====================================================================
+   ROUTER + VIEWS
+   ===================================================================== */
+const app=document.getElementById('app'), crumb=document.getElementById('crumb');
+let cur={unit:null,std:null};
+function setCrumb(t){crumb.textContent=t||'';}
+/* per-unit colour themes (Deenish: a different colour for each unit) */
+const THEME={
+ matter:{a:'#2563eb',d:'#1d4ed8',deep:'#0c2a78',soft:'#eef3fb'},
+ forces:{a:'#dc2626',d:'#b91c1c',deep:'#7a1212',soft:'#fbe8e8'},
+ energy:{a:'#bb8804',d:'#806000',deep:'#473300',soft:'#fbf2cc'},
+ sound:{a:'#6d28d9',d:'#5b21b6',deep:'#3a1378',soft:'#f0eafd'},
+ organisms:{a:'#6c7d2c',d:'#55621f',deep:'#343c12',soft:'#f1f4e4'},
+ ecosystems:{a:'#0d9488',d:'#0b7a70',deep:'#064a44',soft:'#e4f5f2'},
+ earth:{a:'#8a5a2b',d:'#6e4720',deep:'#412a13',soft:'#f5ece1'}
+};
+function setTheme(id){const t=THEME[id]||THEME.matter,r=document.documentElement.style;
+ r.setProperty('--blue',t.a);r.setProperty('--blue-d',t.d);r.setProperty('--theme-deep',t.deep);r.setProperty('--theme-soft',t.soft);}
+function go(view,a,b,c){
+  if(window.__homeIv){clearInterval(window.__homeIv);window.__homeIv=null;}
+  exitDeckFS();
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTheme(['unit','lesson','sheet','assess','resources'].includes(view)&&cur.unit?cur.unit.id:null);
+  ({home:vHome,units:vUnits,unit:vUnit,lesson:vLesson,sheet:vSheet,assess:vAssess,resources:vResources}[view]||vHome)(a,b,c);
+}
+
+function vHome(){
+  setCrumb('');
+  const slides=UNITS.map(u=>({n:u.n,t:u.title}));
+  const floats=[];
+  app.innerHTML=`
+    <section class="home-hero">
+      ${floats.map((f,i)=>`<span class="float" style="left:${(i*9+4)%92}%;top:${(i*37%78)+6}%;animation-delay:${(i*0.6).toFixed(1)}s;font-size:${(2.4+(i%3)*1.1).toFixed(1)}rem">${f}</span>`).join('')}
+      <div class="hero-inner">
+        <h1>Science Explorers</h1>
+        <p>Welcome to <b>Science Explorers</b>, where curious minds investigate the world through discovery and inquiry! Here, we learn to make a <b>claim</b>, support it with <b>evidence</b>, and explain our thinking using <b>reasoning</b> as we explore exciting scientific ideas. Get ready to ask questions, conduct investigations, and think like a real scientist!</p>
+        <div class="cta">
+          <button class="btn" onclick="openDemo()">▶ Try the free demo lesson</button>
+          <button class="btn ghost" onclick="go('units')">See all units</button>
+        </div>
+        <div class="unit-slideshow"><div class="us-slide anim" id="usSlide"><span class="us-badge">Unit ${slides[0].n}</span><span class="us-title">${slides[0].t}</span></div></div>
+        <div class="us-dots" id="usDots">${slides.map((_,k)=>`<span class="us-dot ${k===0?'on':''}"></span>`).join('')}</div>
+      </div>
+    </section>`;
+  let i=0;
+  window.__homeIv=setInterval(()=>{
+    const box=document.getElementById('usSlide');
+    if(!box){clearInterval(window.__homeIv);window.__homeIv=null;return;}
+    i=(i+1)%slides.length;
+    box.innerHTML=`<span class="us-badge">Unit ${slides[i].n}</span><span class="us-title">${slides[i].t}</span>`;
+    box.classList.remove('anim');void box.offsetWidth;box.classList.add('anim');
+    document.querySelectorAll('#usDots .us-dot').forEach((d,k)=>d.classList.toggle('on',k===i));
+  },2600);
+}
+function vUnits(){
+  setCrumb('All units');
+  app.innerHTML=`<section><div class="eyebrow">Choose a unit</div><h2 style="font-size:1.6rem">Units</h2>
+    <div class="grid">${UNITS.map(u=>{const has=u.live&&u.standards.some(s=>s.lessons.length);const t=THEME[u.id]||THEME.matter;
+      return `<div class="ucard ${has?'live':''}" style="--uc:${t.a};--ucd:${t.d};--ucs:${t.soft}" ${has?`onclick="openUnit('${u.id}')"`:''}>
+        <span class="u-n">Unit ${u.n}</span><h3 style="color:${t.d}">${u.title}</h3>
+        <p>${u.standards.length?u.standards.length+' standard'+(u.standards.length>1?'s':''):'Coming soon'}</p>
+        <span class="pill ${has?'live':'soon'}">${has?'Open':'Coming soon'}</span></div>`;}).join('')}</div></section>`;
+}
+function openUnit(id){cur.unit=UNITS.find(u=>u.id===id);cur.std=null;cur.li=0;go('unit');}
+function openDemo(){cur.unit=UNITS.find(u=>u.id==='matter');cur.std=0;cur.li=0;go('lesson');}
+function pickStd(i){cur.std=i;cur.li=0;go('unit');}
+function vUnit(){
+  const u=cur.unit;if(!u)return go('units');
+  if(cur.std==null||!u.standards[cur.std]){const fi=u.standards.findIndex(s=>s.lessons&&s.lessons.length);cur.std=fi<0?0:fi;}
+  setCrumb('Unit '+u.n+' · '+u.title);
+  const sel=u.standards[cur.std]||u.standards[0];
+  const lessons=(sel&&sel.lessons)||[];
+  const hasRes=!!(RESOURCES[u.id]&&RESOURCES[u.id].length)&&u.standards.some(s=>s.lessons&&s.lessons.length);
+  app.innerHTML=`<section><button class="btn gray sm" onclick="go('units')">← All units</button>
+   <div class="std" style="margin-top:16px">
+    <aside class="std-left">
+      <div class="eyebrow">Topic</div>
+      <h2>${u.title}</h2>
+      <div class="topic-sub">Unit ${u.n} · Grade 5</div>
+      <h3>Standards <span style="font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)">— tap one</span></h3>
+      <ul class="std-list">${u.standards.map((s,si)=>{const has=s.lessons&&s.lessons.length;return `<li class="${has?'click':'dim'} ${si===cur.std&&has?'sel':''}" ${has?`onclick="pickStd(${si})"`:''}><b>${s.n}</b>${s.text}</li>`;}).join('')}</ul>
+      ${hasRes?`<button class="btn ghost sm" style="margin-top:16px;width:100%;justify-content:center" onclick="go('resources')">📁 Unit resources</button>`:''}
+    </aside>
+    <div class="std-right">
+      <div class="std-head"><span class="sn">Standard ${sel?sel.n:1}</span>${sel?sel.text:''}</div>
+      ${lessons.length?lessons.map((L,i)=>lessonRow(L,i)).join(''):'<div class="panel">Lessons for this standard are coming soon.</div>'}
+    </div>
+   </div></section>`;
+}
+function lessonRow(L,i){
+  return `<div class="lesson">
+    <div class="lhead"><h3>${L.title}</h3><button class="btn sm" onclick="openLesson(${i})">Open ▸</button></div>
+    <p class="lo"><b>Learning Objective:</b> ${L.lo}</p>
+    <div class="sc"><div style="font-weight:800">Success Criteria</div>
+      ${L.sc.map(s=>`<div class="band">${s.band}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join('')}</ul>`).join('')}</div>
+    <div class="tasks"><span class="lbl">Elaborate task:</span>
+      <button class="medal b" onclick="openSheet(${i},'bronze')">🥉 Bronze</button>
+      <button class="medal s" onclick="openSheet(${i},'silver')">🥈 Silver</button>
+      <button class="medal g" onclick="openSheet(${i},'gold')">🥇 Gold</button>
+      ${L.tasks&&L.tasks.gt?`<button class="medal gt" onclick="openSheet(${i},'gt')">⭐ G&amp;T</button>`:''}</div>
+    <div class="lfoot"><button class="btn ghost sm" onclick="openAssess(${i})">📋 Assessment</button></div>
+  </div>`;
+}
+function lessonsOf(){const u=cur.unit;if(!u)return [];const s=u.standards[cur.std];return (s&&s.lessons)||[];}
+function openLesson(i){cur.li=i;go('lesson');}
+function vLesson(){
+  const L=lessonsOf()[cur.li];if(!L)return go('unit');
+  setCrumb('Unit '+cur.unit.n+' · '+L.title);
+  let s=0;
+  app.innerHTML=`<section><button class="btn gray sm" onclick="go('unit')">← Back to unit</button>
+    <h2 style="font-size:1.4rem;margin:14px 0 4px">${L.title}</h2>
+    <div style="color:var(--muted);font-weight:700;margin-bottom:14px">${L.grade}</div>
+    <div class="panel"><h3>🎯 Learning Objective</h3><p>${L.lo}</p>
+      <h3 style="margin-top:14px">✅ Success Criteria</h3>
+      <div class="sc">${L.sc.map(s=>`<div class="band">${s.band}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join('')}</ul>`).join('')}</div>
+      <h3 style="margin-top:14px">🔑 Key Vocabulary</h3>
+      <div class="vhead">Tap a word to flip it over and see what it means.</div>
+      <div class="vgrid">${L.vocab.map(v=>{const g=GLOSSARY[v]||{e:'🔹',m:'A key science word for this lesson.'};const fico=VOCAB_ICON[v]?ICONS[VOCAB_ICON[v]]:('<span class="ve">'+g.e+'</span>');return `<div class="vcard" onclick="this.classList.toggle('flip')"><div class="vinner"><div class="vface vfront">${fico}<span class="vw">${v}</span><span class="vhint">tap to flip</span></div><div class="vface vback">${g.m}</div></div></div>`;}).join('')}</div></div>
+    <div class="eyebrow">Lesson slides (5E)</div>
+    <div class="deck" id="deck"></div>
+    <div class="detail-actions">
+      <button class="btn" onclick="openCheck()">📝 Quick Check — 10 questions</button>
+      <button class="btn ghost" onclick="openAssess(${cur.li})">📋 Assessment</button>
+      <button class="btn gray" onclick="window.print()">🖨️ Print lesson</button>
+    </div>
+    <div id="checkArea"></div>`;
+  function render(){
+    const sl=L.slides[s];
+    const wg=(SLIDE_WIDGETS[L.id]||[])[s];
+    const taskBtns=(/Elaborate/i.test(sl.tag)&&L.tasks)?'<div class="lfoot" style="margin-top:14px;flex-wrap:wrap">'+[['bronze','b','🥉 Bronze'],['silver','s','🥈 Silver'],['gold','g','🥇 Gold'],['gt','gt','⭐ G&T']].filter(t=>L.tasks[t[0]]).map(t=>'<button class="medal '+t[1]+'" onclick="openSheet('+cur.li+",'"+t[0]+"')\">"+t[2]+' sheet ▸</button>').join('')+'</div>':'';
+    document.getElementById('deck').innerHTML=`
+      <button class="expandbtn" onclick="toggleDeckFS()">${document.getElementById('deck').classList.contains('fs')?'✕ Close':'⛶ Expand'}</button>
+      <div class="slide"><span class="stag">${sl.tag}</span><h3>${sl.h}</h3>${withIcons(sl.body)}${taskBtns}${wg?'<div class="widget" id="slideWidget"></div>':''}</div>
+      <div class="deck-bar">
+        <button class="btn gray sm" ${s===0?'disabled style=opacity:.4':''} onclick="window.__pd(-1)">‹ Prev</button>
+        <div class="dots">${L.slides.map((_,k)=>`<span class="dot ${k===s?'on':''}"></span>`).join('')}</div>
+        <button class="btn sm" ${s===L.slides.length-1?'disabled style=opacity:.4':''} onclick="window.__pd(1)">Next ›</button>
+      </div>`;
+    if(wg)mountWidget(document.getElementById('slideWidget'),wg);
+  }
+  window.__pd=(d)=>{s=Math.max(0,Math.min(L.slides.length-1,s+d));render();};
+  render();
+}
+function openCheck(){
+  const L=lessonsOf()[cur.li];const area=document.getElementById('checkArea');
+  if(!L.mcqs||!L.mcqs.length){area.innerHTML='<div class="panel">A 10-question check for this lesson is coming soon.</div>';area.scrollIntoView({behavior:'smooth'});return;}
+  let score=0,done=0;
+  area.innerHTML=`<div class="panel quiz" id="qz"><div class="no-print"><h3>📝 Quick Check</h3><button class="btn gray sm" onclick="window.print()">🖨️ Print questions</button></div>
+    ${L.mcqs.map((q,qi)=>`<div class="q" data-q="${qi}"><div class="qt">${qi+1}. ${q.q}</div>${q.options.map((o,oi)=>`<button class="opt" onclick="window.__ans(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}</div>`).join('')}
+    <div class="scoreline" id="qscore">Score: 0 / ${L.mcqs.length}</div></div>`;
+  window.__ans=(qi,oi)=>{
+    const block=document.querySelector('#qz .q[data-q="'+qi+'"]');if(block.dataset.done)return;block.dataset.done=1;
+    block.querySelectorAll('.opt').forEach((o,k)=>{o.classList.add('lock');if(k===L.mcqs[qi].answer)o.classList.add('correct');if(k===oi&&k!==L.mcqs[qi].answer)o.classList.add('wrong');});
+    if(oi===L.mcqs[qi].answer)score++;done++;document.getElementById('qscore').textContent='Score: '+score+' / '+L.mcqs.length+(done===L.mcqs.length?(score>=8?' · 🌟 Excellent!':score>=5?' · 👍 Good work!':' · 💪 Review and try again!'):'');
+  };
+  document.getElementById('qz').scrollIntoView({behavior:'smooth'});
+}
+function openSheet(i,level){cur.li=i;cur.level=level;go('sheet');}
+function sheetHTML(t,lessonTitle){
+  return `<h1>${t.title}</h1>
+   <p class="meta">Name: __________________   Date: __________   ${lessonTitle}</p>
+   <ol>${t.items.map(x=>x?`<li>${x}</li>`:`<div class="lines"></div>`).join('')}</ol>
+   ${t.cards?`<h2>✂️ Picture cards — cut these out</h2><div class="cut-cards">${t.cards.map(c=>`<div class="cut-card">${ICONS[c.i]||''}<div class="cl">${c.l}</div></div>`).join('')}</div><h2>Sort them here — glue each card under the right heading</h2><div class="sort-board" style="--cols:${t.columns.length}">${t.columns.map(c=>`<div class="sort-col"><h3>${c}</h3></div>`).join('')}</div>`:''}
+   ${t.bank?`<h2>🖼️ Pictures to help you (or use your own)</h2><div class="pic-bank">${t.bank.map(k=>`<div class="pic">${ICONS[k]||''}</div>`).join('')}</div>`:''}
+   ${t.table?(function(){const cols=t.table.cols;const head=`<tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;let body='';if(typeof t.table.rows==='number'){for(let r=0;r<t.table.rows;r++){body+=`<tr>${cols.map(()=>`<td><input class="ws-in" type="text" /></td>`).join('')}</tr>`;}}else{body=t.table.rows.map(r=>`<tr><td class="lab">${ICONS[r.icon]||''}${r.label}</td>${cols.slice(1).map(()=>`<td><input class="ws-in" type="text" /></td>`).join('')}</tr>`).join('');}return `<table class="ws-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;})():''}
+   ${t.question?`<h2>✍️ ${t.question}</h2><textarea class="ws-area" placeholder="Type your answer…"></textarea>`:''}
+   ${(!t.cards&&!t.table&&!t.question&&!t.bank)?`<div class="lines"></div><div class="lines"></div><div class="lines"></div>`:''}`;
+}
+function vSheet(){
+  const L=lessonsOf()[cur.li];if(!L||!L.tasks)return go('unit');
+  setCrumb(L.title);
+  const levels=['bronze','silver','gold','gt'].filter(k=>L.tasks[k]);
+  app.innerHTML=`<section>
+    <div class="no-print"><button class="btn gray sm" onclick="go('unit')">← Back</button>
+      <button class="btn sm" onclick="window.print()">🖨️ Print all task sheets</button>
+      <span style="color:var(--muted);font-weight:700;font-size:.9rem">Bronze · Silver · Gold · G&amp;T — each on its own page</span></div>
+    ${levels.map(k=>`<section class="ws sheet-page" id="sheet-${k}">${sheetHTML(L.tasks[k],L.title)}</section>`).join('')}
+  </section>`;
+  if(cur.level){const el=document.getElementById('sheet-'+cur.level);if(el)el.scrollIntoView({behavior:'smooth'});}
+}
+function openAssess(i){cur.li=i;go('assess');}
+function vAssess(){
+  const L=lessonsOf()[cur.li];const a=L&&L.assessment;if(!a)return go('unit');
+  setCrumb(L.title);
+  app.innerHTML=`<section>
+    <div class="no-print"><button class="btn gray sm" onclick="go('unit')">← Back</button>
+      <button class="btn sm" onclick="window.print()">🖨️ Print / Save as PDF</button></div>
+    <section class="ws sheet-page">
+      <h1>${a.title}</h1>
+      <p class="meta">Name: __________________   Date: __________</p>
+      ${a.pics?`<div class="pic-bank">${a.pics.map(k=>`<div class="pic">${ICONS[k]||''}</div>`).join('')}</div>`:''}
+      <ol class="assess-q">${a.items.map(x=>`<li>${x.replace(/^\d+\.\s*/,'')}<textarea class="ws-area" rows="2" placeholder="Write your answer…"></textarea></li>`).join('')}</ol>
+      <h2>✅ Success Check — tap each one you can do</h2>
+      <div class="checklist">${a.check.map(c=>`<button class="chk" onclick="this.classList.toggle('on')"><span class="box"></span>${c}</button>`).join('')}</div>
+    </section></section>`;
+}
+/* ===================================================================
+   INTERACTIVE SLIDE WIDGETS — every slide has a hands-on activity
+   =================================================================== */
+function iconOr(t){return (t&&ICONS[t])?ICONS[t]:'';}
+function mountWidget(host,w){
+  if(!host||!w)return;
+  ({reveal:wReveal,observe:wObserve,particles:wParticles,sort:wSort,classify:wClassify,afl:wAFL}[w.type]||(()=>{}))(host,w);
+}
+function wAFL(host,w){
+  const mode=w.mode||'confidence';
+  const opts = mode==='judge'
+     ? [{k:'ok',t:'👍 True'},{k:'no',t:'👎 False'}]
+     : w.style==='traffic'
+       ? [{k:'g',t:'🟢 I understand'},{k:'y',t:'🟡 Getting there'},{k:'r',t:'🔴 Need help'}]
+       : [{k:'g',t:'👍 I can do this'},{k:'y',t:'🤔 Getting there'},{k:'r',t:'🆘 Not yet'}];
+  host.innerHTML=`<div class="afl">${w.title?`<div class="w-title">${w.title}</div>`:''}
+    ${w.statements.map((s,si)=>`<div class="afl-row" data-s="${si}"><span class="at">${s.t}</span>
+      <div class="afl-btns">${opts.map(o=>`<button class="afl-b ${o.k}" data-k="${o.k}">${o.t}</button>`).join('')}</div>
+      <span class="afl-fb"></span></div>`).join('')}</div>`;
+  host.querySelectorAll('.afl-row').forEach((row,si)=>{
+    const st=w.statements[si], fb=row.querySelector('.afl-fb');
+    row.querySelectorAll('.afl-b').forEach(b=>b.onclick=()=>{
+      row.querySelectorAll('.afl-b').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      if(mode==='judge'){
+        const ok=(b.dataset.k==='ok')===!!st.correct;
+        fb.style.color=ok?'#2aa45a':'#d8503e';
+        fb.textContent=ok?'✓ Correct!':(st.correct?'It is True':'It is False');
+      }else{
+        fb.style.color='var(--blue-d)';
+        fb.textContent=b.dataset.k==='g'?'Awesome! 🌟':b.dataset.k==='y'?'Keep going 💪':'I will help you 🤝';
+      }
+    });
+  });
+}
+function wReveal(host,w){
+  host.innerHTML=`<div class="w-title">${w.title||'👆 Tap each card to reveal the answer.'}</div>
+   <div class="w-cards">${w.cards.map(c=>`<div class="w-card" onclick="this.classList.toggle('flip')"><div class="vinner">
+     <div class="vface vfront">${iconOr(c.icon)}<span class="wl">${c.label}</span><span class="vhint">tap</span></div>
+     <div class="vface vback">${c.reveal}</div></div></div>`).join('')}</div>`;
+}
+function wObserve(host,w){
+  let rev=false;
+  function html(){return `<div class="w-title">${w.title||'👆 Tap each box to record what you see, then check.'}</div>
+    <table class="obs"><thead><tr><th>Material</th>${w.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+    <tbody>${w.rows.map((r,ri)=>`<tr><td class="lab">${iconOr(r.icon)}${r.label}</td>${r.ans.map((a,ci)=>`<td><span class="cell ${rev&&a?'ans':''}" data-r="${ri}" data-c="${ci}">${rev?(a?'✓':'✗'):'–'}</span></td>`).join('')}</tr>`).join('')}</tbody></table>
+    <div style="margin-top:10px"><button class="btn sm" id="obsBtn">Show answers</button></div>`;}
+  function wire(){
+    host.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{if(rev)return;c.textContent=c.textContent==='–'?'✓':c.textContent==='✓'?'✗':'–';});
+    const b=host.querySelector('#obsBtn');if(b)b.onclick=()=>{rev=true;host.innerHTML=html();wire();};
+  }
+  host.innerHTML=html();wire();
+}
+function wParticles(host,w){
+  host.innerHTML=`<div class="w-title">👆 Click a state and watch how the particles move.</div>
+   <canvas id="wpc" height="190" style="width:100%;background:#0c1a3a;border-radius:10px;display:block"></canvas>
+   <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
+    <button class="btn sm" onclick="window.__ps&&window.__ps('solid')">Solid</button>
+    <button class="btn sm ghost" onclick="window.__ps&&window.__ps('liquid')">Liquid</button>
+    <button class="btn sm ghost" onclick="window.__ps&&window.__ps('gas')">Gas</button>
+    <span class="w-fb" id="wpfb">Solid — particles packed tightly, only vibrating.</span></div>`;
+  const cv=host.querySelector('#wpc'),ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;
+  let st='solid',raf=0;cv.width=cv.clientWidth||600;
+  const N=56,P=[];for(let i=0;i<N;i++)P.push({x:0,y:0,vx:0,vy:0,hx:0,hy:0});
+  (function(){const W=cv.width,H=cv.height,cols=10,rows=Math.ceil(N/cols),gx=W/(cols+1),gy=(H*.55)/(rows+1);for(let i=0;i<N;i++){const c=i%cols,r=Math.floor(i/cols);P[i].hx=gx*(c+1);P[i].hy=H-12-gy*(r+1);P[i].x=P[i].hx;P[i].y=P[i].hy;P[i].vx=(Math.random()*2-1);P[i].vy=(Math.random()*2-1);}})();
+  function step(){if(!cv.isConnected){cancelAnimationFrame(raf);return;}const W=cv.width,H=cv.height,t=Date.now();ctx.clearRect(0,0,W,H);for(const p of P){if(st==='solid'){p.x+=(p.hx-p.x)*.2+Math.sin(t/200+p.hx)*.4;p.y+=(p.hy-p.y)*.2+Math.cos(t/200+p.hy)*.4;}else if(st==='liquid'){p.x+=p.vx*.6;p.y+=p.vy*.6+.05;if(p.x<6||p.x>W-6)p.vx*=-1;if(p.y<H*.45||p.y>H-6)p.vy*=-1;}else{p.x+=p.vx*1.6;p.y+=p.vy*1.6;if(p.x<6||p.x>W-6)p.vx*=-1;if(p.y<6||p.y>H-6)p.vy*=-1;}ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle=st==='solid'?'#6aa9ff':st==='liquid'?'#38d9c4':'#ffd66b';ctx.fill();}raf=requestAnimationFrame(step);}
+  window.__ps=(s)=>{st=s;if(s!=='solid')for(const p of P){p.vx=(Math.random()*2-1)*1.4;p.vy=(Math.random()*2-1)*1.4;}const f=document.getElementById('wpfb');if(f)f.textContent=s==='solid'?'Solid — particles packed tightly, only vibrating.':s==='liquid'?'Liquid — particles slide past each other and flow.':'Gas — particles bounce everywhere and fill the space.';};
+  raf=requestAnimationFrame(step);
+}
+function wSort(host,w){
+  let sel=null,placed=0;const tot=w.items.length;
+  host.innerHTML=`<div class="w-title">${w.title||'👆 Tap a card, then tap the bin it belongs in.'}</div>
+   <div class="w-bins">${w.bins.map(b=>`<div class="w-bin" data-b="${b.id}"><div>${iconOr(b.icon)} ${b.label}</div><div class="drop" id="wd-${b.id}"></div></div>`).join('')}</div>
+   <div class="w-tray">${w.items.map((it,i)=>`<button class="w-chip" data-i="${i}">${iconOr(it.icon)}${it.label}</button>`).join('')}</div>
+   <div class="w-fb" id="wsfb"></div>`;
+  const fb=host.querySelector('#wsfb');
+  host.querySelectorAll('.w-chip').forEach(c=>c.onclick=()=>{if(c.classList.contains('done'))return;host.querySelectorAll('.w-chip').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');sel=c;});
+  host.querySelectorAll('.w-bin').forEach(bin=>bin.onclick=()=>{
+    if(!sel){fb.style.color='var(--muted)';fb.textContent='Pick a card first 👆';return;}
+    const it=w.items[+sel.dataset.i];
+    if(it.bin===bin.dataset.b){const d=host.querySelector('#wd-'+bin.dataset.b);d.innerHTML+=(iconOr(it.icon)||('<span style="font-weight:700;font-size:.8rem">'+it.label+'</span>'));sel.classList.add('done');sel.classList.remove('sel');sel=null;bin.classList.add('pop');setTimeout(()=>bin.classList.remove('pop'),300);placed++;fb.style.color='#0f7a44';fb.textContent=placed>=tot?'🏆 All sorted — well done!':'✓ Correct!';}
+    else{bin.classList.add('shake');setTimeout(()=>bin.classList.remove('shake'),400);fb.style.color='#b23';fb.textContent='❌ Not that bin — try again.';}
+  });
+}
+function wClassify(host,w){
+  let i=0,score=0;
+  function show(){
+    if(i>=w.items.length){host.innerHTML=`<div class="w-cls"><div class="w-title">🎉 Done! You got ${score} / ${w.items.length}.</div><button class="btn sm" id="clsAgain">↺ Play again</button></div>`;const a=host.querySelector('#clsAgain');if(a)a.onclick=()=>{i=0;score=0;show();};return;}
+    const it=w.items[i];
+    host.innerHTML=`<div class="w-cls"><div class="w-title">${w.title||'Which group does it belong to?'}</div>
+     <div class="item">${iconOr(it.icon)}<span>${it.label}</span></div>
+     <div class="w-cats">${w.cats.map(c=>`<button class="btn sm ghost" data-c="${c}">${c}</button>`).join('')}</div>
+     <div class="w-fb" id="wcfb"></div></div>`;
+    host.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const ok=b.dataset.c===it.cat,fb=host.querySelector('#wcfb');host.querySelectorAll('[data-c]').forEach(x=>x.disabled=true);if(ok){score++;fb.style.color='#0f7a44';fb.textContent='✓ Correct!';}else{fb.style.color='#b23';fb.textContent='❌ It belongs in: '+it.cat;}setTimeout(()=>{i++;show();},950);});
+  }
+  show();
+}
+const SLIDE_WIDGETS={
+ m1:[
+  {type:'reveal',title:'👆 Tap each object',cards:[{icon:'rock',label:'Rock',reveal:'Keeps its shape → SOLID'},{icon:'water',label:'Water',reveal:'Can be poured → LIQUID'},{icon:'balloon',label:'Balloon',reveal:'Fills the space → GAS'}]},
+  {type:'observe',cols:['Keeps shape?','Can it flow?','Can it be poured?'],rows:[{icon:'ice',label:'Ice cube',ans:[true,false,false]},{icon:'water',label:'Water',ans:[false,true,true]},{icon:'balloon',label:'Air-filled balloon',ans:[false,true,false]},{icon:'block',label:'Wooden block',ans:[true,false,false]},{icon:'juice',label:'Juice',ans:[false,true,true]},{icon:'syringe',label:'Syringe (trapped air)',ans:[false,true,false]}]},
+  {type:'particles'},
+  {type:'afl',title:'👆 How are you doing with today\'s goals?',statements:[{t:'I can list the characteristics of solids, liquids and gases.'},{t:'I can explain how solids, liquids and gases are different.'},{t:'I can classify everyday objects as solid, liquid or gas.'}]},
+  {type:'sort',bins:[{id:'solid',icon:'ice',label:'Solid'},{id:'liquid',icon:'water',label:'Liquid'},{id:'gas',icon:'air',label:'Gas'}],items:[{icon:'rock',label:'Rock',bin:'solid'},{icon:'ice',label:'Ice',bin:'solid'},{icon:'block',label:'Block',bin:'solid'},{icon:'water',label:'Water',bin:'liquid'},{icon:'juice',label:'Juice',bin:'liquid'},{icon:'balloon',label:'Balloon air',bin:'gas'}]},
+  {type:'classify',title:'Classify each one:',cats:['Solid','Liquid','Gas'],items:[{icon:'water',label:'Water',cat:'Liquid'},{icon:'air',label:'Air',cat:'Gas'},{icon:'rock',label:'Rock',cat:'Solid'}]}
+ ],
+ m2:[
+  {type:'reveal',cards:[{icon:'water',label:'Water',reveal:'Changes shape & can be poured → LIQUID'},{icon:'block',label:'Wooden block',reveal:'Keeps its shape → SOLID'}]},
+  {type:'observe',cols:['Keeps shape?','Flows?','Takes container shape?'],rows:[{icon:'water',label:'Water',ans:[false,true,true]},{label:'Sand',ans:[false,true,true]},{icon:'block',label:'Block',ans:[true,false,false]},{label:'Clay',ans:[true,false,false]}]},
+  {type:'sort',title:'👆 Sort each material: solid or liquid?',bins:[{id:'solid',icon:'ice',label:'Solid'},{id:'liquid',icon:'water',label:'Liquid'}],items:[{icon:'block',label:'Block',bin:'solid'},{icon:'rock',label:'Rock',bin:'solid'},{icon:'ice',label:'Ice',bin:'solid'},{icon:'water',label:'Water',bin:'liquid'},{icon:'juice',label:'Juice',bin:'liquid'}]},
+  {type:'afl',title:'👆 How are you doing with today\'s goals?',statements:[{t:'I can observe how solids and liquids behave in different containers.'},{t:'I can compare solids and liquids using evidence.'},{t:'I can explain how solids and liquids are similar and different.'}]},
+  {type:'classify',title:'Mystery material — solid or liquid?',cats:['Acts like a SOLID','Acts like a LIQUID'],items:[{label:'Honey',cat:'Acts like a LIQUID'},{label:'Rice',cat:'Acts like a SOLID'},{label:'Jelly',cat:'Acts like a SOLID'},{icon:'juice',label:'Juice',cat:'Acts like a LIQUID'}]},
+  {type:'reveal',cards:[{icon:'block',label:'Solids',reveal:'Keep their shape · do not flow easily'},{icon:'water',label:'Liquids',reveal:'Flow · take the shape of their container'}]}
+ ],
+ m3:[
+  {type:'classify',title:'Solid, liquid… or tricky?',cats:['Solid','Liquid','Tricky!'],items:[{label:'Honey',cat:'Liquid'},{label:'Sand',cat:'Tricky!'},{label:'Toothpaste',cat:'Tricky!'},{label:'Slime',cat:'Tricky!'}]},
+  {type:'observe',cols:['Flows?','Keeps shape?'],rows:[{label:'Honey',ans:[true,false]},{label:'Toothpaste',ans:[false,false]},{label:'Slime',ans:[true,false]},{label:'Sand',ans:[true,false]}]},
+  {type:'reveal',cards:[{label:'Claim',reveal:'A statement that says something is true'},{label:'Evidence',reveal:'What you observe that shows if it is true'},{label:'Conclusion',reveal:'What you decide after looking at the evidence'}]},
+  {type:'afl',title:'👆 How are you doing with today\'s goals?',statements:[{t:'I can question whether a material is a solid or a liquid.'},{t:'I can evaluate evidence from my observations.'},{t:'I can justify my conclusion using science words.'}]},
+  {type:'sort',title:'👆 Is each statement a claim or evidence?',bins:[{id:'claim',label:'Claim'},{id:'evidence',label:'Evidence'}],items:[{label:'All materials are solid or liquid',bin:'claim'},{label:'The honey flowed slowly',bin:'evidence'},{label:'The sand poured like a liquid',bin:'evidence'},{label:'Slime is a liquid',bin:'claim'}]},
+  {type:'reveal',cards:[{label:'My Claim',reveal:'What I tested today'},{label:'My Evidence',reveal:'What I observed'},{label:'My Conclusion',reveal:'What I decided'}]}
+ ],
+ s2l1:[
+  {type:'reveal',title:'👆 Tap each object to see its property',cards:[{icon:'bottle',label:'Plastic bottle',reveal:'Smooth & waterproof → PLASTIC'},{icon:'spoon',label:'Metal spoon',reveal:'Hard & shiny → METAL'},{icon:'ruler',label:'Wooden ruler',reveal:'Hard & stiff → WOOD'},{icon:'cloth',label:'Fabric',reveal:'Soft & flexible → FABRIC'},{icon:'sponge',label:'Sponge',reveal:'Soft & squishy → SPONGE'}]},
+  {type:'observe',title:'👆 Tap each box (Yes/No), then check.',cols:['Hard?','Rough?','Flexible?'],rows:[{icon:'spoon',label:'Metal spoon',ans:[true,false,false]},{icon:'block',label:'Wooden ruler',ans:[true,false,false]},{icon:'sponge',label:'Sponge',ans:[false,true,true]},{icon:'cloth',label:'Fabric',ans:[false,false,true]},{icon:'bottle',label:'Plastic bottle',ans:[true,false,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each property word',cards:[{icon:'sponge',label:'Texture',reveal:'How a material feels: smooth or rough'},{icon:'rock',label:'Hardness',reveal:'How hard or soft a material is'},{icon:'cloth',label:'Flexible',reveal:'Able to bend without breaking'},{icon:'block',label:'Rigid',reveal:'Stiff — it keeps its shape and does not bend'}]},
+  {type:'sort',bins:[{id:'hard',label:'Hard'},{id:'soft',label:'Soft'}],items:[{icon:'spoon',label:'Metal spoon',bin:'hard'},{icon:'block',label:'Wooden ruler',bin:'hard'},{icon:'bottle',label:'Plastic bottle',bin:'hard'},{icon:'sponge',label:'Sponge',bin:'soft'},{icon:'cloth',label:'Fabric',bin:'soft'}]},
+  {type:'classify',title:'Which property fits best?',cats:['Hard','Soft','Flexible'],items:[{icon:'spoon',label:'Metal spoon',cat:'Hard'},{icon:'sponge',label:'Sponge',cat:'Soft'},{icon:'cloth',label:'Fabric',cat:'Flexible'},{icon:'block',label:'Wooden ruler',cat:'Hard'}]},
+  null
+ ],
+ s2l2:[
+  {type:'reveal',title:'👆 Which cup is best for water? Tap to find out',cards:[{icon:'cup',label:'Paper cup',reveal:'Soaks up water and goes soggy ✗'},{icon:'bottle',label:'Plastic cup',reveal:'Waterproof and light ✓'},{icon:'foil',label:'Metal cup',reveal:'Waterproof and strong ✓'}]},
+  {type:'observe',title:'👆 Predict Yes/No for each test, then check.',cols:['Strong?','Flexible?','Water resistant?'],rows:[{icon:'paper',label:'Paper',ans:[false,true,false]},{icon:'bottle',label:'Plastic',ans:[true,true,true]},{icon:'cloth',label:'Fabric',ans:[false,true,false]},{icon:'foil',label:'Foil',ans:[false,true,true]}]},
+  {type:'reveal',title:'👆 Tap to reveal each science word',cards:[{icon:'spoon',label:'Strength',reveal:'How much force a material can take before it breaks'},{icon:'bottle',label:'Water resistant',reveal:'Does not let water through — stays dry'},{label:'Evidence',reveal:'What your test showed you'},{icon:'ruler',label:'Classify',reveal:'To sort things into groups by their properties'}]},
+  {type:'classify',title:'Best material for an umbrella?',cats:['Paper','Plastic','Fabric'],items:[{label:'☂ Umbrella',cat:'Plastic'}]},
+  null,
+  null
+ ],
+ f1:[
+  {type:'reveal',title:'👆 What happens when I let go? Tap each one',cards:[{icon:'ball',label:'A ball',reveal:'Falls DOWN — pulled by gravity ⬇️'},{icon:'pencil',label:'A pencil',reveal:'Falls DOWN — pulled by gravity ⬇️'},{icon:'apple',label:'An apple',reveal:'Falls DOWN — pulled by gravity ⬇️'}]},
+  {type:'classify',title:'Which way did it move?',cats:['Up','Down','Sideways'],items:[{icon:'ball',label:'Ball',cat:'Down'},{icon:'book',label:'Book',cat:'Down'},{icon:'apple',label:'Apple',cat:'Down'},{icon:'leaf',label:'Leaf',cat:'Down'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'apple',label:'Gravity',reveal:'A force that pulls objects toward Earth'},{icon:'magnet',label:'Force',reveal:'A push or a pull'},{icon:'earth',label:'Earth',reveal:'The planet we live on — gravity pulls us to it'},{icon:'magnet',label:'Pull',reveal:'To move something toward you (gravity pulls down)'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Gravity pulls objects toward Earth.',correct:true},{t:'Gravity pushes objects up into the sky.',correct:false},{t:'Gravity makes a dropped ball fall down.',correct:true}]},
+  {type:'sort',title:'👆 Gravity or not gravity?',bins:[{id:'g',label:'Gravity'},{id:'n',label:'Not gravity'}],items:[{icon:'apple',label:'Apple falls',bin:'g'},{icon:'rain',label:'Rain falls',bin:'g'},{icon:'ball',label:'Ball drops',bin:'g'},{icon:'leaf',label:'Leaf falls',bin:'g'},{icon:'magnet',label:'Magnet & clip',bin:'n'},{icon:'bulb',label:'Light on',bin:'n'}]},
+  null
+ ],
+ f2:[
+  {type:'classify',title:'Dropped at the same time — which lands first?',cats:['Feather','Book','Same time'],items:[{label:'🪶 vs 📚',cat:'Book'}]},
+  {type:'observe',title:'👆 Tap Yes/No, then check your predictions.',cols:['Falls down?','Falls fast?'],rows:[{icon:'ball',label:'Tennis ball',ans:[true,true]},{icon:'feather',label:'Feather',ans:[true,false]},{icon:'pencil',label:'Eraser',ans:[true,true]},{icon:'paper',label:'Flat paper',ans:[true,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'apple',label:'Gravity',reveal:'Pulls all objects toward Earth'},{icon:'feather',label:'Air Resistance',reveal:'A force from the air that slows falling objects'},{icon:'book',label:'Observe',reveal:'To watch carefully and notice what happens'},{icon:'ruler',label:'Investigation',reveal:'A fair test to answer a science question'}]},
+  {type:'afl',style:'traffic',title:'🚦 How are you doing? Tap a colour for each goal.',statements:[{t:'I can name objects that gravity pulls down.'},{t:'I can describe what happens when objects fall.'},{t:'I can carry out a gravity investigation.'}]},
+  {type:'sort',title:'👆 Falls because of gravity, or not?',bins:[{id:'g',label:'Falls — gravity'},{id:'n',label:'Not gravity'}],items:[{icon:'apple',label:'Apple falls',bin:'g'},{icon:'ball',label:'Ball drops',bin:'g'},{icon:'leaf',label:'Leaf falls',bin:'g'},{icon:'magnet',label:'Magnet & clip',bin:'n'},{icon:'bulb',label:'Light on',bin:'n'},{icon:'speaker',label:'Speaker sound',bin:'n'}]},
+  null
+ ],
+ f3:[
+  {type:'reveal',title:'👆 What do they share? Tap each one',cards:[{icon:'ball',label:'Ball falling',reveal:'Moves DOWN, toward Earth'},{icon:'apple',label:'Apple dropping',reveal:'Moves DOWN, toward Earth'},{icon:'rain',label:'Rain falling',reveal:'Moves DOWN, toward Earth'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each, then check.',cols:['Moves downward?','Evidence of gravity?'],rows:[{icon:'apple',label:'Apple',ans:[true,true]},{icon:'rain',label:'Rain',ans:[true,true]},{icon:'ball',label:'Ball',ans:[true,true]},{icon:'leaf',label:'Leaf',ans:[true,true]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{label:'Claim',reveal:'A statement we think is true'},{label:'Evidence',reveal:'What we observe that supports a claim'},{icon:'book',label:'Observation',reveal:'Something we notice by watching carefully'},{icon:'apple',label:'Gravity',reveal:'A force that pulls objects toward Earth'}]},
+  {type:'sort',title:'👆 Is each card a claim or evidence?',bins:[{id:'claim',label:'Claim'},{id:'evidence',label:'Evidence'}],items:[{label:'Gravity pulls objects toward Earth',bin:'claim'},{label:'The ball fell when I let go',bin:'evidence'},{label:'Rain landed on the ground',bin:'evidence'},{label:'All objects are pulled down',bin:'claim'}]},
+  {type:'classify',title:'Is this evidence for gravity?',cats:['Evidence of gravity','Not evidence'],items:[{icon:'apple',label:'Apple falls',cat:'Evidence of gravity'},{icon:'rain',label:'Rain falls',cat:'Evidence of gravity'},{icon:'magnet',label:'Magnet & clip',cat:'Not evidence'},{icon:'bulb',label:'Light on',cat:'Not evidence'}]},
+  {type:'afl',mode:'judge',title:'🕵️ Evidence of gravity — True or False?',statements:[{t:'A ball falls when dropped.',correct:true},{t:'A magnet attracts a paper clip.',correct:false},{t:'Rain falls to the ground.',correct:true},{t:'A light turns on.',correct:false},{t:'Leaves fall from a tree.',correct:true}]}
+ ],
+ e1:[
+  {type:'reveal',title:'👆 Tap each one to see how it is connected',cards:[{icon:'sun',label:'The Sun',reveal:'Gives out light and heat energy'},{icon:'grass',label:'Green plant',reveal:'Catches sunlight to make food'},{icon:'apple',label:'Food',reveal:'Stores energy for our bodies'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each plant, then check.',cols:['Gets sunlight?','Stays green & healthy?'],rows:[{icon:'grass',label:'Plant in the Sun',ans:[true,true]},{icon:'leaf',label:'Plant in the dark',ans:[false,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'sun',label:'Energy',reveal:'The power to make things move, grow and work'},{icon:'sun',label:'Sun',reveal:'A star — our main source of light and heat energy'},{icon:'grass',label:'Producer',reveal:'A living thing (a plant) that makes its own food'},{icon:'leaf',label:'Photosynthesis',reveal:'How plants use sunlight to make food'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'The Sun is the main source of energy for living things.',correct:true},{t:'Animals make their own food using sunlight.',correct:false},{t:'Plants are producers because they make their own food.',correct:true}]},
+  {type:'sort',title:'👆 Producer or consumer?',bins:[{id:'p',icon:'grass',label:'Producer'},{id:'c',icon:'rabbit',label:'Consumer'}],items:[{icon:'grass',label:'Grass',bin:'p'},{icon:'tree',label:'Tree',bin:'p'},{icon:'carrot',label:'Carrot',bin:'p'},{icon:'rabbit',label:'Rabbit',bin:'c'},{icon:'fox',label:'Fox',bin:'c'},{icon:'cow',label:'Cow',bin:'c'}]},
+  null
+ ],
+ e2:[
+  {type:'reveal',title:'👆 Tap each one to see who eats what',cards:[{icon:'grass',label:'Grass',reveal:'A producer — makes food from sunlight'},{icon:'rabbit',label:'Rabbit',reveal:'Eats the grass (a consumer)'},{icon:'fox',label:'Fox',reveal:'Eats the rabbit (a consumer)'}]},
+  {type:'sort',title:'👆 What is its role in the food chain?',bins:[{id:'prod',icon:'grass',label:'Producer'},{id:'herb',icon:'rabbit',label:'Eats plants'},{id:'carn',icon:'fox',label:'Eats animals'}],items:[{icon:'grass',label:'Grass',bin:'prod'},{icon:'carrot',label:'Carrot',bin:'prod'},{icon:'rabbit',label:'Rabbit',bin:'herb'},{icon:'cow',label:'Cow',bin:'herb'},{icon:'fox',label:'Fox',bin:'carn'},{icon:'snake',label:'Snake',bin:'carn'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'grass',label:'Food Chain',reveal:'Shows how energy passes between living things'},{icon:'rabbit',label:'Consumer',reveal:'An animal that eats plants or other animals'},{icon:'fox',label:'Predator',reveal:'An animal that hunts and eats other animals'},{icon:'mouse',label:'Prey',reveal:'An animal that is hunted and eaten'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'A food chain starts with the Sun.',correct:true},{t:'The arrows point towards the animal that eats.',correct:true},{t:'Foxes are producers.',correct:false}]},
+  {type:'classify',title:'What is its role in the chain?',cats:['Producer','Predator','Prey'],items:[{icon:'grass',label:'Grass',cat:'Producer'},{icon:'fox',label:'Fox',cat:'Predator'},{icon:'rabbit',label:'Rabbit',cat:'Prey'},{icon:'tree',label:'Tree',cat:'Producer'}]},
+  null
+ ],
+ e3:[
+  {type:'reveal',title:'👆 Where did the runner get energy? Tap each',cards:[{icon:'person',label:'Runner',reveal:'Uses energy to run, grow and breathe'},{icon:'bread',label:'Bread',reveal:'The food that gave the energy'},{icon:'sun',label:'The Sun',reveal:'Where the energy first came from'}]},
+  {type:'classify',title:'What is this in the energy model?',cats:['Source of energy','Producer','Food','Consumer'],items:[{icon:'sun',label:'The Sun',cat:'Source of energy'},{icon:'grass',label:'Wheat plant',cat:'Producer'},{icon:'bread',label:'Bread',cat:'Food'},{icon:'person',label:'Child',cat:'Consumer'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'person',label:'Energy',reveal:'What living things need to move, grow and work'},{icon:'sun',label:'Model',reveal:'A simple way to show how something works'},{icon:'bread',label:'Transfer',reveal:'To pass energy from one thing to another'},{icon:'sun',label:'Sun',reveal:'Where the energy in all food began'}]},
+  {type:'afl',style:'traffic',title:'🚦 How are you doing? Tap a colour for each goal.',statements:[{t:'I can say what animals need energy for.'},{t:'I can explain how energy gets from the Sun to animals.'},{t:'I can make a model tracing energy back to the Sun.'}]},
+  {type:'sort',title:'👆 Which step of the energy model?',bins:[{id:'s1',icon:'sun',label:'① The Sun'},{id:'s2',icon:'grass',label:'② Plant'},{id:'s3',icon:'cow',label:'③ Animal'}],items:[{icon:'sun',label:'Sun',bin:'s1'},{icon:'grass',label:'Grass',bin:'s2'},{icon:'carrot',label:'Carrot',bin:'s2'},{icon:'rabbit',label:'Rabbit',bin:'s3'},{icon:'cow',label:'Cow',bin:'s3'},{icon:'fox',label:'Fox',bin:'s3'}]},
+  null
+ ]
+};
+
+/* ===== Resources — printable picture cards + performance task ===== */
+const RESOURCES={
+ matter:[
+   {kind:'cards',title:'States of Matter — Picture Cards',note:'Cut out and sort into Solid / Liquid / Gas.',cards:[{i:'ice',l:'Ice'},{i:'rock',l:'Rock'},{i:'block',l:'Wooden block'},{i:'water',l:'Water'},{i:'juice',l:'Juice'},{i:'milk',l:'Milk'},{i:'air',l:'Air'},{i:'balloon',l:'Balloon air'},{i:'steam',l:'Steam'}]},
+   {kind:'cards',title:'Material Property Cards',note:'Cut out and sort by property — hard/soft, flexible/rigid, smooth/rough.',cards:[{i:'spoon',l:'Metal spoon'},{i:'ruler',l:'Wooden ruler'},{i:'bottle',l:'Plastic bottle'},{i:'cloth',l:'Fabric'},{i:'sponge',l:'Sponge'},{i:'foil',l:'Foil'},{i:'paper',l:'Paper'},{i:'cup',l:'Cup'}]}
+ ],
+ forces:[
+   {kind:'cards',title:'Gravity Picture Cards',note:'Cut out. Sort into "Falls because of gravity" and "Does not show gravity".',cards:[{i:'apple',l:'Apple'},{i:'leaf',l:'Leaf'},{i:'ball',l:'Ball'},{i:'book',l:'Book'},{i:'rain',l:'Rain'},{i:'feather',l:'Feather'},{i:'bird',l:'Bird'},{i:'kite',l:'Kite'},{i:'bulb',l:'Light bulb'},{i:'magnet',l:'Magnet'},{i:'speaker',l:'Speaker'},{i:'tv',l:'Television'}]},
+   {kind:'poster',title:'End-of-Unit Performance Task — "Gravity Around Us" Poster',note:'Print one per student.',body:`<p><b>Your task:</b> Create a poster called <b>"Gravity Around Us"</b> that shows what you have learned about gravity.</p>
+     <h2>Your poster must include</h2>
+     <ol>
+       <li>A <b>definition of gravity</b> in your own words.<div class="lines"></div><div class="lines"></div></li>
+       <li><b>Three examples</b> of gravity from everyday life.<div class="lines"></div><div class="lines"></div><div class="lines"></div></li>
+       <li>Your <b>observations or evidence</b> (what you saw that shows gravity).<div class="lines"></div><div class="lines"></div></li>
+       <li>A <b>written explanation</b> that supports the idea that gravity pulls objects toward Earth.<textarea class="ws-area"></textarea></li>
+     </ol>
+     <h2>Picture ideas you could draw</h2>
+     <div class="pic-bank">${['apple','rain','ball','leaf','feather','kite','bird','book'].map(k=>`<div class="pic">${ICONS[k]||''}</div>`).join('')}</div>
+     <h2>✅ Success checklist — tap each one you have done</h2>
+     <div class="checklist">${['I wrote what gravity is.','I gave three real examples.','I added observations or evidence.','I explained that gravity pulls objects toward Earth.','My poster is neat and clearly labelled.'].map(c=>`<button class="chk" onclick="this.classList.toggle('on')"><span class="box"></span>${c}</button>`).join('')}</div>`}
+ ],
+ energy:[
+   {kind:'cards',title:'Food Chain Picture Cards',note:'Cut out. Build food chains — start with the Sun, then a plant, then animals.',cards:[{i:'sun',l:'Sun'},{i:'grass',l:'Grass'},{i:'tree',l:'Tree'},{i:'carrot',l:'Carrot'},{i:'corn',l:'Corn'},{i:'rabbit',l:'Rabbit'},{i:'mouse',l:'Mouse'},{i:'grasshopper',l:'Grasshopper'},{i:'cow',l:'Cow'},{i:'chicken',l:'Chicken'},{i:'fish',l:'Fish'},{i:'frog',l:'Frog'},{i:'snake',l:'Snake'},{i:'fox',l:'Fox'},{i:'deer',l:'Deer'},{i:'bird',l:'Bird'}]},
+   {kind:'cards',title:'Producers & Consumers Sorting Cards',note:'Cut out and sort into Producers (make their own food) and Consumers (eat other living things).',cards:[{i:'grass',l:'Grass'},{i:'tree',l:'Tree'},{i:'carrot',l:'Carrot'},{i:'corn',l:'Corn'},{i:'rabbit',l:'Rabbit'},{i:'cow',l:'Cow'},{i:'fox',l:'Fox'},{i:'person',l:'Person'}]}
+ ]
+};
+function resHTML(r){
+  if(r.kind==='cards') return `<section class="ws sheet-page"><h1>${r.title}</h1><p class="meta">${r.note||'Cut out the cards and use them in the lesson.'}</p><div class="cut-cards">${r.cards.map(c=>`<div class="cut-card">${ICONS[c.i]||''}<div class="cl">${c.l}</div></div>`).join('')}</div></section>`;
+  if(r.kind==='poster') return `<section class="ws sheet-page"><h1>${r.title}</h1>${r.note?`<p class="meta">${r.note}</p>`:''}${r.body}</section>`;
+  return '';
+}
+function vResources(){
+  const u=cur.unit;if(!u)return go('units');
+  setCrumb('Unit '+u.n+' · Resources');
+  const sets=RESOURCES[u.id]||[];
+  app.innerHTML=`<section>
+    <div class="no-print"><button class="btn gray sm" onclick="go('unit')">← Back to unit</button>
+      <button class="btn sm" onclick="window.print()">🖨️ Print all resources</button>
+      <span style="color:var(--muted);font-weight:700;font-size:.9rem">${u.title} — printable classroom resources</span></div>
+    ${sets.length?sets.map(resHTML).join(''):'<div class="panel">Resources for this unit are coming soon.</div>'}
+  </section>`;
+}
+/* expand the slide deck to full screen */
+function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';}
+function exitDeckFS(){const d=document.getElementById('deck');if(d)d.classList.remove('fs');document.body.classList.remove('deck-fs');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')exitDeckFS();});
+window.MCQS_EXTRA={
+m2:[
+  {q:"What does a solid do when you put it into a different container?",options:["It flows to fill the container","It keeps its own shape","It becomes a liquid","It disappears"],answer:1},
+  {q:"Which word best describes something that can bend without breaking?",options:["Rigid","Heavy","Flexible","Transparent"],answer:2},
+  {q:"What happens when you pour water into a bowl?",options:["The water keeps a fixed shape","The water takes the shape of the bowl","The water turns into a solid","The water disappears"],answer:1},
+  {q:"A wooden block is placed into a tall jar and then into a wide box. What happens to its shape?",options:["It changes to fit the jar","It changes to fit the box","It stays the same shape in both containers","It melts into a liquid"],answer:2},
+  {q:"Which of these is the BEST example of a rigid solid?",options:["A rubber band","A piece of clay","A building block","A wet cloth"],answer:2},
+  {q:"In science, what do we call information gathered from watching and testing?",options:["A guess","A conclusion","A question","Evidence"],answer:3},
+  {q:"Sand is poured from a cup into a bowl. What do you observe?",options:["The sand keeps the shape of the cup","The sand takes the shape of the bowl","The sand turns into a liquid","The sand floats to the top"],answer:1},
+  {q:"Which property explains why liquids can be poured?",options:["They are rigid","They flow easily","They keep their shape","They are always clear"],answer:1},
+  {q:"A student squeezes a lump of clay and it changes shape. What does this tell us about clay?",options:["Clay is a liquid","Clay is rigid","Clay is flexible","Clay cannot be observed"],answer:2},
+  {q:"Why do scientists use observations as evidence?",options:["Because observations are always opinions","Because observations are things you actually see and test","Because observations are always correct","Because observations do not need to be tested"],answer:1}
+],
+m3:[
+  {q:"What is a claim in science?",options:["A tool used for measuring","A statement that can be tested","A drawing of an experiment","A type of material"],answer:1},
+  {q:"A student says honey is hard to classify because it flows slowly. What type of information is this?",options:["A claim","A question","Evidence","A hypothesis"],answer:2},
+  {q:"After testing several materials, a class decides that not every material fits neatly into the solid or liquid category. What is this called?",options:["A claim","A test","A conclusion","An observation tool"],answer:2},
+  {q:"Which of the following is the BEST example of a claim you can test?",options:["Blue is a nice colour","Every material is either a solid or a liquid","Science is interesting","Water is wet sometimes"],answer:1},
+  {q:"Slime is tricky to classify because it does what?",options:["It is always a solid","It behaves like both a solid and a liquid","It has no colour","It does not exist in nature"],answer:1},
+  {q:"What do scientists use to decide whether a claim is true or false?",options:["Their favourite guess","Evidence from observations and tests","The opinion of one person","A random choice"],answer:1},
+  {q:"A student tests whether sand is a solid or a liquid. She pours it and watches it flow. What step is she doing?",options:["Writing a conclusion","Making a claim","Gathering evidence","Ignoring the experiment"],answer:2},
+  {q:"Quicksand is hard to classify because it acts like both a solid and a liquid. What does this show about the claim that every material is a solid or a liquid?",options:["The claim is definitely true","The claim may need to be reconsidered","The claim does not need evidence","The claim is about liquids only"],answer:1},
+  {q:"Which step comes LAST in testing a claim?",options:["Making an observation","Writing a claim","Conducting a test","Writing a conclusion"],answer:3},
+  {q:"Toothpaste flows when squeezed but holds its shape in a tube. Why is it difficult to classify?",options:["It has a strong smell","It is transparent","It shows properties of both solids and liquids","It is always cold"],answer:2}
+],
+s2l1:[
+  {q:"Which physical property describes how a material feels when you touch it?",options:["Colour","Hardness","Texture","Flexibility"],answer:2},
+  {q:"A student sorts materials into groups based on their colour and how rough they feel. What is she sorting by?",options:["Mass and size","Physical properties","Temperature","Weight"],answer:1},
+  {q:"Which of these materials is BEST described as flexible?",options:["A metal nail","A wooden plank","A rubber band","A glass bottle"],answer:2},
+  {q:"What is the physical property of a material that you can see without touching it?",options:["Texture","Hardness","Colour","Flexibility"],answer:2},
+  {q:"A brick cannot bend and will break before it changes shape. Which word describes the brick?",options:["Flexible","Smooth","Rigid","Transparent"],answer:2},
+  {q:"Which two materials would MOST LIKELY be sorted into the same group if sorted by texture?",options:["Sandpaper and smooth plastic","Sandpaper and rough wood","Silk and sandpaper","Metal and rubber"],answer:1},
+  {q:"A student presses her fingernail into two materials. She leaves a mark in one but not the other. Which property is she testing?",options:["Colour","Flexibility","Hardness","Texture"],answer:2},
+  {q:"What does it mean when we say a material is hard?",options:["It is easy to bend","It is difficult to scratch or dent","It has a rough texture","It is very heavy"],answer:1},
+  {q:"Which of the following is a physical property you can observe with your eyes?",options:["How much it costs","What it is made of","Its colour","How old it is"],answer:2},
+  {q:"Fabric can be bent and folded easily without breaking. This tells us fabric is what?",options:["Rigid","Flexible","Hard","Transparent"],answer:1}
+],
+s2l2:[
+  {q:"What is a fair test?",options:["A test where you change everything at once","A test where only one thing is changed and everything else stays the same","A test done without any planning","A test that always gives the same answer"],answer:1},
+  {q:"A student wants to find the best material for a raincoat. Which property should she test FIRST?",options:["Colour","Water resistance","Cost","Size"],answer:1},
+  {q:"Paper gets weak when wet. Which conclusion does this support?",options:["Paper is the best material for a water bottle","Paper should be used to make umbrellas","Paper is not a good material for a raincoat","Paper is the strongest material"],answer:2},
+  {q:"Which of the following materials is MOST water resistant?",options:["Paper","Cotton fabric","Plastic","Cardboard"],answer:2},
+  {q:"A student says plastic is the best material for a shopping bag. She shows test results where plastic held the most weight and did not absorb water. What is she providing?",options:["A claim only","Evidence to support her claim","A conclusion without evidence","An unfair test"],answer:1},
+  {q:"Which material would be BEST for making a water bottle?",options:["Paper","Fabric","Metal","Cardboard"],answer:2},
+  {q:"In the Claim-Evidence-Reasoning method, what does the reasoning step ask you to do?",options:["Repeat the experiment","Explain why the evidence supports the claim","Describe the colour of the material","List all the materials you used"],answer:1},
+  {q:"A class tests which material is strongest by hanging weights from strips of each material. What property are they comparing?",options:["Water resistance","Colour","Strength","Texture"],answer:2},
+  {q:"Metal is described as strong. Which piece of evidence BEST supports this?",options:["Metal has a shiny colour","Metal does not bend easily and can hold heavy loads","Metal is always cold to touch","Metal is found in many places"],answer:1},
+  {q:"After testing paper, foil, and plastic for water resistance, a student records what she sees. What are her recorded observations called?",options:["Claims","Conclusions","Evidence","Predictions"],answer:2}
+],
+f1:[
+  {q:"What is gravity?",options:["A force that pulls objects toward the Earth","A force that pushes objects away from the Earth","A type of magnet that attracts metal","A sound that travels through the air"],answer:0},
+  {q:"Which of these is an example of gravity at work?",options:["A magnet picking up a paper clip","Turning on a light switch","A ball falling to the ground after being thrown up","Sound coming out of a speaker"],answer:2},
+  {q:"A student drops a pencil. What force pulls it down to the floor?",options:["Magnetism","Gravity","Electricity","Friction"],answer:1},
+  {q:"Which word means a push or a pull?",options:["Earth","Gravity","Force","Pull"],answer:2},
+  {q:"Leaves fall from a tree to the ground. What best explains why?",options:["The wind is always blowing them down","Gravity pulls them toward the Earth","The leaves are too heavy for the branch","The Sun heats them and they drop"],answer:1},
+  {q:"Which of these is NOT an example of gravity?",options:["Rain falling from clouds","A person jumping up and coming back down","A magnet attracting a paper clip","A ball rolling off a table and hitting the floor"],answer:2},
+  {q:"Gravity pulls objects toward which object?",options:["The Moon","The Sun","The Earth","A magnet"],answer:2},
+  {q:"A student jumps into the air and lands back on the ground. What pulled the student down?",options:["Friction","Electricity","Air","Gravity"],answer:3},
+  {q:"Which of these best describes what gravity does?",options:["It pushes objects upward","It pulls objects toward the Earth","It makes objects float in the air","It turns objects into magnets"],answer:1},
+  {q:"Which two vocabulary words belong together when describing why a ball falls down?",options:["Sound and electricity","Force and gravity","Magnet and metal","Switch and light"],answer:1}
+],
+f2:[
+  {q:"Why do objects fall toward the ground when you drop them?",options:["Because they are heavy","Because of the wind","Because gravity pulls them down","Because of electricity"],answer:2},
+  {q:"Does gravity act on all objects or only heavy ones?",options:["Only very heavy objects","Only metal objects","Only round objects","All objects"],answer:3},
+  {q:"A feather falls more slowly than a book. What is slowing the feather down?",options:["Gravity","Magnetism","Air resistance","Friction with the ground"],answer:2},
+  {q:"What does air resistance do to a falling object?",options:["It pulls the object downward faster","It pushes up against the object and slows it down","It makes the object heavier","It stops gravity from working"],answer:1},
+  {q:"In a gravity investigation, what should you do FIRST before dropping objects?",options:["Record your results in a table","Observe what happens","Make a prediction about what will happen","Tell everyone your conclusion"],answer:2},
+  {q:"A student drops a flat piece of paper and a rock at the same time. The rock hits the ground first. What is the best reason?",options:["The rock is made of a different color","The paper has more gravity acting on it","Air resistance slows the paper down more than the rock","Gravity does not act on paper"],answer:2},
+  {q:"After dropping objects in an investigation, what is the next step?",options:["Predict what will happen","Observe and record what you see","Buy new equipment","Eat a snack"],answer:1},
+  {q:"Where should you record your results during a science investigation?",options:["On the wall","In a table or chart","On your hand","You do not need to record results"],answer:1},
+  {q:"Which object would be slowed down the MOST by air resistance when falling?",options:["A heavy rock","A marble","A large open parachute","A solid metal ball"],answer:2},
+  {q:"A student says gravity only acts on objects that are dropped by a person. Is this correct?",options:["Yes, gravity only works when a person drops something","No, gravity acts on all objects all the time","Yes, gravity only works on school equipment","No, gravity only acts on water"],answer:1}
+],
+f3:[
+  {q:"What is a claim?",options:["Something you observe happening in an experiment","A statement that tells what you think is true","A table where you record results","A type of force like gravity"],answer:1},
+  {q:"What is evidence?",options:["A guess you make before an experiment","A statement about what you believe","Observations that support a claim","A question you ask at the start"],answer:2},
+  {q:"Which of these is a CLAIM about gravity?",options:["The ball fell when I released it","Gravity pulls objects toward the Earth","Leaves landed on the ground after falling","Rain hit the pavement"],answer:1},
+  {q:"Which of these is a piece of EVIDENCE for gravity?",options:["Gravity is a pulling force","All objects fall because of gravity","A ball fell to the ground when it was released","Earth is a large planet"],answer:2},
+  {q:"A student says: the ball fell when I let go of it. Is this a claim or evidence?",options:["A claim, because it tells what they believe","Evidence, because it is an observation of what happened","Neither, it is just a question","A prediction, because it happened before the test"],answer:1},
+  {q:"Which of the following is NOT evidence of gravity?",options:["Rain falls to the ground","Leaves fall from trees","A magnet attracts a paper clip","A ball falls when released"],answer:2},
+  {q:"What does a scientist do with evidence?",options:["Ignores it if it does not match their prediction","Uses it to support or challenge a claim","Keeps it secret so others cannot see","Throws it away after the investigation"],answer:1},
+  {q:"Which sentence is the BEST claim that gravity exists?",options:["I think the ball will fall when I drop it","Gravity pulls objects toward the Earth","The ball is round and smooth","The table has four legs"],answer:1},
+  {q:"A light turning on when you flip a switch is NOT evidence of gravity because:",options:["Lights are too small to matter","Flipping a switch uses electricity, not a pulling force toward the Earth","Gravity only works outside","Switches are made of metal"],answer:1},
+  {q:"In the Claim-Evidence-Reasoning framework, what comes after you state your claim and share your evidence?",options:["You make a new prediction","You explain your reasoning for how the evidence supports the claim","You start a completely new investigation","You delete the evidence that does not fit"],answer:1}
+],
+e1:[
+  {q:"What is the main source of energy for living things on Earth?",options:["The Moon","The Sun","Wind","Water"],answer:1},
+  {q:"What do we call a living thing that makes its own food using sunlight?",options:["Consumer","Predator","Producer","Herbivore"],answer:2},
+  {q:"What is the process plants use to make their own food?",options:["Digestion","Respiration","Pollination","Photosynthesis"],answer:3},
+  {q:"Where is the energy from the Sun stored after a plant makes food?",options:["In the soil","In the air","In the food the plant makes","In the roots only"],answer:2},
+  {q:"Why can animals not make their own food?",options:["They do not need energy","They cannot use sunlight to make food","They live underground","They eat too much"],answer:1},
+  {q:"A rabbit eats grass to get energy. Where did that energy originally come from?",options:["The rabbit itself","The soil","Rain","The Sun"],answer:3},
+  {q:"Which of the following is an example of a producer?",options:["A fox","A rabbit","A green plant","A frog"],answer:2},
+  {q:"What happens to solar energy inside a plant during photosynthesis?",options:["It is lost into the air","It is stored in the food the plant makes","It is sent to animals directly","It is turned into water"],answer:1},
+  {q:"An animal gets energy by eating a plant. The energy in that plant came from which source?",options:["The animal that ate it before","Another plant","The Sun","The ground"],answer:2},
+  {q:"Which statement best describes what all living things have in common about their energy?",options:["All living things make their own food","All living things get energy that started as energy from the Sun","All living things get energy from the soil","All living things get energy from rain"],answer:1}
+],
+e2:[
+  {q:"What does a food chain show?",options:["How animals find water","How energy passes from one living thing to another","How plants grow in soil","How animals breathe"],answer:1},
+  {q:"Where does most food chains begin?",options:["With a carnivore","With a predator","With the Sun and a producer","With a consumer"],answer:2},
+  {q:"In a food chain, what direction do the arrows point?",options:["From the predator to the prey","From the largest animal to the smallest","In the direction energy flows, from eaten to eater","From the Sun to the soil"],answer:2},
+  {q:"In the food chain: Sun, grass, rabbit, fox — what is the role of the grass?",options:["Consumer","Predator","Prey only","Producer"],answer:3},
+  {q:"What do we call an animal that eats only plants?",options:["Carnivore","Predator","Herbivore","Producer"],answer:2},
+  {q:"A fox eats a rabbit. What is the fox in this relationship?",options:["Prey","Producer","Herbivore","Predator"],answer:3},
+  {q:"In the food chain: grass, rabbit, fox — what is the rabbit?",options:["A producer and a predator","A prey and a consumer","A producer and a herbivore","A predator only"],answer:1},
+  {q:"What do we call an animal that eats other animals?",options:["Herbivore","Producer","Carnivore","Prey"],answer:2},
+  {q:"Which of these is a correctly written food chain?",options:["Fox, rabbit, grass, Sun","Sun, fox, grass, rabbit","Sun, grass, rabbit, fox","Rabbit, grass, Sun, fox"],answer:2},
+  {q:"In a food chain, the rabbit is eaten by the fox. What is the rabbit called in this relationship?",options:["Predator","Producer","Carnivore","Prey"],answer:3}
+],
+e3:[
+  {q:"What is the purpose of building a model of an energy chain?",options:["To show how animals drink water","To show how energy moves from the Sun to animals","To show how plants grow faster","To show how soil is formed"],answer:1},
+  {q:"A child runs in a race and uses energy. Where did that energy originally come from?",options:["The child made the energy","The air around the child","The Sun","The water the child drank"],answer:2},
+  {q:"What do we call the movement of energy from one living thing to another?",options:["Digestion","Energy transfer","Photosynthesis","Respiration"],answer:1},
+  {q:"Bread is made from wheat. Wheat is a plant. What does this tell us about the energy in bread?",options:["The energy in bread came from the baker","The energy in bread came from water","The energy in bread originally came from the Sun","The energy in bread came from the oven"],answer:2},
+  {q:"Which of these correctly traces the energy a child gets from eating bread?",options:["Child, bread, wheat, Sun","Sun, wheat, bread, child","Bread, child, Sun, wheat","Wheat, Sun, bread, child"],answer:1},
+  {q:"What are THREE things animals use energy for, according to the lesson?",options:["Sleeping, digesting, and drinking","Moving, growing, and body functions","Eating, resting, and cooling down","Swimming, flying, and running only"],answer:1},
+  {q:"If you trace the energy a lion uses backwards along the chain, what is always at the very start?",options:["A large animal","Rain","The Moon","The Sun"],answer:3},
+  {q:"What does the word transfer mean when we talk about energy in a food chain?",options:["Energy is destroyed","Energy moves from one thing to another","Energy appears from nowhere","Energy stays in one place forever"],answer:1},
+  {q:"Why is it useful to model the path of energy from the Sun to an animal?",options:["It helps us understand where the energy originally came from","It shows animals how to find food","It proves that plants do not need sunlight","It shows that energy comes from soil"],answer:0},
+  {q:"Which statement correctly describes how energy reaches an animal like a cow?",options:["The cow gets energy directly from the Sun without eating","The cow gets energy by eating grass, which got its energy from the Sun","The cow gets energy from the soil through its hooves","The cow makes its own energy inside its body"],answer:1}
+],
+};
+/* attach quick-check questions authored for the new lessons */
+if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
+
+go('home');
+</script>
+</body>
+</html>
