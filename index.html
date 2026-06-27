@@ -78,6 +78,19 @@
   .ucard.live:hover{border-color:var(--uc,var(--blue));box-shadow:0 8px 20px rgba(15,23,42,.1)}
   .pill{align-self:flex-start;font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:99px}
   .pill.live{background:var(--ucs,#e7f6ee);color:var(--ucd,#0f7a44)}.pill.soon{background:#f0f2f5;color:var(--silver)}
+  /* grade picker on the home page */
+  .grade-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:18px auto 8px;max-width:760px}
+  .grade-card{cursor:pointer;font:inherit;background:var(--card);border:1px solid var(--line);border-top:5px solid #2563eb;border-radius:16px;padding:16px 20px;min-width:118px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .1s,box-shadow .12s}
+  .grade-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1)}
+  .grade-card .gc-lbl{font-weight:800;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .grade-card .gc-num{font-weight:900;font-size:2.5rem;line-height:1.05;color:#1d4ed8}
+  .grade-card .gc-st{font-weight:800;font-size:.78rem;color:#0f7a44}
+  .grade-card.soon{opacity:.62}.grade-card.soon .gc-st{color:var(--silver)}
+  .grade-cards .grade-card:nth-child(1){border-top-color:#ea580c}.grade-cards .grade-card:nth-child(1) .gc-num{color:#c2410c}
+  .grade-cards .grade-card:nth-child(2){border-top-color:#16a34a}.grade-cards .grade-card:nth-child(2) .gc-num{color:#15803d}
+  .grade-cards .grade-card:nth-child(3){border-top-color:#db2777}.grade-cards .grade-card:nth-child(3) .gc-num{color:#be185d}
+  .grade-cards .grade-card:nth-child(4){border-top-color:#0d9488}.grade-cards .grade-card:nth-child(4) .gc-num{color:#0b7a70}
+  .grade-cards .grade-card:nth-child(5){border-top-color:#2563eb}.grade-cards .grade-card:nth-child(5) .gc-num{color:#1d4ed8}
 
   /* single-page standard layout (the sketch) */
   .std{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
@@ -480,6 +493,18 @@ const ICONS={
  glacier:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="gla_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eafaff"/><stop offset="1" stop-color="#a8dcf0"/></linearGradient><linearGradient id="gla_w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4db6e8"/><stop offset="1" stop-color="#1f7ad6"/></linearGradient></defs><rect x="5" y="40" width="54" height="18" rx="3" fill="url(#gla_w)"/><path d="M14 41 L28 13 L42 41 Z" fill="url(#gla_g)" stroke="#9bd3ec" stroke-width="1"/><path d="M28 13 L23 26 L34 26 Z" fill="#ffffff" opacity=".85"/><path d="M30 58 L41 43 L54 58 Z" fill="url(#gla_g)" opacity=".92" stroke="#9bd3ec" stroke-width="1"/></svg>',
  river:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="riv_land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd06a"/><stop offset="1" stop-color="#4f9e2f"/></linearGradient><linearGradient id="riv_w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cc5ee"/><stop offset="1" stop-color="#2479c4"/></linearGradient></defs><rect x="6" y="8" width="52" height="48" rx="8" fill="url(#riv_land)"/><path d="M22 5 Q35 18 24 30 Q13 42 31 59" fill="none" stroke="url(#riv_w)" stroke-width="8" stroke-linecap="round"/><path d="M22 5 Q35 18 24 30 Q13 42 31 59" fill="none" stroke="#cdeeff" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></svg>',
  volcano:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="vol_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a6a5e"/><stop offset="1" stop-color="#43382f"/></linearGradient><radialGradient id="vol_smoke" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#d2d6dc"/><stop offset="1" stop-color="#d2d6dc" stop-opacity="0"/></radialGradient></defs><g fill="url(#vol_smoke)"><circle cx="27" cy="12" r="7"/><circle cx="37" cy="10" r="6"/><circle cx="33" cy="16" r="6"/></g><path d="M9 54 L24 24 L40 24 L55 54 Z" fill="url(#vol_g)"/><path d="M24 24 L40 24 L36 31 Q32 27 28 31 Z" fill="#ff8a1a"/><path d="M27 24 Q30 38 25 54 M37 24 Q34 40 41 54" stroke="#ff5a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="32" cy="55" rx="24" ry="3" fill="#43382f" opacity=".35"/></svg>',
+ drum:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="drum_b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e23b3b"/><stop offset="1" stop-color="#a01818"/></linearGradient></defs><rect x="14" y="24" width="36" height="26" rx="3" fill="url(#drum_b)"/><ellipse cx="32" cy="24" rx="18" ry="6" fill="#f3e2c0" stroke="#caa86a" stroke-width="1.5"/><path d="M16 26 L22 44 M22 26 L16 44 M42 26 L48 44 M48 26 L42 44" stroke="#f3e2c0" stroke-width="2"/><ellipse cx="32" cy="50" rx="18" ry="5" fill="#7a1212"/><line x1="40" y1="10" x2="50" y2="22" stroke="#9c6b34" stroke-width="2.5" stroke-linecap="round"/><circle cx="40" cy="10" r="3" fill="#caa86a"/><line x1="24" y1="10" x2="14" y2="22" stroke="#9c6b34" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="10" r="3" fill="#caa86a"/></svg>',
+ bell:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="bell_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe07a"/><stop offset="1" stop-color="#d49a16"/></linearGradient></defs><path d="M32 12 C22 12 20 22 20 32 C20 40 14 44 14 46 L50 46 C50 44 44 40 44 32 C44 22 42 12 32 12 Z" fill="url(#bell_g)" stroke="#b07f10" stroke-width="1.2"/><circle cx="32" cy="10" r="3" fill="#caa31a"/><ellipse cx="32" cy="50" rx="6" ry="4" fill="#caa31a"/><ellipse cx="27" cy="26" rx="3" ry="8" fill="#fff3c0" opacity=".6"/></svg>',
+ flashlight:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="fl_b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b6b7e"/><stop offset="1" stop-color="#2e3947"/></linearGradient><linearGradient id="fl_beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff4b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff4b0" stop-opacity="0"/></linearGradient></defs><path d="M30 24 L58 14 L58 50 L30 40 Z" fill="url(#fl_beam)"/><rect x="10" y="26" width="22" height="12" rx="3" fill="url(#fl_b)"/><rect x="30" y="23" width="6" height="18" rx="2" fill="#8a97a8"/><circle cx="34" cy="32" r="4" fill="#fff7c8"/></svg>',
+ ear:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="ear_g" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#ffd9b8"/><stop offset="1" stop-color="#e0a878"/></radialGradient></defs><path d="M22 14 C36 8 50 18 48 34 C47 44 40 48 38 54 C36 60 26 60 24 52 C23 47 26 44 26 40 C26 36 22 36 20 32 C16 26 16 18 22 14 Z" fill="url(#ear_g)" stroke="#c08a58" stroke-width="1.2"/><path d="M30 24 C38 22 40 30 36 36 C33 40 33 44 33 46" fill="none" stroke="#c08a58" stroke-width="2" stroke-linecap="round"/></svg>',
+ eye:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="eye_i" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7fc0ff"/><stop offset="1" stop-color="#1f6fd0"/></radialGradient></defs><path d="M6 32 C16 18 48 18 58 32 C48 46 16 46 6 32 Z" fill="#fff" stroke="#3a4654" stroke-width="2"/><circle cx="32" cy="32" r="11" fill="url(#eye_i)"/><circle cx="32" cy="32" r="5" fill="#1a2230"/><circle cx="29" cy="29" r="2" fill="#fff"/></svg>',
+ roots:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="rt_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a3e"/><stop offset="1" stop-color="#5e3a1f"/></linearGradient></defs><path d="M32 8 L32 28 M32 18 q-8 0 -10 -8 M32 22 q8 0 10 -6" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round"/><rect x="10" y="28" width="44" height="10" rx="3" fill="url(#rt_soil)"/><path d="M32 38 C32 46 30 50 26 56 M32 38 C32 48 35 52 40 57 M32 40 C28 44 22 46 16 48 M32 42 C36 46 42 47 48 49" fill="none" stroke="#caa46a" stroke-width="2" stroke-linecap="round"/></svg>',
+ flower:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="flw_c" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#f0a800"/></radialGradient></defs><line x1="32" y1="36" x2="32" y2="58" stroke="#3a9e2f" stroke-width="3" stroke-linecap="round"/><path d="M32 50 q-9 -2 -12 -9 q9 0 12 6 Z" fill="#5cc23e"/><g fill="#ff6f91"><ellipse cx="32" cy="20" rx="6" ry="9"/><ellipse cx="32" cy="34" rx="6" ry="9"/><ellipse cx="25" cy="27" rx="9" ry="6"/><ellipse cx="39" cy="27" rx="9" ry="6"/></g><circle cx="32" cy="27" r="6" fill="url(#flw_c)"/></svg>',
+ seed:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="seed_g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9764a"/><stop offset="1" stop-color="#6e4423"/></linearGradient></defs><path d="M22 40 a10 14 0 0 1 20 0 a10 14 0 0 1 -20 0 Z" fill="url(#seed_g)" stroke="#523317" stroke-width="1.2"/><path d="M32 28 q-3 4 0 8 q3 -4 0 -8" fill="#caa46a"/><path d="M30 22 q2 -6 0 -10 M34 24 q4 -5 8 -6" fill="none" stroke="#5cc23e" stroke-width="2.5" stroke-linecap="round"/></svg>',
+ chick:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="chk_g" cx="45%" cy="38%" r="62%"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f5c518"/></radialGradient></defs><ellipse cx="32" cy="40" rx="15" ry="13" fill="url(#chk_g)"/><circle cx="32" cy="24" r="11" fill="url(#chk_g)"/><circle cx="28" cy="23" r="2" fill="#2a2018"/><circle cx="36" cy="23" r="2" fill="#2a2018"/><path d="M30 27 L25 29 L30 31 Z" fill="#ff8f00"/><path d="M22 50 l-2 5 M26 51 l-1 5 M40 50 l2 5 M38 51 l1 5" stroke="#ff8f00" stroke-width="2" stroke-linecap="round"/></svg>',
+ egg:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="egg_g" cx="42%" cy="34%" r="68%"><stop offset="0" stop-color="#fffefb"/><stop offset="1" stop-color="#e8ddc8"/></radialGradient></defs><path d="M32 10 C20 10 16 32 16 42 a16 18 0 0 0 32 0 C48 32 44 10 32 10 Z" fill="url(#egg_g)" stroke="#cdbf9f" stroke-width="1.2"/><ellipse cx="26" cy="26" rx="4" ry="8" fill="#fff" opacity=".6"/></svg>',
+ moon:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="moon_g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset="1" stop-color="#e9d27a"/></linearGradient></defs><path d="M40 8 A24 24 0 1 0 40 56 A19 19 0 1 1 40 8 Z" fill="url(#moon_g)" stroke="#d8bd5e" stroke-width="1"/><circle cx="24" cy="24" r="3" fill="#e3c96a" opacity=".6"/><circle cx="20" cy="36" r="2.2" fill="#e3c96a" opacity=".6"/><circle cx="28" cy="40" r="1.6" fill="#e3c96a" opacity=".5"/></svg>',
+ star:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="star_g" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff7c0"/><stop offset="1" stop-color="#ffca28"/></radialGradient></defs><path d="M32 6 L40 24 L60 26 L45 39 L50 58 L32 47 L14 58 L19 39 L4 26 L24 24 Z" fill="url(#star_g)" stroke="#e0a800" stroke-width="1.2" stroke-linejoin="round"/></svg>',
 };
 function withIcons(html){return String(html).replace(/\[\[(\w+)\]\]/g,(m,k)=>ICONS[k]||'');}
 const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'juice',Rigid:'block',
@@ -487,7 +512,8 @@ const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'j
  Energy:'sun',Sun:'sun',Producer:'grass',Consumer:'rabbit',Photosynthesis:'leaf','Food Chain':'grass',Predator:'fox',Prey:'mouse',
  Weight:'scale',Measure:'scale',Heating:'steam',Cooling:'ice',Mix:'juice',Graph:'graph','Physical Property':'magnet',Magnetism:'magnet',Transparency:'glass',Air:'air',Water:'water',Growth:'plant',
  Ecosystem:'tree','Food Web':'grass',Decomposer:'mushroom',Decompose:'worm',Nutrients:'plant',Cycle:'recycle',Sustainability:'recycle',Pollution:'factory',Recycle:'recycle',Habitat:'tree',
- Geosphere:'mountain',Hydrosphere:'ocean',Atmosphere:'cloud',Biosphere:'tree','Water Cycle':'river',Evaporation:'sun',Condensation:'cloud',Precipitation:'rain',Ocean:'ocean','Salt Water':'ocean','Fresh Water':'river',Glacier:'glacier'};
+ Geosphere:'mountain',Hydrosphere:'ocean',Atmosphere:'cloud',Biosphere:'tree','Water Cycle':'river',Evaporation:'sun',Condensation:'cloud',Precipitation:'rain',Ocean:'ocean','Salt Water':'ocean','Fresh Water':'river',Glacier:'glacier',
+ Sound:'speaker',Vibrate:'drum',Loud:'drum',Quiet:'bell',Light:'bulb',See:'eye',Dark:'moon',Shadow:'flashlight',Roots:'roots',Stem:'plant',Leaf:'leaf',Flower:'flower',Legs:'rabbit',Wings:'bird',Eyes:'eye',Ears:'ear'};
 const GLOSSARY={
  'Solid':{e:'🧊',m:'Matter that keeps its own shape and does not flow — like a rock or an ice cube.'},
  'Liquid':{e:'💧',m:'Matter that flows and takes the shape of its container — like water or juice.'},
@@ -560,7 +586,22 @@ const GLOSSARY={
  'Ocean':{e:'🌊',m:'A huge body of salt water — most of the water on Earth.'},
  'Salt Water':{e:'🧂',m:'Water with salt in it — we cannot drink it.'},
  'Fresh Water':{e:'💧',m:'Water without much salt — the water we drink.'},
- 'Glacier':{e:'🧊',m:'A huge sheet of ice where most fresh water is frozen.'}
+ 'Glacier':{e:'🧊',m:'A huge sheet of ice where most fresh water is frozen.'},
+ 'Sound':{e:'🔊',m:'What we hear with our ears.'},
+ 'Vibrate':{e:'〰️',m:'To shake quickly back and forth — this makes a sound.'},
+ 'Loud':{e:'📢',m:'A big sound.'},
+ 'Quiet':{e:'🤫',m:'A small, soft sound.'},
+ 'See':{e:'👀',m:'To look at things with our eyes.'},
+ 'Dark':{e:'🌙',m:'When there is no light and we cannot see.'},
+ 'Shadow':{e:'🕳️',m:'A dark shape made when something blocks the light.'},
+ 'Roots':{e:'🌱',m:'The plant part that takes in water from the soil.'},
+ 'Stem':{e:'🌿',m:'The plant part that holds the plant up and carries water.'},
+ 'Leaf':{e:'🍃',m:'The plant part that makes food using sunlight.'},
+ 'Flower':{e:'🌸',m:'The plant part that makes seeds.'},
+ 'Legs':{e:'🦵',m:'Body parts that help an animal walk and run.'},
+ 'Wings':{e:'🪽',m:'Body parts that help a bird fly.'},
+ 'Eyes':{e:'👁️',m:'Body parts that help an animal see.'},
+ 'Ears':{e:'👂',m:'Body parts that help an animal hear.'}
 };
 /* ---- Unit 1 · Standard 2 : Physical properties of materials ---- */
 const MATTER_S2=[
@@ -1126,6 +1167,97 @@ const EARTH=[
 }
 ];
 
+/* ===== GRADE 1 (AERO/NGSS) ===== */
+const GRADE2=[],GRADE3=[],GRADE4=[];
+const GRADE1=[
+  {n:1,id:'g1ls',title:'Light and Sound',live:true,standards:[{n:1,text:'Plan and conduct investigations to show that vibrating materials make sound, and that objects can be seen only when light shines on them. (1-PS4)',lessons:[
+    {id:'g1la',title:'Lesson 1: Making Sounds',grade:'Grade 1 · 45 min · 5E',
+     lo:'We are learning that sounds are made when things vibrate.',
+     sc:[{band:'Remembering',items:['I can name things that make sounds.']},{band:'Understanding',items:['I can say that sounds are made when things vibrate.']},{band:'Applying',items:['I can make a sound by making something vibrate.']}],
+     vocab:['Sound','Vibrate','Loud','Quiet'],
+     slides:[
+      {tag:'Engage · 8 min',h:'What can you hear?',body:'<p>Listen!</p><ul class="ico-list"><li>[[drum]] a drum · [[bell]] a bell · [[speaker]] a speaker</li></ul><p><b>Ask:</b> What makes a sound? What happens when you hit a drum?</p>'},
+      {tag:'Explore · 12 min',h:'Make it Vibrate',body:'<p>Hit a [[drum]] drum — it <b>shakes</b> (vibrates) and makes a sound. Put your hand on your throat and hum — can you feel it shaking?</p>'},
+      {tag:'Explain · 10 min',h:'Sounds and Vibrations',body:'<p>Sounds are made when something <b>vibrates</b> (shakes quickly). A [[drum]] drum vibrates when you hit it. A [[bell]] bell vibrates when it rings.</p>'},
+      {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+      {tag:'Elaborate · 10 min',h:'Sound Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort sounds into loud and quiet.</li><li>🥈 <b>Silver</b> — Match each thing to how it makes a sound.</li><li>🥇 <b>Gold</b> — Find three things that make a sound.</li><li>⭐ <b>G&T</b> — Make your own instrument.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>What makes a sound?</li><li>Name one loud and one quiet sound.</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Loud or Quiet?',items:['Cut out the picture cards.','Sort them into LOUD sounds and QUIET sounds.'],cards:[{i:'drum',l:'Drum'},{i:'bell',l:'Bell'},{i:'speaker',l:'Speaker'},{i:'bird',l:'Bird tweet'}],columns:['Loud','Quiet']},
+      silver:{title:'Silver — Make it Vibrate',items:['Draw a line from each thing to how you make its sound (a drum — you hit it; a bell — you ring it).','Finish the sentence below.'],bank:['drum','bell','speaker'],question:'Things make a sound when they ________________.'},
+      gold:{title:'Gold — Sound Hunt',items:['Find THREE things in your classroom that make a sound.','Draw each one.','Write how you make it vibrate.'],question:'Three things that make sound and how I make them vibrate:'},
+      gt:{title:'G&T Challenge — Make an Instrument',items:['Make your own simple instrument (a shaker, a drum, a rubber-band guitar).','Show how it vibrates to make a sound.','Can you make it loud and quiet?'],question:'My instrument and how it makes a sound:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['drum','bell','speaker'],items:['1. What makes a sound?','2. What must something do to make a sound?','3. Name one loud and one quiet sound.'],check:['I can name things that make sounds.','I can say that sounds are made when things vibrate.','I can make a sound by making something vibrate.']}
+    },
+    {id:'g1lb',title:'Lesson 2: Light and Seeing',grade:'Grade 1 · 45 min · 5E',
+     lo:'We are learning that we need light to see things.',
+     sc:[{band:'Remembering',items:['I can name things that give light.']},{band:'Understanding',items:['I can say that we need light to see.']},{band:'Applying',items:['I can find out which things make a shadow.']}],
+     vocab:['Light','See','Dark','Shadow'],
+     slides:[
+      {tag:'Engage · 8 min',h:'Can you see in the dark?',body:'<p>What gives us light?</p><ul class="ico-list"><li>[[sun]] the Sun · [[bulb]] a lamp · [[flashlight]] a torch</li></ul><p><b>Ask:</b> Can you see when it is dark? What helps you see?</p>'},
+      {tag:'Explore · 12 min',h:'Light Helps Us See',body:'<p>Turn off the light — can you see? Shine a [[flashlight]] torch — now you can! We need <b>light</b> to <b>see</b>.</p>'},
+      {tag:'Explain · 10 min',h:'Light and Shadows',body:'<p>We need <b>light</b> to see. Light comes from the [[sun]] Sun, lamps and torches. Some things let light through (clear). Some things block light and make a <b>shadow</b>.</p>'},
+      {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+      {tag:'Elaborate · 10 min',h:'Light Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort things that give light.</li><li>🥈 <b>Silver</b> — Make and draw a shadow.</li><li>🥇 <b>Gold</b> — Be a light detective.</li><li>⭐ <b>G&T</b> — Make shadow puppets.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>What do we need to see things?</li><li>What makes a shadow?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Does it Give Light?',items:['Cut out the cards.','Sort them: which things GIVE LIGHT and which do NOT?'],cards:[{i:'sun',l:'Sun'},{i:'bulb',l:'Lamp'},{i:'flashlight',l:'Torch'},{i:'rock',l:'Rock'}],columns:['Gives light','No light']},
+      silver:{title:'Silver — Make a Shadow',items:['Shine a torch at your hand to make a shadow on the wall.','Draw your hand shadow.','Finish the sentence below.'],question:'A shadow is made when something ________ the light.'},
+      gold:{title:'Gold — Light Detective',items:['Find THREE things that give light.','Find ONE thing that lets light through (clear) and ONE that blocks it.','Draw and label them.'],question:'My light findings:'},
+      gt:{title:'G&T Challenge — Shadow Puppets',items:['Use a torch to make shadow shapes with your hands.','Make them bigger and smaller.','Explain why you need light to make a shadow.'],question:'How I made my shadows:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['sun','bulb','flashlight'],items:['1. What do we need to see things?','2. Name one thing that gives light.','3. What makes a shadow?'],check:['I can name things that give light.','I can say that we need light to see.','I can find out which things make a shadow.']}
+    }
+  ]}]},
+  {n:2,id:'g1parts',title:'Plant and Animal Parts',live:true,standards:[{n:1,text:'Use materials to show how plant and animal parts help them survive, grow and meet their needs. (1-LS1)',lessons:[
+    {id:'g1pa',title:'Lesson 1: Plant Parts',grade:'Grade 1 · 45 min · 5E',
+     lo:'We are learning that plants have parts that help them live and grow.',
+     sc:[{band:'Remembering',items:['I can name the parts of a plant.']},{band:'Understanding',items:['I can say what each plant part does.']},{band:'Applying',items:['I can label the parts of a plant.']}],
+     vocab:['Roots','Stem','Leaf','Flower'],
+     slides:[
+      {tag:'Engage · 8 min',h:'Look at this plant',body:'<p>A plant has different parts:</p><ul class="ico-list"><li>[[roots]] roots · [[flower]] flower · [[leaf]] leaves</li></ul><p><b>Ask:</b> What parts can you see? What might each one do?</p>'},
+      {tag:'Explore · 12 min',h:'Find the Parts',body:'<p>Look at a real plant. Find the <b>roots</b>, the <b>stem</b>, the <b>leaves</b> and the <b>flower</b>. Which part is in the soil? Which part is at the top?</p>'},
+      {tag:'Explain · 10 min',h:'What Each Part Does',body:'<p>[[roots]] <b>Roots</b> take in water. The <b>stem</b> holds the plant up. [[leaf]] <b>Leaves</b> make food using sunlight. [[flower]] The <b>flower</b> makes seeds.</p>'},
+      {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+      {tag:'Elaborate · 10 min',h:'Plant Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each part to its job.</li><li>🥈 <b>Silver</b> — Draw and label a plant.</li><li>🥇 <b>Gold</b> — Write the job of each part.</li><li>⭐ <b>G&T</b> — Design your own plant.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name two parts of a plant.</li><li>What do the roots do?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Match the Plant Parts',items:['Cut out the plant-part cards.','Sort each part under the job it does.'],cards:[{i:'roots',l:'Roots'},{i:'leaf',l:'Leaf'},{i:'flower',l:'Flower'}],columns:['Takes in water','Makes food','Makes seeds']},
+      silver:{title:'Silver — Label the Plant',items:['Draw a plant.','Label the roots, stem, leaf and flower.','Write what one part does.'],bank:['roots','leaf','flower'],question:'One plant part and what it does:'},
+      gold:{title:'Gold — Plant Part Jobs',items:['Write the job of each plant part.'],table:{cols:['Plant part','Its job'],rows:[{icon:'roots',label:'Roots'},{label:'Stem'},{icon:'leaf',label:'Leaf'},{icon:'flower',label:'Flower'}]}},
+      gt:{title:'G&T Challenge — Design a Plant',items:['Design your own plant.','Give it strong roots, a tall stem, big leaves and a bright flower.','Explain how each part helps it live.'],question:'My plant and how its parts help it:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['roots','leaf','flower'],items:['1. Name two parts of a plant.','2. What do the roots do?','3. What do the leaves do?'],check:['I can name the parts of a plant.','I can say what each plant part does.','I can label the parts of a plant.']}
+    },
+    {id:'g1pb',title:'Lesson 2: Animal Parts',grade:'Grade 1 · 45 min · 5E',
+     lo:'We are learning that animals have body parts that help them survive.',
+     sc:[{band:'Remembering',items:['I can name animal body parts.']},{band:'Understanding',items:['I can say what each body part helps an animal do.']},{band:'Applying',items:['I can match a body part to its job.']}],
+     vocab:['Legs','Wings','Eyes','Ears'],
+     slides:[
+      {tag:'Engage · 8 min',h:'Look at these animals',body:'<p>Animals have parts that help them:</p><ul class="ico-list"><li>[[bird]] a bird · [[fish]] a fish · [[rabbit]] a rabbit · [[fox]] a fox</li></ul><p><b>Ask:</b> What body parts help each animal move and find food?</p>'},
+      {tag:'Explore · 12 min',h:'How do they move?',body:'<p>How does each animal move and find food? Look at their <b>legs</b>, <b>wings</b>, fins, <b>eyes</b> and <b>ears</b>.</p>'},
+      {tag:'Explain · 10 min',h:'Body Parts Help Animals',body:'<p>Animals have parts that help them: <b>legs</b> to walk, <b>wings</b> to fly, fins to swim, [[eye]] <b>eyes</b> to see, [[ear]] <b>ears</b> to hear, a beak or mouth to eat.</p>'},
+      {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+      {tag:'Elaborate · 10 min',h:'Animal Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each body part to its job.</li><li>🥈 <b>Silver</b> — Draw and label an animal.</li><li>🥇 <b>Gold</b> — Write what each body part does.</li><li>⭐ <b>G&T</b> — Invent an animal.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name two animal body parts.</li><li>What do wings help a bird do?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Match Body Parts',items:['Cut out the cards.','Sort each body part under what it helps the animal do.'],cards:[{i:'bird',l:'Wings'},{i:'fish',l:'Fins'},{i:'eye',l:'Eyes'},{i:'ear',l:'Ears'}],columns:['To move','To see or hear']},
+      silver:{title:'Silver — Animal Parts',items:['Choose an animal.','Draw it and label two body parts.','Write what each part helps it do.'],bank:['bird','fish','rabbit','fox'],question:'My animal and what its parts do:'},
+      gold:{title:'Gold — Body Part Jobs',items:['Write what each body part helps an animal do.'],table:{cols:['Body part','What it helps the animal do'],rows:[{label:'Legs'},{icon:'bird',label:'Wings'},{icon:'eye',label:'Eyes'},{icon:'ear',label:'Ears'}]}},
+      gt:{title:'G&T Challenge — Build an Animal',items:['Invent an animal that lives in water AND can fly.','What body parts does it need?','Explain how each part helps it survive.'],question:'My animal and its body parts:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['bird','fish','ear'],items:['1. Name two animal body parts.','2. What do wings help a bird do?','3. What do ears help an animal do?'],check:['I can name animal body parts.','I can say what each body part helps an animal do.','I can match a body part to its job.']}
+    }
+  ]}]},
+  {n:3,id:'g1young',title:'Parents and Their Young',live:true,standards:[{n:1,text:'Make observations to show that young plants and animals are like, but not exactly like, their parents. (1-LS3)',lessons:[]}]},
+  {n:4,id:'g1sky',title:'Patterns in the Sky',live:true,standards:[{n:1,text:'Observe and describe patterns of the Sun, Moon and stars, and how daylight changes with the seasons. (1-ESS1)',lessons:[]}]}
+];
+
 const UNITS=[
   {n:1,id:'matter',title:'Matter: Properties and Interactions',live:true,
    standards:[
@@ -1146,7 +1278,7 @@ const UNITS=[
    ROUTER + VIEWS
    ===================================================================== */
 const app=document.getElementById('app'), crumb=document.getElementById('crumb');
-let cur={unit:null,std:null};
+let cur={unit:null,std:null,grade:5};
 function setCrumb(t){crumb.textContent=t||'';}
 /* per-unit colour themes (Deenish: a different colour for each unit) */
 const THEME={
@@ -1156,8 +1288,14 @@ const THEME={
  sound:{a:'#6d28d9',d:'#5b21b6',deep:'#3a1378',soft:'#f0eafd'},
  organisms:{a:'#6d28d9',d:'#5b21b6',deep:'#3a1378',soft:'#f0eafd'},
  ecosystems:{a:'#0d9488',d:'#0b7a70',deep:'#064a44',soft:'#e4f5f2'},
- earth:{a:'#8a5a2b',d:'#6e4720',deep:'#412a13',soft:'#f5ece1'}
+ earth:{a:'#8a5a2b',d:'#6e4720',deep:'#412a13',soft:'#f5ece1'},
+ g1ls:{a:'#ea580c',d:'#c2410c',deep:'#7c2d12',soft:'#fff0e2'},
+ g1parts:{a:'#16a34a',d:'#15803d',deep:'#14532d',soft:'#e7f6ed'},
+ g1young:{a:'#db2777',d:'#be185d',deep:'#831843',soft:'#fce7f1'},
+ g1sky:{a:'#4f46e5',d:'#4338ca',deep:'#312e81',soft:'#eceafe'}
 };
+function gradeUnits(g){const m={1:GRADE1,2:GRADE2,3:GRADE3,4:GRADE4,5:UNITS};return m[g]||[];}
+function gUnits(){return gradeUnits(cur.grade);}
 function setTheme(id){const t=THEME[id]||THEME.matter,r=document.documentElement.style;
  r.setProperty('--blue',t.a);r.setProperty('--blue-d',t.d);r.setProperty('--theme-deep',t.deep);r.setProperty('--theme-soft',t.soft);}
 function go(view,a,b,c){
@@ -1170,43 +1308,33 @@ function go(view,a,b,c){
 
 function vHome(){
   setCrumb('');
-  const slides=UNITS.map(u=>({n:u.n,t:u.title}));
-  const floats=[];
   app.innerHTML=`
     <section class="home-hero">
-      ${floats.map((f,i)=>`<span class="float" style="left:${(i*9+4)%92}%;top:${(i*37%78)+6}%;animation-delay:${(i*0.6).toFixed(1)}s;font-size:${(2.4+(i%3)*1.1).toFixed(1)}rem">${f}</span>`).join('')}
       <div class="hero-inner">
         <h1>Science Explorers</h1>
         <p>Welcome to <b>Science Explorers</b>, where curious minds investigate the world through discovery and inquiry! Here, we learn to make a <b>claim</b>, support it with <b>evidence</b>, and explain our thinking using <b>reasoning</b> as we explore exciting scientific ideas. Get ready to ask questions, conduct investigations, and think like a real scientist!</p>
-        <div class="cta">
-          <button class="btn" onclick="openDemo()">▶ Try the free demo lesson</button>
-          <button class="btn ghost" onclick="go('units')">See all units</button>
-        </div>
-        <div class="unit-slideshow"><div class="us-slide anim" id="usSlide"><span class="us-badge">Unit ${slides[0].n}</span><span class="us-title">${slides[0].t}</span></div></div>
-        <div class="us-dots" id="usDots">${slides.map((_,k)=>`<span class="us-dot ${k===0?'on':''}"></span>`).join('')}</div>
+        <div class="cta"><button class="btn" onclick="openDemo()">▶ Try the free demo lesson</button></div>
       </div>
+    </section>
+    <section style="padding-top:10px">
+      <div class="eyebrow" style="text-align:center;font-size:.95rem">Choose your grade</div>
+      <div class="grade-cards">${[1,2,3,4,5].map(g=>{const ready=gradeUnits(g).some(u=>u.live&&u.standards.some(s=>s.lessons&&s.lessons.length));return `<button class="grade-card${ready?'':' soon'}" onclick="openGrade(${g})"><span class="gc-lbl">Grade</span><span class="gc-num">${g}</span><span class="gc-st">${ready?'Open ▸':'Coming soon'}</span></button>`;}).join('')}</div>
     </section>`;
-  let i=0;
-  window.__homeIv=setInterval(()=>{
-    const box=document.getElementById('usSlide');
-    if(!box){clearInterval(window.__homeIv);window.__homeIv=null;return;}
-    i=(i+1)%slides.length;
-    box.innerHTML=`<span class="us-badge">Unit ${slides[i].n}</span><span class="us-title">${slides[i].t}</span>`;
-    box.classList.remove('anim');void box.offsetWidth;box.classList.add('anim');
-    document.querySelectorAll('#usDots .us-dot').forEach((d,k)=>d.classList.toggle('on',k===i));
-  },2600);
 }
+function openGrade(g){cur.grade=g;cur.unit=null;cur.std=null;go('units');}
 function vUnits(){
-  setCrumb('All units');
-  app.innerHTML=`<section><div class="eyebrow">Grade 5 Science · Choose a unit</div><h2 style="font-size:1.6rem">Grade 5 Units</h2>
-    <div class="grid">${UNITS.map(u=>{const has=u.live&&u.standards.some(s=>s.lessons.length);const t=THEME[u.id]||THEME.matter;
+  const units=gUnits();
+  setCrumb('Grade '+cur.grade+' · All units');
+  app.innerHTML=`<section><button class="btn gray sm" onclick="go('home')">← Change grade</button>
+    <div class="eyebrow" style="margin-top:12px">Grade ${cur.grade} Science · Choose a unit</div><h2 style="font-size:1.6rem">Grade ${cur.grade} Units</h2>
+    ${units.length?`<div class="grid">${units.map(u=>{const has=u.live&&u.standards.some(s=>s.lessons.length);const t=THEME[u.id]||THEME.matter;
       return `<div class="ucard ${has?'live':''}" style="--uc:${t.a};--ucd:${t.d};--ucs:${t.soft}" ${has?`onclick="openUnit('${u.id}')"`:''}>
         <span class="u-n">Unit ${u.n}</span><h3 style="color:${t.d}">${u.title}</h3>
         <p>${u.standards.length?u.standards.length+' standard'+(u.standards.length>1?'s':''):'Coming soon'}</p>
-        <span class="pill ${has?'live':'soon'}">${has?'Open':'Coming soon'}</span></div>`;}).join('')}</div></section>`;
+        <span class="pill ${has?'live':'soon'}">${has?'Open':'Coming soon'}</span></div>`;}).join('')}</div>`:`<div class="panel" style="margin-top:16px">Grade ${cur.grade} units are coming soon! 🚧</div>`}</section>`;
 }
-function openUnit(id){cur.unit=UNITS.find(u=>u.id===id);cur.std=null;cur.li=0;go('unit');}
-function openDemo(){cur.unit=UNITS.find(u=>u.id==='matter');cur.std=0;cur.li=0;go('lesson');}
+function openUnit(id){cur.unit=gUnits().find(u=>u.id===id);cur.std=null;cur.li=0;go('unit');}
+function openDemo(){cur.grade=5;cur.unit=UNITS.find(u=>u.id==='matter');cur.std=0;cur.li=0;go('lesson');}
 function pickStd(i){cur.std=i;cur.li=0;go('unit');}
 function vUnit(){
   const u=cur.unit;if(!u)return go('units');
@@ -1624,6 +1752,34 @@ const SLIDE_WIDGETS={
   {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Most of the water on Earth is salty ocean water.',correct:true},{t:'We can drink the water in the oceans.',correct:false},{t:'Most fresh water is frozen in glaciers and ice.',correct:true}]},
   {type:'classify',title:'Salt water or fresh water?',cats:['Salt water','Fresh water'],items:[{icon:'ocean',label:'The ocean',cat:'Salt water'},{icon:'river',label:'A river',cat:'Fresh water'},{icon:'glacier',label:'A glacier',cat:'Fresh water'},{icon:'water',label:'A lake',cat:'Fresh water'}]},
   null
+ ],
+ g1la:[
+  {type:'reveal',title:'👆 Tap each one — how does it make a sound?',cards:[{icon:'drum',label:'Drum',reveal:'Hit it — it vibrates and makes a sound'},{icon:'bell',label:'Bell',reveal:'Ring it — it vibrates'},{icon:'speaker',label:'Speaker',reveal:'It vibrates to play music'}]},
+  {type:'classify',title:'Loud or quiet?',cats:['Loud','Quiet'],items:[{icon:'drum',label:'A big drum',cat:'Loud'},{label:'A whisper',cat:'Quiet'},{icon:'bell',label:'A loud bell',cat:'Loud'},{label:'A tiny tap',cat:'Quiet'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'speaker',label:'Sound',reveal:'What we hear'},{icon:'drum',label:'Vibrate',reveal:'To shake quickly back and forth'},{icon:'drum',label:'Loud',reveal:'A big sound'},{icon:'bell',label:'Quiet',reveal:'A small soft sound'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'A drum vibrates when you hit it.',correct:true},{t:'Things make a sound when they vibrate.',correct:true},{t:'Sound is made when something glows.',correct:false}]},
+  null,null
+ ],
+ g1lb:[
+  {type:'reveal',title:'👆 Tap each one — does it give light?',cards:[{icon:'sun',label:'The Sun',reveal:'Gives bright light in the day'},{icon:'bulb',label:'A lamp',reveal:'Gives light'},{icon:'flashlight',label:'A torch',reveal:'Gives light in the dark'}]},
+  {type:'classify',title:'Does it give light?',cats:['Gives light','No light'],items:[{icon:'sun',label:'The Sun',cat:'Gives light'},{icon:'bulb',label:'A lamp',cat:'Gives light'},{icon:'rock',label:'A rock',cat:'No light'},{icon:'flashlight',label:'A torch',cat:'Gives light'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'bulb',label:'Light',reveal:'It helps us see'},{icon:'eye',label:'See',reveal:'To look at things with our eyes'},{icon:'moon',label:'Dark',reveal:'No light — we cannot see'},{icon:'flashlight',label:'Shadow',reveal:'A dark shape made when something blocks light'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'We need light to see.',correct:true},{t:'We can see well in the dark.',correct:false},{t:'The Sun gives us light.',correct:true}]},
+  null,null
+ ],
+ g1pa:[
+  {type:'reveal',title:'👆 Tap each part to see its job',cards:[{icon:'roots',label:'Roots',reveal:'Take in water from the soil'},{icon:'leaf',label:'Leaf',reveal:'Makes food using sunlight'},{icon:'flower',label:'Flower',reveal:'Makes seeds'}]},
+  {type:'classify',title:'What does this part do?',cats:['Takes in water','Makes food','Makes seeds'],items:[{icon:'roots',label:'Roots',cat:'Takes in water'},{icon:'leaf',label:'Leaf',cat:'Makes food'},{icon:'flower',label:'Flower',cat:'Makes seeds'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'roots',label:'Roots',reveal:'Take in water from the soil'},{icon:'plant',label:'Stem',reveal:'Holds the plant up and carries water'},{icon:'leaf',label:'Leaf',reveal:'Makes food using sunlight'},{icon:'flower',label:'Flower',reveal:'Makes seeds'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Roots take in water.',correct:true},{t:'Leaves make food using sunlight.',correct:true},{t:'The flower holds the plant up.',correct:false}]},
+  null,null
+ ],
+ g1pb:[
+  {type:'reveal',title:'👆 Tap each animal — which part helps it?',cards:[{icon:'bird',label:'Bird',reveal:'Wings help it fly'},{icon:'fish',label:'Fish',reveal:'Fins help it swim'},{icon:'rabbit',label:'Rabbit',reveal:'Legs help it hop'},{icon:'fox',label:'Fox',reveal:'Ears help it hear'}]},
+  {type:'classify',title:'What does this part do?',cats:['To fly','To swim','To see','To hear'],items:[{icon:'bird',label:'Wings',cat:'To fly'},{icon:'fish',label:'Fins',cat:'To swim'},{icon:'eye',label:'Eyes',cat:'To see'},{icon:'ear',label:'Ears',cat:'To hear'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'rabbit',label:'Legs',reveal:'Help an animal walk and run'},{icon:'bird',label:'Wings',reveal:'Help a bird fly'},{icon:'eye',label:'Eyes',reveal:'Help an animal see'},{icon:'ear',label:'Ears',reveal:'Help an animal hear'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Wings help birds fly.',correct:true},{t:'Ears help an animal see.',correct:false},{t:'Fins help a fish swim.',correct:true}]},
+  null,null
  ]
 };
 
@@ -1926,9 +2082,109 @@ earth3:[
   {q:"About what fraction of all water on Earth is fresh water?",options:["About three quarters","About half","About one quarter","Only a very small amount"],answer:3},
   {q:"A student learns that most fresh water is frozen in glaciers. What should the student conclude about using water from rivers and lakes?",options:["Use it as fast as possible before it freezes","Use it carefully because there is very little liquid fresh water available","Do not worry because the oceans have plenty of water","Replace rivers with salt water for drinking"],answer:1},
 ],
+g1la:[
+  {q:"What does a drum do when you hit it?",options:["It vibrates","It glows","It melts","It grows"],answer:0},
+  {q:"What does the word vibrate mean?",options:["To shine bright","To shake quickly","To grow tall","To get cold"],answer:1},
+  {q:"Which sound is QUIET?",options:["A drum bang","A big shout","A soft whisper","A loud clap"],answer:2},
+  {q:"A guitar string makes sound when it...",options:["grows","glows","gets cold","vibrates"],answer:3},
+  {q:"What makes sound?",options:["Things that vibrate","Things that glow","Things that grow","Things that melt"],answer:0},
+  {q:"A bell makes sound when it...",options:["stops moving","vibrates","gets bigger","glows"],answer:1},
+  {q:"Sound is made when something...",options:["glows","grows","vibrates","melts"],answer:2},
+  {q:"Can a loud sound make things shake?",options:["No, never","Only big things","Only tiny things","Yes, it can"],answer:3},
+  {q:"Which is a LOUD sound?",options:["A big drum bang","A soft tap","A whisper","Quiet humming"],answer:0},
+  {q:"What starts a sound?",options:["Cold air","A bright light","A vibration","Hot water"],answer:2},
+],
+g1lb:[
+  {q:"What do we need to see things?",options:["Light","Water","Food","Air"],answer:0},
+  {q:"Can we see well in the dark?",options:["Yes, very well","No, we cannot","Yes, a little","Yes, always"],answer:1},
+  {q:"Which one gives us light?",options:["A rock","A book","The Sun","A shoe"],answer:2},
+  {q:"What makes a shadow?",options:["Light alone","Air","Water","Something blocking light"],answer:3},
+  {q:"A torch helps us...",options:["see in the dark","grow plants","make sounds","feel warm only"],answer:0},
+  {q:"A wall blocks light and makes a...",options:["sound","shadow","plant","rainbow"],answer:1},
+  {q:"Which thing lets light pass through it?",options:["A brick wall","Your hand","Clear glass","A rock"],answer:2},
+  {q:"Which gives us light?",options:["Rocks","Water","Soil","The Sun"],answer:3},
+  {q:"In the dark, we...",options:["cannot see","can see well","can see colors","can see shapes"],answer:0},
+  {q:"A shadow forms when something...",options:["glows","shines","blocks light","adds more light"],answer:2},
+],
+g1pa:[
+  {q:"What do roots do for a plant?",options:["Take in water from the soil","Make food using sunlight","Make seeds","Hold the plant up"],answer:0},
+  {q:"Which part holds the plant up?",options:["The flower","The stem","The roots","The leaf"],answer:1},
+  {q:"Which plant part makes food using sunlight?",options:["The roots","The stem","The leaf","The flower"],answer:2},
+  {q:"Which plant part makes seeds?",options:["The roots","The stem","The leaves","The flower"],answer:3},
+  {q:"Where do roots grow?",options:["In the soil","In the sky","On the stem","On the leaf"],answer:0},
+  {q:"What carries water up through the plant?",options:["The roots","The stem","The flower","The leaves"],answer:1},
+  {q:"Leaves use sunlight to...",options:["take in water","hold up the plant","make food","make seeds"],answer:2},
+  {q:"Which part is at the top of a flowering plant?",options:["Roots","Soil","Stem","Flower"],answer:3},
+  {q:"Which part takes water from the soil?",options:["The roots","The stem","The flower","The leaves"],answer:0},
+  {q:"Water enters the plant from the soil through the...",options:["flower","roots","leaves","stem only"],answer:1},
+],
+g1pb:[
+  {q:"What do legs help an animal do?",options:["Walk and run","Fly in the sky","Swim in water","Hear sounds"],answer:0},
+  {q:"What do wings help birds do?",options:["Walk fast","Fly","Swim","Hear"],answer:1},
+  {q:"What do eyes help an animal do?",options:["Swim","Run fast","See","Fly"],answer:2},
+  {q:"What do ears help an animal do?",options:["Walk","Swim","See","Hear"],answer:3},
+  {q:"What do fins help a fish do?",options:["Swim","Fly","Run","Hear"],answer:0},
+  {q:"Which part helps a bird fly?",options:["Its legs","Its wings","Its eyes","Its ears"],answer:1},
+  {q:"A beak helps an animal...",options:["swim","fly","eat","hear"],answer:2},
+  {q:"Which part helps fish move in water?",options:["Wings","Legs","Eyes","Fins"],answer:3},
+  {q:"Animals have different body parts because...",options:["they need different things","they all look the same","they eat the same food","they live in the same place"],answer:0},
+  {q:"Which part helps an animal hear?",options:["Wings","Fins","Ears","Legs"],answer:2},
+],
+g1ya:[
+  {q:"A puppy grows up to be a...",options:["dog","cat","bird","fish"],answer:0},
+  {q:"A baby chick grows up to be a...",options:["duck","hen","cat","dog"],answer:1},
+  {q:"A kitten grows up to be a...",options:["puppy","chick","cat","hen"],answer:2},
+  {q:"Do baby animals look like their parents?",options:["No, not at all","They look totally different","Only sometimes","Yes, they look a lot like their parents"],answer:3},
+  {q:"A young animal is the same kind of animal as its...",options:["parents","food","home","color"],answer:0},
+  {q:"A baby cat is called a...",options:["puppy","kitten","chick","cub"],answer:1},
+  {q:"A baby dog is called a...",options:["chick","kitten","puppy","cub"],answer:2},
+  {q:"Will a puppy grow up to be a cat?",options:["Yes, it will","Yes, always","It might","No, it will be a dog"],answer:3},
+  {q:"Baby animals and their parents are...",options:["the same kind of animal","very different animals","not related","always the same color"],answer:0},
+  {q:"A chick grows up to look like its...",options:["puppy parent","hen parent","kitten parent","fish parent"],answer:1},
+],
+g1yb:[
+  {q:"A seed from a sunflower grows into a...",options:["sunflower","rose","apple tree","oak tree"],answer:0},
+  {q:"An apple seed grows into an...",options:["orange tree","apple tree","rose plant","oak tree"],answer:1},
+  {q:"Do young plants look like their parent plant?",options:["No, never","No, they look very different","Yes, they look alike","Only sometimes"],answer:2},
+  {q:"What grows from a seed?",options:["An animal","A rock","Water","A new plant"],answer:3},
+  {q:"Where does a new plant come from?",options:["A seed","A rock","Water only","The sky"],answer:0},
+  {q:"If you plant a sunflower seed, what will grow?",options:["A rose","A sunflower","A tree","Grass"],answer:1},
+  {q:"Baby plants can be a little different in...",options:["their kind","what they eat","their size or color","their parents"],answer:2},
+  {q:"What is the plant that a seed comes from called?",options:["The new plant","The water plant","The soil plant","The parent plant"],answer:3},
+  {q:"Which plant would an apple seed grow into?",options:["An apple tree","A rose bush","A sunflower","A cactus"],answer:0},
+  {q:"Young plants look like the plant they grew from. That plant is called the...",options:["young plant","new plant","parent plant","water plant"],answer:2},
+],
+g1sa:[
+  {q:"What gives us light in the day?",options:["The Sun","The Moon","Stars","Lamps only"],answer:0},
+  {q:"When does the Sun rise?",options:["At night","In the morning","In the evening","At midday only"],answer:1},
+  {q:"When does the Sun set?",options:["At midnight","At noon","In the evening","In the morning"],answer:2},
+  {q:"What is it like at night?",options:["Bright and sunny","Very loud","Very warm always","Dark"],answer:3},
+  {q:"Why do we have day and night?",options:["The Earth is turning","The Sun goes away","The Moon covers the Sun","Clouds block the Sun"],answer:0},
+  {q:"Is it light or dark during the day?",options:["Dark","Light","Both","Neither"],answer:1},
+  {q:"The Sun rises every morning. This happens...",options:["only in summer","only on some days","every day in a pattern","only when it is warm"],answer:2},
+  {q:"What do we see in the sky during the day?",options:["The Moon only","Stars only","Many moons","The Sun"],answer:3},
+  {q:"At night the sky is...",options:["dark","sunny","very bright","the same as day"],answer:0},
+  {q:"The Sun seems to move because...",options:["the Sun is running","the Earth is turning","the Moon pushes it","clouds move it"],answer:1},
+],
+g1sb:[
+  {q:"When can we see the Moon and stars?",options:["At night","In the morning","At midday","In the afternoon"],answer:0},
+  {q:"Stars look like...",options:["big squares in the sky","tiny points of light","the same as the Moon","small clouds"],answer:1},
+  {q:"How does the Moon seem to change?",options:["It gets bigger each day","It disappears forever","Its shape changes over a month","It changes color"],answer:2},
+  {q:"Which season has MORE daylight?",options:["Winter","Spring only","Autumn only","Summer"],answer:3},
+  {q:"The Moon and stars are seen in the...",options:["night sky","daytime sky","morning only","afternoon only"],answer:0},
+  {q:"Are stars near or far from us?",options:["Very near","Very far away","The same size as Earth","On the ground"],answer:1},
+  {q:"The Moon seems to change its...",options:["color every week","size every day","shape over a month","sound every night"],answer:2},
+  {q:"Which season has LESS daylight?",options:["Summer","Spring","Autumn","Winter"],answer:3},
+  {q:"What are the bright points of light in the night sky called?",options:["Stars","Suns","Moons","Clouds"],answer:0},
+  {q:"The Moon changes its shape over about...",options:["one week","one month","one year","one day"],answer:1},
+],
 };
 /* attach quick-check questions authored for the new lessons */
-if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS,ECOSYSTEMS,EARTH).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
+if(window.MCQS_EXTRA){
+  let all=[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS,ECOSYSTEMS,EARTH);
+  [GRADE1,GRADE2,GRADE3,GRADE4].forEach(gr=>gr.forEach(u=>u.standards.forEach(s=>(s.lessons||[]).forEach(L=>all.push(L)))));
+  all.forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});
+}
 
 go('home');
 </script>
