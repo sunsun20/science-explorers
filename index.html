@@ -135,6 +135,7 @@
   .quiz .opt:hover{background:#eaf0f9}
   .quiz .opt.correct{background:#e7f6ee;border-color:#46b377;color:#0f7a44}
   .quiz .opt.wrong{background:#fdeaea;border-color:#e88;color:#b23}
+  .quiz .opt.sel{background:var(--theme-soft);border-color:var(--blue);color:var(--blue-d)}
   .quiz .opt.lock{pointer-events:none}
   .scoreline{font-weight:800;color:var(--muted);margin-top:6px}
 
@@ -259,6 +260,7 @@
   .pic{border:1px solid #ccc;border-radius:10px;padding:8px;background:#fff}
   .pic .sci-ico{width:46px;height:46px;margin:0}
   .sheet-page{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;color:#111}
+  .ws-graph{height:190px;margin:8px 0 14px;border-left:2.5px solid #555;border-bottom:2.5px solid #555;background-color:#fff;background-image:linear-gradient(#dfe6ef 1px,transparent 1px),linear-gradient(90deg,#dfe6ef 1px,transparent 1px);background-size:26px 26px;background-position:left bottom;border-radius:2px}
   @media print{header,footer,.no-print,.deck-bar,.detail-actions{display:none!important}body{background:#fff}.sheet-page{border:none;border-radius:0;margin:0;break-after:page;break-inside:avoid}.sheet-page:last-child{break-after:auto}}
 
   footer{border-top:1px solid var(--line);padding:24px 20px;text-align:center;color:var(--muted);font-weight:700;font-size:.9rem}
@@ -441,11 +443,25 @@ const ICONS={
  snake:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="snk_body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#66cc44"/><stop offset="0.5" stop-color="#228833"/><stop offset="1" stop-color="#115522"/></linearGradient><radialGradient id="snk_head" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#88dd55"/><stop offset="1" stop-color="#336622"/></radialGradient></defs><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="url(#snk_body)" stroke-width="9" stroke-linecap="round"/><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="#aaeebb" stroke-width="4" stroke-linecap="round" opacity=".35"/><ellipse cx="34" cy="8" rx="8" ry="6" fill="url(#snk_head)" stroke="#225511" stroke-width="1.2" transform="rotate(-10 34 8)"/><circle cx="31" cy="6" r="2" fill="#1a1a1a"/><circle cx="30.5" cy="5.5" r="0.7" fill="#fff"/><circle cx="38" cy="6" r="2" fill="#1a1a1a"/><circle cx="37.5" cy="5.5" r="0.7" fill="#fff"/><path d="M36 11 L40 13 M36 11 L40 10" stroke="#cc2222" stroke-width="1.2" stroke-linecap="round"/><path d="M32 54 Q14 52 12 40 Q10 28 20 26 Q30 24 32 32 Q34 40 44 40 Q54 40 54 30 Q54 20 44 18 Q36 16 34 10" fill="none" stroke="#338844" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 10" opacity=".5"/></svg>',
  deer:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="der_body" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#cc8844"/><stop offset="1" stop-color="#8B5520"/></radialGradient><radialGradient id="der_face" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ddaa66"/><stop offset="1" stop-color="#aa7733"/></radialGradient><radialGradient id="der_nose" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ffcccc"/><stop offset="1" stop-color="#cc7777"/></radialGradient></defs><path d="M12 64 Q14 50 20 46 Q26 42 32 42 Q38 42 44 46 Q50 50 52 64 Z" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><ellipse cx="32" cy="34" rx="16" ry="18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1.2"/><ellipse cx="32" cy="30" rx="11" ry="13" fill="url(#der_face)"/><path d="M18 22 Q14 10 10 6 Q16 8 18 14 Q20 10 18 4 Q24 8 22 18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><path d="M46 22 Q50 10 54 6 Q48 8 46 14 Q44 10 46 4 Q40 8 42 18" fill="url(#der_body)" stroke="#6B4010" stroke-width="1"/><ellipse cx="26" cy="28" rx="3.5" ry="4" fill="#fff"/><ellipse cx="38" cy="28" rx="3.5" ry="4" fill="#fff"/><circle cx="26" cy="28" r="2.5" fill="#1a1a1a"/><circle cx="25.4" cy="27.4" r="0.8" fill="#fff"/><circle cx="38" cy="28" r="2.5" fill="#1a1a1a"/><circle cx="37.4" cy="27.4" r="0.8" fill="#fff"/><ellipse cx="32" cy="36" rx="5" ry="3.5" fill="url(#der_nose)"/><circle cx="30.5" cy="36" r="1.2" fill="#8B4040"/><circle cx="33.5" cy="36" r="1.2" fill="#8B4040"/><path d="M29 39 Q32 42 35 39" fill="none" stroke="#8B5520" stroke-width="1"/><ellipse cx="24" cy="22" rx="4" ry="3" fill="#f0c090" opacity=".6"/><ellipse cx="40" cy="22" rx="4" ry="3" fill="#f0c090" opacity=".6"/></svg>',
  person:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="per_skin" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ffcc99"/><stop offset="1" stop-color="#e8a060"/></radialGradient><radialGradient id="per_shirt" cx="50%" cy="35%" r="65%"><stop offset="0" stop-color="#66aaff"/><stop offset="1" stop-color="#2255cc"/></radialGradient><radialGradient id="per_hair" cx="50%" cy="30%" r="65%"><stop offset="0" stop-color="#8B5520"/><stop offset="1" stop-color="#4a2a08"/></radialGradient></defs><circle cx="32" cy="18" r="13" fill="url(#per_skin)" stroke="#c07830" stroke-width="1"/><ellipse cx="32" cy="10" rx="13" ry="8" fill="url(#per_hair)"/><ellipse cx="20" cy="14" rx="4" ry="6" fill="url(#per_hair)"/><ellipse cx="44" cy="14" rx="4" ry="6" fill="url(#per_hair)"/><circle cx="27" cy="18" r="2.5" fill="#1a1a1a"/><circle cx="26.4" cy="17.4" r="0.8" fill="#fff"/><circle cx="37" cy="18" r="2.5" fill="#1a1a1a"/><circle cx="36.4" cy="17.4" r="0.8" fill="#fff"/><ellipse cx="32" cy="22" rx="4" ry="2" fill="#cc8855" opacity=".6"/><path d="M29 24 Q32 27 35 24" fill="none" stroke="#c07030" stroke-width="1.2"/><path d="M16 36 Q14 28 18 28 Q22 28 32 31 Q42 28 46 28 Q50 28 48 36 Q46 50 32 52 Q18 50 16 36 Z" fill="url(#per_shirt)" stroke="#1a44aa" stroke-width="1"/><ellipse cx="32" cy="31" rx="6" ry="3" fill="#fff" opacity=".3"/><path d="M18 30 Q10 32 8 42 Q12 44 16 36" fill="url(#per_skin)" stroke="#c07830" stroke-width="0.8"/><path d="M46 30 Q54 32 56 42 Q52 44 48 36" fill="url(#per_skin)" stroke="#c07830" stroke-width="0.8"/><path d="M8 42 Q10 50 14 52" stroke="#c07830" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M56 42 Q54 50 50 52" stroke="#c07830" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+ scale:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="scale_dial" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#f5f5f5"/><stop offset="1" stop-color="#b0b8c8"/></radialGradient><linearGradient id="scale_body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0d8e8"/><stop offset="1" stop-color="#8a96aa"/></linearGradient><linearGradient id="scale_pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8ecf5"/><stop offset="1" stop-color="#b0bac8"/></linearGradient></defs><ellipse cx="32" cy="52" rx="20" ry="4" fill="#8a96aa" opacity=".4"/><rect x="18" y="30" width="28" height="22" rx="6" fill="url(#scale_body)"/><circle cx="32" cy="38" r="10" fill="url(#scale_dial)" stroke="#8a96aa" stroke-width="1.5"/><line x1="32" y1="38" x2="32" y2="31" stroke="#e04040" stroke-width="2" stroke-linecap="round"/><circle cx="32" cy="38" r="2" fill="#8a96aa"/><rect x="22" y="28" width="20" height="4" rx="2" fill="url(#scale_pan)" stroke="#9aa4b8" stroke-width="1"/><ellipse cx="32" cy="28" rx="10" ry="2" fill="#c8d0e0"/></svg>',
+ chocolate:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="choc_bar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B4513"/><stop offset="1" stop-color="#4a1f00"/></linearGradient><linearGradient id="choc_seg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0522d"/><stop offset="1" stop-color="#6b2f0a"/></linearGradient></defs><rect x="8" y="16" width="48" height="32" rx="4" fill="url(#choc_bar)"/><rect x="8" y="16" width="48" height="6" rx="4" fill="#a0522d" opacity=".5"/><line x1="24" y1="16" x2="24" y2="48" stroke="#3a1500" stroke-width="2"/><line x1="40" y1="16" x2="40" y2="48" stroke="#3a1500" stroke-width="2"/><line x1="8" y1="30" x2="56" y2="30" stroke="#3a1500" stroke-width="2"/><rect x="10" y="18" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/><rect x="26" y="18" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/><rect x="42" y="18" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/><rect x="10" y="32" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/><rect x="26" y="32" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/><rect x="42" y="32" width="12" height="10" rx="2" fill="url(#choc_seg)" opacity=".7"/></svg>',
+ butter:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="butt_block" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe87a"/><stop offset="1" stop-color="#d4a017"/></linearGradient><linearGradient id="butt_dish" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0f0f0"/><stop offset="1" stop-color="#c8c8c8"/></linearGradient><linearGradient id="butt_top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4a0"/><stop offset="1" stop-color="#f0c820"/></linearGradient></defs><ellipse cx="32" cy="50" rx="22" ry="5" fill="url(#butt_dish)" stroke="#b0b0b0" stroke-width="1"/><rect x="14" y="28" width="36" height="20" rx="3" fill="url(#butt_block)"/><polygon points="14,28 50,28 46,20 18,20" fill="url(#butt_top)"/><polygon points="50,28 46,20 46,48 50,48" fill="#c49010"/><rect x="14" y="44" width="36" height="4" rx="0" fill="#c49010" opacity=".3"/></svg>',
+ salt:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="salt_body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8f8ff"/><stop offset="1" stop-color="#c8d0e0"/></linearGradient><linearGradient id="salt_cap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0d8e8"/><stop offset="1" stop-color="#8a96b0"/></linearGradient><radialGradient id="salt_glass" cx="35%" cy="30%" r="60%"><stop offset="0" stop-color="#ffffff" stop-opacity=".8"/><stop offset="1" stop-color="#c0cce0" stop-opacity=".2"/></radialGradient></defs><ellipse cx="32" cy="54" rx="10" ry="3" fill="#a0aabb" opacity=".3"/><rect x="22" y="20" width="20" height="32" rx="10" fill="url(#salt_body)" stroke="#b0bac8" stroke-width="1"/><rect x="22" y="20" width="20" height="32" rx="10" fill="url(#salt_glass)"/><rect x="22" y="12" width="20" height="12" rx="5" fill="url(#salt_cap)"/><circle cx="28" cy="17" r="1.5" fill="#6a7890"/><circle cx="32" cy="15" r="1.5" fill="#6a7890"/><circle cx="36" cy="17" r="1.5" fill="#6a7890"/><circle cx="26" cy="46" r="1.5" fill="white" opacity=".8"/><circle cx="30" cy="50" r="1" fill="white" opacity=".8"/><circle cx="36" cy="48" r="1.5" fill="white" opacity=".8"/><circle cx="20" cy="52" r="1" fill="white" opacity=".7"/><circle cx="40" cy="54" r="1" fill="white" opacity=".7"/></svg>',
+ sand:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="sand_pile" cx="50%" cy="60%" r="70%"><stop offset="0" stop-color="#f5d87a"/><stop offset="1" stop-color="#c8960a"/></radialGradient><radialGradient id="sand_sheen" cx="40%" cy="30%" r="50%"><stop offset="0" stop-color="#fff8c0" stop-opacity=".7"/><stop offset="1" stop-color="#f5d87a" stop-opacity="0"/></radialGradient></defs><ellipse cx="32" cy="52" rx="24" ry="6" fill="#c8960a" opacity=".4"/><ellipse cx="32" cy="46" rx="22" ry="8" fill="url(#sand_pile)"/><ellipse cx="32" cy="40" rx="16" ry="9" fill="#f0c840"/><ellipse cx="32" cy="36" rx="10" ry="7" fill="#f5d87a"/><ellipse cx="32" cy="33" rx="6" ry="4" fill="#f8e090"/><ellipse cx="32" cy="40" rx="14" ry="7" fill="url(#sand_sheen)"/><circle cx="20" cy="49" r="1" fill="#d4a820" opacity=".6"/><circle cx="44" cy="50" r="1.2" fill="#d4a820" opacity=".6"/><circle cx="26" cy="52" r="0.8" fill="#d4a820" opacity=".5"/><circle cx="38" cy="51" r="1" fill="#e0b830" opacity=".5"/></svg>',
+ rice:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="rice_bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8ecf5"/><stop offset="1" stop-color="#9aa4c0"/></linearGradient><radialGradient id="rice_fill" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#fffef8"/><stop offset="1" stop-color="#e8e8e0"/></radialGradient></defs><path d="M12 38 Q12 56 32 56 Q52 56 52 38 Z" fill="url(#rice_bowl)"/><ellipse cx="32" cy="38" rx="20" ry="6" fill="#b0bac8"/><ellipse cx="32" cy="36" rx="20" ry="8" fill="url(#rice_fill)"/><ellipse cx="24" cy="34" rx="3" ry="1.2" fill="white" opacity=".9" transform="rotate(-20 24 34)"/><ellipse cx="32" cy="32" rx="3" ry="1.2" fill="white" opacity=".9" transform="rotate(10 32 32)"/><ellipse cx="40" cy="34" rx="3" ry="1.2" fill="white" opacity=".9" transform="rotate(-15 40 34)"/><ellipse cx="28" cy="37" rx="3" ry="1.2" fill="#f0f0ea" opacity=".9" transform="rotate(25 28 37)"/><ellipse cx="36" cy="37" rx="3" ry="1.2" fill="#f0f0ea" opacity=".9" transform="rotate(-10 36 37)"/><ellipse cx="20" cy="37" rx="2.5" ry="1" fill="#f0f0ea" opacity=".8" transform="rotate(15 20 37)"/><ellipse cx="44" cy="36" rx="2.5" ry="1" fill="#f0f0ea" opacity=".8" transform="rotate(-20 44 36)"/><rect x="14" y="52" width="36" height="4" rx="2" fill="#8a96b0" opacity=".5"/></svg>',
+ beans:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="bean1_g" cx="35%" cy="30%" r="65%"><stop offset="0" stop-color="#e05050"/><stop offset="1" stop-color="#8b1a1a"/></radialGradient><radialGradient id="bean2_g" cx="35%" cy="30%" r="65%"><stop offset="0" stop-color="#d84040"/><stop offset="1" stop-color="#7a1515"/></radialGradient><radialGradient id="bean3_g" cx="35%" cy="30%" r="65%"><stop offset="0" stop-color="#e86060"/><stop offset="1" stop-color="#921e1e"/></radialGradient></defs><ellipse cx="32" cy="56" rx="20" ry="3" fill="#7a1515" opacity=".2"/><ellipse cx="22" cy="44" rx="10" ry="7" fill="url(#bean1_g)" transform="rotate(-20 22 44)"/><path d="M15 44 Q22 40 29 44" stroke="#6a1010" stroke-width="1.2" fill="none"/><ellipse cx="22" cy="44" rx="3" ry="2" fill="#c03030" opacity=".3" transform="rotate(-20 22 44)"/><ellipse cx="42" cy="42" rx="10" ry="7" fill="url(#bean2_g)" transform="rotate(15 42 42)"/><path d="M35 40 Q42 36 49 40" stroke="#6a1010" stroke-width="1.2" fill="none"/><ellipse cx="42" cy="42" rx="3" ry="2" fill="#c03030" opacity=".3" transform="rotate(15 42 42)"/><ellipse cx="32" cy="54" rx="10" ry="7" fill="url(#bean3_g)" transform="rotate(5 32 54)"/><path d="M25 52 Q32 48 39 52" stroke="#6a1010" stroke-width="1.2" fill="none"/><ellipse cx="32" cy="54" rx="3" ry="2" fill="#c03030" opacity=".3" transform="rotate(5 32 54)"/></svg>',
+ graph:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_graph1_bar1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7043"/><stop offset="1" stop-color="#bf360c"/></linearGradient><linearGradient id="grad_graph1_bar2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#42a5f5"/><stop offset="1" stop-color="#1565c0"/></linearGradient><linearGradient id="grad_graph1_bar3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#66bb6a"/><stop offset="1" stop-color="#2e7d32"/></linearGradient><linearGradient id="grad_graph1_bar4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffca28"/><stop offset="1" stop-color="#f57f17"/></linearGradient></defs><line x1="12" y1="8" x2="12" y2="52" stroke="#555" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="52" x2="56" y2="52" stroke="#555" stroke-width="2.5" stroke-linecap="round"/><rect x="15" y="28" width="8" height="24" rx="1.5" fill="url(#grad_graph1_bar1)"/><rect x="27" y="18" width="8" height="34" rx="1.5" fill="url(#grad_graph1_bar2)"/><rect x="39" y="34" width="8" height="18" rx="1.5" fill="url(#grad_graph1_bar3)"/><rect x="51" y="22" width="8" height="30" rx="1.5" fill="url(#grad_graph1_bar4)"/></svg>',
+ bag:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_bag1_body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f4fd" stop-opacity="0.85"/><stop offset="1" stop-color="#b8d9f0" stop-opacity="0.7"/></linearGradient><linearGradient id="grad_bag1_zip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c9fd4"/><stop offset="1" stop-color="#2874a6"/></linearGradient></defs><rect x="14" y="18" width="36" height="38" rx="3" fill="url(#grad_bag1_body)" stroke="#7ab8e0" stroke-width="1.5"/><rect x="14" y="18" width="36" height="8" rx="3" fill="url(#grad_bag1_zip)"/><rect x="16" y="20" width="32" height="4" rx="2" fill="#85c1e9" opacity="0.6"/><circle cx="32" cy="22" r="2.5" fill="#1a5276"/><line x1="32" y1="22" x2="38" y2="15" stroke="#1a5276" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="14" r="2" fill="#2874a6"/><rect x="18" y="30" width="28" height="2" rx="1" fill="#a9cce3" opacity="0.5"/><rect x="18" y="36" width="22" height="2" rx="1" fill="#a9cce3" opacity="0.4"/><path d="M14 18 Q14 10 20 10 L44 10 Q50 10 50 18" fill="none" stroke="#7ab8e0" stroke-width="1.5"/></svg>',
+ glass:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_glass1_body" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6eeff" stop-opacity="0.3"/><stop offset="0.4" stop-color="#eaf5ff" stop-opacity="0.6"/><stop offset="1" stop-color="#b3d9f7" stop-opacity="0.4"/></linearGradient><linearGradient id="grad_glass1_water" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#64b5f6"/><stop offset="1" stop-color="#1976d2"/></linearGradient></defs><path d="M18 8 L22 56 L42 56 L46 8 Z" fill="url(#grad_glass1_body)" stroke="#7ab8e0" stroke-width="1.8" stroke-linejoin="round"/><path d="M22 56 L42 56 L44 44 L20 44 Z" fill="url(#grad_glass1_water)" opacity="0.75"/><ellipse cx="32" cy="44" rx="12" ry="2" fill="#90caf9" opacity="0.7"/><path d="M20 44 Q22 41 24 43 Q26 45 28 42 Q30 39 32 42" fill="none" stroke="#bbdefb" stroke-width="1.2" opacity="0.8"/><path d="M24 12 Q24 16 22 22" stroke="#d6eeff" stroke-width="3" stroke-linecap="round" opacity="0.7"/><path d="M34 10 Q34 15 33 20" stroke="#d6eeff" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>',
+ plant:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_plant1_pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a1663a"/><stop offset="1" stop-color="#6d3b1f"/></linearGradient><linearGradient id="grad_plant1_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d4037"/><stop offset="1" stop-color="#3e2723"/></linearGradient><linearGradient id="grad_plant1_leaf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#81c784"/><stop offset="1" stop-color="#2e7d32"/></linearGradient><linearGradient id="grad_plant1_leaf2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5d6a7"/><stop offset="1" stop-color="#388e3c"/></linearGradient></defs><path d="M20 54 L24 38 L40 38 L44 54 Z" fill="url(#grad_plant1_pot)"/><rect x="18" y="35" width="28" height="6" rx="3" fill="url(#grad_plant1_soil)"/><rect x="22" y="37" width="20" height="3" rx="1.5" fill="url(#grad_plant1_soil)"/><line x1="32" y1="36" x2="32" y2="14" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round"/><path d="M32 28 Q32 28 20 18 Q24 30 32 28" fill="url(#grad_plant1_leaf1)"/><path d="M32 22 Q32 22 44 14 Q40 26 32 22" fill="url(#grad_plant1_leaf2)"/><path d="M32 34 Q28 26 22 24 Q26 34 32 34" fill="url(#grad_plant1_leaf1)" opacity="0.85"/><ellipse cx="32" cy="14" rx="3" ry="3.5" fill="#a5d6a7"/></svg>',
+ wilted:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_wilt1_pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a1663a"/><stop offset="1" stop-color="#6d3b1f"/></linearGradient><linearGradient id="grad_wilt1_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8d6e63"/><stop offset="1" stop-color="#4e342e"/></linearGradient><linearGradient id="grad_wilt1_stem" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9ccc65"/><stop offset="1" stop-color="#558b2f"/></linearGradient><linearGradient id="grad_wilt1_leaf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4e157"/><stop offset="1" stop-color="#9e9d24"/></linearGradient><linearGradient id="grad_wilt1_leaf2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ca53"/><stop offset="1" stop-color="#827717"/></linearGradient></defs><path d="M20 54 L24 38 L40 38 L44 54 Z" fill="url(#grad_wilt1_pot)"/><rect x="18" y="35" width="28" height="6" rx="3" fill="url(#grad_wilt1_soil)"/><path d="M32 36 Q32 30 31 24 Q30 20 32 16" fill="none" stroke="#8bc34a" stroke-width="2.5" stroke-linecap="round"/><path d="M31 24 Q24 22 16 30 Q20 24 26 22 Q29 21 31 24" fill="url(#grad_wilt1_leaf1)" opacity="0.9"/><path d="M31 28 Q38 26 46 32 Q42 25 36 24 Q33 23 31 28" fill="url(#grad_wilt1_leaf2)" opacity="0.9"/><path d="M32 16 Q30 14 27 18 Q30 14 32 16" fill="url(#grad_wilt1_leaf1)" opacity="0.8"/><path d="M16 30 Q12 33 11 37" fill="none" stroke="#9ccc65" stroke-width="1.5" stroke-linecap="round"/><path d="M46 32 Q50 34 51 38" fill="none" stroke="#9ccc65" stroke-width="1.5" stroke-linecap="round"/></svg>',
+ wateringcan:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_wcan1_body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#0277bd"/></linearGradient><linearGradient id="grad_wcan1_spout" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#29b6f6"/><stop offset="1" stop-color="#0288d1"/></linearGradient><linearGradient id="grad_wcan1_shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e1f5fe" stop-opacity="0.7"/><stop offset="1" stop-color="#e1f5fe" stop-opacity="0"/></linearGradient></defs><ellipse cx="28" cy="36" rx="18" ry="14" fill="url(#grad_wcan1_body)"/><ellipse cx="28" cy="36" rx="10" ry="6" fill="url(#grad_wcan1_shine)" opacity="0.5"/><path d="M44 32 Q52 26 56 22" fill="none" stroke="url(#grad_wcan1_spout)" stroke-width="5" stroke-linecap="round"/><circle cx="56" cy="22" r="4" fill="#0288d1"/><path d="M55 19 Q58 16 60 12" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M58 20 Q62 18 64 15" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M52 20 Q55 15 56 11" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><circle cx="60" cy="11" r="1.5" fill="#4fc3f7"/><circle cx="64" cy="14" r="1.5" fill="#4fc3f7"/><circle cx="56" cy="10" r="1.5" fill="#4fc3f7"/><path d="M22 22 Q18 18 16 22 Q20 20 22 22" fill="none" stroke="#b3e5fc" stroke-width="2" stroke-linecap="round"/><path d="M16 50 Q12 42 10 36" fill="none" stroke="url(#grad_wcan1_body)" stroke-width="5" stroke-linecap="round"/><ellipse cx="13" cy="43" rx="4" ry="7" fill="url(#grad_wcan1_body)" transform="rotate(-20 13 43)"/></svg>',
 };
 function withIcons(html){return String(html).replace(/\[\[(\w+)\]\]/g,(m,k)=>ICONS[k]||'');}
 const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'juice',Rigid:'block',
  Material:'block',Texture:'sponge',Hardness:'rock',Classify:'ruler',Gravity:'apple',Force:'magnet',Earth:'earth',Pull:'magnet','Air Resistance':'feather',
- Energy:'sun',Sun:'sun',Producer:'grass',Consumer:'rabbit',Photosynthesis:'leaf','Food Chain':'grass',Predator:'fox',Prey:'mouse'};
+ Energy:'sun',Sun:'sun',Producer:'grass',Consumer:'rabbit',Photosynthesis:'leaf','Food Chain':'grass',Predator:'fox',Prey:'mouse',
+ Weight:'scale',Measure:'scale',Heating:'steam',Cooling:'ice',Mix:'juice',Graph:'graph','Physical Property':'magnet',Magnetism:'magnet',Transparency:'glass',Air:'air',Water:'water',Growth:'plant'};
 const GLOSSARY={
  'Solid':{e:'🧊',m:'Matter that keeps its own shape and does not flow — like a rock or an ice cube.'},
  'Liquid':{e:'💧',m:'Matter that flows and takes the shape of its container — like water or juice.'},
@@ -482,7 +498,21 @@ const GLOSSARY={
  'Predator':{e:'🦊',m:'An animal that hunts and eats other animals.'},
  'Prey':{e:'🐭',m:'An animal that is hunted and eaten by another animal.'},
  'Model':{e:'🧩',m:'A simple way to show how something works.'},
- 'Transfer':{e:'➡️',m:'To pass energy from one thing to another.'}
+ 'Transfer':{e:'➡️',m:'To pass energy from one thing to another.'},
+ 'Weight':{e:'⚖️',m:'How heavy something is — we measure it with a scale.'},
+ 'Measure':{e:'📏',m:'To find out the size or amount of something, like its weight.'},
+ 'Heating':{e:'🔥',m:'Adding heat — it can melt a solid into a liquid.'},
+ 'Cooling':{e:'❄️',m:'Taking heat away — it can freeze a liquid into a solid.'},
+ 'Mix':{e:'🥣',m:'To combine two or more substances together.'},
+ 'Graph':{e:'📊',m:'A picture of your data that makes it easy to compare.'},
+ 'Physical Property':{e:'🔎',m:'Something you can observe or measure about a material.'},
+ 'Magnetism':{e:'🧲',m:'Whether a magnet sticks to a material.'},
+ 'Transparency':{e:'🔍',m:'Whether light can pass through a material.'},
+ 'Air':{e:'💨',m:'Plants take in carbon dioxide from the air through their leaves.'},
+ 'Water':{e:'💧',m:'Plants absorb water through their roots.'},
+ 'Growth':{e:'🌱',m:'Getting bigger — plants use air and water to grow.'},
+ 'Reasoning':{e:'🧠',m:'How your evidence supports your claim.'},
+ 'Argument':{e:'💬',m:'A claim backed up by evidence and reasoning.'}
 };
 /* ---- Unit 1 · Standard 2 : Physical properties of materials ---- */
 const MATTER_S2=[
@@ -720,20 +750,172 @@ const ENERGY=[
 }
 ];
 
+/* ---- Unit 1 · Standard 4 : Conservation of weight ---- */
+const MATTER_S4=[
+{
+  id:'ms4a', title:'Lesson 1: Investigating Weight Before and After Physical Changes',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to measure and graph the weight of substances before and after heating or cooling to show that the total weight remains the same.',
+  sc:[
+    {band:'Remembering',items:['I can identify tools used to measure weight.']},
+    {band:'Understanding',items:['I can explain what happens to the weight of a substance when it is heated or cooled.']},
+    {band:'Applying',items:['I can measure, record and graph data to show that the total weight remains the same.']}
+  ],
+  vocab:['Weight','Measure','Heating','Cooling'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Mystery Demonstration',body:'<p><b>Watch carefully:</b></p><ul class="ico-list"><li>[[ice]] An ice cube inside a sealed [[bag]] bag.</li><li>[[scale]] We weigh the bag…</li><li>[[water]] …let the ice melt, then weigh again.</li></ul><p><b>Ask:</b> Did anything leave the bag? Why did the weight not change? What changed?</p>'},
+    {tag:'Explore · 20 min',h:'Investigation Stations',body:'<p><b>Two stations:</b></p><ul class="ico-list"><li>[[ice]] Station A — ice melts inside a sealed container.</li><li>[[water]] Station B — warm water cools down.</li></ul><p>At each station: <b>measure the weight before</b>, observe the change, then <b>measure after</b>. Record your results.</p>'},
+    {tag:'Explain · 15 min',h:'Conservation of Matter',body:'<p>When we <b>heat</b> or <b>cool</b> a substance, it can change <b>form</b> (solid to liquid) — but no matter is added or taken away.</p><p><b>Key idea:</b> Matter may change its form, but the <b>total weight stays the same</b>. This is called <b>conservation of matter</b>.</p>'},
+    {tag:'AFL · 10 min',h:'Conserved or Changed?',body:'<p><b>True or False?</b> Tap your answer for each statement.</p>'},
+    {tag:'Elaborate · 20 min',h:'Weight Detective',body:'<p>Be a weight detective — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match the before/after pictures and finish the bar graph.</li><li>🥈 <b>Silver</b> — Fix the missing or incorrect evidence at each station.</li><li>🥇 <b>Gold</b> — Run your own melting investigation and present a CER.</li><li>⭐ <b>G&T</b> — Bust a science myth about weight using measurements and graphs.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>What happened to the weight after heating or cooling?</li><li>Why?</li><li>What evidence supports your answer?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Evidence Match-Up',items:['Cut out the before/after picture cards and the weight cards below.','Match each BEFORE picture to its AFTER picture.','Complete the missing bars on the bar graph.','Circle "Conserved!" if the weight stayed the same, or "Changed!" if it did not.'],cards:[{i:'ice',l:'Before: ice (50 g)'},{i:'water',l:'After: water (50 g)'},{i:'scale',l:'Weight: 50 g'},{i:'bag',l:'Sealed bag'}],columns:['BEFORE','AFTER'],graph:'Draw the bars: weight BEFORE and weight AFTER'},
+    silver:{title:'Silver — Graph Detective',items:['At each evidence station something is missing or wrong.','Build or finish the bar graph from the measurements.','Find and fix the mistake.'],table:{cols:['Station','Weight before (g)','Weight after (g)','Same or changed?'],rows:5},graph:'Build the bar graph from your measurements',question:'The total weight stayed the same because ____________________.'},
+    gold:{title:'Gold — Science Lab Challenge',items:['Choose one investigation: melt chocolate, melt butter, melt ice, or mix warm + cold water.','Write a hypothesis, then measure the weight BEFORE and AFTER.','Record your data and draw a bar graph.','Present a 1-minute Science News Report using Claim – Evidence – Reasoning.'],bank:['chocolate','butter','ice','water'],table:{cols:['Part','Write your answer'],rows:[{label:'Hypothesis'},{label:'Weight before (g)'},{label:'Weight after (g)'},{label:'Claim — our investigation showed…'},{label:'Evidence — our measurements and graph showed…'},{label:'Reasoning — this proves the total weight…'}]},graph:'Draw your before-and-after bar graph'},
+    gt:{title:'G&T Challenge — Science Myth Busters',items:['Choose a myth to bust:','• "Ice weighs less after it melts."','• "Hot water weighs more than cold water."','• "Mixing substances creates extra weight."','Use measurements, a graph and scientific reasoning to show whether it is TRUE or FALSE.','Make a "Myth vs Fact" poster explaining why.'],graph:'Use a graph as your evidence',question:'My myth, my evidence, and is it TRUE or FALSE:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['ice','scale','water'],
+    items:['1. What happened to the weight after heating or cooling?','2. Why did it stay the same?','3. What evidence supports your answer?'],
+    check:['I can identify tools used to measure weight.','I can explain what happens to weight when matter is heated or cooled.','I can measure, record and graph data to show total weight stays the same.']}
+},
+{
+  id:'ms4b', title:'Lesson 2: Mixing Substances and Conserving Weight',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use measurements and graphs to provide evidence that the total weight remains constant when substances are mixed.',
+  sc:[
+    {band:'Remembering',items:['I can identify substances that can be mixed.']},
+    {band:'Understanding',items:['I can explain why mixing substances does not change the total weight.']},
+    {band:'Analysing',items:['I can analyse graphs and measurements to explain why weight is conserved.']}
+  ],
+  vocab:['Mix','Weight','Evidence','Graph'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Magic Mixing',body:'<p><b>Magic mixing!</b> We have [[water]] water and [[salt]] salt.</p><p><b>Predict:</b> after we mix them, will the total weight increase, decrease, or stay the same? Vote below!</p>'},
+    {tag:'Explore · 20 min',h:'Mixing Investigations',body:'<p><b>Investigations:</b></p><ul class="ico-list"><li>[[water]] water + [[salt]] salt</li><li>[[sand]] sand + [[water]] water</li><li>[[rice]] rice + [[beans]] beans</li></ul><p><b>Steps:</b> measure each substance separately, add the weights, mix, measure again, and record.</p>'},
+    {tag:'Explain · 15 min',h:'Before = After',body:'<p>When we mix substances, we just bring the same matter together — none is added or lost.</p><p><b>Key idea:</b> <b>Total weight before mixing = total weight after mixing.</b> Matter cannot be created or destroyed.</p>'},
+    {tag:'AFL · 10 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer for each statement about mixing.</p>'},
+    {tag:'Elaborate · 20 min',h:'Crack the Case',body:'<p>Crack the conservation case — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match the before/after pictures, build the bar graph, finish the sentence.</li><li>🥈 <b>Silver</b> — Draw the graph, find the hidden mistake, explain why weight stays the same.</li><li>🥇 <b>Gold</b> — Escape Lab: solve the stations and write a CER to "escape".</li><li>⭐ <b>G&T</b> — Design your own fair test and defend whether weight is conserved.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'CER Reflection',body:'<p><b>Finish each part:</b></p><ol><li><b>Claim:</b> The total weight…</li><li><b>Evidence:</b> My graph shows…</li><li><b>Reasoning:</b> This proves…</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Science Puzzle Race',items:['Cut out the before/after pictures and the weight cards.','Match the correct before and after investigation pictures.','Build the bar graph like a puzzle (draw the bars).'],cards:[{i:'salt',l:'Salt (10 g)'},{i:'water',l:'Water (50 g)'},{i:'beans',l:'Beans (60 g)'},{i:'rice',l:'Rice (80 g)'},{i:'sand',l:'Sand'},{i:'scale',l:'Scale'}],columns:['BEFORE mixing','AFTER mixing'],graph:'Draw the before and after bars',question:'The total weight stayed the same because ____________________.'},
+    silver:{title:'Silver — Data Detective Relay',items:['At each station: draw the bar graph from the measurements.','Find the hidden mistake and fix it.','Explain why the total weight stayed the same.'],table:{cols:['Mixture','Weight before (g)','Weight after (g)','Conserved?'],rows:[{icon:'salt',label:'Water + salt'},{icon:'sand',label:'Sand + water'},{icon:'beans',label:'Rice + beans'}]},graph:'Build the bar graph for each mixture'},
+    gold:{title:'Gold — Conservation Escape Lab',items:['Station 1 — Calculate the missing weight.','Station 2 — Read the graph and answer the questions.','Station 3 — Predict whether the total weight changes after mixing.','Station 4 — Spot and fix the scientist\'s mistake.','Final: write a CER to unlock the lab.'],table:{cols:['CER','My answer'],rows:[{label:'Claim — what happened to the total weight?'},{label:'Evidence — use measurements and graphs'},{label:'Reasoning — why this proves conservation'}]},graph:'Draw the graph you used as evidence'},
+    gt:{title:'G&T Challenge — Design Your Own Fair Test',items:['Choose any safe household substances to mix.','Write a hypothesis and plan the investigation.','Collect measurements and make a graph.','Explain why some people might think weight changes, even when measurements show it does not.'],question:'My fair test, my data, and why weight is conserved:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['salt','water','scale'],
+    items:['1. Name two substances that can be mixed.','2. Why does mixing not change the total weight?','3. What evidence shows weight is conserved?'],
+    check:['I can identify substances that can be mixed.','I can explain why mixing does not change total weight.','I can analyse graphs and measurements to explain why weight is conserved.']}
+}
+];
+
+/* ---- Unit 1 · Standard 5 : Classify by physical properties ---- */
+const MATTER_S5=[
+{
+  id:'ms5a', title:'Lesson 1: Identifying and Classifying Materials',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use observations and measurements to identify and classify materials according to their physical properties.',
+  sc:[
+    {band:'Remembering',items:['I can identify the physical properties of materials (colour, texture, hardness, flexibility, magnetism, transparency).']},
+    {band:'Understanding',items:['I can describe how physical properties help us identify different materials.']},
+    {band:'Applying',items:['I can observe, measure and classify materials based on their physical properties.']}
+  ],
+  vocab:['Physical Property','Observe','Measure','Classify'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Mystery Bag Challenge',body:'<p>🕵️ <b>Mystery Bag!</b> Without looking, feel an object and describe it using only your senses:</p><ul class="ico-list"><li>[[sponge]] soft? [[spoon]] hard &amp; cold? [[block]] wooden? [[ball]] bouncy?</li></ul><p><b>Ask:</b> What clues helped you identify it? Which properties were easiest to feel?</p>'},
+    {tag:'Explore · 20 min',h:'Material Investigation Stations',body:'<p>🔬 Investigate: [[block]] wood · [[bottle]] plastic · [[spoon]] metal · [[glass]] glass · [[ball]] rubber · [[cloth]] fabric.</p><p>Test each one: ✔ colour ✔ texture ✔ hardness ✔ flexibility ✔ magnetism ✔ transparency. Record in your Properties Table.</p>'},
+    {tag:'Explain · 15 min',h:'What is a Physical Property?',body:'<p>A <b>physical property</b> is something we can observe or measure about a material — its <b>colour, texture, hardness, flexibility, magnetism</b> and <b>transparency</b>.</p><p>Some properties we just <b>observe</b> (colour); others we must <b>test</b> (magnetism, hardness). We <b>classify</b> materials by sorting them using these properties.</p>'},
+    {tag:'AFL · 10 min',h:'Property Sorting Challenge',body:'<p><b>See-through or not?</b> Tap an object, then drop it in the right bin.</p>'},
+    {tag:'Elaborate · 20 min',h:'Material Detective',body:'<p>Become a material detective — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each object to its property and sort it.</li><li>🥈 <b>Silver</b> — Observe, measure and classify the mystery materials.</li><li>🥇 <b>Gold</b> — Identify a secret material and make a Material ID Card.</li><li>⭐ <b>G&T</b> — Design your own classification system with a key others can follow.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>Name three physical properties of the object.</li><li>Which material do you think it is?</li><li>What evidence supports your answer?</li></ol><p><b>Challenge:</b> Could another material have similar properties? Explain.</p>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Material Match-Up',items:['Cut out the object cards and the property cards.','Match each object to its correct property.','Sort the objects into groups: hard/soft, magnetic/non-magnetic, transparent/opaque.'],cards:[{i:'spoon',l:'Metal spoon'},{i:'glass',l:'Glass'},{i:'block',l:'Wood'},{i:'ball',l:'Rubber ball'},{i:'sponge',l:'Sponge'},{i:'bottle',l:'Plastic'}],columns:['Hard','Soft'],question:'I know this object is ________ because it is ________________.'},
+    silver:{title:'Silver — Science Sorting Relay',items:['For each mystery material: observe, measure (if you can), and record its physical properties.','Classify it on the sorting chart.'],table:{cols:['Material','Colour','Texture','Magnetic? (Y/N)','See-through? (Y/N)'],rows:[{icon:'spoon',label:'Metal'},{icon:'glass',label:'Glass'},{icon:'block',label:'Wood'},{icon:'cloth',label:'Fabric'},{icon:'ball',label:'Rubber'}]},question:'The most useful property for identifying my material was ____________ because ____________.'},
+    gold:{title:'Gold — Material Detective ID Card',items:['You have a secret material. Use observations and simple tests to identify it.','Complete the property checklist below.','Make a Material ID Card: name, properties, classification, and your evidence.'],bank:['spoon','glass','block','ball','sponge','bottle'],table:{cols:['Property','My observation'],rows:[{label:'Colour'},{label:'Texture'},{label:'Hard or soft'},{label:'Magnetic?'},{label:'See-through?'},{label:'My material is… (my evidence)'}]}},
+    gt:{title:'G&T Challenge — Design a Classification System',items:['Choose 15–20 classroom objects.','Pick at least THREE physical properties for sorting.','Make a classification key or flowchart someone else can follow.','Test it — have another group sort the objects using only your key.'],question:'My three properties, my classification key, and how well it worked:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['spoon','glass','block'],
+    items:['1. Name three physical properties of a material.','2. Which material do you think the mystery object is?','3. What evidence supports your answer?'],
+    check:['I can identify the physical properties of materials.','I can describe how properties help us identify materials.','I can observe, measure and classify materials by their properties.']}
+}
+];
+
+/* ---- Unit 4 · Organisms and Processes : Plants need air & water ---- */
+const ORGANISMS=[
+{
+  id:'o1', title:'Lesson 1: Investigating What Plants Need to Grow',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to investigate and use evidence to explain that plants mainly get the materials they need to grow from air and water.',
+  sc:[
+    {band:'Remembering',items:['I can identify the basic needs of plants for growth.']},
+    {band:'Understanding',items:['I can explain why air and water are important for plant growth.']},
+    {band:'Applying',items:['I can use evidence from an investigation to explain where plants get the materials they need to grow.']}
+  ],
+  vocab:['Air','Water','Growth','Evidence'],
+  slides:[
+    {tag:'Engage · 10 min',h:'The Mystery Plant',body:'<p>🌱 Two identical plants:</p><ul class="ico-list"><li>[[plant]] Plant A — healthy.</li><li>[[wilted]] Plant B — wilted.</li></ul><p><b>Ask:</b> Why did one grow better? What do plants need to survive? Does soil become part of the plant? Write a prediction.</p>'},
+    {tag:'Explore · 20 min',h:'Plant Investigation',body:'<p>🔬 Observe four plants:</p><ul class="ico-list"><li>[[plant]] A — water + air.</li><li>[[wilted]] B — very little water.</li><li>[[bag]] C — covered with a clear bag (watch for moisture from the leaves).</li><li>[[sun]] D — photos of a plant grown over several weeks.</li></ul><p>Measure plant height, record leaf colour, and predict what happens next.</p>'},
+    {tag:'Explain · 15 min',h:'Where Plants Get Their Materials',body:'<p>Plants <b>absorb water through their roots</b>. They <b>take in carbon dioxide from the air through their leaves</b>.</p><p><b>Key idea:</b> Most of a plant\'s mass comes from <b>air and water — not soil</b>.</p><p>[[water]] water (roots) + [[air]] air (leaves) → [[plant]] plant growth</p>'},
+    {tag:'AFL · 10 min',h:'Evidence or Opinion?',body:'<p>🎯 Tap each statement, then drop it in the right box.</p>'},
+    {tag:'Elaborate · 20 min',h:'Plant Scientist',body:'<p>Investigate what plants need — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Build the healthy-plant puzzle and match each need.</li><li>🥈 <b>Silver</b> — Collect evidence at the plant stations.</li><li>🥇 <b>Gold</b> — Science Escape: interpret data, fix mistakes, build a graph, write a CER.</li><li>⭐ <b>G&T</b> — Design your own fair test for what plants need.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>Plants mainly get materials from ______ and ______.</li><li>One piece of evidence is…</li><li>I know this because…</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Plant Needs Puzzle',items:['Cut out the plant picture pieces and the need cards.','Build the healthy-plant puzzle.','Match each clue to the correct plant need.'],cards:[{i:'plant',l:'Healthy plant'},{i:'air',l:'Air'},{i:'water',l:'Water'},{i:'sun',l:'Sunlight'},{i:'wateringcan',l:'Watering can'},{i:'leaf',l:'Leaf'}],columns:['Plant NEEDS','Not mainly used'],question:'Plants mainly get the materials they need from ________ and ________.'},
+    silver:{title:'Silver — Plant Detective Stations',items:['Rotate through the stations: leaf observations · water investigation · growth photos · data table.','At each station collect ONE piece of evidence and record your observation.','Decide whether the evidence supports the idea that plants mainly get materials from air and water.'],table:{cols:['Station','My evidence','Supports air & water? (Y/N)'],rows:[{icon:'leaf',label:'Leaf observation'},{icon:'water',label:'Water investigation'},{icon:'plant',label:'Growth photos'},{icon:'graph',label:'Data table'}]}},
+    gold:{title:'Gold — Science Escape Challenge',items:['Station 1 — Interpret the plant investigation data.','Station 2 — Identify the mistakes in a plant experiment.','Station 3 — Build a bar graph using the plant-growth measurements.','Station 4 — Match the evidence to the scientific claims.','Final: write a CER explaining why plants mainly get materials from air and water.'],table:{cols:['CER','My answer'],rows:[{label:'Claim'},{label:'Evidence'},{label:'Reasoning'}]},graph:'Build the plant-growth bar graph'},
+    gt:{title:'G&T Challenge — Design the Perfect Plant Investigation',items:['Design your own fair test. Choose ONE thing to change: amount of water, air, light, or soil type.','Write a hypothesis and name your variables.','Plan the investigation and predict the results.','Explain what evidence you would collect.'],question:'My fair-test plan: hypothesis, variables, and the evidence I would collect:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['plant','water','air'],
+    items:['1. Plants mainly get materials from ______ and ______.','2. Give one piece of evidence.','3. How do you know this?'],
+    check:['I can identify the basic needs of plants for growth.','I can explain why air and water are important for plant growth.','I can use evidence to explain where plants get their materials.']}
+},
+{
+  id:'o2', title:'Lesson 2: Using Evidence to Support an Argument',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use evidence from investigations to support the argument that plants mainly get the materials they need to grow from air and water.',
+  sc:[
+    {band:'Remembering',items:['I can identify evidence from plant investigations.']},
+    {band:'Analysing',items:['I can analyse investigation results to determine what they show.']},
+    {band:'Evaluating',items:['I can support an argument using scientific evidence.']}
+  ],
+  vocab:['Evidence','Claim','Reasoning','Argument'],
+  slides:[
+    {tag:'Engage · 10 min',h:'True or False?',body:'<p>🤔 Tap your answer for each statement, then explain your thinking.</p>'},
+    {tag:'Explore · 20 min',h:'Evidence Investigation',body:'<p>🌿 Examine the [[plant]] plant photographs, [[graph]] growth measurements and graphs, and the observation notes.</p><p>Identify: ✔ patterns ✔ evidence ✔ conclusions.</p>'},
+    {tag:'Explain · 15 min',h:'Observation → Evidence → Argument',body:'<p>Scientists build an argument step by step:</p><p>[[plant]] <b>Observation</b> → 📋 <b>Evidence</b> → 💬 <b>Argument</b></p><p>A <b>claim</b> is what you think is true. <b>Evidence</b> is what you observed. <b>Reasoning</b> explains how the evidence supports the claim.</p>'},
+    {tag:'AFL · 10 min',h:'Claim, Evidence or Reasoning?',body:'<p>🎯 Tap each strip and sort it into the right group.</p>'},
+    {tag:'Elaborate · 20 min',h:'Argue Like a Scientist',body:'<p>Use evidence to argue like a scientist — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each claim to the correct evidence.</li><li>🥈 <b>Silver</b> — Gallery walk: record the evidence at each station.</li><li>🥇 <b>Gold</b> — Plant Scientist Debate: argue with evidence, then write a CER.</li><li>⭐ <b>G&T</b> — Be a science communicator: convince younger students with 3 pieces of evidence.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket — CER',body:'<ol><li><b>Claim:</b> Where do plants mainly get the materials they need to grow?</li><li><b>Evidence:</b> Two pieces of evidence from today.</li><li><b>Reasoning:</b> How your evidence supports your claim.</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Evidence Match-Up',items:['Cut out the claim cards and the evidence cards.','Match each claim with the correct evidence.'],cards:[{i:'plant',l:'The plant grew tall'},{i:'graph',l:'Soil barely lost weight'},{i:'water',l:'Water given daily'},{i:'air',l:'Leaves took in air'}],columns:['CLAIM','EVIDENCE'],question:'The evidence shows ____________________________.'},
+    silver:{title:'Silver — Science Gallery Walk',items:['At each station (graph · photo · investigation notes) write down what evidence you found and what it tells you.','Leave one question on a sticky note for the next group.'],table:{cols:['Station','Evidence I found','What it tells me'],rows:[{icon:'graph',label:'Graph'},{icon:'plant',label:'Photo'},{icon:'leaf',label:'Notes'}]}},
+    gold:{title:'Gold — Plant Scientist Debate',items:['One side argues: "Soil is where plants get most of their materials."','The other argues: "Plants mainly get their materials from air and water."','Use investigation evidence to debate.','Then write a CER defending the stronger argument.'],table:{cols:['CER','My answer'],rows:[{label:'Claim'},{label:'Evidence (at least 2)'},{label:'Reasoning'}]}},
+    gt:{title:'G&T Challenge — Science Communicator',items:['Create a one-minute news report, an infographic, a comic strip OR a digital presentation.','Convince younger students that plants mainly get their materials from air and water.','Use at least THREE pieces of evidence.','Answer one common wrong idea (e.g. "plants get their food from soil") and explain why the evidence does not support it.'],question:'My message, my 3 pieces of evidence, and the wrong idea I corrected:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['plant','graph','water'],
+    items:['1. Where do plants mainly get the materials they need to grow?','2. Write two pieces of evidence from your investigations.','3. Explain how your evidence supports your claim.'],
+    check:['I can identify evidence from plant investigations.','I can analyse results to determine what they show.','I can support an argument using scientific evidence.']}
+}
+];
+
 const UNITS=[
   {n:1,id:'matter',title:'Matter: Properties and Interactions',live:true,
    standards:[
      {n:1,text:'Explore and gather evidence through questions and observations to determine if matter exists as a solid, liquid or gas.',lessons:MATTER_S1},
      {n:2,text:'Plan and perform investigations to explore, describe, and categorize materials based on their physical properties.',lessons:MATTER_S2},
      {n:3,text:'Explain, using a model, that matter is composed of particles that are too small to be seen.',lessons:[]},
-     {n:4,text:'Use measurements and graphs to investigate how the total amount of matter stays constant during physical changes.',lessons:[]}
+     {n:4,text:'Use measurements and graphs to provide evidence that the total weight remains the same when substances are heated, cooled, or mixed, regardless of the type of change.',lessons:MATTER_S4},
+     {n:5,text:'Use observations and measurements to identify and classify materials according to their physical properties.',lessons:MATTER_S5}
    ]},
   {n:2,id:'forces',title:'Forces',live:true,standards:[{n:1,text:'Support the idea that gravity is a force that pulls objects toward the Earth.',lessons:FORCES}]},
   {n:3,id:'energy',title:'Energy',live:true,standards:[{n:1,text:'Use models to demonstrate that the energy animals need for body functions, growth and movement began as energy from the Sun.',lessons:ENERGY}]},
-  {n:4,id:'sound',title:'Sound Waves',live:false,standards:[]},
-  {n:5,id:'organisms',title:'Organisms and Processes',live:false,standards:[]},
-  {n:6,id:'ecosystems',title:'Ecosystems and Sustainability',live:false,standards:[]},
-  {n:7,id:'earth',title:"Earth's Interactions",live:false,standards:[]}
+  {n:4,id:'organisms',title:'Organisms and Processes',live:true,standards:[{n:1,text:'Use evidence from investigations to show that plants mainly get the materials they need to grow from air and water.',lessons:ORGANISMS}]},
+  {n:5,id:'ecosystems',title:'Ecosystems and Sustainability',live:false,standards:[]},
+  {n:6,id:'earth',title:"Earth's Interactions",live:false,standards:[]}
 ];
 
 /* =====================================================================
@@ -748,7 +930,7 @@ const THEME={
  forces:{a:'#dc2626',d:'#b91c1c',deep:'#7a1212',soft:'#fbe8e8'},
  energy:{a:'#bb8804',d:'#806000',deep:'#473300',soft:'#fbf2cc'},
  sound:{a:'#6d28d9',d:'#5b21b6',deep:'#3a1378',soft:'#f0eafd'},
- organisms:{a:'#6c7d2c',d:'#55621f',deep:'#343c12',soft:'#f1f4e4'},
+ organisms:{a:'#6d28d9',d:'#5b21b6',deep:'#3a1378',soft:'#f0eafd'},
  ecosystems:{a:'#0d9488',d:'#0b7a70',deep:'#064a44',soft:'#e4f5f2'},
  earth:{a:'#8a5a2b',d:'#6e4720',deep:'#412a13',soft:'#f5ece1'}
 };
@@ -829,13 +1011,8 @@ function lessonRow(L,i){
   return `<div class="lesson">
     <div class="lhead"><h3>${L.title}</h3><button class="btn sm" onclick="openLesson(${i})">Open ▸</button></div>
     <p class="lo"><b>Learning Objective:</b> ${L.lo}</p>
-    <div class="sc"><div style="font-weight:800">Success Criteria</div>
+    <div class="sc"><div style="font-weight:800">Success Criteria <span style="font-weight:600;color:var(--muted);font-size:.85rem">(Bloom's Taxonomy)</span></div>
       ${L.sc.map(s=>`<div class="band">${s.band}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join('')}</ul>`).join('')}</div>
-    <div class="tasks"><span class="lbl">Elaborate task:</span>
-      <button class="medal b" onclick="openSheet(${i},'bronze')">🥉 Bronze</button>
-      <button class="medal s" onclick="openSheet(${i},'silver')">🥈 Silver</button>
-      <button class="medal g" onclick="openSheet(${i},'gold')">🥇 Gold</button>
-      ${L.tasks&&L.tasks.gt?`<button class="medal gt" onclick="openSheet(${i},'gt')">⭐ G&amp;T</button>`:''}</div>
     <div class="lfoot"><button class="btn ghost sm" onclick="openAssess(${i})">📋 Assessment</button></div>
   </div>`;
 }
@@ -849,7 +1026,7 @@ function vLesson(){
     <h2 style="font-size:1.4rem;margin:14px 0 4px">${L.title}</h2>
     <div style="color:var(--muted);font-weight:700;margin-bottom:14px">${L.grade}</div>
     <div class="panel"><h3>🎯 Learning Objective</h3><p>${L.lo}</p>
-      <h3 style="margin-top:14px">✅ Success Criteria</h3>
+      <h3 style="margin-top:14px">✅ Success Criteria <span style="font-weight:600;color:var(--muted);font-size:.9rem">(Bloom's Taxonomy)</span></h3>
       <div class="sc">${L.sc.map(s=>`<div class="band">${s.band}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join('')}</ul>`).join('')}</div>
       <h3 style="margin-top:14px">🔑 Key Vocabulary</h3>
       <div class="vhead">Tap a word to flip it over and see what it means.</div>
@@ -882,15 +1059,18 @@ function vLesson(){
 function openCheck(){
   const L=lessonsOf()[cur.li];const area=document.getElementById('checkArea');
   if(!L.mcqs||!L.mcqs.length){area.innerHTML='<div class="panel">A 10-question check for this lesson is coming soon.</div>';area.scrollIntoView({behavior:'smooth'});return;}
-  let score=0,done=0;
-  area.innerHTML=`<div class="panel quiz" id="qz"><div class="no-print"><h3>📝 Quick Check</h3><button class="btn gray sm" onclick="window.print()">🖨️ Print questions</button></div>
-    ${L.mcqs.map((q,qi)=>`<div class="q" data-q="${qi}"><div class="qt">${qi+1}. ${q.q}</div>${q.options.map((o,oi)=>`<button class="opt" onclick="window.__ans(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}</div>`).join('')}
-    <div class="scoreline" id="qscore">Score: 0 / ${L.mcqs.length}</div></div>`;
-  window.__ans=(qi,oi)=>{
-    const block=document.querySelector('#qz .q[data-q="'+qi+'"]');if(block.dataset.done)return;block.dataset.done=1;
-    block.querySelectorAll('.opt').forEach((o,k)=>{o.classList.add('lock');if(k===L.mcqs[qi].answer)o.classList.add('correct');if(k===oi&&k!==L.mcqs[qi].answer)o.classList.add('wrong');});
-    if(oi===L.mcqs[qi].answer)score++;done++;document.getElementById('qscore').textContent='Score: '+score+' / '+L.mcqs.length+(done===L.mcqs.length?(score>=8?' · 🌟 Excellent!':score>=5?' · 👍 Good work!':' · 💪 Review and try again!'):'');
-  };
+  const sel=new Array(L.mcqs.length).fill(-1);
+  function draw(checked){
+    let s=0;if(checked)for(let i=0;i<L.mcqs.length;i++)if(sel[i]===L.mcqs[i].answer)s++;
+    const n=L.mcqs.length;
+    area.innerHTML=`<div class="panel quiz" id="qz"><div class="no-print"><h3>📝 Quick Check</h3><button class="btn gray sm" onclick="window.print()">🖨️ Print questions</button></div>
+      ${L.mcqs.map((q,qi)=>`<div class="q" data-q="${qi}"><div class="qt">${qi+1}. ${q.q}</div>${q.options.map((o,oi)=>{let c='opt';if(checked){c+=' lock';if(oi===q.answer)c+=' correct';else if(oi===sel[qi])c+=' wrong';}else if(sel[qi]===oi)c+=' sel';return `<button class="${c}" onclick="window.__pick(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`;}).join('')}</div>`).join('')}
+      <div class="no-print" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px">${checked?`<button class="btn gray" onclick="window.__again()">↺ Try again</button>`:`<button class="btn" onclick="window.__check()">✅ Check answers</button>`}<div class="scoreline">${checked?('Score: '+s+' / '+n+(s>=8?' · 🌟 Excellent!':s>=5?' · 👍 Good work!':' · 💪 Keep practising!')):'Choose your answers, then press <b>Check answers</b>. You can change them as many times as you like first.'}</div></div></div>`;
+  }
+  window.__pick=(qi,oi)=>{sel[qi]=oi;const block=document.querySelector('#qz .q[data-q="'+qi+'"]');if(block)block.querySelectorAll('.opt').forEach((o,k)=>o.classList.toggle('sel',k===oi));};
+  window.__check=()=>{draw(true);const qz=document.getElementById('qz');if(qz)qz.scrollIntoView({behavior:'smooth'});};
+  window.__again=()=>{for(let i=0;i<sel.length;i++)sel[i]=-1;draw(false);const qz=document.getElementById('qz');if(qz)qz.scrollIntoView({behavior:'smooth'});};
+  draw(false);
   document.getElementById('qz').scrollIntoView({behavior:'smooth'});
 }
 function openSheet(i,level){cur.li=i;cur.level=level;go('sheet');}
@@ -901,6 +1081,7 @@ function sheetHTML(t,lessonTitle){
    ${t.cards?`<h2>✂️ Picture cards — cut these out</h2><div class="cut-cards">${t.cards.map(c=>`<div class="cut-card">${ICONS[c.i]||''}<div class="cl">${c.l}</div></div>`).join('')}</div><h2>Sort them here — glue each card under the right heading</h2><div class="sort-board" style="--cols:${t.columns.length}">${t.columns.map(c=>`<div class="sort-col"><h3>${c}</h3></div>`).join('')}</div>`:''}
    ${t.bank?`<h2>🖼️ Pictures to help you (or use your own)</h2><div class="pic-bank">${t.bank.map(k=>`<div class="pic">${ICONS[k]||''}</div>`).join('')}</div>`:''}
    ${t.table?(function(){const cols=t.table.cols;const head=`<tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;let body='';if(typeof t.table.rows==='number'){for(let r=0;r<t.table.rows;r++){body+=`<tr>${cols.map(()=>`<td><input class="ws-in" type="text" /></td>`).join('')}</tr>`;}}else{body=t.table.rows.map(r=>`<tr><td class="lab">${ICONS[r.icon]||''}${r.label}</td>${cols.slice(1).map(()=>`<td><input class="ws-in" type="text" /></td>`).join('')}</tr>`).join('');}return `<table class="ws-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;})():''}
+   ${t.graph?`<h2>📊 ${t.graph}</h2><div class="ws-graph"></div>`:''}
    ${t.question?`<h2>✍️ ${t.question}</h2><textarea class="ws-area" placeholder="Type your answer…"></textarea>`:''}
    ${(!t.cards&&!t.table&&!t.question&&!t.bank)?`<div class="lines"></div><div class="lines"></div><div class="lines"></div>`:''}`;
 }
@@ -1117,6 +1298,46 @@ const SLIDE_WIDGETS={
   {type:'afl',style:'traffic',title:'🚦 How are you doing? Tap a colour for each goal.',statements:[{t:'I can say what animals need energy for.'},{t:'I can explain how energy gets from the Sun to animals.'},{t:'I can make a model tracing energy back to the Sun.'}]},
   {type:'sort',title:'👆 Which step of the energy model?',bins:[{id:'s1',icon:'sun',label:'① The Sun'},{id:'s2',icon:'grass',label:'② Plant'},{id:'s3',icon:'cow',label:'③ Animal'}],items:[{icon:'sun',label:'Sun',bin:'s1'},{icon:'grass',label:'Grass',bin:'s2'},{icon:'carrot',label:'Carrot',bin:'s2'},{icon:'rabbit',label:'Rabbit',bin:'s3'},{icon:'cow',label:'Cow',bin:'s3'},{icon:'fox',label:'Fox',bin:'s3'}]},
   null
+ ],
+ ms4a:[
+  {type:'reveal',title:'👆 Tap each step of the mystery',cards:[{icon:'ice',label:'Before',reveal:'The sealed bag weighs 50 g'},{icon:'water',label:'After melting',reveal:'Still 50 g — nothing left the bag'},{icon:'scale',label:'The weight',reveal:'Stayed the SAME — matter is conserved'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each, then check.',cols:['Changed form?','Total weight changed?'],rows:[{icon:'ice',label:'Ice melting',ans:[true,false]},{icon:'water',label:'Warm water cooling',ans:[true,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'scale',label:'Weight',reveal:'How heavy something is'},{icon:'scale',label:'Measure',reveal:'To find out how heavy something is, using a scale'},{icon:'steam',label:'Heating',reveal:'Adding heat — can melt a solid into a liquid'},{icon:'ice',label:'Cooling',reveal:'Taking heat away — can freeze a liquid into a solid'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'When ice melts in a sealed bag, the total weight stays the same.',correct:true},{t:'Heating a substance always makes it weigh more.',correct:false},{t:'Matter can change form but the total weight stays the same.',correct:true}]},
+  {type:'classify',title:'True science or a wrong idea?',cats:['True — weight stays the same','Wrong idea'],items:[{icon:'ice',label:'Ice melts in a sealed bag → same weight',cat:'True — weight stays the same'},{label:'Melted ice weighs less',cat:'Wrong idea'},{label:'Hot water weighs more than cold',cat:'Wrong idea'},{icon:'water',label:'Water freezes in a sealed cup → same weight',cat:'True — weight stays the same'}]},
+  null
+ ],
+ ms4b:[
+  {type:'classify',title:'Mix water + salt — what happens to the weight?',cats:['Increase','Decrease','Stay the same'],items:[{icon:'salt',label:'Water + salt mixed',cat:'Stay the same'}]},
+  {type:'reveal',title:'👆 Tap to check the totals',cards:[{icon:'salt',label:'50 g water + 10 g salt',reveal:'= 60 g after mixing (the same!)'},{icon:'beans',label:'80 g rice + 60 g beans',reveal:'= 140 g after mixing (the same!)'},{icon:'sand',label:'Sand + water',reveal:'Total weight is conserved'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'juice',label:'Mix',reveal:'To combine two or more substances together'},{icon:'scale',label:'Weight',reveal:'How heavy something is, measured in grams'},{icon:'book',label:'Evidence',reveal:'The measurements and observations you collect'},{icon:'graph',label:'Graph',reveal:'A picture of your data that makes it easy to compare'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Total weight before mixing equals total weight after mixing.',correct:true},{t:'Mixing two substances creates extra weight.',correct:false},{t:'50 g of water mixed with 10 g of salt weighs 60 g.',correct:true}]},
+  {type:'sort',title:'👆 True science or a wrong idea?',bins:[{id:'same',label:'Weight stays the same'},{id:'wrong',label:'Wrong idea'}],items:[{icon:'salt',label:'Water + salt → same total',bin:'same'},{label:'Mixing makes extra weight',bin:'wrong'},{icon:'beans',label:'Rice + beans → same total',bin:'same'},{label:'Some weight disappears when mixed',bin:'wrong'}]},
+  null
+ ],
+ ms5a:[
+  {type:'reveal',title:'👆 Feel each one — tap to reveal',cards:[{icon:'sponge',label:'Sponge',reveal:'Soft & squishy'},{icon:'spoon',label:'Metal spoon',reveal:'Hard, smooth & magnetic'},{icon:'block',label:'Wooden block',reveal:'Hard & rough'},{icon:'ball',label:'Rubber ball',reveal:'Bouncy & flexible'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each property, then check.',cols:['Magnetic?','See-through?','Flexible?'],rows:[{icon:'spoon',label:'Metal',ans:[true,false,false]},{icon:'glass',label:'Glass',ans:[false,true,false]},{icon:'cloth',label:'Fabric',ans:[false,false,true]},{icon:'block',label:'Wood',ans:[false,false,false]},{icon:'ball',label:'Rubber',ans:[false,false,true]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'magnet',label:'Physical Property',reveal:'Something you can observe or measure about a material'},{icon:'magnet',label:'Magnetism',reveal:'Whether a magnet sticks to it'},{icon:'glass',label:'Transparency',reveal:'Whether light can pass through it'},{icon:'ruler',label:'Classify',reveal:'To sort things into groups by their properties'}]},
+  {type:'sort',title:'👆 See-through or not?',bins:[{id:'see',icon:'glass',label:'See-through'},{id:'op',icon:'block',label:'Not see-through'}],items:[{icon:'glass',label:'Glass',bin:'see'},{icon:'bottle',label:'Plastic bottle',bin:'see'},{icon:'block',label:'Wood',bin:'op'},{icon:'spoon',label:'Metal',bin:'op'},{icon:'cloth',label:'Fabric',bin:'op'},{icon:'sponge',label:'Sponge',bin:'op'}]},
+  {type:'classify',title:'Which property is being tested?',cats:['Magnetism','Transparency','Flexibility'],items:[{icon:'magnet',label:'A magnet sticks to it',cat:'Magnetism'},{icon:'glass',label:'Light passes through it',cat:'Transparency'},{icon:'cloth',label:'It bends easily',cat:'Flexibility'},{icon:'spoon',label:'A magnet sticks to it',cat:'Magnetism'}]},
+  null
+ ],
+ o1:[
+  {type:'reveal',title:'👆 Tap each plant to find out why',cards:[{icon:'plant',label:'Healthy plant',reveal:'Got plenty of water and air'},{icon:'wilted',label:'Wilted plant',reveal:'Did not get enough water'},{icon:'water',label:'What plants need most',reveal:'Air and water — not soil!'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each plant, then check.',cols:['Got water?','Grew well?'],rows:[{icon:'plant',label:'Plant A (water + air)',ans:[true,true]},{icon:'wilted',label:'Plant B (little water)',ans:[false,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'air',label:'Air',reveal:'Plants take in carbon dioxide from the air through their leaves'},{icon:'water',label:'Water',reveal:'Plants absorb water through their roots'},{icon:'plant',label:'Growth',reveal:'Getting bigger — plants use air and water to grow'},{icon:'book',label:'Evidence',reveal:'What you observe and measure that supports an idea'}]},
+  {type:'sort',title:'👆 Supported by evidence, or not?',bins:[{id:'ev',label:'Supported by evidence'},{id:'need',label:'Needs more evidence'}],items:[{icon:'water',label:'Plants need water',bin:'ev'},{label:'Soil is the main food for plants',bin:'need'},{icon:'air',label:'Plants take in air through leaves',bin:'ev'},{label:'Bigger pots make plants grow taller',bin:'need'}]},
+  {type:'classify',title:'Where does the plant get this?',cats:['From the air','From water','A wrong idea'],items:[{icon:'air',label:'Carbon dioxide (gas)',cat:'From the air'},{icon:'water',label:'Water',cat:'From water'},{label:'Most of its food from eating soil',cat:'A wrong idea'}]},
+  null
+ ],
+ o2:[
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Plants eat soil.',correct:false},{t:'Plants need air.',correct:true},{t:'Water helps plants grow.',correct:true},{t:'Soil becomes the plant.',correct:false}]},
+  {type:'observe',title:'👆 Tap Yes/No for each, then check.',cols:['Plant grew?','Soil weight changed a lot?'],rows:[{icon:'plant',label:'Plant after weeks',ans:[true,false]},{icon:'graph',label:'Growth data',ans:[true,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'book',label:'Evidence',reveal:'What you observed and measured'},{icon:'plant',label:'Claim',reveal:'A statement you think is true'},{icon:'graph',label:'Reasoning',reveal:'How your evidence supports your claim'},{icon:'book',label:'Argument',reveal:'A claim backed up by evidence and reasoning'}]},
+  {type:'sort',title:'👆 Claim, evidence or reasoning?',bins:[{id:'claim',label:'Claim'},{id:'evidence',label:'Evidence'},{id:'reason',label:'Reasoning'}],items:[{label:'Plants get materials from air and water',bin:'claim'},{label:'The soil barely lost any weight',bin:'evidence'},{label:'The plant grew much taller',bin:'evidence'},{label:'So the material came from air and water',bin:'reason'}]},
+  {type:'classify',title:'Claim, evidence or reasoning?',cats:['Claim','Evidence','Reasoning'],items:[{label:'Plants mainly use air and water',cat:'Claim'},{label:'The soil lost almost no weight',cat:'Evidence'},{label:'So the plant did not eat the soil',cat:'Reasoning'},{label:'The plant grew 20 cm taller',cat:'Evidence'}]},
+  null
  ]
 };
 
@@ -1287,9 +1508,69 @@ e3:[
   {q:"Why is it useful to model the path of energy from the Sun to an animal?",options:["It helps us understand where the energy originally came from","It shows animals how to find food","It proves that plants do not need sunlight","It shows that energy comes from soil"],answer:0},
   {q:"Which statement correctly describes how energy reaches an animal like a cow?",options:["The cow gets energy directly from the Sun without eating","The cow gets energy by eating grass, which got its energy from the Sun","The cow gets energy from the soil through its hooves","The cow makes its own energy inside its body"],answer:1}
 ],
+ms4a:[
+  {q:"Which tool do scientists use to measure weight?",options:["A ruler","A thermometer","A scale or balance","A magnifying glass"],answer:2},
+  {q:"An ice cube is placed inside a sealed bag and left to melt. What happens to the total weight of the bag?",options:["It increases because water is heavier than ice","It stays the same","It decreases because ice melts away","It changes depending on the temperature"],answer:1},
+  {q:"Why does the weight stay the same when ice melts inside a sealed bag?",options:["Ice and water weigh different amounts","Nothing leaves the bag, so no matter is lost","The bag absorbs some of the water","Melting always adds extra weight"],answer:1},
+  {q:"What does the word 'conservation of matter' mean?",options:["Matter disappears when it is heated","Matter can be created by cooling","Matter can change form but the total amount stays the same","Matter always becomes lighter when it melts"],answer:2},
+  {q:"When you heat a solid and it turns into a liquid, what changes?",options:["The total weight increases","The total weight decreases","The form or state of the matter changes","The matter disappears"],answer:2},
+  {q:"A scientist melts a block of wax in a closed container. Which statement is correct?",options:["The wax gains weight as it melts","The weight of the wax stays the same","The wax loses weight because it turns to liquid","The weight depends on how hot it gets"],answer:1},
+  {q:"Which of these is the best evidence that weight does not change during melting?",options:["Looking at the colour of the melted material","Measuring weight on a scale before and after melting","Feeling how warm the material is","Counting how many pieces the material has"],answer:1},
+  {q:"A student records the weight of an ice cube before and after melting. The numbers are the same. What does this show?",options:["The scale was broken","Some matter was destroyed","The student made a mistake","Weight is conserved when matter changes state"],answer:3},
+  {q:"Which vocabulary word means to find out how heavy something is?",options:["Heat","Measure","Cool","Classify"],answer:1},
+  {q:"Scientists often use graphs to share results. What is the main reason graphs are useful?",options:["They make experiments look more colourful","They help scientists avoid doing measurements","They show data clearly so others can understand the evidence","They replace the need for scales"],answer:2}
+],
+ms4b:[
+  {q:"You measure 50 g of salt and 200 g of water and mix them together. What is the total weight of the mixture?",options:["Less than 250 g","Exactly 250 g","More than 250 g","Impossible to know"],answer:1},
+  {q:"What happens to total weight when you mix two substances together?",options:["It always increases","It always decreases","It stays the same","It depends on what you mix"],answer:2},
+  {q:"Which of the following BEST explains why weight does not change when substances are mixed?",options:["Mixing makes matter disappear","Matter cannot be created or destroyed","Some matter floats away during mixing","Weight only stays the same if you stir slowly"],answer:1},
+  {q:"A student mixes rice and beans. Before mixing: rice = 80 g, beans = 60 g. What should the mixture weigh?",options:["80 g","60 g","140 g","20 g"],answer:2},
+  {q:"Which tool would you use to check that weight is conserved after mixing sand and water?",options:["A thermometer","A ruler","A scale or balance","A magnifying glass"],answer:2},
+  {q:"In a Claim-Evidence-Reasoning report, what is the role of 'evidence'?",options:["It is what you guess will happen","It is the data or observations you collected","It is the explanation of why something happened","It is the question you are trying to answer"],answer:1},
+  {q:"A data table shows weight before and after mixing water and salt. The numbers match. What is the correct claim?",options:["Mixing water and salt creates extra weight","Mixing water and salt destroys some weight","The weight before mixing equals the weight after mixing","Salt always floats in water"],answer:2},
+  {q:"Which of these mixes would NOT change the total weight when combined?",options:["Sand and water only","Rice and beans only","Water and salt only","All of the above would keep the same total weight"],answer:3},
+  {q:"What kind of graph is most useful for comparing weight before mixing and weight after mixing?",options:["A pie chart showing percentages","A bar graph showing each weight","A line graph showing temperature over time","A picture of the substances"],answer:1},
+  {q:"Why do scientists measure each substance separately BEFORE mixing?",options:["To make the experiment look more organised","So they can compare the total to the weight after mixing and check conservation","Because mixing is not allowed in science class","To find out the colour of each substance"],answer:1}
+],
+ms5a:[
+  {q:"Which of the following is a physical property of a material?",options:["How much it costs","Its colour","Who made it","Where it was found"],answer:1},
+  {q:"A student sorts materials into groups based on whether they are magnetic or not magnetic. What is the student doing?",options:["Measuring","Heating","Classifying","Mixing"],answer:2},
+  {q:"Which property must be TESTED rather than just observed with your eyes?",options:["Colour","Shape","Magnetism","Size"],answer:2},
+  {q:"What does 'transparency' mean as a physical property?",options:["How rough a surface feels","Whether light can pass through a material","How hard a material is","Whether a material can bend"],answer:1},
+  {q:"A student bends a piece of rubber easily. Which physical property does this test?",options:["Hardness","Magnetism","Flexibility","Transparency"],answer:2},
+  {q:"Which material is MOST LIKELY to be attracted to a magnet?",options:["Wood","Rubber","Glass","Metal"],answer:3},
+  {q:"How do scientists classify materials into groups?",options:["By their price","By where they were bought","By their physical properties","By their smell only"],answer:2},
+  {q:"A student scratches two materials together and one leaves a mark on the other. Which property is being tested?",options:["Texture","Hardness","Transparency","Flexibility"],answer:1},
+  {q:"Which of these is the BEST way to identify the texture of a material?",options:["Hold it up to the light","Touch its surface and observe how it feels","Check if a magnet sticks to it","Weigh it on a scale"],answer:1},
+  {q:"Glass allows light to pass through it. Wood does not. This difference in which physical property?",options:["Hardness","Magnetism","Flexibility","Transparency"],answer:3}
+],
+o1:[
+  {q:"What are the TWO main things plants need in order to grow?",options:["Soil and sunlight","Air and water","Fertiliser and heat","Salt and sugar"],answer:1},
+  {q:"Through which part of a plant does water enter the plant?",options:["Leaves","Flowers","Roots","Stem"],answer:2},
+  {q:"Where do plants get the carbon dioxide they need?",options:["From the soil","From the water","From the air through their leaves","From fertiliser"],answer:2},
+  {q:"A plant is wilting. What is the MOST LIKELY reason?",options:["It received too much air","It did not get enough water","It was given too much sunlight","The soil was too heavy"],answer:1},
+  {q:"Most of the material that makes up a plant comes from which sources?",options:["Soil and fertiliser","Air and water","Rocks and minerals","Salt and sand"],answer:1},
+  {q:"A student grows two plants. Plant A gets water every day. Plant B gets no water. What will MOST LIKELY happen?",options:["Plant B will grow taller","Both plants will grow the same","Plant A will grow and Plant B will wilt","Plant A will wilt and Plant B will grow"],answer:2},
+  {q:"Which part of the plant takes in carbon dioxide from the air?",options:["Roots","Seeds","Flowers","Leaves"],answer:3},
+  {q:"A student weighs a small plant and its soil when it first sprouts. After several weeks, the plant is much larger but the soil has barely lost any weight. What does this tell us?",options:["The plant grew mainly using soil","The plant grew mainly using air and water","The plant created new matter by itself","The soil gained weight from sunlight"],answer:1},
+  {q:"Which vocabulary word means the proof collected from an investigation?",options:["Air","Growth","Evidence","Water"],answer:2},
+  {q:"Which statement about what plants need to grow is CORRECT?",options:["Plants get most of their mass from eating soil","Plants only need sunlight and nothing else","Plants mainly use air and water to build their bodies","Plants grow by absorbing rocks through their roots"],answer:2}
+],
+o2:[
+  {q:"In science, what is a 'claim'?",options:["A measurement taken during an experiment","A question you want to investigate","A statement about what you think is true based on evidence","A type of graph used to show data"],answer:2},
+  {q:"What is 'evidence' in a scientific argument?",options:["A guess made before the experiment","The observations and data collected during an investigation","An opinion about what should happen","A vocabulary word defined in a textbook"],answer:1},
+  {q:"A student says plants get their food from soil. An investigation shows the soil loses almost no weight while the plant grows large. What does this evidence suggest?",options:["The claim is supported — plants do eat soil","The claim is not supported — plants get their material mainly from air and water","The evidence is wrong because plants need soil","The plant must have eaten rocks instead"],answer:1},
+  {q:"What does the 'reasoning' step do in Claim-Evidence-Reasoning?",options:["It lists the materials used in the experiment","It explains HOW the evidence supports the claim","It describes the colour of the plant","It gives a new question to investigate"],answer:1},
+  {q:"Which is a common WRONG idea about plants that evidence does NOT support?",options:["Plants absorb water through their roots","Plants take in carbon dioxide from the air","Plants eat soil to grow bigger","Plants need air and water to build their bodies"],answer:2},
+  {q:"A scientist observes that a plant kept in a sealed, transparent box (with air and water but no soil) still grows. What argument does this support?",options:["Plants must have soil to grow","Plants can grow using air and water without soil","Sealed boxes make plants grow faster","Plants do not need anything to grow"],answer:1},
+  {q:"What is the correct order of steps in building a scientific argument?",options:["Argument, then Evidence, then Observation","Claim, then Reasoning, then Evidence","Observation, then Evidence, then Argument","Reasoning, then Claim, then Observation"],answer:2},
+  {q:"Which of these is the BEST piece of evidence that plants get material mainly from air and water?",options:["Plants look green because of their leaves","A plant grows much larger while the soil it sits in loses very little weight","Plants die without sunlight","Roots spread out wide in the soil"],answer:1},
+  {q:"Why is it important to use evidence when making a scientific argument?",options:["Because it makes the argument look longer","Because evidence shows that the claim is based on real observations, not just a guess","Because scientists are required to use graphs in every report","Because evidence always proves the claim is correct"],answer:1},
+  {q:"Which vocabulary word means a well-supported statement backed by observations and reasoning?",options:["Claim","Argument","Evidence","Reasoning"],answer:1}
+],
 };
 /* attach quick-check questions authored for the new lessons */
-if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
+if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
 
 go('home');
 </script>
