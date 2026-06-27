@@ -1,7 +1,7 @@
 # Science Explorers
 
 **Multi-grade:** the home page now has a **grade picker (Grades 1–5)**, built to the AERO/NGSS standards.
-**Grade 5** is complete (6 units). **Grade 1** is in progress — Units 1–2 live (Light & Sound, Plant & Animal Parts); Units 3–4 and Grades 2–4 coming. Each grade's units live in its own array (`GRADE1`…`GRADE4`, plus `UNITS` for Grade 5).
+**Grade 5** (6 units) and **Grade 1** (4 units: Light & Sound, Plant & Animal Parts, Parents & Their Young, Patterns in the Sky) are complete. **Grades 2–4** coming. Each grade's units live in its own array (`GRADE1`…`GRADE4`, plus `UNITS` for Grade 5). Sort/classify activities shuffle their items so the answer order is not a giveaway; every slide has a Back button.
 
 A Grade 5 science teaching website by **Deenish Ramdial** — one self-contained page with
 interactive 5E lessons, printable Bronze/Silver/Gold worksheets, vocabulary flip-cards and
