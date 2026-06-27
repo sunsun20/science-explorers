@@ -12,7 +12,9 @@ quick-check quizzes.
 3. **Energy** (Energy from the Sun) — live
 4. **Organisms and Processes** (plants need air & water) — live
 5. **Ecosystems and Sustainability** (food webs, decomposers, protecting nature) — live
-6. Earth's Interactions — coming soon
+6. **Earth's Interactions** (Earth's four systems, the water cycle, where water is) — live
+
+All 6 Grade 5 units are now live.
 
 ## How to change things
 
