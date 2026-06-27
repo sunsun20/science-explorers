@@ -82,9 +82,9 @@
   .grade-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:18px auto 8px;max-width:760px}
   .grade-card{cursor:pointer;font:inherit;background:var(--card);border:1px solid var(--line);border-top:5px solid #2563eb;border-radius:16px;padding:16px 20px;min-width:118px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .1s,box-shadow .12s}
   .grade-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1)}
-  .grade-card .gc-lbl{font-weight:800;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-  .grade-card .gc-num{font-weight:900;font-size:2.5rem;line-height:1.05;color:#1d4ed8}
-  .grade-card .gc-st{font-weight:800;font-size:.78rem;color:#0f7a44}
+  .grade-card .gc-lbl{font-weight:900;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:#475569}
+  .grade-card .gc-num{font-weight:900;font-size:2.8rem;line-height:1.05;color:#1d4ed8;-webkit-text-stroke:.6px currentColor}
+  .grade-card .gc-st{font-weight:900;font-size:.84rem;color:#0f7a44}
   .grade-card.soon{opacity:.62}.grade-card.soon .gc-st{color:var(--silver)}
   .grade-cards .grade-card:nth-child(1){border-top-color:#ea580c}.grade-cards .grade-card:nth-child(1) .gc-num{color:#c2410c}
   .grade-cards .grade-card:nth-child(2){border-top-color:#16a34a}.grade-cards .grade-card:nth-child(2) .gc-num{color:#15803d}
@@ -303,7 +303,7 @@
 </header>
 
 <main id="app" class="wrap"></main>
-<footer>Science Explorers · A Grade 5 science classroom by Deenish Ramdial</footer>
+<footer>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial<br><span style="opacity:.85">© 2026 Deenish Ramdial · All rights reserved.</span></footer>
 
 <script>
 /* =====================================================================
@@ -505,6 +505,13 @@ const ICONS={
  egg:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="egg_g" cx="42%" cy="34%" r="68%"><stop offset="0" stop-color="#fffefb"/><stop offset="1" stop-color="#e8ddc8"/></radialGradient></defs><path d="M32 10 C20 10 16 32 16 42 a16 18 0 0 0 32 0 C48 32 44 10 32 10 Z" fill="url(#egg_g)" stroke="#cdbf9f" stroke-width="1.2"/><ellipse cx="26" cy="26" rx="4" ry="8" fill="#fff" opacity=".6"/></svg>',
  moon:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="moon_g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset="1" stop-color="#e9d27a"/></linearGradient></defs><path d="M40 8 A24 24 0 1 0 40 56 A19 19 0 1 1 40 8 Z" fill="url(#moon_g)" stroke="#d8bd5e" stroke-width="1"/><circle cx="24" cy="24" r="3" fill="#e3c96a" opacity=".6"/><circle cx="20" cy="36" r="2.2" fill="#e3c96a" opacity=".6"/><circle cx="28" cy="40" r="1.6" fill="#e3c96a" opacity=".5"/></svg>',
  star:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="star_g" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff7c0"/><stop offset="1" stop-color="#ffca28"/></radialGradient></defs><path d="M32 6 L40 24 L60 26 L45 39 L50 58 L32 47 L14 58 L19 39 L4 26 L24 24 Z" fill="url(#star_g)" stroke="#e0a800" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+ bee:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="bee_b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd34d"/><stop offset="1" stop-color="#e0a000"/></linearGradient></defs><ellipse cx="44" cy="22" rx="12" ry="8" fill="#cfe8ff" opacity=".7" transform="rotate(-22 44 22)"/><ellipse cx="34" cy="20" rx="12" ry="8" fill="#cfe8ff" opacity=".7" transform="rotate(18 34 20)"/><ellipse cx="32" cy="40" rx="18" ry="13" fill="url(#bee_b)" stroke="#7a5a00" stroke-width="1.2"/><path d="M26 29 q-1 22 0 22 M34 28 q0 24 0 24 M42 30 q-1 20 -1 20" stroke="#3a2c00" stroke-width="3.5" fill="none"/><circle cx="14" cy="36" r="6" fill="#2a2418"/><circle cx="12" cy="34" r="1.5" fill="#fff"/><path d="M10 30 q-3 -4 -1 -7 M14 29 q1 -5 4 -6" stroke="#2a2418" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>',
+ pond:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="pond_w" cx="50%" cy="40%" r="62%"><stop offset="0" stop-color="#7fd0f0"/><stop offset="1" stop-color="#1f7ad6"/></radialGradient></defs><ellipse cx="32" cy="40" rx="26" ry="16" fill="url(#pond_w)" stroke="#4a9e2f" stroke-width="3"/><ellipse cx="24" cy="36" rx="7" ry="3" fill="#3fae3f"/><circle cx="26" cy="35" r="1.6" fill="#ff6f91"/><path d="M14 43 q5 -3 10 0 M34 45 q5 -3 10 0" stroke="#cdeeff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/><path d="M46 24 q1 8 -2 14 M50 26 q0 6 -2 10" stroke="#3a9e2f" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+ cactus:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="cac_g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fbf4a"/><stop offset="1" stop-color="#3a8a28"/></linearGradient><linearGradient id="cac_pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a4a"/><stop offset="1" stop-color="#a8612a"/></linearGradient></defs><rect x="26" y="12" width="12" height="36" rx="6" fill="url(#cac_g)"/><path d="M26 30 q-10 0 -10 -8 q0 -5 5 -5 q5 0 5 6" fill="url(#cac_g)"/><path d="M38 26 q10 0 10 -8 q0 -5 -5 -5 q-5 0 -5 6" fill="url(#cac_g)"/><circle cx="32" cy="16" r="2.5" fill="#ff6f91"/><path d="M22 47 h20 l-2 8 h-16 z" fill="url(#cac_pot)"/></svg>',
+ map:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="map_w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9bd6f5"/><stop offset="1" stop-color="#4aa3e0"/></linearGradient></defs><path d="M8 14 L24 10 L40 14 L56 10 L56 50 L40 54 L24 50 L8 54 Z" fill="url(#map_w)" stroke="#cfcabc" stroke-width="1.5" stroke-linejoin="round"/><path d="M24 10 L24 50 M40 14 L40 54" stroke="#bfe7ff" stroke-width="1"/><path d="M12 20 q8 -3 16 2 q8 5 16 0 l4 18 q-10 4 -18 -1 q-8 -4 -16 1 Z" fill="#8fd06a"/><circle cx="34" cy="30" r="3" fill="#e23b3b"/><path d="M34 33 v5" stroke="#e23b3b" stroke-width="1.5"/></svg>',
+ crack:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="crk_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b08a5e"/><stop offset="1" stop-color="#7a5630"/></linearGradient></defs><rect x="6" y="22" width="52" height="30" rx="4" fill="url(#crk_g)"/><rect x="6" y="22" width="52" height="6" fill="#8fbf5a"/><path d="M30 22 L26 32 L34 38 L28 52 M34 38 L44 42 M26 32 L16 36" fill="none" stroke="#3a2814" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".3"/><path d="M30 22 L26 32 L34 38 L28 52 M34 38 L44 42 M26 32 L16 36" fill="none" stroke="#2a1c0e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ atom:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="atom_n" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#ff9a6b"/><stop offset="1" stop-color="#d63a2a"/></radialGradient></defs><g fill="none" stroke="#2b8fd6" stroke-width="2.5"><ellipse cx="32" cy="32" rx="26" ry="11"/><ellipse cx="32" cy="32" rx="26" ry="11" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="26" ry="11" transform="rotate(120 32 32)"/></g><circle cx="32" cy="32" r="7" fill="url(#atom_n)"/><circle cx="58" cy="32" r="3" fill="#1f7ad6"/><circle cx="19" cy="9" r="3" fill="#1f7ad6"/><circle cx="19" cy="55" r="3" fill="#1f7ad6"/></svg>',
+ magnifier:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="mag_g" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#eaf6ff" stop-opacity=".9"/><stop offset="1" stop-color="#bcd9f0" stop-opacity=".5"/></radialGradient></defs><circle cx="26" cy="26" r="16" fill="url(#mag_g)" stroke="#5a6b7e" stroke-width="3"/><line x1="38" y1="38" x2="54" y2="54" stroke="#5a6b7e" stroke-width="6" stroke-linecap="round"/><ellipse cx="20" cy="20" rx="5" ry="3" fill="#fff" opacity=".7" transform="rotate(-30 20 20)"/><circle cx="22" cy="24" r="1.6" fill="#7a8aa0"/><circle cx="30" cy="22" r="1.6" fill="#7a8aa0"/><circle cx="27" cy="30" r="1.6" fill="#7a8aa0"/></svg>',
 };
 function withIcons(html){return String(html).replace(/\[\[(\w+)\]\]/g,(m,k)=>ICONS[k]||'');}
 const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'juice',Rigid:'block',
@@ -514,7 +521,8 @@ const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'j
  Ecosystem:'tree','Food Web':'grass',Decomposer:'mushroom',Decompose:'worm',Nutrients:'plant',Cycle:'recycle',Sustainability:'recycle',Pollution:'factory',Recycle:'recycle',Habitat:'tree',
  Geosphere:'mountain',Hydrosphere:'ocean',Atmosphere:'cloud',Biosphere:'tree','Water Cycle':'river',Evaporation:'sun',Condensation:'cloud',Precipitation:'rain',Ocean:'ocean','Salt Water':'ocean','Fresh Water':'river',Glacier:'glacier',
  Sound:'speaker',Vibrate:'drum',Loud:'drum',Quiet:'bell',Light:'bulb',See:'eye',Dark:'moon',Shadow:'flashlight',Roots:'roots',Stem:'plant',Leaf:'leaf',Flower:'flower',Legs:'rabbit',Wings:'bird',Eyes:'eye',Ears:'ear',
- Parent:'chicken',Young:'chick',Same:'egg',Different:'fox',Seed:'seed',Grow:'plant',Alike:'flower',Day:'sun',Night:'moon',Sky:'cloud',Moon:'moon',Star:'star',Pattern:'star'};
+ Parent:'chicken',Young:'chick',Same:'egg',Different:'fox',Seed:'seed',Grow:'plant',Alike:'flower',Day:'sun',Night:'moon',Sky:'cloud',Moon:'moon',Star:'star',Pattern:'star',
+ Hard:'spoon',Soft:'sponge',Waterproof:'bottle',Strong:'spoon','See-through':'glass',Plant:'plant',Plants:'flower',Bee:'bee',Pollen:'flower',Spread:'bee',Habitat:'tree',Pond:'pond',Forest:'tree',Desert:'cactus','Living Things':'tree',Animals:'fox',Fast:'volcano',Slow:'river',Volcano:'volcano',Change:'crack',Land:'mountain',Mountain:'mountain',Particle:'atom',Matter:'atom',Dissolve:'water'};
 const GLOSSARY={
  'Solid':{e:'🧊',m:'Matter that keeps its own shape and does not flow — like a rock or an ice cube.'},
  'Liquid':{e:'💧',m:'Matter that flows and takes the shape of its container — like water or juice.'},
@@ -615,7 +623,32 @@ const GLOSSARY={
  'Sky':{e:'🌌',m:'The space above us where we see the Sun, Moon and stars.'},
  'Moon':{e:'🌙',m:'A big rock in the sky that we see at night.'},
  'Star':{e:'⭐',m:'A tiny point of light far away in the sky.'},
- 'Pattern':{e:'🔁',m:'Something that happens again and again.'}
+ 'Pattern':{e:'🔁',m:'Something that happens again and again.'},
+ 'Hard':{e:'🪨',m:'Stiff and firm — it does not squash.'},
+ 'Soft':{e:'🧽',m:'Squashy and easy to bend.'},
+ 'Waterproof':{e:'🌂',m:'Keeps water out — it does not let water through.'},
+ 'Strong':{e:'💪',m:'Does not break easily.'},
+ 'See-through':{e:'🔍',m:'You can see through it — it is clear.'},
+ 'Plant':{e:'🌱',m:'A living thing that grows in the ground and makes its own food.'},
+ 'Plants':{e:'🌿',m:'Living things that make their own food using sunlight.'},
+ 'Bee':{e:'🐝',m:'An insect that carries pollen between flowers.'},
+ 'Pollen':{e:'🌼',m:'A yellow dust that flowers make.'},
+ 'Spread':{e:'💨',m:'To move seeds to new places.'},
+ 'Habitat':{e:'🏞️',m:'The place where a plant or animal lives.'},
+ 'Pond':{e:'💧',m:'A small area of water — a habitat.'},
+ 'Forest':{e:'🌳',m:'A place with many trees — a habitat.'},
+ 'Desert':{e:'🌵',m:'A dry, sandy place — a habitat.'},
+ 'Living Things':{e:'🦋',m:'Plants and animals that grow and need food and water.'},
+ 'Animals':{e:'🦊',m:'Living things that eat food and move around.'},
+ 'Fast':{e:'⚡',m:'Happens quickly.'},
+ 'Slow':{e:'🐌',m:'Happens over a long time.'},
+ 'Volcano':{e:'🌋',m:'A mountain that can erupt — a fast Earth change.'},
+ 'Change':{e:'🔄',m:'When something becomes different.'},
+ 'Land':{e:'⛰️',m:'The solid ground — mountains, hills and plains.'},
+ 'Mountain':{e:'🏔️',m:'A very high shape of land.'},
+ 'Particle':{e:'⚛️',m:'A tiny piece of matter, far too small to see.'},
+ 'Matter':{e:'🧊',m:'Anything that takes up space and has weight.'},
+ 'Dissolve':{e:'🥄',m:'When a solid breaks into tiny particles and spreads out in a liquid.'}
 };
 /* ---- Unit 1 · Standard 2 : Physical properties of materials ---- */
 const MATTER_S2=[
@@ -1182,7 +1215,178 @@ const EARTH=[
 ];
 
 /* ===== GRADE 1 (AERO/NGSS) ===== */
-const GRADE2=[],GRADE3=[],GRADE4=[];
+const GRADE3=[],GRADE4=[];
+/* ===== GRADE 2 (AERO/NGSS) ===== */
+const GRADE2=[
+  {n:1,id:'g2mat',title:'Materials and Matter',live:true,standards:[{n:1,text:'Plan and conduct an investigation to describe and classify materials by their observable properties, and choose the best material for a purpose. (2-PS1)',lessons:[
+    {id:'g2pa',title:'Lesson 1: Properties of Materials',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning to describe and sort materials by their properties.',
+     sc:[{band:'Remembering',items:['I can name some materials.']},{band:'Understanding',items:['I can describe a material using its properties.']},{band:'Applying',items:['I can sort materials by a property.']}],
+     vocab:['Material','Property','Hard','Soft'],
+     slides:[
+      {tag:'Engage · 10 min',h:'What is it made of?',body:'<p>Look at these things:</p><ul class="ico-list"><li>[[block]] wood · [[spoon]] metal · [[bottle]] plastic · [[cloth]] fabric</li></ul><p><b>Ask:</b> How can we describe each one? Is it hard or soft? shiny or dull?</p>'},
+      {tag:'Explore · 15 min',h:'Feel and Look',body:'<p>Feel and look at each material. Is it <b>hard</b> or <b>soft</b>? bendy or stiff? rough or smooth? shiny or dull?</p>'},
+      {tag:'Explain · 10 min',h:'Material Properties',body:'<p>Materials have <b>properties</b> — things we can see and feel. A material can be <b>hard</b> or <b>soft</b>, bendy or stiff, rough or smooth, shiny or dull, waterproof or soak up water. We sort materials by their properties.</p>'},
+      {tag:'AFL · 5 min',h:'Which Property?',body:'<p>Tap the property that matches each material.</p>'},
+      {tag:'Elaborate · 10 min',h:'Material Sort',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort materials into hard and soft.</li><li>🥈 <b>Silver</b> — Describe a material with three properties.</li><li>🥇 <b>Gold</b> — Sort six materials by a property.</li><li>⭐ <b>G&T</b> — Make a mystery-material clue card.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name two materials.</li><li>Name one hard and one soft material.</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Hard or Soft?',items:['Cut out the material cards.','Sort them into HARD and SOFT.'],cards:[{i:'block',l:'Wood'},{i:'spoon',l:'Metal'},{i:'bottle',l:'Plastic'},{i:'cloth',l:'Fabric'},{i:'sponge',l:'Sponge'},{i:'glass',l:'Glass'}],columns:['Hard','Soft']},
+      silver:{title:'Silver — Describe a Material',items:['Choose a material.','Write three of its properties (for example: hard, shiny, smooth).'],bank:['block','spoon','bottle','cloth','glass'],question:'My material and three of its properties:'},
+      gold:{title:'Gold — Property Sort',items:['Sort the materials by a property you choose (hard/soft, bendy/stiff, shiny/dull).','Write which property you used.'],table:{cols:['Material','My property'],rows:[{icon:'block',label:'Wood'},{icon:'spoon',label:'Metal'},{icon:'cloth',label:'Fabric'},{icon:'glass',label:'Glass'}]}},
+      gt:{title:'G&T Challenge — Mystery Material',items:['Hide a material in a bag.','Write clues about its properties (hard? shiny? bendy?).','Can a friend guess what it is from your clues?'],question:'My mystery-material clues:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['block','spoon','cloth'],items:['1. Name two materials.','2. What is a property?','3. Name one hard and one soft material.'],check:['I can name some materials.','I can describe a material using its properties.','I can sort materials by a property.']}
+    },
+    {id:'g2pb',title:'Lesson 2: Best Material for the Job',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning to choose the best material for a job by its properties.',
+     sc:[{band:'Remembering',items:['I can name what some things are made of.']},{band:'Understanding',items:['I can say why a material is good for a job.']},{band:'Applying',items:['I can choose the best material for a job.']}],
+     vocab:['Material','Waterproof','Strong','See-through'],
+     slides:[
+      {tag:'Engage · 10 min',h:'Why glass for a window?',body:'<p>Different jobs need different materials:</p><ul class="ico-list"><li>[[glass]] a window · [[bottle]] a raincoat · [[block]] a chair</li></ul><p><b>Ask:</b> Why is a window made of glass? Why is a raincoat made of plastic?</p>'},
+      {tag:'Explore · 15 min',h:'Match Material to Job',body:'<p>Which material is best for a window? a raincoat? a chair? Match each material to its job and say why.</p>'},
+      {tag:'Explain · 10 min',h:'Choosing Materials',body:'<p>We choose a <b>material</b> by its properties. A window is [[glass]] glass because it is <b>see-through</b>. A raincoat is plastic because it is <b>waterproof</b>. A chair is wood or metal because it is <b>strong</b> and hard.</p>'},
+      {tag:'AFL · 5 min',h:'Best for the Job?',body:'<p>Tap the job each material is best for.</p>'},
+      {tag:'Elaborate · 10 min',h:'Material Engineer',body:'<p>Be a material engineer — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each material to its job.</li><li>🥈 <b>Silver</b> — Say why a material is good for a thing.</li><li>🥇 <b>Gold</b> — Choose the best material for three things.</li><li>⭐ <b>G&T</b> — Design a raincoat.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Why is a window made of glass?</li><li>What does waterproof mean?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Match Material to Job',items:['Cut out the cards.','Match each material to the job it is best for.'],cards:[{i:'glass',l:'Glass'},{i:'bottle',l:'Plastic'},{i:'block',l:'Wood'},{i:'cloth',l:'Fabric'}],columns:['Window','Raincoat','Chair']},
+      silver:{title:'Silver — Why That Material?',items:['Choose a thing (a window, a spoon, a raincoat, a chair).','Write what it is made of and WHY that material is good for it.'],bank:['glass','spoon','bottle','block'],question:'My thing, its material, and why:'},
+      gold:{title:'Gold — Material Engineer',items:['Choose the best material to make each thing.','For each, write the property that makes it good.'],table:{cols:['Thing','Best material','Why (property)'],rows:[{label:'Umbrella'},{label:'Window'},{label:'Cup'}]}},
+      gt:{title:'G&T Challenge — Design a Raincoat',items:['Design a raincoat.','Choose a waterproof material.','Explain why your material keeps you dry.'],question:'My raincoat material and why it works:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['glass','bottle','block'],items:['1. Why is a window made of glass?','2. What does waterproof mean?','3. Choose a good material for a chair and say why.'],check:['I can name what some things are made of.','I can say why a material is good for a job.','I can choose the best material for a job.']}
+    }
+  ]}]},
+  {n:2,id:'g2plants',title:'What Plants Need',live:true,standards:[{n:1,text:'Plan and investigate what plants need to grow, and describe how animals help plants by moving pollen and spreading seeds. (2-LS2)',lessons:[
+    {id:'g2la',title:'Lesson 1: Plants Need Water and Light',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning that plants need water and light to grow.',
+     sc:[{band:'Remembering',items:['I can say what plants need.']},{band:'Understanding',items:['I can say what happens to a plant with no water or light.']},{band:'Applying',items:['I can plan a way to grow a healthy plant.']}],
+     vocab:['Plant','Water','Light','Grow'],
+     slides:[
+      {tag:'Engage · 10 min',h:'Why did one plant die?',body:'<p>Two plants:</p><ul class="ico-list"><li>[[plant]] a healthy plant · [[wilted]] a wilted plant</li></ul><p><b>Ask:</b> Why did one grow well and one wilt? What do plants need?</p>'},
+      {tag:'Explore · 15 min',h:'Grow Two Plants',body:'<p>Grow two plants. Give one [[water]] water and [[sun]] light. Give the other none. Watch what happens to each.</p>'},
+      {tag:'Explain · 10 min',h:'Plants Need Water and Light',body:'<p>Plants need <b>water</b> and <b>light</b> to <b>grow</b>. A [[plant]] plant with water and sunlight grows green and healthy. A [[wilted]] plant with no water wilts and dies.</p>'},
+      {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+      {tag:'Elaborate · 10 min',h:'Plant Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort what a plant needs.</li><li>🥈 <b>Silver</b> — Draw a healthy and a wilted plant.</li><li>🥇 <b>Gold</b> — Plan how to grow a plant.</li><li>⭐ <b>G&T</b> — Plan a fair test.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name two things a plant needs.</li><li>What happens to a plant with no water?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — What Plants Need',items:['Cut out the cards.','Sort them: what a plant NEEDS and what it does NOT need.'],cards:[{i:'water',l:'Water'},{i:'sun',l:'Sunlight'},{i:'ball',l:'A toy'},{i:'moon',l:'Darkness'}],columns:['Plants need','Not needed']},
+      silver:{title:'Silver — Healthy or Wilted?',items:['Draw a healthy plant and a wilted plant.','Write why the healthy one grew well.'],bank:['plant','wilted','water','sun'],question:'The healthy plant grew well because ____________.'},
+      gold:{title:'Gold — Plant Plan',items:['Plan how to grow a healthy plant.','Write what you will give it and how often.'],question:'My plan to grow a healthy plant:'},
+      gt:{title:'G&T Challenge — Fair Test',items:['Plan a fair test: does a plant grow without light?','Keep everything the same except the light.','Predict what will happen.'],question:'My fair test and prediction:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['plant','water','sun'],items:['1. Name two things a plant needs.','2. What happens to a plant with no water?','3. Why do plants need light?'],check:['I can say what plants need.','I can say what happens to a plant with no water or light.','I can plan a way to grow a healthy plant.']}
+    },
+    {id:'g2lb',title:'Lesson 2: Pollinators and Spreading Seeds',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning that animals help plants by carrying pollen and spreading seeds.',
+     sc:[{band:'Remembering',items:['I can name an animal that helps plants.']},{band:'Understanding',items:['I can say how bees help flowers.']},{band:'Applying',items:['I can describe how seeds are spread.']}],
+     vocab:['Bee','Pollen','Seed','Spread'],
+     slides:[
+      {tag:'Engage · 10 min',h:'How do bees help plants?',body:'<p>A bee visits a flower:</p><ul class="ico-list"><li>[[bee]] a bee · [[flower]] a flower</li></ul><p><b>Ask:</b> What is the bee doing? How does it help the plant?</p>'},
+      {tag:'Explore · 15 min',h:'Pollen and Seeds',body:'<p>A [[bee]] bee goes from flower to flower, carrying pollen. This helps plants make [[seed]] seeds. Seeds are spread by animals and the wind to new places.</p>'},
+      {tag:'Explain · 10 min',h:'Pollinators',body:'<p>A <b>bee</b> carries <b>pollen</b> from flower to flower (pollination). This helps flowers make <b>seeds</b>. Animals and the wind <b>spread</b> seeds to new places, so new plants grow.</p>'},
+      {tag:'AFL · 5 min',h:'How is the seed spread?',body:'<p>Tap how each seed is spread.</p>'},
+      {tag:'Elaborate · 10 min',h:'Seed Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort who helps plants.</li><li>🥈 <b>Silver</b> — Draw how a bee helps a flower.</li><li>🥇 <b>Gold</b> — List ways seeds spread.</li><li>⭐ <b>G&T</b> — Design a travelling seed.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name an animal that helps plants.</li><li>How does a bee help a flower?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Who Helps Plants?',items:['Cut out the cards.','Sort them: which things HELP plants make or spread seeds?'],cards:[{i:'bee',l:'Bee'},{i:'bird',l:'Bird'},{i:'cloud',l:'Wind'},{i:'rock',l:'A rock'}],columns:['Helps plants','Does not help']},
+      silver:{title:'Silver — How Bees Help',items:['Draw a bee on a flower.','Write how the bee helps the plant.'],bank:['bee','flower','seed'],question:'A bee helps a flower by ____________.'},
+      gold:{title:'Gold — Spreading Seeds',items:['Write three ways seeds can be spread (wind, animals, water).','Give an example of each.'],table:{cols:['How seeds spread','Example'],rows:[{label:'Wind'},{label:'Animals'},{label:'Water'}]}},
+      gt:{title:'G&T Challenge — Design a Seed',items:['Design a seed that can travel far.','Will it use wind, water or an animal?','Explain how your seed is good at spreading.'],question:'My seed and how it spreads:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['bee','flower','seed'],items:['1. Name an animal that helps plants.','2. How does a bee help a flower?','3. Name one way seeds are spread.'],check:['I can name an animal that helps plants.','I can say how bees help flowers.','I can describe how seeds are spread.']}
+    }
+  ]}]},
+  {n:3,id:'g2hab',title:'Living Things and Habitats',live:true,standards:[{n:1,text:'Make observations of plants and animals to compare the diversity of life in different habitats. (2-LS4)',lessons:[
+    {id:'g2ha',title:'Lesson 1: Different Habitats',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning that different living things live in different habitats.',
+     sc:[{band:'Remembering',items:['I can name some habitats.']},{band:'Understanding',items:['I can say what a habitat is.']},{band:'Applying',items:['I can match an animal to its habitat.']}],
+     vocab:['Habitat','Pond','Forest','Desert'],
+     slides:[
+      {tag:'Engage · 10 min',h:'Where do they live?',body:'<p>Different living things, different homes:</p><ul class="ico-list"><li>[[fish]] a fish · [[fox]] a fox · [[cactus]] a cactus</li></ul><p><b>Ask:</b> Where does each one live? Why there?</p>'},
+      {tag:'Explore · 15 min',h:'Homes for Living Things',body:'<p>A habitat is where a plant or animal lives. A [[fish]] fish lives in water. A [[cactus]] cactus lives in the dry desert. Match each living thing to its home.</p>'},
+      {tag:'Explain · 10 min',h:'What is a Habitat?',body:'<p>A <b>habitat</b> is the place where a plant or animal lives. Different living things live in different habitats — a [[pond]] pond, a [[tree]] forest, a [[cactus]] desert, or the ocean. They live where they can get what they need.</p>'},
+      {tag:'AFL · 5 min',h:'Which Habitat?',body:'<p>Tap the habitat where each living thing lives.</p>'},
+      {tag:'Elaborate · 10 min',h:'Habitat Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each animal to its habitat.</li><li>🥈 <b>Silver</b> — Draw a habitat.</li><li>🥇 <b>Gold</b> — Say why an animal lives there.</li><li>⭐ <b>G&T</b> — What if it moved?</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>What is a habitat?</li><li>Where does a fish live?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Match Animal to Habitat',items:['Cut out the cards.','Match each living thing to its habitat.'],cards:[{i:'fish',l:'Fish'},{i:'fox',l:'Fox'},{i:'cactus',l:'Cactus'},{i:'frog',l:'Frog'}],columns:['Pond','Forest','Desert']},
+      silver:{title:'Silver — My Habitat',items:['Choose a habitat (pond, forest or desert).','Draw it and write two living things that live there.'],bank:['pond','tree','cactus','fish'],question:'My habitat and what lives there:'},
+      gold:{title:'Gold — Why There?',items:['Choose an animal.','Write where it lives and WHY it lives there.'],bank:['fish','fox','cactus','frog'],question:'My animal, its habitat, and why:'},
+      gt:{title:'G&T Challenge — New Habitat',items:['What would happen if you moved a fish to the desert?','Explain why living things need the right habitat.'],question:'Why living things need the right habitat:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['pond','tree','cactus'],items:['1. What is a habitat?','2. Name two habitats.','3. Where does a fish live?'],check:['I can name some habitats.','I can say what a habitat is.','I can match an animal to its habitat.']}
+    },
+    {id:'g2hb',title:'Lesson 2: So Many Living Things',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning that there are many different kinds of living things in different places.',
+     sc:[{band:'Remembering',items:['I can name different living things.']},{band:'Understanding',items:['I can say that different places have different living things.']},{band:'Applying',items:['I can compare the living things in two habitats.']}],
+     vocab:['Living Things','Different','Plants','Animals'],
+     slides:[
+      {tag:'Engage · 10 min',h:'How many living things?',body:'<p>So many living things!</p><ul class="ico-list"><li>[[tree]] [[bird]] [[fox]] [[bee]] [[flower]]</li></ul><p><b>Ask:</b> How many different living things can you find?</p>'},
+      {tag:'Explore · 15 min',h:'Count the Living Things',body:'<p>Look at a habitat. Count the different plants and animals. A forest has very different living things from a desert.</p>'},
+      {tag:'Explain · 10 min',h:'Many Kinds of Life',body:'<p>There are many <b>different</b> kinds of <b>living things</b> — lots of <b>plants</b> and <b>animals</b> — in different places. Each habitat has its own living things. Having many kinds of living things is good for our world.</p>'},
+      {tag:'AFL · 5 min',h:'Plant or Animal?',body:'<p>Tap whether each one is a plant or an animal.</p>'},
+      {tag:'Elaborate · 10 min',h:'Living Things Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort plants and animals.</li><li>🥈 <b>Silver</b> — Count living things in a habitat.</li><li>🥇 <b>Gold</b> — Compare two habitats.</li><li>⭐ <b>G&T</b> — Make a habitat poster.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name two different living things.</li><li>Name one plant and one animal.</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Plant or Animal?',items:['Cut out the cards.','Sort them into PLANTS and ANIMALS.'],cards:[{i:'tree',l:'Tree'},{i:'bird',l:'Bird'},{i:'flower',l:'Flower'},{i:'fox',l:'Fox'},{i:'grass',l:'Grass'},{i:'bee',l:'Bee'}],columns:['Plants','Animals']},
+      silver:{title:'Silver — Count Living Things',items:['Look at a habitat (real or a picture).','List four different living things you can see.','Which are plants? Which are animals?'],question:'The living things I found:'},
+      gold:{title:'Gold — Compare Habitats',items:['Choose two habitats (forest and desert).','Write two living things in each.','How are they different?'],table:{cols:['Habitat','Living things'],rows:[{icon:'tree',label:'Forest'},{icon:'cactus',label:'Desert'}]}},
+      gt:{title:'G&T Challenge — Habitat Poster',items:['Make a poster of a habitat full of life.','Show at least five different living things.','Why is it good to have many kinds of living things?'],question:'My habitat poster plan:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['tree','bird','flower'],items:['1. Name two different living things.','2. Do a forest and a desert have the same living things?','3. Name one plant and one animal.'],check:['I can name different living things.','I can say that different places have different living things.','I can compare the living things in two habitats.']}
+    }
+  ]}]},
+  {n:4,id:'g2earth',title:'Earth\'s Land and Water',live:true,standards:[{n:1,text:'Observe that some Earth events happen quickly and some slowly, and map the shapes and kinds of land and bodies of water in an area. (2-ESS1, 2-ESS2)',lessons:[
+    {id:'g2ea',title:'Lesson 1: Earth Changes Fast and Slow',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning that some Earth changes happen fast and some happen slowly.',
+     sc:[{band:'Remembering',items:['I can name a fast and a slow Earth change.']},{band:'Understanding',items:['I can say if a change is fast or slow.']},{band:'Applying',items:['I can sort Earth changes into fast and slow.']}],
+     vocab:['Fast','Slow','Volcano','Change'],
+     slides:[
+      {tag:'Engage · 10 min',h:'Fast or slow?',body:'<p>The Earth changes:</p><ul class="ico-list"><li>[[volcano]] a volcano erupts · [[river]] a river wears away rock</li></ul><p><b>Ask:</b> Which change is fast? Which is slow?</p>'},
+      {tag:'Explore · 15 min',h:'Earth Changes',body:'<p>Some Earth changes are <b>fast</b> — a [[volcano]] volcano, an earthquake, a landslide. Some are <b>slow</b> — a [[river]] river making a canyon, a hill wearing down.</p>'},
+      {tag:'Explain · 10 min',h:'Fast and Slow Changes',body:'<p>The Earth <b>changes</b>. Some changes are <b>fast</b> — a [[volcano]] volcano, an earthquake, a [[crack]] landslide. Some are <b>slow</b> — a [[river]] river wearing away rock over many years.</p>'},
+      {tag:'AFL · 5 min',h:'Fast or Slow?',body:'<p>Tap the Earth changes into fast and slow.</p>'},
+      {tag:'Elaborate · 10 min',h:'Change Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort fast and slow changes.</li><li>🥈 <b>Silver</b> — Draw a fast and a slow change.</li><li>🥇 <b>Gold</b> — List fast and slow changes.</li><li>⭐ <b>G&T</b> — Make a canyon.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name a fast Earth change.</li><li>Name a slow Earth change.</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Fast or Slow?',items:['Cut out the cards.','Sort the Earth changes into FAST and SLOW.'],cards:[{i:'volcano',l:'Volcano'},{i:'crack',l:'Earthquake'},{i:'river',l:'River canyon'},{i:'mountain',l:'Hill wearing down'}],columns:['Fast','Slow']},
+      silver:{title:'Silver — Earth Changes',items:['Draw one fast Earth change and one slow Earth change.','Write which is which.'],bank:['volcano','crack','river','mountain'],question:'Fast: ____________   Slow: ____________'},
+      gold:{title:'Gold — How Land Changes',items:['Write two fast and two slow ways the land can change.'],table:{cols:['Fast changes','Slow changes'],rows:2}},
+      gt:{title:'G&T Challenge — Make a Canyon',items:['Use sand and water to show how a river slowly makes a canyon.','Draw what happens.','Why does it take a long time in real life?'],question:'How a river makes a canyon:'}
+     },
+     assessment:{title:'Lesson 1 — Assessment',pics:['volcano','crack','river'],items:['1. Name a fast Earth change.','2. Name a slow Earth change.','3. Is a river making a canyon fast or slow?'],check:['I can name a fast and a slow Earth change.','I can say if a change is fast or slow.','I can sort Earth changes into fast and slow.']}
+    },
+    {id:'g2eb',title:'Lesson 2: Land and Water on Earth',grade:'Grade 2 · 50 min · 5E',
+     lo:'We are learning about the different shapes of land and water on Earth.',
+     sc:[{band:'Remembering',items:['I can name shapes of land and water.']},{band:'Understanding',items:['I can say that most of Earth is water.']},{band:'Applying',items:['I can show land and water on a map.']}],
+     vocab:['Land','Water','Ocean','Mountain'],
+     slides:[
+      {tag:'Engage · 10 min',h:'Land or water?',body:'<p>Earth has land and water:</p><ul class="ico-list"><li>[[mountain]] a mountain · [[ocean]] an ocean · [[river]] a river</li></ul><p><b>Ask:</b> What shapes of land and water do you know?</p>'},
+      {tag:'Explore · 15 min',h:'Earth on a Map',body:'<p>Earth has land shapes — mountains, hills, flat plains. And water — oceans, lakes, rivers. Look at a [[map]] map: where is the land? where is the water?</p>'},
+      {tag:'Explain · 10 min',h:'Land and Water',body:'<p>Earth has different shapes of <b>land</b> — [[mountain]] mountains, hills and flat plains — and <b>water</b> — [[ocean]] oceans, lakes and rivers. Most of the Earth is covered in <b>water</b>. We can show land and water on a [[map]] map.</p>'},
+      {tag:'AFL · 5 min',h:'Land or Water?',body:'<p>Tap whether each one is land or water.</p>'},
+      {tag:'Elaborate · 10 min',h:'Map Time',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort land and water.</li><li>🥈 <b>Silver</b> — Draw a map.</li><li>🥇 <b>Gold</b> — List land and water shapes.</li><li>⭐ <b>G&T</b> — Make an Earth model.</li></ul>'},
+      {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>Name a shape of land.</li><li>Is most of Earth land or water?</li></ol>'}
+     ],
+     tasks:{
+      bronze:{title:'Bronze — Land or Water?',items:['Cut out the cards.','Sort them into LAND and WATER.'],cards:[{i:'mountain',l:'Mountain'},{i:'ocean',l:'Ocean'},{i:'river',l:'River'},{i:'volcano',l:'Hill'},{i:'pond',l:'Pond'},{i:'tree',l:'Forest land'}],columns:['Land','Water']},
+      silver:{title:'Silver — My Map',items:['Draw a simple map with land and water.','Label one mountain, one ocean and one river.'],bank:['mountain','ocean','river','map'],question:'On my map the land is ____ and the water is ____.'},
+      gold:{title:'Gold — Earth Shapes',items:['Write two land shapes and two water shapes.','Is there more land or more water on Earth?'],table:{cols:['Land shapes','Water shapes'],rows:2}},
+      gt:{title:'G&T Challenge — Make a Model',items:['Make a model of Earth with land and water.','Show a mountain, an ocean and a river.','Is most of your model land or water? Why?'],question:'My Earth model:'}
+     },
+     assessment:{title:'Lesson 2 — Assessment',pics:['mountain','ocean','river'],items:['1. Name a shape of land.','2. Name a body of water.','3. Is most of Earth land or water?'],check:['I can name shapes of land and water.','I can say that most of Earth is water.','I can show land and water on a map.']}
+    }
+  ]}]}
+];
 const GRADE1=[
   {n:1,id:'g1ls',title:'Light and Sound',live:true,standards:[{n:1,text:'Plan and conduct investigations to show that vibrating materials make sound, and that objects can be seen only when light shines on them. (1-PS4)',lessons:[
     {id:'g1la',title:'Lesson 1: Making Sounds',grade:'Grade 1 · 45 min · 5E',
@@ -1359,7 +1563,48 @@ const UNITS=[
    standards:[
      {n:1,text:'Explore and gather evidence through questions and observations to determine if matter exists as a solid, liquid or gas.',lessons:MATTER_S1},
      {n:2,text:'Plan and perform investigations to explore, describe, and categorize materials based on their physical properties.',lessons:MATTER_S2},
-     {n:3,text:'Explain, using a model, that matter is composed of particles that are too small to be seen.',lessons:[]},
+     {n:3,text:'Explain, using a model, that matter is composed of particles that are too small to be seen.',lessons:[
+       {id:'ms3a',title:'Lesson 1: Matter is Made of Tiny Particles',grade:'Grade 5 · 60 min · 5E',
+        lo:'We are learning to use a model to show that all matter is made of tiny particles too small to see.',
+        sc:[{band:'Remembering',items:['I can say that all matter is made of tiny particles.']},{band:'Understanding',items:['I can explain why we use a model to show particles.']},{band:'Applying',items:['I can use evidence, like dissolving, to show that particles are there.']}],
+        vocab:['Particle','Model','Matter','Dissolve'],
+        slides:[
+         {tag:'Engage · 10 min',h:'Where did the sugar go?',body:'<p>Stir sugar into [[water]] water — it seems to vanish! But the water tastes <b>sweet</b> and weighs the same.</p><p><b>Ask:</b> Where did the sugar go? Can we see what matter is really made of? [[magnifier]]</p>'},
+         {tag:'Explore · 15 min',h:'The Dissolving Mystery',body:'<p>Stir sugar into water. It seems to disappear — but the water tastes sweet and weighs the same. The sugar broke into tiny <b>particles</b>, far too small to see, and spread out among the water.</p>'},
+         {tag:'Explain · 15 min',h:'Tiny Particles',body:'<p>All <b>matter</b> is made of tiny <b>particles</b> — far too small to see, even with a [[magnifier]] magnifying glass. We use a <b>model</b> (tiny dots) to show them. [[atom]] When sugar <b>dissolves</b>, its particles spread out among the water particles.</p>'},
+         {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+         {tag:'Elaborate · 10 min',h:'Particle Detective',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Draw a particle model of water, air and a rock.</li><li>🥈 <b>Silver</b> — Solve the dissolving mystery.</li><li>🥇 <b>Gold</b> — Give evidence that particles are there.</li><li>⭐ <b>G&T</b> — Explain why scientists use models.</li></ul>'},
+         {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>What is all matter made of?</li><li>Why do we use a model to show particles?</li><li>When sugar dissolves, where do its particles go?</li></ol>'}
+        ],
+        tasks:{
+         bronze:{title:'Bronze — Model the Particles',items:['Look at the pictures of water, air and a rock.','Draw a model: fill each one with tiny dots to show its particles.','Finish the sentence below.'],bank:['water','air','rock','atom'],question:'All matter is made of tiny ________________.'},
+         silver:{title:'Silver — The Dissolving Mystery',items:['Stir sugar into water. Where did it go?','Draw a BEFORE model (sugar grains + water) and an AFTER model (sugar particles spread out).','Explain why the water still tastes sweet.'],bank:['water','atom'],question:'Where did the sugar go, and how do you know it is still there?'},
+         gold:{title:'Gold — Particle Detective',items:['How do we know matter is made of particles we cannot see?','Give TWO pieces of evidence (for example: sugar dissolving, a smell spreading through a room).','Use the words particle, model and evidence.'],question:'My evidence that matter is made of tiny particles:'},
+         gt:{title:'G&T Challenge — Why a Model?',items:['Scientists use models to show things too small to see.','Explain why a particle model is useful, even though it is not a photograph.','What can a model show, and what can it NOT show?'],question:'Why scientists use a particle model:'}
+        },
+        assessment:{title:'Lesson 1 — Assessment',pics:['water','air','atom'],items:['1. What is all matter made of?','2. Why do we use a model to show particles?','3. When sugar dissolves, where do its particles go?'],check:['I can say that all matter is made of tiny particles.','I can explain why we use a model to show particles.','I can use evidence to show that particles are there.']}
+       },
+       {id:'ms3b',title:'Lesson 2: Modelling Solids, Liquids and Gases',grade:'Grade 5 · 60 min · 5E',
+        lo:'We are learning to use a particle model to explain why solids, liquids and gases behave differently.',
+        sc:[{band:'Remembering',items:['I can describe how particles are arranged in solids, liquids and gases.']},{band:'Understanding',items:['I can explain why a solid keeps its shape and a gas spreads out.']},{band:'Applying',items:['I can use a particle model to explain how matter behaves.']}],
+        vocab:['Particle','Solid','Liquid','Gas'],
+        slides:[
+         {tag:'Engage · 10 min',h:'Why does a gas fill the room?',body:'<p>Three states of matter:</p><ul class="ico-list"><li>[[ice]] a solid · [[water]] a liquid · [[air]] a gas</li></ul><p><b>Ask:</b> A gas fills the whole room, but a rock does not. How are their particles different?</p>'},
+         {tag:'Explore · 15 min',h:'Watch the Particles Move',body:'<p>Watch the particle model below. In a <b>solid</b> the particles are packed tight. In a <b>liquid</b> they slide past each other. In a <b>gas</b> they fly apart and fill the space.</p>'},
+         {tag:'Explain · 15 min',h:'A Model for Each State',body:'<p>In a <b>solid</b> [[ice]], particles are packed tightly in fixed places (they only vibrate) — so it keeps its shape. In a <b>liquid</b> [[water]], particles are close but slide past each other — so it flows. In a <b>gas</b> [[air]], particles are far apart and move freely — so it fills the space.</p>'},
+         {tag:'AFL · 5 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer.</p>'},
+         {tag:'Elaborate · 10 min',h:'Model the States',body:'<p>Show what you know — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Match each state to its particle picture.</li><li>🥈 <b>Silver</b> — Draw the particles for a solid, liquid and gas.</li><li>🥇 <b>Gold</b> — Explain with the particle model.</li><li>⭐ <b>G&T</b> — Model a changing state.</li></ul>'},
+         {tag:'Evaluate · 5 min',h:'Exit Ticket',body:'<ol><li>How are the particles arranged in a solid?</li><li>Why can a liquid flow?</li><li>Why does a gas fill all the space?</li></ol>'}
+        ],
+        tasks:{
+         bronze:{title:'Bronze — Match the Particles',items:['Cut out the state cards.','Match each one to its particle picture: packed tight (solid), sliding (liquid), or far apart (gas).'],cards:[{i:'ice',l:'Solid (ice)'},{i:'water',l:'Liquid (water)'},{i:'air',l:'Gas (air)'},{i:'balloon',l:'Gas (balloon)'}],columns:['Packed tight','Sliding','Far apart']},
+         silver:{title:'Silver — Draw the Particles',items:['Draw a particle model for a solid, a liquid and a gas.','For each, write how the particles are arranged.'],bank:['ice','water','air','atom'],table:{cols:['State','How the particles are arranged'],rows:[{icon:'ice',label:'Solid'},{icon:'water',label:'Liquid'},{icon:'air',label:'Gas'}]}},
+         gold:{title:'Gold — Explain with a Model',items:['Use the particle model to explain WHY a solid keeps its shape but a gas fills the room.','Use the words particle, solid and gas.'],question:'Why a solid keeps its shape but a gas spreads out:'},
+         gt:{title:'G&T Challenge — Changing State',items:['What happens to the particles when ice melts into water, then turns to steam?','Draw the particle model for each step.','Do the particles get smaller, or just move differently?'],question:'How the particles change from ice to water to steam:'}
+        },
+        assessment:{title:'Lesson 2 — Assessment',pics:['ice','water','air'],items:['1. How are the particles arranged in a solid?','2. Why can a liquid flow?','3. Why does a gas fill all the space?'],check:['I can describe how particles are arranged in solids, liquids and gases.','I can explain why a solid keeps its shape and a gas spreads out.','I can use a particle model to explain how matter behaves.']}
+       }
+     ]},
      {n:4,text:'Use measurements and graphs to provide evidence that the total weight remains the same when substances are heated, cooled, or mixed, regardless of the type of change.',lessons:MATTER_S4},
      {n:5,text:'Use observations and measurements to identify and classify materials according to their physical properties.',lessons:MATTER_S5}
    ]},
@@ -1388,7 +1633,11 @@ const THEME={
  g1ls:{a:'#ea580c',d:'#c2410c',deep:'#7c2d12',soft:'#fff0e2'},
  g1parts:{a:'#16a34a',d:'#15803d',deep:'#14532d',soft:'#e7f6ed'},
  g1young:{a:'#db2777',d:'#be185d',deep:'#831843',soft:'#fce7f1'},
- g1sky:{a:'#4f46e5',d:'#4338ca',deep:'#312e81',soft:'#eceafe'}
+ g1sky:{a:'#4f46e5',d:'#4338ca',deep:'#312e81',soft:'#eceafe'},
+ g2mat:{a:'#0ea5e9',d:'#0369a1',deep:'#0c3a5e',soft:'#e2f4fd'},
+ g2plants:{a:'#16a34a',d:'#15803d',deep:'#14532d',soft:'#e7f6ed'},
+ g2hab:{a:'#0d9488',d:'#0b7a70',deep:'#064a44',soft:'#e4f5f2'},
+ g2earth:{a:'#b45309',d:'#92400e',deep:'#5e2c08',soft:'#fbf0e2'}
 };
 function gradeUnits(g){const m={1:GRADE1,2:GRADE2,3:GRADE3,4:GRADE4,5:UNITS};return m[g]||[];}
 function gUnits(){return gradeUnits(cur.grade);}
@@ -1413,7 +1662,7 @@ function vHome(){
       </div>
     </section>
     <section style="padding-top:10px">
-      <div class="eyebrow" style="text-align:center;font-size:.95rem">Choose your grade</div>
+      <div class="eyebrow" style="text-align:center;font-size:1.05rem;font-weight:900;letter-spacing:.12em;color:#334155">Choose your grade</div>
       <div class="grade-cards">${[1,2,3,4,5].map(g=>{const ready=gradeUnits(g).some(u=>u.live&&u.standards.some(s=>s.lessons&&s.lessons.length));return `<button class="grade-card${ready?'':' soon'}" onclick="openGrade(${g})"><span class="gc-lbl">Grade</span><span class="gc-num">${g}</span><span class="gc-st">${ready?'Open ▸':'Coming soon'}</span></button>`;}).join('')}</div>
     </section>`;
 }
@@ -1906,6 +2155,77 @@ const SLIDE_WIDGETS={
   {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'moon',label:'Moon',reveal:'A big rock in the sky we see at night'},{icon:'star',label:'Star',reveal:'A tiny point of light far away'},{icon:'moon',label:'Night',reveal:'When the sky is dark'},{icon:'star',label:'Pattern',reveal:'Something that happens again and again'}]},
   {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'We see the Moon and stars at night.',correct:true},{t:'The Moon stays the same shape forever.',correct:false},{t:'There is more daylight in summer.',correct:true}]},
   null,null
+ ],
+ g2pa:[
+  {type:'reveal',title:'👆 Tap each material to learn about it',cards:[{icon:'block',label:'Wood',reveal:'Hard and rough'},{icon:'spoon',label:'Metal',reveal:'Hard and shiny'},{icon:'bottle',label:'Plastic',reveal:'Light and bendy'},{icon:'cloth',label:'Fabric',reveal:'Soft and bendy'}]},
+  {type:'sort',title:'👆 Hard or soft?',bins:[{id:'hard',icon:'spoon',label:'Hard'},{id:'soft',icon:'cloth',label:'Soft'}],items:[{icon:'block',label:'Wood',bin:'hard'},{icon:'spoon',label:'Metal',bin:'hard'},{icon:'glass',label:'Glass',bin:'hard'},{icon:'cloth',label:'Fabric',bin:'soft'},{icon:'sponge',label:'Sponge',bin:'soft'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'block',label:'Material',reveal:'What an object is made of'},{icon:'magnifier',label:'Property',reveal:'Something you can see or feel about a material'},{icon:'spoon',label:'Hard',reveal:'Stiff and firm — does not squash'},{icon:'sponge',label:'Soft',reveal:'Squashy and easy to bend'}]},
+  {type:'classify',title:'Which property?',cats:['Shiny','Bendy','Rough'],items:[{icon:'spoon',label:'Metal spoon',cat:'Shiny'},{icon:'cloth',label:'Fabric',cat:'Bendy'},{icon:'block',label:'Wood',cat:'Rough'}]},
+  null,null
+ ],
+ g2pb:[
+  {type:'reveal',title:'👆 Tap each material — what job is it good for?',cards:[{icon:'glass',label:'Glass',reveal:'See-through — good for a window'},{icon:'bottle',label:'Plastic',reveal:'Waterproof — good for a raincoat'},{icon:'block',label:'Wood',reveal:'Strong & hard — good for a chair'}]},
+  {type:'classify',title:'Best material for the job?',cats:['Window','Raincoat','Chair'],items:[{icon:'glass',label:'Glass (see-through)',cat:'Window'},{icon:'bottle',label:'Plastic (waterproof)',cat:'Raincoat'},{icon:'block',label:'Wood (strong)',cat:'Chair'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'block',label:'Material',reveal:'What an object is made of'},{icon:'bottle',label:'Waterproof',reveal:'Keeps water out — does not let water through'},{icon:'spoon',label:'Strong',reveal:'Does not break easily'},{icon:'glass',label:'See-through',reveal:'You can see through it (clear)'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'A window is made of glass because it is see-through.',correct:true},{t:'A raincoat is made of paper because it is waterproof.',correct:false},{t:'A chair needs a strong material.',correct:true}]},
+  null,null
+ ],
+ g2la:[
+  {type:'reveal',title:'👆 Tap each plant to find out why',cards:[{icon:'plant',label:'Healthy plant',reveal:'Got water and light — healthy'},{icon:'wilted',label:'Wilted plant',reveal:'No water — it wilted'},{icon:'water',label:'What plants need',reveal:'Water and sunlight'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each plant, then check.',cols:['Got water?','Grew well?'],rows:[{icon:'plant',label:'Plant with water + light',ans:[true,true]},{icon:'wilted',label:'Plant with no water',ans:[false,false]}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'plant',label:'Plant',reveal:'A living thing that grows in the ground'},{icon:'water',label:'Water',reveal:'Plants need it to grow'},{icon:'sun',label:'Light',reveal:'Sunlight that plants need to make food'},{icon:'plant',label:'Grow',reveal:'To get bigger'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Plants need water to grow.',correct:true},{t:'Plants grow well in the dark.',correct:false},{t:'Plants need sunlight.',correct:true}]},
+  null,null
+ ],
+ g2lb:[
+  {type:'reveal',title:'👆 Tap each one to find out',cards:[{icon:'bee',label:'Bee',reveal:'Carries pollen from flower to flower'},{icon:'flower',label:'Flower',reveal:'Makes pollen and seeds'},{icon:'seed',label:'Seed',reveal:'Grows into a new plant'}]},
+  {type:'classify',title:'How is this seed spread?',cats:['By the wind','By an animal','By water'],items:[{label:'A fluffy dandelion seed',cat:'By the wind'},{label:'A sticky burr on a fox',cat:'By an animal'},{label:'A coconut floating',cat:'By water'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'bee',label:'Bee',reveal:'An insect that carries pollen between flowers'},{icon:'flower',label:'Pollen',reveal:'A yellow dust flowers make'},{icon:'seed',label:'Seed',reveal:'A tiny part a new plant grows from'},{icon:'bee',label:'Spread',reveal:'To move seeds to new places'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Bees carry pollen between flowers.',correct:true},{t:'Seeds can be spread by the wind.',correct:true},{t:'Pollen makes plants sick.',correct:false}]},
+  null,null
+ ],
+ g2ha:[
+  {type:'reveal',title:'👆 Tap each one — where does it live?',cards:[{icon:'fish',label:'Fish',reveal:'Lives in water (a pond or the sea)'},{icon:'fox',label:'Fox',reveal:'Lives in a forest'},{icon:'cactus',label:'Cactus',reveal:'Lives in the dry desert'}]},
+  {type:'sort',title:'👆 Where does it live?',bins:[{id:'pond',icon:'pond',label:'Pond'},{id:'forest',icon:'tree',label:'Forest'},{id:'desert',icon:'cactus',label:'Desert'}],items:[{icon:'fish',label:'Fish',bin:'pond'},{icon:'frog',label:'Frog',bin:'pond'},{icon:'fox',label:'Fox',bin:'forest'},{icon:'deer',label:'Deer',bin:'forest'},{icon:'cactus',label:'Cactus',bin:'desert'},{icon:'snake',label:'Snake',bin:'desert'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'tree',label:'Habitat',reveal:'The place where a plant or animal lives'},{icon:'pond',label:'Pond',reveal:'A small area of water — a habitat'},{icon:'tree',label:'Forest',reveal:'A place with many trees — a habitat'},{icon:'cactus',label:'Desert',reveal:'A dry, sandy place — a habitat'}]},
+  {type:'classify',title:'Which habitat?',cats:['Pond','Forest','Desert'],items:[{icon:'fish',label:'Fish',cat:'Pond'},{icon:'fox',label:'Fox',cat:'Forest'},{icon:'cactus',label:'Cactus',cat:'Desert'}]},
+  null,null
+ ],
+ g2hb:[
+  {type:'reveal',title:'👆 Tap each one — plant or animal?',cards:[{icon:'tree',label:'Tree',reveal:'A plant'},{icon:'bird',label:'Bird',reveal:'An animal'},{icon:'bee',label:'Bee',reveal:'An animal (insect)'}]},
+  {type:'classify',title:'Plant or animal?',cats:['Plant','Animal'],items:[{icon:'tree',label:'Tree',cat:'Plant'},{icon:'bird',label:'Bird',cat:'Animal'},{icon:'flower',label:'Flower',cat:'Plant'},{icon:'fox',label:'Fox',cat:'Animal'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'tree',label:'Living Things',reveal:'Plants and animals that grow and need food and water'},{icon:'fox',label:'Different',reveal:'Not the same'},{icon:'flower',label:'Plants',reveal:'Living things that make their own food'},{icon:'bird',label:'Animals',reveal:'Living things that eat and move'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'There are many different kinds of living things.',correct:true},{t:'A forest and a desert have the same animals.',correct:false},{t:'Trees and flowers are plants.',correct:true}]},
+  null,null
+ ],
+ g2ea:[
+  {type:'reveal',title:'👆 Tap each one — fast or slow?',cards:[{icon:'volcano',label:'Volcano',reveal:'Erupts FAST'},{icon:'crack',label:'Earthquake',reveal:'Shakes the land FAST'},{icon:'river',label:'River',reveal:'Wears rock away SLOWLY'}]},
+  {type:'sort',title:'👆 Fast or slow change?',bins:[{id:'fast',icon:'volcano',label:'Fast'},{id:'slow',icon:'river',label:'Slow'}],items:[{icon:'volcano',label:'A volcano',bin:'fast'},{icon:'crack',label:'An earthquake',bin:'fast'},{label:'A landslide',bin:'fast'},{icon:'river',label:'A river making a canyon',bin:'slow'},{icon:'mountain',label:'A hill wearing down',bin:'slow'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'volcano',label:'Fast',reveal:'Happens quickly'},{icon:'river',label:'Slow',reveal:'Happens over a long time'},{icon:'volcano',label:'Volcano',reveal:'A mountain that can erupt — a fast change'},{icon:'crack',label:'Change',reveal:'When something becomes different'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'A volcano erupting is a fast change.',correct:true},{t:'A river makes a canyon very quickly.',correct:false},{t:'Some Earth changes take a long time.',correct:true}]},
+  null,null
+ ],
+ g2eb:[
+  {type:'reveal',title:'👆 Tap each one — land or water?',cards:[{icon:'mountain',label:'Mountain',reveal:'A high shape of LAND'},{icon:'ocean',label:'Ocean',reveal:'A huge body of WATER'},{icon:'river',label:'River',reveal:'Moving WATER on the land'}]},
+  {type:'sort',title:'👆 Land or water?',bins:[{id:'land',icon:'mountain',label:'Land'},{id:'water',icon:'ocean',label:'Water'}],items:[{icon:'mountain',label:'Mountain',bin:'land'},{icon:'volcano',label:'A hill',bin:'land'},{icon:'ocean',label:'Ocean',bin:'water'},{icon:'river',label:'River',bin:'water'},{icon:'pond',label:'Pond',bin:'water'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'mountain',label:'Land',reveal:'The solid ground — mountains, hills and plains'},{icon:'ocean',label:'Water',reveal:'Oceans, lakes and rivers'},{icon:'ocean',label:'Ocean',reveal:'A huge body of salt water'},{icon:'mountain',label:'Mountain',reveal:'A very high shape of land'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Most of the Earth is covered in water.',correct:true},{t:'A mountain is made of water.',correct:false},{t:'An ocean is a body of water.',correct:true}]},
+  null,null
+ ],
+ ms3a:[
+  {type:'reveal',title:'👆 Tap each one to find out',cards:[{icon:'water',label:'Sugar in water',reveal:'Stir it in — it seems to vanish'},{icon:'magnifier',label:'Too small to see',reveal:'The particles are too small to see, even with this'},{icon:'atom',label:'A model',reveal:'Tiny dots show the particles'}]},
+  {type:'classify',title:'Is it matter (made of particles)?',cats:['Matter — made of particles','Not matter'],items:[{icon:'water',label:'Water',cat:'Matter — made of particles'},{icon:'air',label:'Air',cat:'Matter — made of particles'},{icon:'rock',label:'A rock',cat:'Matter — made of particles'},{label:'A shadow',cat:'Not matter'}]},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'atom',label:'Particle',reveal:'A tiny piece of matter, too small to see'},{icon:'atom',label:'Model',reveal:'A simple picture or idea that shows how something works'},{icon:'rock',label:'Matter',reveal:'Anything that takes up space and has weight'},{icon:'water',label:'Dissolve',reveal:'When a solid breaks into tiny particles and spreads out in a liquid'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'All matter is made of tiny particles.',correct:true},{t:'We can easily see particles with our eyes.',correct:false},{t:'When sugar dissolves, its particles spread out in the water.',correct:true}]},
+  null,null
+ ],
+ ms3b:[
+  {type:'reveal',title:'👆 Tap each state to see its particles',cards:[{icon:'ice',label:'Solid',reveal:'Particles packed tight'},{icon:'water',label:'Liquid',reveal:'Particles slide past each other'},{icon:'air',label:'Gas',reveal:'Particles fly apart'}]},
+  {type:'particles'},
+  {type:'reveal',title:'👆 Tap to learn each word',cards:[{icon:'atom',label:'Particle',reveal:'A tiny piece of matter'},{icon:'ice',label:'Solid',reveal:'Particles packed tightly in fixed places'},{icon:'water',label:'Liquid',reveal:'Particles close but able to slide'},{icon:'air',label:'Gas',reveal:'Particles far apart, moving freely'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'In a solid, particles are packed tightly.',correct:true},{t:'In a gas, particles are packed tightly together.',correct:false},{t:'In a liquid, particles can slide past each other.',correct:true}]},
+  {type:'sort',title:'👆 How are the particles?',bins:[{id:'s',icon:'ice',label:'Packed tight (solid)'},{id:'l',icon:'water',label:'Slide past (liquid)'},{id:'g',icon:'air',label:'Far apart (gas)'}],items:[{icon:'ice',label:'Ice',bin:'s'},{icon:'block',label:'Wood',bin:'s'},{icon:'water',label:'Water',bin:'l'},{icon:'juice',label:'Juice',bin:'l'},{icon:'air',label:'Air',bin:'g'},{icon:'balloon',label:'Balloon air',bin:'g'}]},
+  null
  ]
 };
 
@@ -2304,11 +2624,131 @@ g1sb:[
   {q:"What are the bright points of light in the night sky called?",options:["Stars","Suns","Moons","Clouds"],answer:0},
   {q:"The Moon changes its shape over about...",options:["one week","one month","one year","one day"],answer:1},
 ],
+g2pa:[
+  {q:"Which word describes a material that bends without breaking?",options:["hard","rough","bendy","dull"],answer:2},
+  {q:"A sponge soaks up water. We call this property...",options:["absorbent","waterproof","stiff","smooth"],answer:0},
+  {q:"Which material is usually SOFT?",options:["metal","fabric","glass","rock"],answer:1},
+  {q:"A raincoat does not let water through. It is...",options:["rough","dull","absorbent","waterproof"],answer:3},
+  {q:"Sandpaper feels rough. What is the OPPOSITE of rough?",options:["hard","dull","smooth","stiff"],answer:2},
+  {q:"Which word means a material does NOT bend easily?",options:["stiff","bendy","soft","shiny"],answer:0},
+  {q:"A mirror is shiny. What is the OPPOSITE of shiny?",options:["rough","dull","hard","stiff"],answer:1},
+  {q:"Which material is usually HARD?",options:["cotton","sponge","rubber","wood"],answer:3},
+  {q:"We sort and describe materials by their...",options:["colors only","names only","properties","prices"],answer:2},
+  {q:"Which of these is an example of a material?",options:["plastic","heavy","bendy","rough"],answer:0}
+],
+g2pb:[
+  {q:"Why is glass used to make windows?",options:["it is soft","it is see-through","it soaks up water","it is bendy"],answer:1},
+  {q:"A raincoat is made of plastic because plastic is...",options:["rough","dull","absorbent","waterproof"],answer:3},
+  {q:"Which material would be BEST for making a strong chair?",options:["wood","paper","cotton","sponge"],answer:0},
+  {q:"We choose a material by matching its... to the job.",options:["color","name","properties","price"],answer:2},
+  {q:"Why is a soft sweater made from fabric?",options:["to be waterproof","to feel comfortable and warm","to be see-through","to be very hard"],answer:1},
+  {q:"Which material is BEST for a pot that holds hot soup?",options:["rubber","paper","fabric","metal"],answer:3},
+  {q:"A plastic bag keeps things dry because plastic is...",options:["waterproof","absorbent","dull","soft"],answer:0},
+  {q:"Why do builders use wood or metal to make a bridge?",options:["they are see-through","they are soft","they are strong","they soak up water"],answer:2},
+  {q:"Which material is BEST for a drinking cup you can see through?",options:["cotton","glass","rubber","paper"],answer:1},
+  {q:"A sponge is a good bath toy because it is...",options:["hard and stiff","see-through","very shiny","soft and absorbent"],answer:3}
+],
+g2la:[
+  {q:"What do plants need to live and grow?",options:["water and light","sand and wind","ice and rain","salt and dark"],answer:0},
+  {q:"What happens to a plant that gets no water?",options:["it grows bigger","it turns very green","it wilts and dies","it gets more flowers"],answer:2},
+  {q:"A plant kept in the dark becomes...",options:["big and green","pale and weak","very healthy","full of flowers"],answer:1},
+  {q:"Where do plants get their light?",options:["from the soil","from the wind","from water","from the sun"],answer:3},
+  {q:"A healthy plant with lots of water and light looks...",options:["green and strong","yellow and wilted","pale and thin","dry and dead"],answer:0},
+  {q:"Your plant is wilting. What should you do?",options:["put it in the dark","add more sand","give it water","pull out its leaves"],answer:2},
+  {q:"Which TWO things help a plant grow healthy?",options:["wind and rock","water and sunlight","ice and sand","dark and cold"],answer:1},
+  {q:"What happens to a plant that gets plenty of water and light?",options:["it turns yellow","it wilts","it dies","it grows healthy and green"],answer:3},
+  {q:"A plant grows toward the window. It is reaching for...",options:["light","water","soil","air"],answer:0},
+  {q:"Which word means a plant droops because it needs water?",options:["shines","spreads","wilts","blooms"],answer:2}
+],
+g2lb:[
+  {q:"What do bees carry from flower to flower?",options:["water","seeds","soil","pollen"],answer:3},
+  {q:"Which animal is a pollinator?",options:["fish","bee","snake","cow"],answer:1},
+  {q:"What is it called when pollen moves from flower to flower?",options:["pollination","spreading","growing","watering"],answer:0},
+  {q:"Seeds that are spread to new places can...",options:["fly away forever","turn into flowers only","grow into new plants","make pollen"],answer:2},
+  {q:"Which TWO things help spread seeds to new places?",options:["rock and soil","snow and ice","heat and cold","animals and wind"],answer:3},
+  {q:"What does a butterfly do when it visits a flower?",options:["it eats the seeds","it carries pollen","it waters the plant","it makes soil"],answer:1},
+  {q:"Why is pollination important for plants?",options:["it helps plants make seeds","it helps plants drink water","it makes plants grow taller","it gives plants sunlight"],answer:0},
+  {q:"An animal eats a fruit and drops the seed far away. This helps...",options:["make pollen","water the plant","spread the seed","pollinate the flower"],answer:2},
+  {q:"Where does pollen come from?",options:["roots","soil","seeds","flowers"],answer:3},
+  {q:"Pollinators help new plants grow by carrying... from flower to flower.",options:["water","pollen","seeds","soil"],answer:1}
+],
+g2ha:[
+  {q:"What is a habitat?",options:["a type of food","a part of a plant","the place where a living thing lives","a kind of weather"],answer:2},
+  {q:"A fish lives in...",options:["water","sand","a tree","a cave"],answer:0},
+  {q:"Which habitat is very hot and dry?",options:["pond","forest","ocean","desert"],answer:3},
+  {q:"A frog is most likely to live near a...",options:["desert","pond","mountain","ice"],answer:1},
+  {q:"A cactus lives in the desert because it can survive with...",options:["lots of cold","deep ocean water","very little water","thick forest shade"],answer:2},
+  {q:"Birds and squirrels often live in a...",options:["forest","pond","ocean","desert"],answer:0},
+  {q:"Why do living things live in a certain habitat?",options:["because it looks nice","because it is big","because it is cold","to get what they need"],answer:3},
+  {q:"Which habitat has the most salt water?",options:["pond","ocean","forest","desert"],answer:1},
+  {q:"The place where an animal lives and finds what it needs is called its...",options:["property","pollen","habitat","material"],answer:2},
+  {q:"Which animal is most likely to live in a pond?",options:["a duck","a camel","a lion","a monkey"],answer:0}
+],
+g2hb:[
+  {q:"Having many different kinds of living things on Earth is...",options:["bad for plants","good for our world","bad for animals","not important"],answer:1},
+  {q:"Which of these is a living thing?",options:["a rock","a cloud","a puddle","a tree"],answer:3},
+  {q:"What do different habitats around the world have?",options:["different living things","the same animals","no plants","only rocks"],answer:0},
+  {q:"Which is true about Earth?",options:["only one animal lives here","only fish live here","it has many kinds of plants and animals","no plants grow here"],answer:2},
+  {q:"A rainforest has many types of animals and plants. We say it has...",options:["the same kind of animal","many different kinds of living things","no plants at all","only one type of tree"],answer:1},
+  {q:"Which of these is a plant?",options:["a frog","a butterfly","a fish","a sunflower"],answer:3},
+  {q:"A forest and an ocean each have... kinds of plants and animals.",options:["different","the same","no","only one"],answer:0},
+  {q:"Earth is special because it has so many...",options:["the same rocks","the same weather","kinds of living things","only one habitat"],answer:2},
+  {q:"What do we call all the plants and animals that are alive?",options:["materials","living things","habitats","properties"],answer:1},
+  {q:"Which group has ONLY animals?",options:["tree, frog, rock","cactus, bee, cloud","flower, grass, leaf","bee, fish, bird"],answer:3}
+],
+g2ea:[
+  {q:"Which event changes the Earth VERY QUICKLY?",options:["a volcano erupting","a hill slowly wearing down","a river making a canyon","a rock slowly crumbling"],answer:0},
+  {q:"A river wears away rock over a very long time to make a canyon. This is a...",options:["very fast change","sudden change","slow change","quick change"],answer:2},
+  {q:"What is a landslide?",options:["a river wearing rock away","rocks and soil sliding down a hill quickly","a volcano forming slowly","a canyon growing deeper"],answer:1},
+  {q:"Which change takes the LONGEST time?",options:["a landslide","an earthquake","a volcano erupting","a canyon forming from a river"],answer:3},
+  {q:"An earthquake shakes the land...",options:["very quickly","over thousands of years","slowly every day","very slowly"],answer:0},
+  {q:"What do we call an opening in the Earth that can shoot out hot rock?",options:["a canyon","a landslide","a volcano","a plain"],answer:2},
+  {q:"Which word means the land looks different than before?",options:["habitat","change","property","material"],answer:1},
+  {q:"Which of these changes happens the SLOWEST?",options:["a volcano erupting","a landslide","an earthquake","a hill slowly wearing down over thousands of years"],answer:3},
+  {q:"A volcano erupting is an example of a... change.",options:["fast","slow","tiny","invisible"],answer:0},
+  {q:"A canyon forms when a river...",options:["erupts from below","shakes the ground","slowly wears away rock","slides down a hill"],answer:2}
+],
+g2eb:[
+  {q:"Most of Earth is covered in...",options:["mountains","forests","flat plains","water"],answer:3},
+  {q:"What is the name for a very tall shape of land?",options:["ocean","mountain","river","lake"],answer:1},
+  {q:"Which body of water is the LARGEST?",options:["ocean","lake","river","pond"],answer:0},
+  {q:"A river is...",options:["a tall shape of land","a flat dry plain","moving water that flows across the land","a very deep hole"],answer:2},
+  {q:"We can show land and water on a...",options:["habitat","property","canyon","map"],answer:3},
+  {q:"A flat, wide area of land is called a...",options:["ocean","plain","mountain","lake"],answer:1},
+  {q:"Which of these is a body of WATER?",options:["a lake","a mountain","a hill","a plain"],answer:0},
+  {q:"A hill is smaller than a...",options:["river","lake","mountain","ocean"],answer:2},
+  {q:"Which body of water is found all around the continents of Earth?",options:["river","lake","plain","ocean"],answer:3},
+  {q:"Which tool shows us both land and water on Earth?",options:["a habitat card","a map","a food chart","a material list"],answer:1}
+],
+ms3a:[
+  {q:"What are all types of matter made of?",options:["Tiny particles too small to see","Light and energy waves","Water and air only","Cells that can be seen with a magnifying glass"],answer:0},
+  {q:"What is a MODEL used for in science?",options:["To make matter heavier","To show or explain something we cannot see directly","To measure how fast particles move","To dissolve sugar in water"],answer:1},
+  {q:"What is the special science word for the tiny pieces that make up all matter?",options:["Waves","Droplets","Particles","Bubbles"],answer:2},
+  {q:"Why does sugar seem to disappear when you stir it into water?",options:["The sugar is destroyed by the water","The sugar turns into a gas and floats away","The sugar particles all sink to the very bottom","The sugar particles spread out and mix among the water particles"],answer:3},
+  {q:"Jamie stirs sugar into water and the water tastes sweet even though he cannot see the sugar anymore. What does this tell us?",options:["The sugar particles are still there but spread out in the water","The sugar has completely disappeared and no longer exists","New sugar was created inside the water","The water particles replaced all the sugar particles"],answer:0},
+  {q:"When sugar dissolves in water, what happens to the total weight of the mixture?",options:["It becomes lighter because the sugar disappears","It stays the same because the sugar particles are still there","It doubles because water and sugar combine into a new substance","It becomes lighter because particles escape into the air"],answer:1},
+  {q:"Is air made of particles?",options:["No, air is just empty space with nothing in it","Only hot air contains particles","Yes, air is made of particles even though we cannot see them","Air only has particles when wind is blowing"],answer:2},
+  {q:"A student draws tiny circles to represent sugar particles mixed in water. What is this drawing called?",options:["A photograph","A recipe","An experiment result","A model"],answer:3},
+  {q:"Which of the following is the best evidence that particles exist even when we cannot see them?",options:["Sugar dissolved in water makes it taste sweet but the total weight stays the same","Ice melts when it gets warm outside","Water can be poured from one cup to another","Rocks are heavy and hard to lift"],answer:0},
+  {q:"What does the word dissolve mean?",options:["To break something into large pieces by hitting it","To heat a solid until it becomes a liquid","When a solid mixes completely into a liquid so it cannot be seen","When a liquid turns into a gas by evaporating"],answer:2}
+],
+ms3b:[
+  {q:"In a solid, how are the particles arranged?",options:["Packed tightly together in fixed places","Spread far apart and moving quickly in all directions","Loosely grouped so they can flow past each other","Scattered randomly with lots of empty space between them"],answer:0},
+  {q:"What can the particles in a liquid do that particles in a solid cannot?",options:["Stay perfectly still and never move","Slide past each other so the liquid can flow","Move far apart to fill all available space","Lock together permanently in a fixed pattern"],answer:1},
+  {q:"Why does a liquid take the shape of its container?",options:["Because liquid particles are too heavy to move upward","Because liquid particles are packed so tightly they push outward","Because liquid particles move so fast they bounce off the walls","Because liquid particles can slide past each other and flow into any shape"],answer:3},
+  {q:"In a gas, how do the particles move?",options:["They stay still in fixed positions","They slide slowly and carefully past each other","They move quickly in all directions and spread out to fill all the space","They vibrate in one place without moving far away"],answer:2},
+  {q:"You open a bottle of perfume on one side of the room and soon smell it on the other side. Which statement best explains this?",options:["Gas particles from the perfume spread out quickly in all directions to fill the room","Solid particles from the perfume vibrate slowly across the room to reach you","Liquid particles from the perfume flow along the floor toward you","The perfume particles disappear and are recreated near your nose"],answer:0},
+  {q:"A solid block keeps its shape no matter which way you turn it. Why?",options:["Because solid particles move very quickly around each other to stay in shape","Because solid particles are packed tightly in fixed places and can only vibrate","Because there are no gaps at all between solid particles","Because solid particles are bigger than liquid or gas particles"],answer:1},
+  {q:"Which state of matter spreads out to fill ALL the available space in its container?",options:["Solid","Liquid","Gas","Both solid and liquid"],answer:2},
+  {q:"Water is poured into a round bowl and then into a square dish. Each time the water takes the new shape. What does this tell us about liquid particles?",options:["Liquid particles are destroyed when moved to a new container","Liquid particles pack into fixed positions like solid particles","Liquid particles move so far apart that the water becomes a gas","Liquid particles can slide past each other so the liquid flows into any shape"],answer:3},
+  {q:"Which description best matches a SOLID?",options:["Particles packed tightly in fixed places and only able to vibrate","Particles far apart and moving quickly in all directions","Particles close together but able to slide past each other","Particles spreading out to fill all available space in a container"],answer:0},
+  {q:"A scientist draws tiny circles that are far apart with arrows pointing in many different directions. Which state of matter is she modeling?",options:["Solid, because the circles are packed closely together","Gas, because the circles are far apart and moving quickly in all directions","Liquid, because the circles can slide past each other","Solid, because the arrows show the circles vibrating in place"],answer:1}
+],
 };
 /* attach quick-check questions authored for the new lessons */
 if(window.MCQS_EXTRA){
   let all=[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS,ECOSYSTEMS,EARTH);
-  [GRADE1,GRADE2,GRADE3,GRADE4].forEach(gr=>gr.forEach(u=>u.standards.forEach(s=>(s.lessons||[]).forEach(L=>all.push(L)))));
+  [GRADE1,GRADE2,GRADE3,GRADE4,UNITS].forEach(gr=>gr.forEach(u=>u.standards.forEach(s=>(s.lessons||[]).forEach(L=>all.push(L)))));
   all.forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});
 }
 
