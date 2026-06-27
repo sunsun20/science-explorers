@@ -11,7 +11,8 @@ quick-check quizzes.
 2. **Forces** (Gravity) — live
 3. **Energy** (Energy from the Sun) — live
 4. **Organisms and Processes** (plants need air & water) — live
-5–6. Ecosystems and Sustainability · Earth's Interactions — coming soon
+5. **Ecosystems and Sustainability** (food webs, decomposers, protecting nature) — live
+6. Earth's Interactions — coming soon
 
 ## How to change things
 
@@ -22,7 +23,7 @@ Where to look inside the `<script>`:
 
 | What you want to change | Where it is |
 |---|---|
-| Lesson content (objective, success criteria, slides, tasks, assessment) | the data arrays `MATTER_S1`, `MATTER_S2`, `MATTER_S4`, `MATTER_S5`, `FORCES`, `ENERGY`, `ORGANISMS` |
+| Lesson content (objective, success criteria, slides, tasks, assessment) | the data arrays `MATTER_S1`, `MATTER_S2`, `MATTER_S4`, `MATTER_S5`, `FORCES`, `ENERGY`, `ORGANISMS`, `ECOSYSTEMS` |
 | Quiz questions (10 per lesson) | `window.MCQS_EXTRA` (Lesson 1 of Matter uses `mcqs`) |
 | Each unit's colour theme | the `THEME` map |
 | Pictures (realistic SVG icons) | the `ICONS` object — use a picture in text by writing `[[name]]` |

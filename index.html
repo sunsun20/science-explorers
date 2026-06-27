@@ -261,7 +261,20 @@
   .pic .sci-ico{width:46px;height:46px;margin:0}
   .sheet-page{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;color:#111}
   .ws-graph{height:190px;margin:8px 0 14px;border-left:2.5px solid #555;border-bottom:2.5px solid #555;background-color:#fff;background-image:linear-gradient(#dfe6ef 1px,transparent 1px),linear-gradient(90deg,#dfe6ef 1px,transparent 1px);background-size:26px 26px;background-position:left bottom;border-radius:2px}
-  @media print{header,footer,.no-print,.deck-bar,.detail-actions{display:none!important}body{background:#fff}.sheet-page{border:none;border-radius:0;margin:0;break-after:page;break-inside:avoid}.sheet-page:last-child{break-after:auto}}
+  .print-deck{display:none}
+  @media print{header,footer,.no-print,.deck-bar,.detail-actions{display:none!important}body{background:#fff}.sheet-page{border:none;border-radius:0;margin:0;break-after:page;break-inside:avoid}.sheet-page:last-child{break-after:auto}
+    body.pl-print #app{display:none!important}
+    body.pl-print .print-deck{display:block!important;color:#111;padding:0 6px}
+    .print-deck h1{font-size:1.6rem;margin:0 0 2px}
+    .print-deck .pl-meta{color:#444;font-weight:700;margin-bottom:8px}
+    .print-deck h2{font-size:1.12rem;margin:12px 0 4px;color:#1d4ed8;border-bottom:1px solid #ccc;padding-bottom:3px}
+    .print-deck .pl-slide{break-inside:avoid;margin-bottom:6px}
+    .print-deck .pl-slide h2{border:none;color:#111;font-size:1.15rem;margin:2px 0 4px}
+    .print-deck .pl-tag{display:inline-block;background:#1d4ed8;color:#fff;font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:99px;margin:12px 0 2px}
+    .print-deck .sci-ico{width:26px;height:26px;vertical-align:middle}
+    .print-deck .twocol{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .print-deck .anchor{border:1px solid #ccc;border-radius:8px;padding:8px}
+    .print-deck .anchor h4{color:#1d4ed8;margin-bottom:4px}}
 
   footer{border-top:1px solid var(--line);padding:24px 20px;text-align:center;color:var(--muted);font-weight:700;font-size:.9rem}
   .hidden{display:none!important}
@@ -456,12 +469,19 @@ const ICONS={
  plant:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_plant1_pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a1663a"/><stop offset="1" stop-color="#6d3b1f"/></linearGradient><linearGradient id="grad_plant1_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d4037"/><stop offset="1" stop-color="#3e2723"/></linearGradient><linearGradient id="grad_plant1_leaf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#81c784"/><stop offset="1" stop-color="#2e7d32"/></linearGradient><linearGradient id="grad_plant1_leaf2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5d6a7"/><stop offset="1" stop-color="#388e3c"/></linearGradient></defs><path d="M20 54 L24 38 L40 38 L44 54 Z" fill="url(#grad_plant1_pot)"/><rect x="18" y="35" width="28" height="6" rx="3" fill="url(#grad_plant1_soil)"/><rect x="22" y="37" width="20" height="3" rx="1.5" fill="url(#grad_plant1_soil)"/><line x1="32" y1="36" x2="32" y2="14" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round"/><path d="M32 28 Q32 28 20 18 Q24 30 32 28" fill="url(#grad_plant1_leaf1)"/><path d="M32 22 Q32 22 44 14 Q40 26 32 22" fill="url(#grad_plant1_leaf2)"/><path d="M32 34 Q28 26 22 24 Q26 34 32 34" fill="url(#grad_plant1_leaf1)" opacity="0.85"/><ellipse cx="32" cy="14" rx="3" ry="3.5" fill="#a5d6a7"/></svg>',
  wilted:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_wilt1_pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a1663a"/><stop offset="1" stop-color="#6d3b1f"/></linearGradient><linearGradient id="grad_wilt1_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8d6e63"/><stop offset="1" stop-color="#4e342e"/></linearGradient><linearGradient id="grad_wilt1_stem" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9ccc65"/><stop offset="1" stop-color="#558b2f"/></linearGradient><linearGradient id="grad_wilt1_leaf1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4e157"/><stop offset="1" stop-color="#9e9d24"/></linearGradient><linearGradient id="grad_wilt1_leaf2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ca53"/><stop offset="1" stop-color="#827717"/></linearGradient></defs><path d="M20 54 L24 38 L40 38 L44 54 Z" fill="url(#grad_wilt1_pot)"/><rect x="18" y="35" width="28" height="6" rx="3" fill="url(#grad_wilt1_soil)"/><path d="M32 36 Q32 30 31 24 Q30 20 32 16" fill="none" stroke="#8bc34a" stroke-width="2.5" stroke-linecap="round"/><path d="M31 24 Q24 22 16 30 Q20 24 26 22 Q29 21 31 24" fill="url(#grad_wilt1_leaf1)" opacity="0.9"/><path d="M31 28 Q38 26 46 32 Q42 25 36 24 Q33 23 31 28" fill="url(#grad_wilt1_leaf2)" opacity="0.9"/><path d="M32 16 Q30 14 27 18 Q30 14 32 16" fill="url(#grad_wilt1_leaf1)" opacity="0.8"/><path d="M16 30 Q12 33 11 37" fill="none" stroke="#9ccc65" stroke-width="1.5" stroke-linecap="round"/><path d="M46 32 Q50 34 51 38" fill="none" stroke="#9ccc65" stroke-width="1.5" stroke-linecap="round"/></svg>',
  wateringcan:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="grad_wcan1_body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#0277bd"/></linearGradient><linearGradient id="grad_wcan1_spout" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#29b6f6"/><stop offset="1" stop-color="#0288d1"/></linearGradient><linearGradient id="grad_wcan1_shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e1f5fe" stop-opacity="0.7"/><stop offset="1" stop-color="#e1f5fe" stop-opacity="0"/></linearGradient></defs><ellipse cx="28" cy="36" rx="18" ry="14" fill="url(#grad_wcan1_body)"/><ellipse cx="28" cy="36" rx="10" ry="6" fill="url(#grad_wcan1_shine)" opacity="0.5"/><path d="M44 32 Q52 26 56 22" fill="none" stroke="url(#grad_wcan1_spout)" stroke-width="5" stroke-linecap="round"/><circle cx="56" cy="22" r="4" fill="#0288d1"/><path d="M55 19 Q58 16 60 12" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M58 20 Q62 18 64 15" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M52 20 Q55 15 56 11" stroke="#29b6f6" stroke-width="1.8" stroke-linecap="round" fill="none"/><circle cx="60" cy="11" r="1.5" fill="#4fc3f7"/><circle cx="64" cy="14" r="1.5" fill="#4fc3f7"/><circle cx="56" cy="10" r="1.5" fill="#4fc3f7"/><path d="M22 22 Q18 18 16 22 Q20 20 22 22" fill="none" stroke="#b3e5fc" stroke-width="2" stroke-linecap="round"/><path d="M16 50 Q12 42 10 36" fill="none" stroke="url(#grad_wcan1_body)" stroke-width="5" stroke-linecap="round"/><ellipse cx="13" cy="43" rx="4" ry="7" fill="url(#grad_wcan1_body)" transform="rotate(-20 13 43)"/></svg>',
+ mushroom:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><radialGradient id="mush_cap" cx="42%" cy="28%" r="72%"><stop offset="0" stop-color="#ff6f63"/><stop offset="1" stop-color="#c81e1e"/></radialGradient><linearGradient id="mush_stem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4e0"/><stop offset="1" stop-color="#e3cda0"/></linearGradient></defs><path d="M14 31 Q14 13 32 13 Q50 13 50 31 Q50 34 45 34 L19 34 Q14 34 14 31 Z" fill="url(#mush_cap)"/><circle cx="25" cy="24" r="3.2" fill="#fff" opacity=".85"/><circle cx="39" cy="22" r="2.6" fill="#fff" opacity=".85"/><circle cx="33" cy="29" r="2" fill="#fff" opacity=".8"/><path d="M26 34 Q24 48 22 54 Q29 57 42 54 Q40 48 38 34 Z" fill="url(#mush_stem)" stroke="#d8c08c" stroke-width="1"/></svg>',
+ worm:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="worm_b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7a6b8"/><stop offset="1" stop-color="#d76a86"/></linearGradient></defs><path d="M12 48 Q6 34 20 32 Q34 30 29 20 Q26 12 40 12 Q53 12 50 25" fill="none" stroke="url(#worm_b)" stroke-width="9" stroke-linecap="round"/><path d="M12 48 Q6 34 20 32 Q34 30 29 20 Q26 12 40 12 Q53 12 50 25" fill="none" stroke="#ffd2dd" stroke-width="3.5" stroke-linecap="round" opacity=".5"/><circle cx="49" cy="22" r="1.4" fill="#5a2030"/><circle cx="45.5" cy="19.5" r="1.2" fill="#5a2030"/></svg>',
+ recycle:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="rec_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cd47a"/><stop offset="1" stop-color="#2e9e44"/></linearGradient></defs><g transform="translate(32 33)" fill="url(#rec_g)"><path d="M-3.5 -19 L3.5 -19 L3.5 -7 L9 -7 L0 5 L-9 -7 L-3.5 -7 Z" transform="rotate(0)"/><path d="M-3.5 -19 L3.5 -19 L3.5 -7 L9 -7 L0 5 L-9 -7 L-3.5 -7 Z" transform="rotate(120)"/><path d="M-3.5 -19 L3.5 -19 L3.5 -7 L9 -7 L0 5 L-9 -7 L-3.5 -7 Z" transform="rotate(240)"/></g></svg>',
+ litter:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="lit_can" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e4e6"/><stop offset="1" stop-color="#9aa0a8"/></linearGradient></defs><ellipse cx="32" cy="53" rx="24" ry="5" fill="#cbb68a" opacity=".45"/><g transform="rotate(-16 26 44)"><rect x="15" y="38" width="21" height="12" rx="2" fill="url(#lit_can)" stroke="#7a8088" stroke-width="1"/><rect x="15" y="42" width="21" height="2.4" fill="#d23b3b"/><path d="M21 38 q-1 -3 3 -3" stroke="#7a8088" stroke-width="1.2" fill="none"/></g><path d="M37 35 l11 -2 l-2 8 l8 1 l-10 6 l1 -7 l-9 1 z" fill="#f6f3ea" stroke="#cfcabc" stroke-width="1"/><circle cx="13" cy="51" r="1.8" fill="#b7a06f" opacity=".6"/></svg>',
+ factory:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="fac_b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a93a0"/><stop offset="1" stop-color="#59616c"/></linearGradient></defs><g fill="#cdd2d8"><circle cx="19" cy="14" r="6"/><circle cx="27" cy="9" r="7"/><circle cx="35" cy="14" r="5"/></g><rect x="15" y="22" width="6" height="14" fill="url(#fac_b)"/><rect x="25" y="17" width="6" height="19" fill="url(#fac_b)"/><path d="M9 36 L43 36 L43 52 L9 52 Z" fill="url(#fac_b)"/><path d="M43 40 L56 36 L56 52 L43 52 Z" fill="#6b7480"/><rect x="14" y="42" width="6" height="10" fill="#3f4650"/><rect x="24" y="42" width="6" height="10" fill="#3f4650"/><rect x="34" y="42" width="6" height="10" fill="#3f4650"/><rect x="47" y="43" width="6" height="9" fill="#2f353d"/></svg>',
+ sapling:'<svg class="sci-ico" viewBox="0 0 64 64"><defs><linearGradient id="sap_l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fe06a"/><stop offset="1" stop-color="#2f9e3f"/></linearGradient><linearGradient id="sap_soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a36"/><stop offset="1" stop-color="#5e3a1f"/></linearGradient></defs><ellipse cx="32" cy="50" rx="18" ry="8" fill="url(#sap_soil)"/><ellipse cx="32" cy="47" rx="18" ry="6" fill="#6e4424"/><path d="M32 49 L32 25" stroke="#6b8f3a" stroke-width="2.5" stroke-linecap="round"/><path d="M32 35 Q21 33 17 24 Q28 24 32 33 Z" fill="url(#sap_l)"/><path d="M32 30 Q43 28 47 19 Q36 19 32 28 Z" fill="url(#sap_l)"/><path d="M32 25 Q30 19 33 15 Q36 20 33 26 Z" fill="#8fe06a"/></svg>',
 };
 function withIcons(html){return String(html).replace(/\[\[(\w+)\]\]/g,(m,k)=>ICONS[k]||'');}
 const VOCAB_ICON={Solid:'ice',Liquid:'water',Gas:'air',Flow:'water',Container:'juice',Rigid:'block',
  Material:'block',Texture:'sponge',Hardness:'rock',Classify:'ruler',Gravity:'apple',Force:'magnet',Earth:'earth',Pull:'magnet','Air Resistance':'feather',
  Energy:'sun',Sun:'sun',Producer:'grass',Consumer:'rabbit',Photosynthesis:'leaf','Food Chain':'grass',Predator:'fox',Prey:'mouse',
- Weight:'scale',Measure:'scale',Heating:'steam',Cooling:'ice',Mix:'juice',Graph:'graph','Physical Property':'magnet',Magnetism:'magnet',Transparency:'glass',Air:'air',Water:'water',Growth:'plant'};
+ Weight:'scale',Measure:'scale',Heating:'steam',Cooling:'ice',Mix:'juice',Graph:'graph','Physical Property':'magnet',Magnetism:'magnet',Transparency:'glass',Air:'air',Water:'water',Growth:'plant',
+ Ecosystem:'tree','Food Web':'grass',Decomposer:'mushroom',Decompose:'worm',Nutrients:'plant',Cycle:'recycle',Sustainability:'recycle',Pollution:'factory',Recycle:'recycle',Habitat:'tree'};
 const GLOSSARY={
  'Solid':{e:'🧊',m:'Matter that keeps its own shape and does not flow — like a rock or an ice cube.'},
  'Liquid':{e:'💧',m:'Matter that flows and takes the shape of its container — like water or juice.'},
@@ -512,7 +532,17 @@ const GLOSSARY={
  'Water':{e:'💧',m:'Plants absorb water through their roots.'},
  'Growth':{e:'🌱',m:'Getting bigger — plants use air and water to grow.'},
  'Reasoning':{e:'🧠',m:'How your evidence supports your claim.'},
- 'Argument':{e:'💬',m:'A claim backed up by evidence and reasoning.'}
+ 'Argument':{e:'💬',m:'A claim backed up by evidence and reasoning.'},
+ 'Ecosystem':{e:'🌳',m:'All the living and non-living things in a place.'},
+ 'Food Web':{e:'🕸️',m:'Many food chains linked together.'},
+ 'Decomposer':{e:'🍄',m:'A living thing that breaks down dead plants and animals.'},
+ 'Decompose':{e:'🪱',m:'To break down dead plants and animals.'},
+ 'Nutrients':{e:'🌱',m:'Materials in the soil that plants need to grow.'},
+ 'Cycle':{e:'♻️',m:'When matter goes round and round, used again and again.'},
+ 'Sustainability':{e:'♻️',m:'Using resources carefully so nature stays healthy for the future.'},
+ 'Pollution':{e:'🏭',m:'Harmful things that dirty the air, water or land.'},
+ 'Recycle':{e:'♻️',m:'To use materials again instead of throwing them away.'},
+ 'Habitat':{e:'🏞️',m:'The home of a living thing.'}
 };
 /* ---- Unit 1 · Standard 2 : Physical properties of materials ---- */
 const MATTER_S2=[
@@ -902,6 +932,94 @@ const ORGANISMS=[
 }
 ];
 
+/* ---- Unit 5 · Ecosystems and Sustainability ---- */
+const ECOSYSTEMS=[
+{
+  id:'eco1', title:'Lesson 1: Food Webs',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use a food web to show how energy and matter move through an ecosystem.',
+  sc:[
+    {band:'Remembering',items:['I can name the living and non-living parts of an ecosystem.']},
+    {band:'Understanding',items:['I can explain how a food web links many food chains together.']},
+    {band:'Applying',items:['I can build a food web that shows how energy moves from producers to consumers.']}
+  ],
+  vocab:['Ecosystem','Food Web','Producer','Consumer'],
+  slides:[
+    {tag:'Engage · 10 min',h:'What lives here?',body:'<p><b>Look at this habitat.</b> What lives here?</p><ul class="ico-list"><li>[[grass]] grass · [[tree]] trees</li><li>[[rabbit]] rabbits · [[deer]] deer · [[fox]] foxes · [[bird]] birds</li></ul><p><b>Ask:</b> Which living things eat plants? Which eat other animals? How are they all connected?</p>'},
+    {tag:'Explore · 20 min',h:'Build a Food Web',body:'<p><b>Investigation:</b> Build food chains from the cards, then link them into a <b>food web</b>. Most animals eat more than one food, so the chains overlap.</p><p>Example: [[grass]] → [[rabbit]] → [[fox]] and [[grass]] → [[mouse]] → [[bird]]</p>'},
+    {tag:'Explain · 15 min',h:'Ecosystems & Food Webs',body:'<p>An <b>ecosystem</b> is all the living things (plants and animals) and non-living things (water, air, soil, sunlight) in a place.</p><p>A <b>food web</b> is many food chains linked together. It shows how <b>energy and matter</b> move from <b>producers</b> (plants) to <b>consumers</b> (animals).</p>'},
+    {tag:'AFL · 10 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer for each statement about ecosystems.</p>'},
+    {tag:'Elaborate · 20 min',h:'Web Builder',body:'<p>Build your food web — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort the living things into producers and consumers.</li><li>🥈 <b>Silver</b> — Build two food chains and link them into a web.</li><li>🥇 <b>Gold</b> — Explain what happens to the web if one animal disappears.</li><li>⭐ <b>G&T</b> — Design a food web with at least 6 living things and explain the energy flow.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>What is an ecosystem?</li><li>What does a food web show?</li><li>Build a short food chain from this ecosystem.</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Producers & Consumers',items:['Cut out the living-thing cards.','Sort them into PRODUCERS (make their own food) and CONSUMERS (eat other living things).','Draw one more example of your own for each group.'],cards:[{i:'grass',l:'Grass'},{i:'tree',l:'Tree'},{i:'rabbit',l:'Rabbit'},{i:'deer',l:'Deer'},{i:'fox',l:'Fox'},{i:'bird',l:'Bird'}],columns:['Producers','Consumers']},
+    silver:{title:'Silver — Build a Food Web',items:['Use the picture bank to build TWO food chains that share a living thing.','Write each chain with arrows ( → ), starting with the Sun.','Then draw lines to link them into a food web.'],bank:['sun','grass','tree','rabbit','mouse','deer','fox','bird','snake'],table:{cols:['Food chain (use arrows →)'],rows:2},question:'Which living thing is shared by both chains? ____________________'},
+    gold:{title:'Gold — A Broken Web',items:['Look at a food web: Sun → grass → rabbit → fox, and grass → mouse → bird.','Explain what would happen to the foxes and the birds if all the grass died.','Use the words energy, producer and consumer.'],bank:['sun','grass','rabbit','mouse','fox','bird'],question:'What would happen to the food web if the grass died:'},
+    gt:{title:'G&T Challenge — Design a Food Web',items:['Design a food web with at least SIX living things (plus the Sun).','Draw the arrows to show how energy flows.','Name the producers, the plant-eaters and the meat-eaters.','Explain what would happen if one of them disappeared.'],question:'My food web, the energy flow, and what happens if one disappears:'}
+  },
+  assessment:{title:'Lesson 1 — Assessment',pics:['grass','rabbit','fox'],
+    items:['1. What is an ecosystem?','2. What does a food web show?','3. Build a food chain from grass, a fox and a rabbit (use arrows).'],
+    check:['I can name the parts of an ecosystem.','I can explain how a food web links food chains together.','I can build a food web showing energy moving from producers to consumers.']}
+},
+{
+  id:'eco2', title:'Lesson 2: Decomposers and the Cycle of Matter',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to use a model to describe how decomposers return matter to the soil so it can be used again.',
+  sc:[
+    {band:'Remembering',items:['I can identify decomposers in an ecosystem.']},
+    {band:'Understanding',items:['I can explain how decomposers break down dead plants and animals.']},
+    {band:'Applying',items:['I can model how matter cycles between living things and the soil.']}
+  ],
+  vocab:['Decomposer','Decompose','Nutrients','Cycle'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Where do dead leaves go?',body:'<p><b>Think about this:</b> What happens to a fallen [[leaf]] leaf or a dead log over many weeks?</p><p><b>Ask:</b> Where does it go? What lives on it and breaks it down? Why does the forest floor not fill up with dead leaves?</p>'},
+    {tag:'Explore · 20 min',h:'Decomposers at Work',body:'<p>🔬 Look at decomposers at work — [[mushroom]] fungi (mushrooms), [[worm]] worms, and tiny bacteria.</p><p>Observe how they break down dead [[leaf]] leaves and return the matter to the [[plant]] soil, where plants can use it again.</p>'},
+    {tag:'Explain · 15 min',h:'The Cycle of Matter',body:'<p><b>Decomposers</b> (fungi, worms and bacteria) break down dead plants and animals. This is called <b>decomposing</b>.</p><p>They return <b>nutrients</b> (matter) to the soil. Plants use the nutrients to grow — so matter goes round and round in a <b>cycle</b>.</p><p>[[leaf]] dead matter → [[worm]] decomposers → [[plant]] soil &amp; new plants → repeat!</p>'},
+    {tag:'AFL · 10 min',h:'Decomposer or Not?',body:'<p>Tap each living thing, then drop it in the right bin.</p>'},
+    {tag:'Elaborate · 20 min',h:'Model the Cycle',body:'<p>Model the cycle of matter — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Put the matter cycle in order and label the decomposers.</li><li>🥈 <b>Silver</b> — Explain what each decomposer does.</li><li>🥇 <b>Gold</b> — Explain what would happen with no decomposers.</li><li>⭐ <b>G&T</b> — Design a poster showing the cycle of matter in an ecosystem.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>Name two decomposers.</li><li>What do decomposers do?</li><li>Why are decomposers important for new plants?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Order the Cycle of Matter',items:['Cut out the cards.','Put them in order to show the cycle: dead matter → decomposers → soil → new plants.','Glue them in a circle and draw arrows.','Circle the decomposers.'],cards:[{i:'leaf',l:'Dead leaf'},{i:'mushroom',l:'Mushroom'},{i:'worm',l:'Worm'},{i:'plant',l:'New plant'}],columns:['1st','2nd','3rd','4th']},
+    silver:{title:'Silver — Decomposer Detective',items:['For each decomposer, write what it does and what it returns to the soil.'],table:{cols:['Decomposer','What it does','What it returns to the soil'],rows:[{icon:'mushroom',label:'Mushroom (fungus)'},{icon:'worm',label:'Worm'},{label:'Bacteria'}]}},
+    gold:{title:'Gold — A World With No Decomposers',items:['Imagine an ecosystem with NO decomposers.','Explain what would happen to the dead plants and animals.','Explain what would happen to the plants that need nutrients.','Use the words decompose, nutrients and cycle.'],bank:['leaf','mushroom','worm','plant'],question:'What would happen with no decomposers:'},
+    gt:{title:'G&T Challenge — Cycle of Matter Poster',items:['Design a poster showing the cycle of matter in an ecosystem.','Include producers, consumers, decomposers and the soil.','Use arrows to show how matter cycles round and round.','Write one sentence explaining why nothing is wasted in nature.'],question:'My cycle-of-matter poster plan:'}
+  },
+  assessment:{title:'Lesson 2 — Assessment',pics:['mushroom','worm','plant'],
+    items:['1. Name two decomposers.','2. What do decomposers do to dead plants and animals?','3. Why are decomposers important for new plants?'],
+    check:['I can identify decomposers in an ecosystem.','I can explain how decomposers break down dead matter.','I can model how matter cycles between living things and the soil.']}
+},
+{
+  id:'eco3', title:'Lesson 3: Protecting Our Ecosystems',
+  grade:'Grade 5 · 60 min · 5E',
+  lo:'We are learning to explain how people can protect ecosystems and use evidence to argue for keeping them healthy.',
+  sc:[
+    {band:'Remembering',items:['I can identify ways people can harm or help ecosystems.']},
+    {band:'Understanding',items:['I can explain why protecting habitats keeps ecosystems healthy.']},
+    {band:'Evaluating',items:['I can use evidence to suggest ways to make our world more sustainable.']}
+  ],
+  vocab:['Sustainability','Pollution','Recycle','Habitat'],
+  slides:[
+    {tag:'Engage · 10 min',h:'Which place is healthy?',body:'<p><b>Two places — which is healthy?</b></p><ul class="ico-list"><li>[[tree]] A clean forest with healthy plants and animals.</li><li>[[litter]] A place with litter and [[factory]] pollution, and few living things.</li></ul><p><b>Ask:</b> What is different? What could have harmed the second place? How could we fix it?</p>'},
+    {tag:'Explore · 20 min',h:'Harm or Help?',body:'<p>🔍 Sort actions into ones that <b>harm</b> ecosystems and ones that <b>help</b> them.</p><p><b>Harm:</b> [[litter]] dropping litter · [[factory]] pollution · cutting down trees.<br><b>Help:</b> [[recycle]] recycling · [[sapling]] planting trees · keeping water clean.</p>'},
+    {tag:'Explain · 15 min',h:'Sustainability',body:'<p>A <b>habitat</b> is the home of a living thing. <b>Pollution</b>, litter and cutting down trees can destroy habitats.</p><p><b>Sustainability</b> means using resources carefully so ecosystems stay healthy for the future. We can help by <b>recycling</b>, reducing waste, planting trees and protecting habitats.</p>'},
+    {tag:'AFL · 10 min',h:'True or False?',body:'<p><b>True or False?</b> Tap your answer for each statement about protecting ecosystems.</p>'},
+    {tag:'Elaborate · 20 min',h:'Ecosystem Protector',body:'<p>Be an ecosystem protector — open your task sheet:</p><ul><li>🥉 <b>Bronze</b> — Sort the actions into "harms" and "helps".</li><li>🥈 <b>Silver</b> — Make a plan to make your school more sustainable.</li><li>🥇 <b>Gold</b> — Write a CER: should we protect a local habitat?</li><li>⭐ <b>G&T</b> — Design a campaign poster to protect an ecosystem.</li></ul>'},
+    {tag:'Evaluate · 10 min',h:'Exit Ticket',body:'<ol><li>Name one way people harm ecosystems.</li><li>Name two ways we can protect ecosystems.</li><li>What does sustainability mean?</li></ol>'}
+  ],
+  tasks:{
+    bronze:{title:'Bronze — Harm or Help?',items:['Cut out the action cards.','Sort them into HARMS the ecosystem and HELPS the ecosystem.','Draw one more "help" action of your own.'],cards:[{i:'litter',l:'Dropping litter'},{i:'factory',l:'Pollution'},{i:'recycle',l:'Recycling'},{i:'sapling',l:'Planting trees'},{i:'water',l:'Clean water'},{i:'tree',l:'Protecting forests'}],columns:['Harms','Helps']},
+    silver:{title:'Silver — Sustainability Plan',items:['Make a plan to make your classroom or school more sustainable.','Write THREE actions your class could do (for example: recycle, save paper, save water).','For each one, explain how it helps the ecosystem.'],table:{cols:['Our action','How it helps the ecosystem'],rows:3}},
+    gold:{title:'Gold — Protect a Habitat (CER)',items:['Choose a local habitat (a park, pond, beach or wood).','Should we protect it? Write a Claim–Evidence–Reasoning argument.'],table:{cols:['CER','My answer'],rows:[{label:'Claim — we should…'},{label:'Evidence — what is happening to it'},{label:'Reasoning — why protecting it keeps the ecosystem healthy'}]}},
+    gt:{title:'G&T Challenge — Protect-the-Ecosystem Campaign',items:['Design a campaign poster to protect an ecosystem.','Choose a problem (litter, pollution, cutting down trees).','Show the problem, the solution, and a slogan.','Use at least two pieces of evidence about why it matters.'],question:'My campaign: the problem, the solution, and my slogan:'}
+  },
+  assessment:{title:'Lesson 3 — Assessment',pics:['recycle','sapling','litter'],
+    items:['1. Name one way people can harm an ecosystem.','2. Name two ways we can protect ecosystems.','3. What does sustainability mean?'],
+    check:['I can identify ways people harm or help ecosystems.','I can explain why protecting habitats keeps ecosystems healthy.','I can use evidence to suggest ways to be more sustainable.']}
+}
+];
+
 const UNITS=[
   {n:1,id:'matter',title:'Matter: Properties and Interactions',live:true,
    standards:[
@@ -914,7 +1032,7 @@ const UNITS=[
   {n:2,id:'forces',title:'Forces',live:true,standards:[{n:1,text:'Support the idea that gravity is a force that pulls objects toward the Earth.',lessons:FORCES}]},
   {n:3,id:'energy',title:'Energy',live:true,standards:[{n:1,text:'Use models to demonstrate that the energy animals need for body functions, growth and movement began as energy from the Sun.',lessons:ENERGY}]},
   {n:4,id:'organisms',title:'Organisms and Processes',live:true,standards:[{n:1,text:'Use evidence from investigations to show that plants mainly get the materials they need to grow from air and water.',lessons:ORGANISMS}]},
-  {n:5,id:'ecosystems',title:'Ecosystems and Sustainability',live:false,standards:[]},
+  {n:5,id:'ecosystems',title:'Ecosystems and Sustainability',live:true,standards:[{n:1,text:'Develop and use models to describe how matter and energy move among producers, consumers, decomposers and the environment, and explain how people can help keep ecosystems healthy.',lessons:ECOSYSTEMS}]},
   {n:6,id:'earth',title:"Earth's Interactions",live:false,standards:[]}
 ];
 
@@ -974,7 +1092,7 @@ function vHome(){
 }
 function vUnits(){
   setCrumb('All units');
-  app.innerHTML=`<section><div class="eyebrow">Choose a unit</div><h2 style="font-size:1.6rem">Units</h2>
+  app.innerHTML=`<section><div class="eyebrow">Grade 5 Science · Choose a unit</div><h2 style="font-size:1.6rem">Grade 5 Units</h2>
     <div class="grid">${UNITS.map(u=>{const has=u.live&&u.standards.some(s=>s.lessons.length);const t=THEME[u.id]||THEME.matter;
       return `<div class="ucard ${has?'live':''}" style="--uc:${t.a};--ucd:${t.d};--ucs:${t.soft}" ${has?`onclick="openUnit('${u.id}')"`:''}>
         <span class="u-n">Unit ${u.n}</span><h3 style="color:${t.d}">${u.title}</h3>
@@ -1036,7 +1154,7 @@ function vLesson(){
     <div class="detail-actions">
       <button class="btn" onclick="openCheck()">📝 Quick Check — 10 questions</button>
       <button class="btn ghost" onclick="openAssess(${cur.li})">📋 Assessment</button>
-      <button class="btn gray" onclick="window.print()">🖨️ Print lesson</button>
+      <button class="btn gray" onclick="printLesson()">🖨️ Print lesson</button>
     </div>
     <div id="checkArea"></div>`;
   function render(){
@@ -1055,6 +1173,20 @@ function vLesson(){
   }
   window.__pd=(d)=>{s=Math.max(0,Math.min(L.slides.length-1,s+d));render();};
   render();
+}
+function printLesson(){
+  const L=lessonsOf()[cur.li];if(!L)return;
+  let host=document.getElementById('printDeck');
+  if(!host){host=document.createElement('div');host.id='printDeck';host.className='print-deck';document.body.appendChild(host);}
+  host.innerHTML=`<h1>${L.title}</h1><div class="pl-meta">${L.grade}</div>`
+    +`<h2>🎯 Learning Objective</h2><p>${L.lo}</p>`
+    +`<h2>✅ Success Criteria (Bloom's Taxonomy)</h2>`+L.sc.map(s=>`<p><b>${s.band}:</b> ${s.items.join(' ')}</p>`).join('')
+    +`<h2>🔑 Key Vocabulary</h2><p>${L.vocab.join(' · ')}</p>`
+    +L.slides.map(sl=>`<section class="pl-slide"><span class="pl-tag">${sl.tag}</span><h2>${sl.h}</h2>${withIcons(sl.body)}</section>`).join('');
+  document.body.classList.add('pl-print');
+  window.onafterprint=()=>document.body.classList.remove('pl-print');
+  window.print();
+  setTimeout(()=>document.body.classList.remove('pl-print'),500);
 }
 function openCheck(){
   const L=lessonsOf()[cur.li];const area=document.getElementById('checkArea');
@@ -1338,6 +1470,30 @@ const SLIDE_WIDGETS={
   {type:'sort',title:'👆 Claim, evidence or reasoning?',bins:[{id:'claim',label:'Claim'},{id:'evidence',label:'Evidence'},{id:'reason',label:'Reasoning'}],items:[{label:'Plants get materials from air and water',bin:'claim'},{label:'The soil barely lost any weight',bin:'evidence'},{label:'The plant grew much taller',bin:'evidence'},{label:'So the material came from air and water',bin:'reason'}]},
   {type:'classify',title:'Claim, evidence or reasoning?',cats:['Claim','Evidence','Reasoning'],items:[{label:'Plants mainly use air and water',cat:'Claim'},{label:'The soil lost almost no weight',cat:'Evidence'},{label:'So the plant did not eat the soil',cat:'Reasoning'},{label:'The plant grew 20 cm taller',cat:'Evidence'}]},
   null
+ ],
+ eco1:[
+  {type:'reveal',title:'👆 Tap each one to find its role',cards:[{icon:'grass',label:'Grass',reveal:'A producer — makes food from sunlight'},{icon:'rabbit',label:'Rabbit',reveal:'Eats plants (a consumer)'},{icon:'fox',label:'Fox',reveal:'Eats other animals (a consumer)'}]},
+  {type:'sort',title:'👆 What is its role in the food web?',bins:[{id:'prod',icon:'grass',label:'Producer'},{id:'herb',icon:'rabbit',label:'Eats plants'},{id:'carn',icon:'fox',label:'Eats animals'}],items:[{icon:'grass',label:'Grass',bin:'prod'},{icon:'leaf',label:'Leaves',bin:'prod'},{icon:'rabbit',label:'Rabbit',bin:'herb'},{icon:'mouse',label:'Mouse',bin:'herb'},{icon:'fox',label:'Fox',bin:'carn'},{icon:'snake',label:'Snake',bin:'carn'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'tree',label:'Ecosystem',reveal:'All the living and non-living things in a place'},{icon:'grass',label:'Food Web',reveal:'Many food chains linked together'},{icon:'grass',label:'Producer',reveal:'A plant that makes its own food'},{icon:'rabbit',label:'Consumer',reveal:'An animal that eats plants or other animals'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'A food web shows how energy moves through an ecosystem.',correct:true},{t:'Every food web starts with a fox.',correct:false},{t:'Most animals eat more than one kind of food.',correct:true}]},
+  {type:'classify',title:'Producer or consumer?',cats:['Producer','Consumer'],items:[{icon:'grass',label:'Grass',cat:'Producer'},{icon:'tree',label:'Tree',cat:'Producer'},{icon:'rabbit',label:'Rabbit',cat:'Consumer'},{icon:'fox',label:'Fox',cat:'Consumer'}]},
+  null
+ ],
+ eco2:[
+  {type:'reveal',title:'👆 Tap each one to find out',cards:[{icon:'leaf',label:'Dead leaf',reveal:'Slowly breaks down and disappears'},{icon:'mushroom',label:'Mushroom (fungus)',reveal:'A decomposer — breaks down dead matter'},{icon:'worm',label:'Worm',reveal:'A decomposer — eats and breaks down dead leaves'}]},
+  {type:'observe',title:'👆 Tap Yes/No for each, then check.',cols:['A decomposer?','Returns matter to soil?'],rows:[{icon:'mushroom',label:'Mushroom',ans:[true,true]},{icon:'worm',label:'Worm',ans:[true,true]},{icon:'fox',label:'Fox',ans:[false,false]},{icon:'grass',label:'Grass',ans:[false,false]}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'mushroom',label:'Decomposer',reveal:'A living thing that breaks down dead plants and animals'},{icon:'worm',label:'Decompose',reveal:'To break down dead matter'},{icon:'plant',label:'Nutrients',reveal:'Materials in the soil that plants need to grow'},{icon:'recycle',label:'Cycle',reveal:'When matter goes round and round, used again and again'}]},
+  {type:'sort',title:'👆 Decomposer or not?',bins:[{id:'dec',icon:'mushroom',label:'Decomposer'},{id:'not',icon:'fox',label:'Not a decomposer'}],items:[{icon:'mushroom',label:'Mushroom',bin:'dec'},{icon:'worm',label:'Worm',bin:'dec'},{icon:'fox',label:'Fox',bin:'not'},{icon:'rabbit',label:'Rabbit',bin:'not'},{icon:'tree',label:'Tree',bin:'not'}]},
+  {type:'classify',title:'What is its job in the ecosystem?',cats:['Producer','Consumer','Decomposer'],items:[{icon:'grass',label:'Grass',cat:'Producer'},{icon:'fox',label:'Fox',cat:'Consumer'},{icon:'mushroom',label:'Mushroom',cat:'Decomposer'},{icon:'worm',label:'Worm',cat:'Decomposer'}]},
+  null
+ ],
+ eco3:[
+  {type:'reveal',title:'👆 Tap each one — harm or help?',cards:[{icon:'litter',label:'Litter',reveal:'Harms animals and their habitats'},{icon:'factory',label:'Pollution',reveal:'Dirties the air and water'},{icon:'recycle',label:'Recycling',reveal:'Helps — reuses materials and reduces waste'}]},
+  {type:'sort',title:'👆 Harms or helps ecosystems?',bins:[{id:'harm',icon:'litter',label:'Harms ecosystems'},{id:'help',icon:'recycle',label:'Helps ecosystems'}],items:[{icon:'litter',label:'Dropping litter',bin:'harm'},{icon:'factory',label:'Pollution',bin:'harm'},{label:'Cutting down trees',bin:'harm'},{icon:'recycle',label:'Recycling',bin:'help'},{icon:'sapling',label:'Planting trees',bin:'help'},{icon:'water',label:'Keeping water clean',bin:'help'}]},
+  {type:'reveal',title:'👆 Tap to reveal each key word',cards:[{icon:'recycle',label:'Sustainability',reveal:'Using resources carefully so nature stays healthy for the future'},{icon:'factory',label:'Pollution',reveal:'Harmful things that dirty the air, water or land'},{icon:'recycle',label:'Recycle',reveal:'To use materials again instead of throwing them away'},{icon:'tree',label:'Habitat',reveal:'The home of a living thing'}]},
+  {type:'afl',mode:'judge',title:'👍 True or 👎 False?',statements:[{t:'Recycling helps protect ecosystems.',correct:true},{t:'Dropping litter is good for animals.',correct:false},{t:'Planting trees gives animals more habitats.',correct:true}]},
+  {type:'classify',title:'Does this harm or help the ecosystem?',cats:['Harms','Helps'],items:[{icon:'litter',label:'Dropping litter',cat:'Harms'},{icon:'recycle',label:'Recycling',cat:'Helps'},{icon:'sapling',label:'Planting trees',cat:'Helps'},{icon:'factory',label:'Pollution',cat:'Harms'}]},
+  null
  ]
 };
 
@@ -1568,9 +1724,45 @@ o2:[
   {q:"Why is it important to use evidence when making a scientific argument?",options:["Because it makes the argument look longer","Because evidence shows that the claim is based on real observations, not just a guess","Because scientists are required to use graphs in every report","Because evidence always proves the claim is correct"],answer:1},
   {q:"Which vocabulary word means a well-supported statement backed by observations and reasoning?",options:["Claim","Argument","Evidence","Reasoning"],answer:1}
 ],
+eco1:[
+  {q:"What do we call all the living things and non-living things found together in one place?",options:["a food web","a habitat","an ecosystem","a food chain"],answer:2},
+  {q:"Where does the energy in a food web originally come from?",options:["the Sun","soil","water","animals"],answer:0},
+  {q:"In a food web, green plants are called _____ .",options:["consumers","producers","decomposers","habitats"],answer:1},
+  {q:"In a food web, an animal that eats other living things is called a _____ .",options:["habitat","ecosystem","decomposer","consumer"],answer:3},
+  {q:"How is a food web different from a single food chain?",options:["A food web links many food chains together","A food web starts with animals, not plants","A food web does not use sunlight","A food web has only one path for energy"],answer:0},
+  {q:"Which of the following is a non-living part of an ecosystem?",options:["a frog","sunlight","a mushroom","a tree"],answer:1},
+  {q:"A grasshopper eats leaves, and a frog eats the grasshopper. What role do the leaves play in this food chain?",options:["consumer","ecosystem","producer","food web"],answer:2},
+  {q:"If all the green plants in an ecosystem disappeared, what would most likely happen to the animals?",options:["Animals would become producers","The Sun would produce more energy","Consumers would grow stronger","Animals would run out of food and die"],answer:3},
+  {q:"In a food chain, energy passes from the Sun to a plant, and then from the plant to _____ .",options:["soil","an animal","water","sunlight"],answer:1},
+  {q:"What does a food web show us about an ecosystem?",options:["Where animals build their homes","How soil is formed from rocks","How the Sun creates weather","How energy and matter move through living things"],answer:3}
+],
+eco2:[
+  {q:"What are living things called that break down dead plants and animals?",options:["consumers","producers","decomposers","habitats"],answer:2},
+  {q:"Which of the following is an example of a decomposer?",options:["a rabbit","a mushroom","a grass plant","a butterfly"],answer:1},
+  {q:"What do decomposers return to the soil when they break down dead matter?",options:["sunlight","water","habitats","nutrients"],answer:3},
+  {q:"What does the word decompose mean?",options:["To break down dead plants and animals","To grow new plants","To eat living animals","To absorb sunlight"],answer:0},
+  {q:"Why are decomposers important for plants to grow?",options:["They give plants water directly","They return nutrients to the soil that plants can use","They block sunlight from reaching other plants","They eat insects that harm plants"],answer:1},
+  {q:"What would happen if there were no decomposers in an ecosystem?",options:["Plants would grow faster","More animals would be born","Animals would become decomposers","Dead matter would pile up and nutrients would not return to the soil"],answer:3},
+  {q:"In an ecosystem, matter moves in a _____ .",options:["cycle","line","habitat","chain"],answer:0},
+  {q:"Which group of living things includes worms, fungi, and bacteria?",options:["habitats","decomposers","consumers","producers"],answer:1},
+  {q:"A leaf falls from a tree and slowly breaks down on the forest floor. Which living things are most likely responsible for this?",options:["consumers","producers","large animals","decomposers"],answer:3},
+  {q:"Why do we say that matter cycles in an ecosystem?",options:["Matter moves in a straight line from plants to animals","Matter is created new each time a plant grows","Matter is used and reused as it passes through living things and back to the soil","Matter comes only from the Sun"],answer:2}
+],
+eco3:[
+  {q:"What is the word for using resources carefully so ecosystems stay healthy for the future?",options:["recycling","pollution","conservation","sustainability"],answer:3},
+  {q:"What is a habitat?",options:["A type of food chain","The home of a living thing","A kind of pollution","A nutrient in the soil"],answer:1},
+  {q:"Which of the following is an example of pollution?",options:["planting trees","cleaning a river","dropping litter in a lake","recycling paper"],answer:2},
+  {q:"What does conservation mean?",options:["Protecting nature and living things","Cutting down trees for wood","Using as many resources as possible","Adding chemicals to rivers"],answer:0},
+  {q:"Which action would BEST help protect an ecosystem?",options:["Dropping litter in parks","Cutting down more trees","Polluting rivers with waste","Recycling and reducing waste"],answer:3},
+  {q:"A factory pours chemicals into a river. What is this an example of?",options:["pollution","conservation","sustainability","recycling"],answer:0},
+  {q:"Why is cutting down too many trees harmful to an ecosystem?",options:["It makes the soil too wet","It creates more food for animals","It destroys the habitats of living things","It increases sunlight for all plants"],answer:2},
+  {q:"A student sorts paper, plastic, and glass into different bins so the materials can be reused. What is the student doing?",options:["decomposing","polluting","conserving a habitat","recycling"],answer:3},
+  {q:"Which human action can HARM an ecosystem?",options:["planting trees in a forest","keeping rivers clean","dropping litter in a park","protecting animal habitats"],answer:2},
+  {q:"A city plants trees and cleans up a polluted river. What idea does this action BEST show?",options:["pollution","sustainability","a food chain","decomposition"],answer:1}
+],
 };
 /* attach quick-check questions authored for the new lessons */
-if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
+if(window.MCQS_EXTRA){[].concat(MATTER_S1,MATTER_S2,FORCES,ENERGY,MATTER_S4,MATTER_S5,ORGANISMS,ECOSYSTEMS).forEach(L=>{if(window.MCQS_EXTRA[L.id]&&!L.mcqs)L.mcqs=window.MCQS_EXTRA[L.id];});}
 
 go('home');
 </script>
