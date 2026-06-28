@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>🌙 Moon Tracker — Phases of the Moon</title>
+<style>
+  /* ============ DESIGN TOKENS (Moon Tracker brief + Duolingo house style) ============ */
+  :root{
+    --bg:#0b1026;          /* deep night navy */
+    --bg2:#0e1330;
+    --panel:#161d44;       /* cards / slots */
+    --panel2:#1c2452;
+    --moon-lit:#f6f1d8;    /* warm cream */
+    --moon-dark:#2b2f4a;   /* shadow side */
+    --text:#eef1ff;
+    --muted:#a9b3e0;
+    --gold:#ffd166;        /* stars, score */
+    --correct:#3ddc97;     /* right answer */
+    --retry:#ffb84d;       /* try again — amber, never red */
+    --accent:#5ec8ff;      /* secondary buttons, focus ring */
+    --duo:#58cc02;         /* Duolingo primary green */
+    --duo-d:#3f8f01;       /* button under-shadow */
+    --accent-d:#2c8fc7;
+    --gold-d:#c79a2e;
+    --line:rgba(255,255,255,.10);
+    --radius:16px;
+    --font:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font);
+    background:
+      radial-gradient(1100px 560px at 78% -12%, #1b2a66 0%, transparent 58%),
+      radial-gradient(820px 520px at 8% 108%, #182a55 0%, transparent 55%),
+      linear-gradient(170deg,#0b1026 0%,#0a0f24 60%,#0b1026 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    line-height:1.5;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{margin:0;line-height:1.16;font-weight:700}
+  p{margin:0}
+  /* star field */
+  #stars,#stars2{position:fixed;top:2px;left:2px;width:2px;height:2px;border-radius:50%;background:#fff;z-index:0;pointer-events:none}
+  #stars{animation:tw 5.5s ease-in-out infinite}
+  #stars2{animation:tw2 7.5s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.85}50%{opacity:.45}}
+  @keyframes tw2{0%,100%{opacity:.5}50%{opacity:.95}}
+
+  .app{position:relative;z-index:2;max-width:1000px;margin:0 auto;padding:0 16px 56px;min-height:100vh}
+
+  /* ============ TOP BAR ============ */
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:10px 0 12px;margin-bottom:6px;
+    background:linear-gradient(180deg,rgba(11,16,38,.96) 60%,rgba(11,16,38,0));backdrop-filter:blur(4px)}
+  .tb-title{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .tb-spacer{flex:1 1 14px}
+  .dots{display:flex;gap:7px;align-items:center}
+  .dot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.16);position:relative;
+    display:grid;place-items:center;transition:background .2s,transform .2s}
+  .dot small{position:absolute;top:16px;font-size:.55rem;color:var(--muted);font-weight:700;display:none}
+  .dot.on{background:var(--accent);transform:scale(1.18);box-shadow:0 0 0 4px rgba(94,200,255,.18)}
+  .dot.done{background:var(--correct)}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,209,102,.14);color:var(--gold);
+    font-weight:700;padding:7px 13px;border-radius:99px;font-size:.92rem;border:1px solid rgba(255,209,102,.32);white-space:nowrap}
+  .unit-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(94,200,255,.14);color:var(--accent);
+    border:1px solid rgba(94,200,255,.32);font-weight:700;font-size:.78rem;padding:5px 12px;border-radius:99px;
+    letter-spacing:.04em;white-space:nowrap}
+  .starmeter{display:inline-flex;gap:1px;font-size:1.18rem;line-height:1;letter-spacing:1px}
+  .iconbtn{width:42px;height:42px;min-width:42px;border-radius:12px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:1.12rem;cursor:pointer;display:grid;place-items:center;
+    font-family:var(--font);transition:transform .08s,background .15s}
+  .iconbtn:hover{background:var(--panel2)}
+  .iconbtn:active{transform:translateY(1px)}
+
+  /* ============ SCREENS ============ */
+  .screen{display:none;animation:fadeUp .4s cubic-bezier(.2,.7,.2,1)}
+  .screen.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .card{background:linear-gradient(180deg,var(--panel) 0%,#13193b 100%);border:1px solid var(--line);
+    border-radius:var(--radius);padding:24px;box-shadow:0 14px 40px rgba(3,7,24,.45)}
+  .center{text-align:center}
+
+  /* ============ BUTTONS (Duolingo chunky 3D) ============ */
+  .btn{font-family:var(--font);font-weight:700;font-size:1.02rem;border:none;cursor:pointer;
+    min-height:52px;padding:14px 26px;border-radius:14px;color:#fff;letter-spacing:.01em;
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    background:var(--duo);box-shadow:0 5px 0 var(--duo-d);transition:transform .07s,box-shadow .07s,filter .15s;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;text-decoration:none}
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--duo-d)}
+  .btn.accent{background:var(--accent);color:#04243a;box-shadow:0 5px 0 var(--accent-d)}
+  .btn.accent:active{box-shadow:0 1px 0 var(--accent-d)}
+  .btn.gold{background:var(--gold);color:#3a2c00;box-shadow:0 5px 0 var(--gold-d)}
+  .btn.gold:active{box-shadow:0 1px 0 var(--gold-d)}
+  .btn.ghost{background:var(--panel2);color:var(--text);box-shadow:0 5px 0 #0c1233;border:1px solid var(--line)}
+  .btn.ghost:active{box-shadow:0 1px 0 #0c1233}
+  .btn.sm{min-height:46px;padding:11px 18px;font-size:.95rem;box-shadow:0 4px 0 var(--duo-d)}
+  .btn.sm:active{box-shadow:0 1px 0 var(--duo-d)}
+  .btn.sm.ghost{box-shadow:0 4px 0 #0c1233}
+  .btn.sm.ghost:active{box-shadow:0 1px 0 #0c1233}
+  .btn.sm.accent{box-shadow:0 4px 0 var(--accent-d)}
+  .btn.sm.accent:active{box-shadow:0 1px 0 var(--accent-d)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.3)}
+  .btn:disabled:active{transform:none;box-shadow:0 5px 0 var(--duo-d)}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+
+  .eyebrow{color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem}
+  .ar{font-weight:700}
+  .hl{color:var(--gold)}
+  .hlg{color:var(--correct)}
+  .hla{color:var(--retry)}
+
+  /* ============ S0 TITLE ============ */
+  .hero{padding:34px 22px 30px;text-align:center}
+  .hero h1{font-size:clamp(2.3rem,8vw,3.5rem);color:var(--gold);text-shadow:0 6px 30px rgba(255,209,102,.25);letter-spacing:.01em}
+  .hero .sub{color:var(--text);font-size:clamp(1rem,3.4vw,1.3rem);margin-top:8px;font-weight:600}
+  .hero .sub .ar{color:var(--accent)}
+  .hero .tag{display:inline-block;margin-top:14px;background:rgba(94,200,255,.14);color:var(--accent);
+    border:1px solid rgba(94,200,255,.3);font-weight:700;font-size:.82rem;padding:6px 15px;border-radius:99px;letter-spacing:.05em}
+  .bigmoon{margin:22px auto 6px;width:170px;height:170px;display:grid;place-items:center;position:relative}
+  .bigmoon::before{content:"";position:absolute;inset:-26px;border-radius:50%;
+    background:radial-gradient(circle,rgba(246,241,216,.20),transparent 68%);filter:blur(4px);z-index:0}
+  .bigmoon svg{position:relative;z-index:1;filter:drop-shadow(0 10px 26px rgba(246,241,216,.18))}
+  .cap{color:var(--muted);font-weight:600;font-size:.92rem;margin-top:4px}
+
+  /* ============ KEY WORDS ============ */
+  .kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+  .kw{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+  .kw .en{font-weight:700;font-size:1rem}
+  .kw .arr{font-size:1.18rem;color:var(--gold);font-weight:700;margin-top:1px}
+  .kw .tr{color:var(--muted);font-size:.78rem;font-style:italic;margin-top:2px}
+  .sectionhead{display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:700;color:var(--text);margin:2px 0 2px}
+
+  /* ============ PRIMER ============ */
+  .primer{max-width:560px;margin:0 auto}
+  .primer .pmoon{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
+  .primer h2{font-size:1.6rem;margin-bottom:10px;color:var(--gold)}
+  .primer p{font-size:1.12rem;color:var(--text)}
+  .pdots{display:flex;justify-content:center;gap:9px;margin:18px 0 4px}
+  .pdots i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.2)}
+  .pdots i.on{background:var(--accent);transform:scale(1.2)}
+  .ww-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ww-box{flex:1 1 200px;background:var(--panel2);border-radius:14px;padding:16px;text-align:center;border:1px solid var(--line)}
+  .ww-box.wax{border-color:rgba(61,220,151,.4)}
+  .ww-box.wan{border-color:rgba(255,184,77,.4)}
+  .ww-box .big{font-size:1.25rem;font-weight:700;margin:6px 0 4px}
+  .ww-box.wax .big{color:var(--correct)}
+  .ww-box.wan .big{color:var(--retry)}
+
+  /* ============ MOON TILE ============ */
+  .tile{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:9px 7px 8px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:grab;user-select:none;touch-action:none;
+    transition:transform .12s,border-color .15s,box-shadow .15s;width:100%}
+  .tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .tile .tname{font-weight:700;font-size:.82rem;text-align:center;line-height:1.12}
+  .tile .tar{color:var(--gold);font-size:.82rem;font-weight:700;line-height:1.1}
+  .tile.compact{padding:6px 4px}
+  .tile.compact .tname{font-size:.72rem}
+  .tile.sel{border-color:var(--accent);box-shadow:0 0 0 4px rgba(94,200,255,.28);transform:translateY(-2px)}
+  .tile.hintpulse{border-color:var(--gold);animation:hintp 1s ease-in-out infinite}
+  @keyframes hintp{0%,100%{box-shadow:0 0 0 0 rgba(255,209,102,.5)}50%{box-shadow:0 0 0 8px rgba(255,209,102,0)}}
+  .dragging-src{opacity:.32}
+  .ghost-tile{position:fixed;z-index:999;transform:translate(-50%,-50%) scale(1.06) rotate(-3deg);pointer-events:none;
+    opacity:.96;box-shadow:0 16px 34px rgba(0,0,0,.5)}
+
+  /* ============ ROUND 1 ============ */
+  .instr{font-size:1.06rem;color:var(--text);margin-bottom:4px}
+  .tip{color:var(--muted);font-size:.86rem;margin-top:4px}
+  .poolwrap{margin:14px 0}
+  .poollabel{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .pool-area{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;min-height:60px;
+    background:rgba(255,255,255,.03);border:2px dashed var(--line);border-radius:14px;padding:10px}
+  .pool-area.drop-hover{border-color:var(--accent);background:rgba(94,200,255,.08)}
+  .slots{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:6px 0 4px}
+  .slot{position:relative;background:rgba(255,255,255,.03);border:2px dashed var(--line);border-radius:14px;
+    min-height:104px;padding:6px 5px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    touch-action:none;transition:border-color .15s,background .15s,transform .12s}
+  .slot .slotnum{position:absolute;top:4px;left:7px;font-size:.72rem;font-weight:700;color:var(--muted);z-index:2}
+  .slot.drop-hover{border-color:var(--accent);background:rgba(94,200,255,.1);transform:scale(1.03)}
+  .slot.filled{border-style:solid}
+  .slot.correct{border-color:var(--correct);background:rgba(61,220,151,.12);cursor:default}
+  .slot.wrong{border-color:var(--retry);animation:amberpulse .9s ease-in-out infinite}
+  @keyframes amberpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,184,77,.45)}50%{box-shadow:0 0 0 7px rgba(255,184,77,0)}}
+  .slot .badge{position:absolute;top:3px;right:5px;font-size:.95rem;font-weight:700;z-index:2}
+  .slot.correct .badge{color:var(--correct)}
+  .slot.wrong .badge{color:var(--retry)}
+  .slot .ghosthint{font-size:2.2rem;opacity:.32}
+  .slots.cycling .tile{animation:cyc 1.1s ease-in-out}
+  @keyframes cyc{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-10px) scale(1.08)}100%{transform:translateY(0) scale(1)}}
+
+  .wwband{display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:8px 0 14px;font-weight:700;font-size:.9rem}
+  .wwband > div{flex:1;padding:10px 12px;text-align:center}
+  .wwband .wx{background:rgba(61,220,151,.16);color:var(--correct)}
+  .wwband .wn{background:rgba(255,184,77,.16);color:var(--retry)}
+  @media (max-width:520px){.wwband{font-size:.78rem}}
+
+  .banner{border-radius:12px;padding:12px 14px;font-weight:700;margin:10px 0;display:none;font-size:.98rem}
+  .banner.show{display:block;animation:fadeUp .3s}
+  .banner.partial{background:rgba(255,184,77,.14);border:1px solid rgba(255,184,77,.4);color:var(--retry)}
+  .banner.good{background:rgba(61,220,151,.14);border:1px solid rgba(61,220,151,.4);color:var(--correct)}
+
+  .winpanel{display:none;text-align:center;margin-top:10px;animation:fadeUp .45s}
+  .winpanel.show{display:block}
+  .winpanel h2{color:var(--gold);font-size:1.7rem}
+  .counter{font-size:2.4rem;font-weight:700;color:var(--correct);margin:6px 0 0;font-variant-numeric:tabular-nums}
+  .counter small{font-size:1rem;color:var(--muted);font-weight:700}
+
+  /* ============ ROUND 2 ============ */
+  .timeline{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+  .tl-card{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:10px 12px;
+    display:flex;flex-direction:column;align-items:center;gap:4px;min-width:104px}
+  .tl-card.cur{border-color:var(--accent);box-shadow:0 0 0 4px rgba(94,200,255,.16)}
+  .tl-card.qmark{border-style:dashed;justify-content:center}
+  .tl-card .qm{font-size:2.4rem;color:var(--gold);font-weight:700}
+  .tl-card .tname{font-weight:700;font-size:.82rem;text-align:center}
+  .tl-arrow{font-size:1.6rem;color:var(--muted)}
+  .qcount{color:var(--accent);font-weight:700;letter-spacing:.05em;font-size:.88rem;text-align:center}
+  .qprompt{font-size:1.25rem;text-align:center;margin:4px 0 12px;font-weight:700}
+  .qprompt b{color:var(--gold)}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  @media (max-width:540px){.opts{grid-template-columns:1fr}}
+  .opt{background:var(--panel2);border:2px solid var(--line);border-radius:16px;padding:14px 10px;cursor:pointer;
+    font-family:var(--font);color:var(--text);display:flex;flex-direction:column;align-items:center;gap:6px;
+    transition:transform .1s,border-color .15s,box-shadow .15s;min-height:48px}
+  .opt:hover:not(.lock){border-color:var(--accent);transform:translateY(-2px)}
+  .opt .oname{font-weight:700;font-size:.95rem;text-align:center}
+  .opt .oar{color:var(--gold);font-size:.85rem;font-weight:700}
+  .opt.lock{cursor:default}
+  .opt.correct{border-color:var(--correct);background:rgba(61,220,151,.14);box-shadow:0 0 0 3px rgba(61,220,151,.2)}
+  .opt.wrong{border-color:var(--retry);background:rgba(255,184,77,.13);animation:shake .4s}
+  .opt.dim{opacity:.4}
+  .opt .mark{font-weight:700;font-size:1.05rem}
+  .opt.correct .mark{color:var(--correct)}
+  .opt.wrong .mark{color:var(--retry)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .why{margin-top:14px;border-radius:14px;padding:14px 16px;font-weight:600;font-size:1rem;display:none;animation:fadeUp .3s}
+  .why.show{display:block}
+  .why.ok{background:rgba(61,220,151,.13);border:1px solid rgba(61,220,151,.4)}
+  .why.ok b{color:var(--correct)}
+  .why.amber{background:rgba(255,184,77,.13);border:1px solid rgba(255,184,77,.4)}
+  .why.amber b{color:var(--retry)}
+  .why .pts{font-weight:700;font-size:1.05rem;margin-left:4px}
+
+  /* ============ S4 BONUS ============ */
+  .bonuscard{max-width:540px;margin:0 auto;text-align:center}
+  .bonuscard .crescent{margin:6px auto 12px;width:130px;height:130px;display:grid;place-items:center;position:relative}
+  .bonuscard .crescent::before{content:"";position:absolute;inset:-22px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,209,102,.22),transparent 70%);z-index:0}
+  .bonuscard .crescent svg{position:relative;z-index:1;filter:drop-shadow(0 8px 22px rgba(255,209,102,.28))}
+  .bonuscard h2{color:var(--gold);font-size:1.7rem;margin-bottom:10px}
+  .bonuscard p{font-size:1.1rem}
+  .bonuscard .manycultures{color:var(--accent);font-weight:700;font-size:1.18rem;margin-top:12px}
+
+  /* ============ S5 RESULTS ============ */
+  .resulthero{text-align:center}
+  .bigstars{font-size:2.7rem;letter-spacing:4px;line-height:1}
+  .scoreline{font-size:1.5rem;font-weight:700;color:var(--gold);margin-top:8px}
+  .rank{font-size:1.35rem;font-weight:700;margin-top:6px}
+  .best{color:var(--muted);font-weight:700;margin-top:4px;font-size:.95rem}
+  .refstrip{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:10px 0 6px}
+  .refstrip .tile{cursor:default}
+  .refstrip .tile:hover{transform:none;border-color:var(--line)}
+  .refcap{color:var(--muted);font-weight:700;font-size:.88rem;margin-bottom:6px}
+  .challenge{display:flex;gap:11px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+    border-radius:14px;padding:13px 15px;margin:9px 0;font-weight:600;font-size:1rem}
+  .challenge .em{font-size:1.5rem}
+
+  /* ============ MODAL ============ */
+  .modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:18px;
+    background:rgba(5,9,26,.72);backdrop-filter:blur(3px)}
+  .modal.show{display:flex;animation:fadeUp .25s}
+  .modal .inner{background:linear-gradient(180deg,var(--panel),#11173a);border:1px solid var(--line);
+    border-radius:18px;padding:22px;max-width:540px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .modal h2{color:var(--gold);font-size:1.4rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .modal .closebar{display:flex;justify-content:flex-end;margin-top:16px}
+  .helptip{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:10px 0;font-size:1rem}
+  .helptip b{color:var(--accent)}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:80;
+    background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:11px 18px;
+    font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:1rem}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:680px){
+    .pool-area{grid-template-columns:repeat(4,1fr)}
+    .slots{grid-template-columns:repeat(4,1fr)}
+    .refstrip{grid-template-columns:repeat(4,1fr)}
+    .card{padding:18px}
+    .dots{gap:5px}.dot{width:11px;height:11px}
+  }
+  @media (max-width:420px){
+    .pool-area{grid-template-columns:repeat(2,1fr)}
+    .tb-title{font-size:1rem}
+    .chip{font-size:.82rem;padding:6px 10px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+    #stars,#stars2{animation:none}
+    .slot.wrong{animation:none;box-shadow:0 0 0 2px rgba(255,184,77,.6)}
+    .tile.hintpulse{animation:none;box-shadow:0 0 0 4px rgba(255,209,102,.5)}
+  }
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="stars2"></div>
+
+<div class="app">
+  <!-- ============ TOP BAR ============ -->
+  <div class="topbar">
+    <div class="tb-title">🌙 Moon Tracker</div>
+    <span class="unit-pill">🌙 Grade 5 · Unit 4 · Phases of the Moon</span>
+    <div class="dots" id="dots" aria-label="Progress"></div>
+    <div class="tb-spacer"></div>
+    <div class="chip" id="scoreChip">Moon Points: 0</div>
+    <div class="starmeter" id="topStars" aria-label="Mastery stars">☆☆☆</div>
+    <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+    <button class="iconbtn" id="wordsBtn" title="Key Words" aria-label="Key words">📖</button>
+    <button class="iconbtn" id="helpBtn" title="Help — replay tips" aria-label="Help">?</button>
+    <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+  </div>
+
+  <!-- ============ S0 — TITLE ============ -->
+  <section class="screen active" id="s0">
+    <div class="card hero">
+      <div style="text-align:center;margin-bottom:10px"><span class="unit-pill" style="font-size:.9rem;padding:7px 18px">🌙 Grade 5 · Unit 4 · Phases of the Moon</span></div>
+      <div class="eyebrow">Grade 5 · Science</div>
+      <h1>🌙 Moon Tracker</h1>
+      <div class="sub">Phases of the Moon</div>
+      <div class="bigmoon" id="bigmoon" aria-hidden="true"></div>
+      <div class="cap" id="bigmooncap">Watch it change…</div>
+      <span class="tag">Grade 5 · Science</span>
+      <div class="btnrow">
+        <button class="btn" id="startBtn">▶ Start</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="sectionhead">📖 Key Words</div>
+      <div class="kw-grid" id="kwGrid0"></div>
+    </div>
+  </section>
+
+  <!-- ============ S1 — PRIMER ============ -->
+  <section class="screen" id="s1">
+    <div class="card primer">
+      <div class="eyebrow center" style="margin-bottom:8px">Quick Science Primer</div>
+      <div id="primerBody"></div>
+      <div class="pdots" id="primerDots"></div>
+      <div class="btnrow">
+        <button class="btn ghost sm" id="primerBack">← Back</button>
+        <button class="btn" id="primerNext">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S2 — ROUND 1 ============ -->
+  <section class="screen" id="s2">
+    <div class="card">
+      <div class="eyebrow">Round 1 · Put the Moon in Order</div>
+      <p class="instr">Drag the 8 Moon phases into the correct order. Start at <b>New Moon 🌑</b> and go around the cycle.</p>
+      <p class="tip">Tip: tap a phase, then tap a slot to place it. On a filled slot, tiles swap.</p>
+
+      <div class="poolwrap">
+        <div class="poollabel">Phase Pool — drag from here</div>
+        <div class="pool-area" id="poolArea" aria-label="Phase pool"></div>
+      </div>
+
+      <div class="slots" id="slotsRow" aria-label="Order slots"></div>
+      <div class="wwband">
+        <div class="wx">← Waxing 🌒→🌕 growing</div>
+        <div class="wn">Waning 🌖→🌘 shrinking →</div>
+      </div>
+
+      <div class="banner" id="r1banner"></div>
+
+      <div class="btnrow">
+        <button class="btn" id="checkBtn" disabled>✓ Check Order</button>
+        <button class="btn accent sm" id="hintBtn">💡 Hint</button>
+        <button class="btn ghost sm" id="resetBtn">↺ Reset</button>
+      </div>
+      <p class="tip center" style="margin-top:12px">Stars: 1 Check = ⭐⭐⭐ (30) · 2 Checks = ⭐⭐ (20) · 3+ = ⭐ (10)</p>
+
+      <div class="winpanel" id="r1win">
+        <h2>You did it! 🌙</h2>
+        <p style="margin-top:6px">You ordered the whole cycle! It loops — after Waning Crescent comes New Moon again.</p>
+        <div class="counter"><span id="dayCounter">0.0</span> <small>days</small></div>
+        <p class="tip" style="margin-top:2px">≈ 29.5 days = 1 lunar month</p>
+        <div class="btnrow"><button class="btn" id="r1continue">Continue →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S3 — ROUND 2 ============ -->
+  <section class="screen" id="s3">
+    <div class="card">
+      <div class="eyebrow">Round 2 · What Comes Next?</div>
+      <div class="qcount" id="qcount">Q 1 / 6</div>
+      <div class="timeline" id="r2timeline"></div>
+      <p class="qprompt" id="r2prompt"></p>
+      <div class="opts" id="r2opts"></div>
+      <div class="why" id="r2why"></div>
+      <div class="btnrow">
+        <button class="btn" id="r2next" style="display:none">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S4 — BONUS ============ -->
+  <section class="screen" id="s4">
+    <div class="card bonuscard">
+      <div class="eyebrow">Bonus · Many Cultures, One Sky</div>
+      <div class="crescent" id="bonusMoon" aria-hidden="true"></div>
+      <h2>Many cultures, one sky</h2>
+      <p>The first thin <b class="hl">crescent — hilal</b> — marks the start of a new month in lunar calendars around the world. Here in the UAE it begins <b>Ramadan and Eid</b>; other moon calendars around the world watch for the very same crescent.</p>
+      <div class="manycultures">🌙 Many cultures, one sky.</div>
+      <div class="btnrow"><button class="btn gold" id="bonusBtn">Cool! → +10</button></div>
+    </div>
+  </section>
+
+  <!-- ============ S5 — RESULTS ============ -->
+  <section class="screen" id="s5">
+    <div class="card resulthero">
+      <div class="eyebrow">Results</div>
+      <div class="bigstars" id="resStars">☆☆☆</div>
+      <div class="scoreline" id="resScore">Moon Points: 0 / 100</div>
+      <div class="rank" id="resRank"></div>
+      <div class="best" id="resBest"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="refcap">The full cycle — your reference:</div>
+      <div class="refstrip" id="refStrip"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="sectionhead" style="margin-bottom:6px">🚀 Keep exploring</div>
+      <div class="challenge"><span class="em">🔦</span><span><b>Tonight's mission:</b> flashlight + ball — make all 8 phases yourself.</span></div>
+      <div class="challenge"><span class="em">🌙</span><span><b>Watch the real Moon for a week</b> — can you name each night's phase?</span></div>
+      <div class="btnrow">
+        <button class="btn" id="againBtn">↻ Play Again</button>
+        <button class="btn ghost" id="homeBtn">🏠 Home</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="sectionhead">📖 Key Words</div>
+      <div class="kw-grid" id="kwGrid5"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="wordsModal">
+  <div class="inner">
+    <h2>📖 Key Words</h2>
+    <div class="kw-grid" id="kwGridModal"></div>
+    <div class="closebar"><button class="btn sm ghost" data-close="wordsModal">Close</button></div>
+  </div>
+</div>
+
+<div class="modal" id="helpModal">
+  <div class="inner">
+    <h2>💡 Quick Tips</h2>
+    <div class="helptip">The Moon makes <b>no light of its own</b> — it reflects sunlight, like a ball lit by a flashlight.</div>
+    <div class="helptip"><b>Waxing</b> 🌒→🌕 = the lit part is <b>growing</b>, lit on the <b>right</b>.<br><b>Waning</b> 🌖→🌘 = the lit part is <b>shrinking</b>, lit on the <b>left</b>.</div>
+    <div class="helptip">Try it at home: in a dark room, shine a flashlight (the Sun) on a ball (the Moon) and turn the ball around — you can make every phase yourself.</div>
+    <div class="helptip">Round 1: drag — or <b>tap a phase then tap a slot</b>. Green ✓ = correct.</div>
+    <div class="closebar"><button class="btn sm ghost" data-close="helpModal">Got it!</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ======================= DATA (single source of truth) ======================= */
+var PHASES=[
+ {en:"New Moon",        emoji:"🌑", lit:0,   side:"none",  ww:"start",  sci:"The Moon sits between Earth and the Sun. Its lit half faces away from us, so we see almost nothing."},
+ {en:"Waxing Crescent", emoji:"🌒", lit:25,  side:"right", ww:"Waxing", sci:"A thin sliver of light on the right. Waxing means the lit part is growing."},
+ {en:"First Quarter",   emoji:"🌓", lit:50,  side:"right", ww:"Waxing", sci:"Half the face is lit on the right. We're one quarter of the way through the cycle."},
+ {en:"Waxing Gibbous",  emoji:"🌔", lit:75,  side:"right", ww:"Waxing", sci:"More than half lit and still growing toward Full."},
+ {en:"Full Moon",       emoji:"🌕", lit:100, side:"full",  ww:"peak",   sci:"Earth is between the Sun and Moon, so we see the whole sunlit face."},
+ {en:"Waning Gibbous",  emoji:"🌖", lit:75,  side:"left",  ww:"Waning", sci:"More than half lit, but now shrinking. Waning means the lit part is getting smaller."},
+ {en:"Last Quarter",    emoji:"🌗", lit:50,  side:"left",  ww:"Waning", sci:"Half the face is lit on the left. Three quarters through the cycle."},
+ {en:"Waning Crescent", emoji:"🌘", lit:25,  side:"left",  ww:"Waning", sci:"A thin sliver on the left, shrinking toward New — then the whole cycle starts again."}
+];
+
+var KEYWORDS=[
+ ["Moon","lights our night sky"],
+ ["Phase","the lit shape we see each night"],
+ ["Waxing","growing — the lit part gets bigger (New→Full)"],
+ ["Waning","shrinking — the lit part gets smaller (Full→New)"],
+ ["Crescent","a thin curved sliver of light"],
+ ["Gibbous","more than half lit, bulging"],
+ ["Reflect","bounces the Sun's light toward Earth"],
+ ["Orbit","the Moon's path around Earth"]
+];
+
+/* Round 2 questions: cur = current phase idx; opts = 3 phase idx (correct = (cur+1)%8). */
+var R2Q=[
+ {cur:0, opts:[1,4,7], why:"After New Moon, a thin crescent appears on the <b>right</b> and starts to grow — that's <b>waxing</b> (growing)."},
+ {cur:1, opts:[2,0,6], why:"The lit part keeps growing until half the face shines — <b>First Quarter</b>."},
+ {cur:2, opts:[3,4,5], why:"More than half lit and still growing — <b>Waxing Gibbous</b> (gibbous means 'bulging')."},
+ {cur:4, opts:[5,3,0], why:"After Full, the light starts to shrink — <b>Waning Gibbous</b>. Now we're <b>waning</b> (shrinking)."},
+ {cur:6, opts:[7,1,4], why:"A shrinking sliver, now lit on the <b>left</b> — <b>Waning Crescent</b>."},
+ {cur:7, opts:[0,4,2], why:"Back to <b>New Moon</b> — the cycle repeats about every <b>29.5 days</b>, one lunar month."}
+];
+/* Concept bonus (Q7): +0, vocab reinforcement, text options */
+var Q7={q:"<b>Waxing</b> means the lit part is…?", opts:[{t:"Growing",ok:true},{t:"Shrinking",ok:false},{t:"Staying the same",ok:false}],
+        why:"<b>Waxing</b> = growing (New → Full). <b>Waning</b> = shrinking (Full → New)."};
+
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ======================= MOON SVG RENDERER ======================= */
+var moonUID=0;
+function moonSVG(lit, side, size){
+  size = size||64;
+  var r=45, cx=50, cy=50, f=lit/100, uid='m'+(moonUID++);
+  var litShape='';
+  var topPt = cx+' '+(cy-r), botPt = cx+' '+(cy+r);
+  if(side==='full' || lit>=100){
+    litShape = '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="url(#litg'+uid+')"/>';
+  } else if(lit<=0 || side==='none'){
+    litShape = '';
+  } else {
+    var termRx = (r*Math.abs(1-2*f)).toFixed(2);
+    var limbSweep, termSweep;
+    if(side==='right'){ limbSweep=1; termSweep=(f<0.5)?0:1; }  // waxing: lit on RIGHT
+    else { limbSweep=0; termSweep=(f<0.5)?1:0; }                // waning: lit on LEFT
+    var d='M '+topPt+' A '+r+' '+r+' 0 0 '+limbSweep+' '+botPt+' A '+termRx+' '+r+' 0 0 '+termSweep+' '+topPt+' Z';
+    litShape = '<path d="'+d+'" fill="url(#litg'+uid+')"/>';
+  }
+  // craters clipped to the lit region only (so dark side stays dark)
+  var craterG='';
+  if(litShape){
+    var clipInner = litShape.replace('fill="url(#litg'+uid+')"','');
+    craterG = '<clipPath id="clip'+uid+'">'+clipInner+'</clipPath>'+
+      '<g clip-path="url(#clip'+uid+')" fill="#d8cda1">'+
+      '<circle cx="36" cy="40" r="6.5" opacity=".40"/>'+
+      '<circle cx="60" cy="58" r="5" opacity=".34"/>'+
+      '<circle cx="48" cy="70" r="4" opacity=".30"/>'+
+      '<circle cx="64" cy="34" r="3" opacity=".30"/></g>';
+  }
+  var newRing = (lit<=0||side==='none')
+    ? '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(246,241,216,.42)" stroke-width="2"/>'+
+      '<circle cx="38" cy="42" r="5" fill="#33375a"/><circle cx="62" cy="60" r="4" fill="#33375a"/>'
+    : '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>';
+  return '<svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'" role="img" aria-hidden="true">'+
+    '<defs><radialGradient id="litg'+uid+'" cx="38%" cy="34%" r="75%">'+
+    '<stop offset="0%" stop-color="#fffaf0"/><stop offset="68%" stop-color="#f6f1d8"/>'+
+    '<stop offset="100%" stop-color="#e3d8af"/></radialGradient></defs>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#2b2f4a"/>'+
+    litShape + craterG + newRing + '</svg>';
+}
+
+/* ======================= AUDIO (Web Audio blips) ======================= */
+var Audio_ = {ctx:null, muted:false};
+try{ Audio_.muted = localStorage.getItem('moonMute')==='1'; }catch(e){}
+function ac(){ if(!Audio_.ctx){ try{ Audio_.ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return Audio_.ctx; }
+function tone(freq, start, dur, type, vol){
+  var c=ac(); if(!c) return;
+  var o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  var t=c.currentTime+start;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol||0.18, t+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+function sfx(name){
+  if(Audio_.muted) return;
+  if(ac() && ac().state==='suspended'){ try{ac().resume();}catch(e){}}
+  if(name==='click'){ tone(520,0,0.08,'triangle',0.12); }
+  else if(name==='correct'){ tone(660,0,0.12,'sine',0.18); tone(880,0.10,0.16,'sine',0.18); }
+  else if(name==='wrong'){ tone(300,0,0.18,'sine',0.14); tone(240,0.10,0.20,'sine',0.12); }
+  else if(name==='win'){ [523,659,784,1047].forEach(function(fq,i){ tone(fq,i*0.11,0.30,'triangle',0.17); }); }
+  else if(name==='points'){ tone(740,0,0.10,'sine',0.15); tone(988,0.08,0.14,'sine',0.15); }
+}
+
+/* ======================= GAME STATE ======================= */
+var game={ scoreR1:0, scoreR2:0, scoreBonus:0, bonusGiven:false, screen:0 };
+function totalScore(){ return game.scoreR1 + game.scoreR2 + game.scoreBonus; }
+
+/* ======================= HELPERS ======================= */
+function $(id){ return document.getElementById(id); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function tileHTML(idx, compact){
+  var p=PHASES[idx];
+  return '<div class="tile'+(compact?' compact':'')+'" data-phase="'+idx+'" tabindex="0" role="button" aria-label="'+p.en+'">'+
+    moonSVG(p.lit,p.side, compact?46:54)+
+    '<div class="tname">'+p.en+'</div>'+
+  '</div>';
+}
+function toast(msg){
+  var t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove('show'); }, 1700);
+}
+
+/* ======================= TOP BAR ======================= */
+function buildDots(){
+  var d=$('dots'); d.innerHTML='';
+  for(var i=0;i<6;i++){ var s=document.createElement('span'); s.className='dot'; s.id='dot'+i; d.appendChild(s); }
+}
+function overallStars(score){ return score>=85?3:score>=65?2:score>=40?1:0; }
+function starString(n,total){ total=total||3; var s=''; for(var i=0;i<total;i++){ s+= (i<n?'⭐':'☆'); } return s; }
+function updateTopBar(){
+  $('scoreChip').textContent='Moon Points: '+totalScore();
+  $('topStars').textContent=starString(overallStars(totalScore()),3);
+  for(var i=0;i<6;i++){
+    var dot=$('dot'+i); dot.className='dot';
+    if(i<game.screen) dot.classList.add('done');
+    if(i===game.screen) dot.classList.add('on');
+  }
+}
+
+/* ======================= NAVIGATION ======================= */
+var SCREENS=['s0','s1','s2','s3','s4','s5'];
+function goto(n){
+  game.screen=n;
+  for(var i=0;i<SCREENS.length;i++){ $(SCREENS[i]).classList.toggle('active', i===n); }
+  window.scrollTo({top:0, behavior: RM?'auto':'smooth'});
+  updateTopBar();
+  if(n===1) renderPrimer(0);
+  if(n===2) initRound1();
+  if(n===3) initRound2();
+  if(n===4) renderBonus();
+  if(n===5) renderResults();
+}
+
+/* ======================= S0 TITLE — cycling moon ======================= */
+var s0cyc=0;
+function renderBigMoon(){
+  var p=PHASES[s0cyc%8];
+  $('bigmoon').innerHTML=moonSVG(p.lit,p.side,170);
+  $('bigmooncap').textContent='Watch it change… '+p.emoji+' '+p.en;
+}
+setInterval(function(){ if($('s0').classList.contains('active')){ s0cyc++; renderBigMoon(); } }, 1150);
+
+/* ======================= KEY WORDS ======================= */
+function renderKW(el){
+  var h='';
+  for(var i=0;i<KEYWORDS.length;i++){
+    var k=KEYWORDS[i];
+    h+='<div class="kw"><div class="en">'+k[0]+'</div><div class="tr">'+k[1]+'</div></div>';
+  }
+  el.innerHTML=h;
+}
+
+/* ======================= S1 PRIMER ======================= */
+var primerStep=0;
+var PRIMER=[
+  {h:"The Moon changes shape each night.",
+   body:"It makes no light of its own — it reflects sunlight, like a ball lit by a flashlight.",
+   moons:true},
+  {h:"Waxing vs Waning",
+   body:"<div class='ww-row'><div class='ww-box wax'><div style='font-size:1.8rem'>🌒→🌕</div><div class='big'>Waxing = GROWING</div><div class='tip'>lit on the right →</div></div>"+
+        "<div class='ww-box wan'><div style='font-size:1.8rem'>🌖→🌘</div><div class='big'>Waning = SHRINKING</div><div class='tip'>← lit on the left</div></div></div>"},
+  {h:"Try it at home!",
+   body:"In a dark room, shine a flashlight (the Sun) on a ball (the Moon) and turn the ball around — you can make every phase yourself. 🔦⚪"}
+];
+function renderPrimer(step){
+  primerStep=step;
+  var P=PRIMER[step];
+  var moonsHtml='';
+  if(P.moons){
+    moonsHtml='<div class="pmoon">';
+    for(var i=0;i<8;i++){ moonsHtml+=moonSVG(PHASES[i].lit,PHASES[i].side,40); }
+    moonsHtml+='</div>';
+  }
+  $('primerBody').innerHTML='<h2 class="center">'+P.h+'</h2>'+moonsHtml+'<p class="center" style="margin-top:6px">'+P.body+'</p>';
+  var dh=''; for(var k=0;k<3;k++){ dh+='<i class="'+(k===step?'on':'')+'"></i>'; }
+  $('primerDots').innerHTML=dh;
+  $('primerBack').style.visibility = step===0?'hidden':'visible';
+  $('primerNext').textContent = step===2 ? "Let's Play →" : "Next →";
+}
+$('primerNext').onclick=function(){ sfx('click'); if(primerStep<2) renderPrimer(primerStep+1); else goto(2); };
+$('primerBack').onclick=function(){ sfx('click'); if(primerStep>0) renderPrimer(primerStep-1); };
+
+/* ======================= S2 ROUND 1 — drag & drop ======================= */
+var r1={ pool:[], slots:[], locked:[], status:[], selected:null, checks:0, won:false, hint:false };
+function initRound1(){
+  r1.pool=shuffle([0,1,2,3,4,5,6,7]);
+  r1.slots=[null,null,null,null,null,null,null,null];
+  r1.locked=[false,false,false,false,false,false,false,false];
+  r1.status=['none','none','none','none','none','none','none','none'];
+  r1.selected=null; r1.checks=0; r1.won=false; r1.hint=false;
+  $('r1win').classList.remove('show');
+  $('r1banner').className='banner';
+  $('slotsRow').classList.remove('cycling');
+  renderR1();
+}
+function clearMoveFeedback(){
+  for(var i=0;i<8;i++){ if(!r1.locked[i]) r1.status[i]='none'; }
+  $('r1banner').className='banner';
+}
+function renderR1(){
+  // pool
+  var pa=$('poolArea'); pa.innerHTML='';
+  for(var i=0;i<r1.pool.length;i++){
+    var idx=r1.pool[i];
+    var wrap=document.createElement('div');
+    wrap.innerHTML=tileHTML(idx,false);
+    var tile=wrap.firstChild;
+    if(r1.selected && r1.selected.from==='pool' && r1.selected.idx===idx) tile.classList.add('sel');
+    if(r1.hint && idx===0) tile.classList.add('hintpulse');
+    attachTilePointer(tile, {kind:'pooltile', phaseIdx:idx});
+    attachKey(tile, {kind:'pooltile', phaseIdx:idx});
+    pa.appendChild(tile);
+  }
+  attachPoolDrop(pa);
+  // slots
+  var sr=$('slotsRow'); sr.innerHTML='';
+  for(var s=0;s<8;s++){
+    var slot=document.createElement('div');
+    slot.className='slot'; slot.dataset.slot=s; slot.tabIndex=0; slot.setAttribute('role','button');
+    var pid=r1.slots[s];
+    slot.setAttribute('aria-label','Slot '+(s+1)+(pid!=null?': '+PHASES[pid].en:': empty'));
+    if(pid!=null) slot.classList.add('filled');
+    if(r1.status[s]==='correct') slot.classList.add('correct');
+    if(r1.status[s]==='wrong') slot.classList.add('wrong');
+    var inner='<span class="slotnum">'+(s+1)+'</span>';
+    if(r1.status[s]==='correct') inner+='<span class="badge">✓</span>';
+    if(r1.status[s]==='wrong') inner+='<span class="badge">↔</span>';
+    if(pid!=null){
+      inner+=tileHTML(pid,true);
+    } else if(r1.hint && s===0){
+      inner+='<span class="ghosthint">🌑</span>';
+    }
+    slot.innerHTML=inner;
+    if(pid!=null){
+      var st=slot.querySelector('.tile');
+      if(r1.selected && r1.selected.from==='slot' && r1.selected.key===s) st.classList.add('sel');
+      if(r1.locked[s]){ st.style.cursor='default'; }
+    }
+    attachTilePointer(slot, {kind:'slot', index:s});
+    attachKey(slot, {kind:'slot', index:s});
+    sr.appendChild(slot);
+  }
+  // check button enable
+  var allFilled=true; for(var f=0;f<8;f++){ if(r1.slots[f]==null) allFilled=false; }
+  $('checkBtn').disabled = !allFilled || r1.won;
+}
+
+/* ---- selection & placement logic ---- */
+function placeInto(slotIndex){
+  if(r1.locked[slotIndex] || !r1.selected){ r1.selected=null; renderR1(); return; }
+  var sel=r1.selected, occupant=r1.slots[slotIndex];
+  if(sel.from==='pool'){ r1.pool=r1.pool.filter(function(x){return x!==sel.idx;}); }
+  else { r1.slots[sel.key]=null; }
+  r1.slots[slotIndex]=sel.idx;
+  if(occupant!=null){
+    if(sel.from==='pool'){ r1.pool.push(occupant); }
+    else { r1.slots[sel.key]=occupant; }
+  }
+  r1.selected=null;
+  if(sel.idx===0 && slotIndex===0) r1.hint=false; // New Moon placed in slot 1
+  clearMoveFeedback();
+  renderR1();
+}
+function returnToPool(){
+  if(!r1.selected){ return; }
+  if(r1.selected.from==='slot'){ r1.slots[r1.selected.key]=null; r1.pool.push(r1.selected.idx); clearMoveFeedback(); }
+  r1.selected=null; renderR1();
+}
+function handleTap(desc){
+  if(r1.won) return;
+  if(desc.kind==='pooltile'){
+    var pid=desc.phaseIdx;
+    if(r1.selected && r1.selected.from==='pool' && r1.selected.idx===pid){ r1.selected=null; }
+    else { r1.selected={from:'pool', idx:pid}; }
+    renderR1();
+  } else { // slot
+    var i=desc.index;
+    if(r1.locked[i]) return;
+    if(r1.selected){ placeInto(i); return; }
+    if(r1.slots[i]!=null){ r1.selected={from:'slot', key:i, idx:r1.slots[i]}; renderR1(); return; }
+  }
+}
+
+/* ---- pointer drag (mouse + touch unified) ---- */
+var drag=null;
+function srcOf(desc){
+  if(desc.kind==='pooltile') return {from:'pool', idx:desc.phaseIdx};
+  if(desc.kind==='slot'){ var i=desc.index; if(r1.slots[i]!=null && !r1.locked[i]) return {from:'slot', key:i, idx:r1.slots[i]}; }
+  return null;
+}
+function attachTilePointer(el, desc){
+  el.addEventListener('pointerdown', function(e){
+    if(r1.won) return;
+    if(e.pointerType==='mouse' && e.button!==0) return;
+    var src=srcOf(desc);
+    drag={desc:desc, src:src, sx:e.clientX, sy:e.clientY, moved:false, ghost:null, el:el};
+    window.addEventListener('pointermove', onPMove);
+    window.addEventListener('pointerup', onPUp);
+  });
+}
+function onPMove(e){
+  if(!drag) return;
+  var dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(!drag.moved && Math.sqrt(dx*dx+dy*dy)>7 && drag.src){
+    drag.moved=true;
+    var srcEl = (drag.desc.kind==='pooltile') ? drag.el : drag.el.querySelector('.tile');
+    if(srcEl){
+      var g=srcEl.cloneNode(true); g.classList.add('ghost-tile');
+      g.classList.remove('sel'); g.style.width=srcEl.offsetWidth+'px';
+      document.body.appendChild(g); drag.ghost=g; srcEl.classList.add('dragging-src');
+    }
+  }
+  if(drag.moved && drag.ghost){
+    e.preventDefault();
+    drag.ghost.style.left=e.clientX+'px';
+    drag.ghost.style.top=e.clientY+'px';
+    highlightDrop(e.clientX, e.clientY);
+  }
+}
+function onPUp(e){
+  window.removeEventListener('pointermove', onPMove);
+  window.removeEventListener('pointerup', onPUp);
+  if(!drag) return;
+  if(drag.moved){
+    if(drag.ghost) drag.ghost.remove();
+    clearDropHL();
+    var tgt=dropTargetAt(e.clientX, e.clientY);
+    r1.selected=drag.src;
+    if(tgt && tgt.type==='slot'){ placeInto(tgt.index); }
+    else if(tgt && tgt.type==='pool'){ returnToPool(); }
+    else { r1.selected=null; renderR1(); }
+  } else {
+    handleTap(drag.desc);
+  }
+  drag=null;
+}
+function dropTargetAt(x,y){
+  var el=document.elementFromPoint(x,y); if(!el) return null;
+  var slot=el.closest && el.closest('.slot'); if(slot) return {type:'slot', index:+slot.dataset.slot};
+  var pool=el.closest && el.closest('.pool-area'); if(pool) return {type:'pool'};
+  return null;
+}
+function highlightDrop(x,y){
+  clearDropHL();
+  var t=dropTargetAt(x,y);
+  if(t && t.type==='slot'){ var s=document.querySelector('.slot[data-slot="'+t.index+'"]'); if(s && !r1.locked[t.index]) s.classList.add('drop-hover'); }
+  else if(t && t.type==='pool'){ $('poolArea').classList.add('drop-hover'); }
+}
+function clearDropHL(){
+  var hs=document.querySelectorAll('.drop-hover'); for(var i=0;i<hs.length;i++) hs[i].classList.remove('drop-hover');
+}
+function attachPoolDrop(pa){ /* pool drop handled in pointerup via dropTargetAt */ }
+function attachKey(el, desc){
+  el.addEventListener('keydown', function(e){
+    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handleTap(desc); }
+  });
+}
+
+/* ---- Check / Hint / Reset ---- */
+$('checkBtn').onclick=function(){
+  var allFilled=true; for(var f=0;f<8;f++){ if(r1.slots[f]==null) allFilled=false; }
+  if(!allFilled || r1.won) return;
+  r1.checks++;
+  var correct=0;
+  for(var i=0;i<8;i++){
+    if(r1.slots[i]===i){ r1.status[i]='correct'; r1.locked[i]=true; correct++; }
+    else { r1.status[i]='wrong'; }
+  }
+  if(correct===8){ winRound1(); return; }
+  var b=$('r1banner'); b.className='banner partial show';
+  b.textContent = correct+' of 8 in the right place! The green ✓ ones are correct — move the others and check again.';
+  sfx('wrong');
+  renderR1();
+};
+$('hintBtn').onclick=function(){
+  sfx('click'); r1.hint=true; renderR1();
+  toast('New Moon 🌑 starts the cycle — put it in slot 1.');
+  var b=$('r1banner'); b.className='banner good show';
+  b.textContent='💡 New Moon starts the cycle. Put 🌑 in slot 1.';
+};
+$('resetBtn').onclick=function(){ sfx('click'); initRound1(); };
+
+function winRound1(){
+  r1.won=true;
+  for(var i=0;i<8;i++){ r1.locked[i]=true; r1.status[i]='correct'; }
+  game.scoreR1 = r1.checks===1?30 : r1.checks===2?20 : 10;
+  renderR1();
+  $('checkBtn').disabled=true;
+  updateTopBar();
+  sfx('win');
+  var win=$('r1win'); win.classList.add('show');
+  if(!RM){ $('slotsRow').classList.add('cycling'); setTimeout(function(){ $('slotsRow').classList.remove('cycling'); },1400); }
+  // animate counter to 29.5
+  var dc=$('dayCounter');
+  if(RM){ dc.textContent='29.5'; }
+  else {
+    var start=performance.now(), dur=1500;
+    (function step(t){
+      var p=Math.min(1,(t-start)/dur), e=1-Math.pow(1-p,3);
+      dc.textContent=(29.5*e).toFixed(1);
+      if(p<1) requestAnimationFrame(step);
+    })(start);
+  }
+  var stars = r1.checks===1?3 : r1.checks===2?2 : 1;
+  toast('Round 1 complete! '+starString(stars,3)+'  +'+game.scoreR1+' points');
+  win.scrollIntoView({behavior: RM?'auto':'smooth', block:'center'});
+}
+$('r1continue').onclick=function(){ sfx('click'); goto(3); };
+
+/* ======================= S3 ROUND 2 — predictor ======================= */
+var r2={ order:[], qi:0, tries:0, answered:false, opts:[], stage:'q' };
+function initRound2(){
+  r2.order=shuffle([0,1,2,3,4,5]);
+  r2.qi=0; r2.stage='q';
+  renderR2();
+}
+function buildOptsForQ(qObj){
+  return shuffle(qObj.opts.slice());
+}
+function renderR2(){
+  r2.tries=0; r2.answered=false;
+  $('r2why').className='why'; $('r2why').innerHTML='';
+  $('r2next').style.display='none';
+
+  if(r2.stage==='q' && r2.qi<6){
+    var Q=R2Q[r2.order[r2.qi]];
+    var curP=PHASES[Q.cur];
+    $('qcount').textContent='Q '+(r2.qi+1)+' / 6';
+    // timeline
+    $('r2timeline').innerHTML =
+      '<div class="tl-card cur"><div>'+moonSVG(curP.lit,curP.side,58)+'</div><div class="tname">'+curP.en+'</div></div>'+
+      '<div class="tl-arrow">→</div>'+
+      '<div class="tl-card qmark"><div class="qm">?</div><div class="tname">next</div></div>';
+    $('r2prompt').innerHTML='After <b>'+curP.en+' '+curP.emoji+'</b>, what comes next?';
+    r2.opts=buildOptsForQ(Q);
+    var oh='';
+    for(var i=0;i<r2.opts.length;i++){
+      var pi=r2.opts[i], p=PHASES[pi];
+      oh+='<button class="opt" data-opt="'+pi+'" data-i="'+i+'">'+moonSVG(p.lit,p.side,54)+
+          '<span class="oname">'+p.en+'</span><span class="mark"></span></button>';
+    }
+    $('r2opts').innerHTML=oh;
+    var btns=$('r2opts').querySelectorAll('.opt');
+    btns.forEach(function(b){ b.onclick=function(){ answerR2(+b.dataset.opt, b); }; });
+  } else {
+    // Q7 concept bonus
+    r2.stage='concept';
+    $('qcount').textContent='Bonus vocab · just for fun (+0)';
+    $('r2timeline').innerHTML='<div class="tl-card cur" style="min-width:auto;padding:14px 20px"><div style="font-size:2.4rem">🌒→🌕</div><div class="tname">Waxing</div></div>';
+    $('r2prompt').innerHTML=Q7.q;
+    var oo=shuffle(Q7.opts.slice());
+    r2.opts=oo;
+    var ch='';
+    for(var j=0;j<oo.length;j++){
+      ch+='<button class="opt" data-ok="'+(oo[j].ok?'1':'0')+'" data-i="'+j+'"><span class="oname" style="font-size:1.05rem">'+oo[j].t+'</span><span class="mark"></span></button>';
+    }
+    $('r2opts').innerHTML=ch;
+    var cbtns=$('r2opts').querySelectorAll('.opt');
+    cbtns.forEach(function(b){ b.onclick=function(){ answerConcept(b.dataset.ok==='1', b); }; });
+  }
+}
+function lockOpts(){ var bs=$('r2opts').querySelectorAll('.opt'); bs.forEach(function(b){ b.classList.add('lock'); }); }
+function answerR2(pickIdx, btn){
+  if(r2.answered) return;
+  if(btn.classList.contains('lock')) return; // ignore re-taps on an already-wrong option
+  var Q=R2Q[r2.order[r2.qi]];
+  var correctIdx=(Q.cur+1)%8;
+  if(pickIdx===correctIdx){
+    r2.answered=true;
+    btn.classList.add('correct'); btn.querySelector('.mark').textContent='✓';
+    lockOpts();
+    var pts=(r2.tries===0)?10:5;
+    game.scoreR2+=pts; updateTopBar(); sfx('correct');
+    var w=$('r2why'); w.className='why ok show';
+    w.innerHTML=(r2.tries===0?'✓ Yes! ':'✓ Got it! ')+Q.why+' <span class="pts hlg">+'+pts+'</span>';
+    $('r2next').style.display='';
+    // flip qmark card to answer
+    var ans=PHASES[correctIdx];
+    var qcard=$('r2timeline').querySelector('.qmark');
+    if(qcard){ qcard.classList.remove('qmark'); qcard.classList.add('cur'); qcard.innerHTML='<div>'+moonSVG(ans.lit,ans.side,58)+'</div><div class="tname">'+ans.en+'</div>'; }
+  } else {
+    if(r2.tries===0){
+      r2.tries=1;
+      btn.classList.add('wrong','dim','lock'); btn.querySelector('.mark').textContent='↔';
+      sfx('wrong');
+      var w2=$('r2why'); w2.className='why amber show';
+      w2.innerHTML='<b>Not quite</b> — look at the lit part. Try once more.';
+    } else {
+      r2.answered=true;
+      btn.classList.add('wrong'); btn.querySelector('.mark').textContent='↔';
+      // reveal correct
+      var bs=$('r2opts').querySelectorAll('.opt');
+      bs.forEach(function(b){ if(+b.dataset.opt===correctIdx){ b.classList.add('correct'); b.querySelector('.mark').textContent='✓'; } });
+      lockOpts();
+      sfx('wrong');
+      var ansP=PHASES[correctIdx];
+      var w3=$('r2why'); w3.className='why amber show';
+      w3.innerHTML='The answer is <b>'+ansP.en+' '+ansP.emoji+'</b>. '+Q.why+' <span class="pts hla">+0</span>';
+      $('r2next').style.display='';
+      var qcard2=$('r2timeline').querySelector('.qmark');
+      if(qcard2){ qcard2.classList.remove('qmark'); qcard2.classList.add('cur'); qcard2.innerHTML='<div>'+moonSVG(ansP.lit,ansP.side,58)+'</div><div class="tname">'+ansP.en+'</div>'; }
+    }
+  }
+}
+function answerConcept(isOk, btn){
+  if(r2.answered) return;
+  r2.answered=true;
+  var bs=$('r2opts').querySelectorAll('.opt');
+  if(isOk){ btn.classList.add('correct'); btn.querySelector('.mark').textContent='✓'; sfx('correct'); }
+  else {
+    btn.classList.add('wrong'); btn.querySelector('.mark').textContent='↔';
+    bs.forEach(function(b){ if(b.dataset.ok==='1'){ b.classList.add('correct'); b.querySelector('.mark').textContent='✓'; } });
+    sfx('wrong');
+  }
+  lockOpts();
+  var w=$('r2why'); w.className='why ok show';
+  w.innerHTML=(isOk?'✓ Exactly! ':'')+Q7.why+' <span class="pts">(+0 — just for fun)</span>';
+  $('r2next').style.display='';
+}
+$('r2next').onclick=function(){
+  sfx('click');
+  if(r2.stage==='concept'){ goto(4); return; }
+  r2.qi++;
+  if(r2.qi<6){ renderR2(); }
+  else { r2.stage='q'; renderR2(); } // renderR2 will switch to concept when qi>=6
+};
+
+/* ======================= S4 BONUS ======================= */
+function renderBonus(){
+  $('bonusMoon').innerHTML=moonSVG(25,'right',130);
+}
+$('bonusBtn').onclick=function(){
+  sfx('points');
+  if(!game.bonusGiven){ game.scoreBonus=10; game.bonusGiven=true; updateTopBar(); toast('+10 bonus points! 🌙'); }
+  $('bonusBtn').disabled=true;
+  setTimeout(function(){ goto(5); }, 420);
+};
+
+/* ======================= S5 RESULTS ======================= */
+function renderResults(){
+  var total=totalScore();
+  var stars=overallStars(total);
+  $('resStars').textContent=starString(stars,3);
+  $('resScore').textContent='Moon Points: '+total+' / 100';
+  var rank;
+  if(total>=85) rank='🌟 Moon Master — you know the whole cycle!';
+  else if(total>=65) rank='🌙 Sky Watcher — great tracking!';
+  else if(total>=40) rank='✨ Rising Crescent — keep watching the Moon!';
+  else rank='🚀 Good start, explorer — tap Play Again and you\'ll grow like a waxing Moon!';
+  $('resRank').textContent=rank;
+  // reference strip
+  var rs=''; for(var i=0;i<8;i++){ rs+=tileHTML(i,true); }
+  $('refStrip').innerHTML=rs;
+  // best score (localStorage optional)
+  var best=null;
+  try{
+    var prev=parseInt(localStorage.getItem('moonBest')||'0',10);
+    if(total>prev){ localStorage.setItem('moonBest', String(total)); best=total; }
+    else best=prev;
+  }catch(e){ best=null; }
+  $('resBest').textContent = (best!=null) ? ('Best so far: '+best+' / 100') : '';
+  sfx('win');
+}
+
+/* ======================= MODALS ======================= */
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+$('wordsBtn').onclick=function(){ sfx('click'); renderKW($('kwGridModal')); openModal('wordsModal'); };
+$('helpBtn').onclick=function(){ sfx('click'); openModal('helpModal'); };
+document.querySelectorAll('[data-close]').forEach(function(b){ b.onclick=function(){ closeModal(b.dataset.close); }; });
+document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('click',function(e){ if(e.target===m) closeModal(m.id); }); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ document.querySelectorAll('.modal.show').forEach(function(m){ closeModal(m.id); }); }});
+
+/* ======================= MUTE ======================= */
+function refreshMute(){ $('muteBtn').textContent = Audio_.muted ? '🔇' : '🔊'; $('muteBtn').setAttribute('aria-label', Audio_.muted?'Unmute':'Mute'); }
+$('muteBtn').onclick=function(){
+  Audio_.muted=!Audio_.muted;
+  try{ localStorage.setItem('moonMute', Audio_.muted?'1':'0'); }catch(e){}
+  refreshMute();
+  if(!Audio_.muted) sfx('click');
+};
+
+/* ======================= START / NAV BUTTONS ======================= */
+$('startBtn').onclick=function(){ try{ if(ac()&&ac().state==='suspended') ac().resume(); }catch(e){} sfx('click'); goto(1); };
+$('againBtn').onclick=function(){
+  sfx('click');
+  game.scoreR1=0; game.scoreR2=0; game.scoreBonus=0; game.bonusGiven=false;
+  $('bonusBtn').disabled=false;
+  updateTopBar();
+  goto(2);
+};
+$('homeBtn').onclick=function(){
+  sfx('click');
+  game.scoreR1=0; game.scoreR2=0; game.scoreBonus=0; game.bonusGiven=false;
+  $('bonusBtn').disabled=false;
+  updateTopBar();
+  goto(0);
+};
+
+/* ======================= STAR FIELD ======================= */
+function buildStarfield(){
+  function make(n, maxSize){
+    var s=[];
+    for(var i=0;i<n;i++){
+      var x=Math.floor(Math.random()*100), y=Math.floor(Math.random()*100);
+      var sz=(Math.random()*maxSize+0.4).toFixed(1);
+      var c=Math.random()<0.18?'#ffd166':'#ffffff';
+      s.push((x)+'vw '+(y)+'vh 0 '+sz+'px '+c);
+    }
+    return s.join(',');
+  }
+  $('stars').style.boxShadow=make(90,1.1);
+  $('stars2').style.boxShadow=make(46,1.6);
+}
+
+/* ======================= INIT ======================= */
+buildDots();
+buildStarfield();
+renderBigMoon();
+renderKW($('kwGrid0'));
+renderKW($('kwGrid5'));
+refreshMute();
+updateTopBar();
+window.addEventListener('resize', function(){ clearTimeout(buildStarfield._t); buildStarfield._t=setTimeout(buildStarfield,300); });
+</script>
+<footer style="max-width:920px;margin:28px auto 32px;padding:18px 26px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:#5b6472;font-weight:700;line-height:1.55;">
+  <div>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial</div>
+  <div>© 2026 Deenish Ramdial · All rights reserved.</div>
+</footer>
+</body>
+</html>

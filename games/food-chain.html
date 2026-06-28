@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Build the Chain — Food Chains &amp; Energy</title>
+<style>
+/* ====================================================================
+   BUILD THE CHAIN — Food Chains & Energy (Grade 5)
+   Single self-contained offline HTML file. No external assets.
+   Duolingo-style house theme (see Grade5_Science_Hub/DESIGN.md).
+   ==================================================================== */
+:root{
+  --green:#58cc02; --green-d:#46a302; --green-l:#d7ffb8; --green-soft:#eefbe0;
+  --blue:#1cb0f6; --blue-d:#1391cf;
+  --yellow:#ffc700; --purple:#a570ff; --pink:#cc348d;
+  --ink:#3c3c3c; --charcoal:#4b4b4b; --graphite:#777; --silver:#afafaf;
+  --line:#e5e5e5; --line-d:#cfcfcf; --white:#fff; --paper:#f7f9fc;
+  --amber:#ff9600; --amber-d:#e07d00; --amber-bg:#fff4e0;
+  --radius:16px; --radius-sm:12px;
+  --head:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito Sans','Varela Round','Fredoka','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);
+  line-height:1.45;letter-spacing:.01em;overflow-x:hidden;min-height:100vh}
+h1,h2,h3,.headline{font-family:var(--head);font-weight:700;margin:0;line-height:1.15;letter-spacing:-.01em}
+.ar{font-family:'Geeza Pro','Noto Naskh Arabic','Damascus','Tahoma',var(--body);direction:rtl;unicode-bidi:isolate}
+/* ---------- Unit tag pill ---------- */
+.unit-pill{background:var(--green-soft);border:2px solid var(--green-l);color:var(--green-d);
+  font-family:var(--head);font-weight:800;padding:5px 13px;border-radius:99px;font-size:.82rem;white-space:nowrap}
+.unit-tag{display:inline-block;background:var(--green-soft);border:2px solid var(--green-l);
+  color:var(--green-d);font-family:var(--head);font-weight:800;padding:6px 18px;border-radius:99px;
+  font-size:.95rem;margin-bottom:14px}
+
+/* ---------- Top bar ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:#fff;border-bottom:2px solid var(--line);
+  display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--head);font-weight:700;color:var(--green);
+  font-size:1.18rem;cursor:pointer;letter-spacing:-.01em}
+.brand .logo{width:36px;height:36px;border-radius:11px;background:var(--green);box-shadow:0 3px 0 var(--green-d);
+  display:grid;place-items:center;font-size:1.15rem}
+.brand .sub{color:var(--graphite);font-size:.78rem;font-weight:700}
+.tb-sp{flex:1}
+.star-counter{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--charcoal);
+  background:var(--green-soft);border:2px solid var(--green-l);padding:7px 13px;border-radius:99px;font-size:.95rem}
+.star-counter .st{font-size:1.1rem;filter:drop-shadow(0 1px 0 #e0a800)}
+.icon-btn{min-width:46px;min-height:46px;border:2px solid var(--line);background:#fff;border-radius:13px;
+  cursor:pointer;font-size:1.2rem;display:grid;place-items:center;color:var(--charcoal);
+  box-shadow:0 3px 0 var(--line);transition:transform .06s,box-shadow .06s,background .12s}
+.icon-btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--line)}
+.icon-btn:hover{background:var(--paper)}
+.icon-btn.on{background:var(--green-soft);border-color:var(--green-l)}
+
+/* ---------- Buttons ---------- */
+.btn{font-family:var(--head);font-weight:700;border:none;border-radius:15px;cursor:pointer;color:#fff;
+  background:var(--green);padding:14px 26px;font-size:1.1rem;letter-spacing:.01em;min-height:54px;
+  box-shadow:0 5px 0 var(--green-d);transition:transform .06s,box-shadow .06s,filter .12s;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.btn:hover{filter:brightness(1.04)}
+.btn:active{transform:translateY(5px);box-shadow:0 0 0 var(--green-d)}
+.btn.blue{background:var(--blue);box-shadow:0 5px 0 var(--blue-d)}
+.btn.blue:active{box-shadow:0 0 0 var(--blue-d)}
+.btn.amber{background:var(--amber);box-shadow:0 5px 0 var(--amber-d)}
+.btn.amber:active{box-shadow:0 0 0 var(--amber-d)}
+.btn.ghost{background:#fff;color:var(--blue);box-shadow:0 4px 0 var(--line),inset 0 0 0 2px var(--line)}
+.btn.ghost:active{box-shadow:inset 0 0 0 2px var(--line)}
+.btn.gray{background:#fff;color:var(--graphite);box-shadow:0 4px 0 var(--line),inset 0 0 0 2px var(--line)}
+.btn.gray:active{box-shadow:inset 0 0 0 2px var(--line)}
+.btn.sm{padding:10px 18px;font-size:.95rem;min-height:46px;box-shadow:0 4px 0 var(--green-d)}
+.btn.sm:active{box-shadow:0 0 0 var(--green-d)}
+.btn:disabled{background:#e5e5e5;color:#a9a9a9;box-shadow:0 4px 0 var(--line-d);cursor:not-allowed;filter:none;transform:none}
+
+/* ---------- Screens / layout ---------- */
+main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
+.screen{display:none}
+.screen.active{display:block;animation:scIn .4s cubic-bezier(.2,.7,.2,1)}
+@keyframes scIn{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+.center{text-align:center}
+.panel{background:#fff;border:2px solid var(--line);border-radius:var(--radius);padding:22px}
+
+/* ---------- S1 Title ---------- */
+.title-hero{position:relative;border-radius:26px;overflow:hidden;text-align:center;
+  padding:46px 22px 40px;margin-top:8px;
+  background:radial-gradient(820px 420px at 50% -30%,#bdf07a 0%,transparent 62%),linear-gradient(170deg,#eafbd6,#ffffff 70%)}
+.title-hero .sun-deco{font-size:4.4rem;display:inline-block;animation:spin 26s linear infinite;filter:drop-shadow(0 6px 16px rgba(255,180,0,.4))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.title-hero h1{font-size:clamp(2.6rem,9vw,4.6rem);color:var(--green);text-shadow:0 3px 0 #fff,0 5px 0 rgba(70,163,2,.25);margin:6px 0 2px}
+.title-hero .ar-sub{font-size:clamp(1.4rem,4.5vw,2rem);color:var(--charcoal);font-weight:800;margin-bottom:2px}
+.title-hero .ar-sub small{display:block;font-size:.62em;color:var(--graphite);font-family:var(--body);direction:ltr}
+.silho{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin:14px 0 18px;font-size:2.1rem;flex-wrap:wrap}
+.silho span{display:inline-block;animation:bob 4s ease-in-out infinite}
+.silho span:nth-child(2){animation-delay:.3s}.silho span:nth-child(3){animation-delay:.6s}
+.silho span:nth-child(4){animation-delay:.9s}.silho span:nth-child(5){animation-delay:1.2s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.title-hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.foot-line{margin-top:20px;color:var(--charcoal);font-weight:800;font-size:1.05rem}
+.sky-line{margin-top:10px;color:var(--graphite);font-weight:700;font-size:.95rem;max-width:560px;margin-left:auto;margin-right:auto}
+.sky-line b{color:var(--blue-d)}
+
+/* ---------- S2 Habitat select ---------- */
+.section-h{text-align:center;margin:6px 0 4px}
+.section-h h2{font-size:clamp(1.8rem,5vw,2.4rem);color:var(--green)}
+.section-h p{color:var(--graphite);font-weight:700;margin:6px 0 0}
+.habitats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:22px}
+.habitat-card{position:relative;border:3px solid var(--line);border-radius:22px;padding:24px 20px 22px;cursor:pointer;
+  background:#fff;box-shadow:0 6px 0 var(--line);text-align:center;transition:transform .1s,box-shadow .1s,border-color .12s;overflow:hidden}
+.habitat-card:hover{border-color:var(--hc,var(--green))}
+.habitat-card:active{transform:translateY(6px);box-shadow:0 0 0 var(--line)}
+.habitat-card .hc-bg{position:absolute;inset:0;opacity:.5;z-index:0}
+.habitat-card>*{position:relative;z-index:1}
+.habitat-card .hc-emoji{font-size:3.4rem;line-height:1}
+.habitat-card h3{font-size:1.5rem;margin:10px 0 2px;color:var(--hc-d,var(--charcoal))}
+.habitat-card .hc-ar{font-size:1.2rem;font-weight:800;color:var(--charcoal)}
+.habitat-card .hc-teaser{color:var(--graphite);font-weight:700;font-size:.95rem;margin-top:8px;min-height:42px}
+.habitat-card .hc-status{margin-top:10px;font-weight:800;font-size:1rem;min-height:26px}
+.habitat-card .hc-status.done{color:var(--green-d)}
+.habitat-card .hc-status .stars{letter-spacing:2px}
+.free-badge{display:inline-block;margin-top:14px;background:var(--purple);color:#fff;font-weight:800;
+  padding:5px 14px;border-radius:99px;font-size:.85rem}
+
+/* ---------- S3 Build the chain ---------- */
+.build-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.build-head h2{font-size:clamp(1.5rem,4.5vw,2rem);color:var(--green)}
+.build-head .round-pill{background:var(--green-soft);border:2px solid var(--green-l);color:var(--green-d);
+  font-weight:800;padding:5px 13px;border-radius:99px;font-size:.85rem}
+.build-tip{color:var(--graphite);font-weight:700;font-size:.95rem;margin:2px 0 14px}
+
+.chain{background:linear-gradient(180deg,#fff,var(--stage,#fbfdff));border:2px solid var(--line);
+  border-radius:20px;padding:18px 14px 22px;margin-bottom:16px}
+.chain-main{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap}
+.arrow{font-size:1.7rem;color:var(--silver);font-weight:900;padding:0 1px;align-self:center;margin-top:-14px}
+.chain-decomp{display:flex;flex-direction:column;align-items:center;margin-top:6px}
+.decomp-link{display:flex;flex-direction:column;align-items:center;color:var(--green-d);font-weight:800;font-size:.78rem;line-height:1}
+.decomp-link .updots{font-size:1.4rem;letter-spacing:2px;color:var(--silver);margin-bottom:1px}
+.decomp-link .rec{display:flex;align-items:center;gap:4px;opacity:.85}
+
+/* slot + card share a footprint */
+.slot{position:relative;width:104px;min-height:128px;border-radius:16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:8px 6px;border:3px dashed var(--silver);background:#fff;
+  cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.slot .slot-num{position:absolute;top:5px;left:8px;font-weight:900;color:var(--silver);font-size:.85rem}
+.slot .slot-hint{display:flex;flex-direction:column;gap:2px;color:var(--silver);font-weight:800;font-size:.82rem;margin-top:6px;text-align:center}
+.slot .slot-hint .sh-ar{font-size:.9rem}
+.slot.glow{animation:slotGlow 1.8s ease-in-out infinite}
+@keyframes slotGlow{0%,100%{border-color:var(--silver);box-shadow:0 0 0 rgba(88,204,2,0)}
+  50%{border-color:var(--green);box-shadow:0 0 16px rgba(88,204,2,.35)}}
+.slot.drop-hover{border-color:var(--green);border-style:solid;background:var(--green-soft);transform:scale(1.04)}
+.slot.filled{border-style:solid;border-color:transparent;background:transparent;padding:0;cursor:default}
+.slot.amber-flash{animation:amberFlash .55s ease}
+@keyframes amberFlash{0%,100%{border-color:var(--silver)}30%,70%{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 0 16px rgba(255,150,0,.4)}}
+
+.card{width:104px;min-height:128px;border-radius:16px;background:#fff;border:3px solid var(--line);
+  box-shadow:0 4px 0 var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:10px 6px;cursor:grab;user-select:none;touch-action:none;text-align:center;
+  transition:transform .1s,box-shadow .1s,border-color .12s}
+.card:hover{border-color:var(--blue)}
+.card:active{cursor:grabbing}
+.card .card-emoji{font-size:2.5rem;line-height:1}
+.card .card-en{font-weight:800;font-size:.92rem;color:var(--charcoal);line-height:1.1}
+.card .card-ar{font-weight:800;font-size:.95rem;color:var(--graphite)}
+.card.selected{border-color:var(--blue);box-shadow:0 0 0 4px rgba(28,176,246,.3),0 4px 0 var(--blue-d);transform:translateY(-3px)}
+.card.in-slot{box-shadow:0 4px 0 var(--line)}
+.card.locked{border-color:var(--green);box-shadow:0 4px 0 var(--green-d);cursor:default;background:#fbfff5}
+.card.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.card.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.card.glow-good{animation:glowGood .7s ease}
+@keyframes glowGood{0%{box-shadow:0 0 0 rgba(88,204,2,0),0 4px 0 var(--green-d)}50%{box-shadow:0 0 22px rgba(88,204,2,.7),0 4px 0 var(--green-d)}100%{box-shadow:0 4px 0 var(--green-d)}}
+.drag-clone{position:fixed;z-index:9999;pointer-events:none;left:0;top:0;opacity:.95;
+  transform:rotate(-3deg) scale(1.06);box-shadow:0 14px 26px rgba(0,0,0,.25)!important;border-color:var(--blue)!important}
+.lock-badge{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--green);
+  color:#fff;display:grid;place-items:center;font-size:.8rem;box-shadow:0 2px 0 var(--green-d);z-index:3}
+
+/* tray */
+.tray-wrap{background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px}
+.tray-label{font-weight:800;color:var(--charcoal);font-size:.92rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tray-label .ar{font-size:1rem}
+#tray{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;min-height:130px;align-items:center}
+#tray.empty::after{content:"All cards placed — press Check!";color:var(--silver);font-weight:800}
+.build-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+
+/* keyword chips */
+.kw-strip{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:4px 0 14px}
+.kw-chip{background:var(--green-soft);border:2px solid var(--green-l);color:var(--green-d);font-weight:800;
+  padding:6px 13px;border-radius:99px;font-size:.85rem;cursor:pointer}
+.kw-chip .ar{font-size:.95rem;margin-left:4px}
+.kw-chip:hover{background:var(--green-l)}
+
+/* ---------- toast / banner feedback ---------- */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(40px);z-index:200;
+  max-width:min(560px,92vw);background:#fff;border:3px solid var(--line);border-radius:16px;
+  padding:14px 18px;font-weight:800;color:var(--charcoal);box-shadow:0 12px 30px rgba(0,0,0,.18);
+  display:flex;align-items:center;gap:11px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .ti{font-size:1.5rem;flex-shrink:0}
+#toast.good{border-color:var(--green);background:var(--green-soft)}
+#toast.warn{border-color:var(--amber);background:var(--amber-bg)}
+#toast.info{border-color:var(--blue);background:#e8f6fe}
+#toast .tx{font-size:.98rem;line-height:1.3}
+
+/* ---------- S4 energy flow ---------- */
+.ef-wrap{text-align:center}
+.ef-stage{position:relative;background:linear-gradient(180deg,#fffdf2,#fff);border:2px solid var(--line);
+  border-radius:20px;padding:34px 14px 26px;margin:10px 0 14px;overflow:hidden}
+.ef-chain{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;position:relative;z-index:2}
+.ef-seg{display:flex;align-items:center;gap:8px}
+.ef-arrow{font-size:1.7rem;color:#d8b24a;font-weight:900}
+.ef-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
+.edot{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6c2,#ffc700 60%,#ff9d00);
+  box-shadow:0 0 10px rgba(255,199,0,.9);will-change:transform,opacity}
+.node{width:96px;min-height:118px;border-radius:16px;background:#fff;border:3px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 5px;text-align:center}
+.node .node-emoji{font-size:2.3rem;line-height:1}
+.node .node-en{font-weight:800;font-size:.86rem;color:var(--charcoal);line-height:1.1}
+.node .node-ar{font-weight:800;font-size:.9rem;color:var(--graphite)}
+.node.dim{opacity:.28;filter:grayscale(.6)}
+.node.removed{opacity:0;transform:scale(.4);transition:opacity .5s,transform .5s}
+.node.glow-d{border-color:var(--green);box-shadow:0 0 20px rgba(88,204,2,.6);animation:dpulse 1.4s ease-in-out infinite}
+@keyframes dpulse{0%,100%{box-shadow:0 0 12px rgba(88,204,2,.4)}50%{box-shadow:0 0 26px rgba(88,204,2,.75)}}
+.ef-decomp{display:flex;flex-direction:column;align-items:center;margin-top:10px;position:relative;z-index:2}
+.ef-decomp .updots{font-size:1.5rem;color:#7bbf3a;letter-spacing:3px}
+.ef-cap{min-height:58px;font-weight:800;color:var(--charcoal);font-size:1.08rem;max-width:680px;margin:6px auto 0;transition:opacity .3s}
+.ef-cap b{color:var(--amber-d)}
+.reduced-labels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;font-weight:800;color:var(--amber-d)}
+.reduced-labels span{background:var(--amber-bg);border:2px solid var(--amber);border-radius:10px;padding:5px 11px}
+
+/* ---------- S5 break a link ---------- */
+.break-q{background:#fff;border:2px solid var(--line);border-radius:18px;padding:18px;margin-top:14px;text-align:center}
+.break-q .conseq{font-weight:800;color:var(--charcoal);font-size:1.12rem;margin:4px auto 14px;max-width:620px;min-height:30px}
+.break-q .ask{font-weight:800;color:var(--blue-d);margin-bottom:12px}
+.break-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.node.tappable{cursor:pointer;animation:tapWiggle 2.2s ease-in-out infinite}
+.node.tappable:hover{border-color:var(--amber);box-shadow:0 0 16px rgba(255,150,0,.4)}
+@keyframes tapWiggle{0%,92%,100%{transform:none}96%{transform:translateY(-4px)}}
+.tap-hint{color:var(--graphite);font-weight:800;font-size:.95rem;margin-top:6px}
+
+/* ---------- S6 result ---------- */
+.result-stars{font-size:2.6rem;letter-spacing:8px;margin:8px 0;min-height:50px}
+.star-pop{display:inline-block;animation:starPop .6s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes starPop{0%{transform:scale(0) rotate(-40deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.trophy-strip{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin:14px 0;
+  background:linear-gradient(180deg,#fffdf2,#fff);border:2px solid var(--green-l);border-radius:16px;padding:14px 10px}
+.recap{background:var(--green-soft);border:2px solid var(--green-l);border-radius:14px;padding:14px;
+  font-weight:800;color:var(--green-d);margin:14px auto;max-width:640px;font-size:1.02rem}
+.star-rule{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+.star-rule .sr{background:#fff;border:2px solid var(--line);border-radius:12px;padding:7px 12px;font-weight:800;font-size:.85rem;color:var(--graphite)}
+.star-rule .sr.got{border-color:var(--green);color:var(--green-d);background:var(--green-soft)}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
+/* mini chain (trophy / final) */
+.mini-node{width:54px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.mini-node .me{font-size:1.7rem}
+.mini-node .mn{font-size:.6rem;font-weight:800;color:var(--graphite);text-align:center;line-height:1}
+.mini-arrow{color:var(--silver);font-weight:900;font-size:1rem}
+
+/* ---------- S7 final ---------- */
+.rank-badge{font-family:var(--head);font-weight:700;font-size:clamp(1.6rem,5vw,2.4rem);margin:10px 0 4px}
+.rank-msg{color:var(--charcoal);font-weight:800;font-size:1.05rem;margin-bottom:6px}
+.final-chains{display:flex;flex-direction:column;gap:14px;margin:18px 0;text-align:left}
+.final-chain{background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px}
+.final-chain .fc-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.final-chain .fc-head .fc-name{font-weight:800;color:var(--charcoal)}
+.final-chain .fc-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.close-line{margin-top:16px;color:var(--blue-d);font-weight:800}
+
+/* ---------- overlay ---------- */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(20,30,20,.55);display:none;
+  align-items:center;justify-content:center;padding:18px;animation:fadeIn .2s}
+.overlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:22px;max-width:520px;width:100%;padding:26px 24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.modal h2{color:var(--green);font-size:1.7rem;margin-bottom:14px}
+.howto-list{list-style:none;padding:0;margin:0 0 18px;counter-reset:h}
+.howto-list li{counter-increment:h;display:flex;gap:13px;align-items:flex-start;margin:14px 0;font-weight:700;color:var(--charcoal);font-size:1.02rem}
+.howto-list li::before{content:counter(h);flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  background:var(--green);color:#fff;display:grid;place-items:center;font-family:var(--head);font-weight:700;box-shadow:0 3px 0 var(--green-d)}
+.howto-list li b{color:var(--green-d)}
+.kw-table{display:flex;flex-direction:column;gap:10px;margin:6px 0 18px}
+.kw-row{display:flex;align-items:center;gap:12px;border:2px solid var(--line);border-radius:14px;padding:11px 14px}
+.kw-row .kw-en{font-weight:800;color:var(--green-d);min-width:96px}
+.kw-row .kw-ar{font-weight:800;color:var(--charcoal);font-size:1.15rem;min-width:78px}
+.kw-row .kw-say{color:var(--silver);font-style:italic;font-size:.85rem;min-width:96px}
+.kw-row .kw-kid{color:var(--graphite);font-weight:700;font-size:.88rem;flex:1;min-width:140px}
+.modal .modal-close{margin-top:8px;width:100%}
+
+/* ---------- confetti ---------- */
+.confetti{position:fixed;top:-12px;z-index:250;pointer-events:none;border-radius:2px}
+
+/* footer */
+.foot-note{text-align:center;color:var(--silver);font-weight:700;font-size:.8rem;margin-top:30px}
+
+@media (max-width:560px){
+  .slot,.card{width:88px;min-height:114px}
+  .card .card-emoji{font-size:2.1rem}
+  .node{width:84px;min-height:106px}
+  .arrow{font-size:1.3rem}
+  main{padding:14px 10px 90px}
+}
+@media (prefers-reduced-motion:reduce){
+  .slot.glow,.silho span,.title-hero .sun-deco,.node.tappable,.node.glow-d,.card.pop,.card.shake,.star-pop{animation:none!important}
+  .screen.active{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- =================== TOP BAR =================== -->
+<header class="topbar">
+  <div class="brand" id="brandHome" title="Restart / Home">
+    <span class="logo">🔗</span>
+    <span>Build the Chain</span>
+  </div>
+  <span class="unit-pill">🐢 Grade 5 · Unit 3 · Food Chains &amp; Energy</span>
+  <div class="tb-sp"></div>
+  <div class="star-counter" id="starCounter" aria-live="polite"><span class="st">⭐</span><span id="starTotal">0 / 9</span></div>
+  <button class="icon-btn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+  <button class="icon-btn" id="kwBtn" title="Key Words" aria-label="Key Words">📖</button>
+  <button class="icon-btn" id="helpBtn" title="How to Play" aria-label="How to play">❓</button>
+  <button class="icon-btn on" id="soundBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+</header>
+
+<main>
+  <!-- =================== S1 TITLE =================== -->
+  <section class="screen active" id="S1">
+    <div class="title-hero">
+      <div class="unit-tag">🐢 Grade 5 · Unit 3 · Food Chains &amp; Energy</div>
+      <div class="sun-deco" aria-hidden="true">☀️</div>
+      <h1>Build the Chain</h1>
+      <div class="silho" aria-hidden="true"><span>🌻</span><span>🐛</span><span>🐦</span><span>🦅</span><span>🪱</span></div>
+      <div class="cta">
+        <button class="btn" id="startBtn">Start ▸</button>
+        <button class="btn ghost" id="howtoBtn">How to Play</button>
+      </div>
+      <div class="foot-line">Energy starts at the Sun. Let's follow it!</div>
+      <div class="sky-line"><b>Many cultures, one sky</b> — everyone everywhere shares the same Sun that powers every food chain.</div>
+    </div>
+    <div class="foot-note">Grade 5 Science · plays offline, no internet needed</div>
+  </section>
+
+  <!-- =================== S2 HABITAT SELECT =================== -->
+  <section class="screen" id="S2">
+    <div class="section-h">
+      <h2 id="s2Title">Pick a habitat to build</h2>
+      <p id="s2Sub">Build the energy chain in all three to become an Ecosystem Expert!</p>
+    </div>
+    <div class="habitats" id="habitatList"></div>
+  </section>
+
+  <!-- =================== S3 BUILD =================== -->
+  <section class="screen" id="S3">
+    <div class="build-head">
+      <h2 id="buildTitle">Build the chain</h2>
+      <span class="round-pill" id="roundPill"></span>
+    </div>
+    <div class="build-tip">Drag a card into a glowing slot — or tap a card, then tap a slot.</div>
+    <div class="kw-strip" id="kwStrip"></div>
+    <div class="chain" id="chainArea"></div>
+    <div class="tray-wrap">
+      <div class="tray-label">🎴 Card tray</div>
+      <div id="tray"></div>
+    </div>
+    <div class="build-actions">
+      <button class="btn gray sm" id="resetBtn">↺ Reset</button>
+      <button class="btn" id="checkBtn" disabled>Fill all 6 slots to check</button>
+    </div>
+  </section>
+
+  <!-- =================== S4 ENERGY FLOW =================== -->
+  <section class="screen" id="S4">
+    <div class="section-h"><h2>⚡ Energy Flow</h2></div>
+    <div class="ef-wrap">
+      <div class="ef-stage" id="efStage">
+        <div class="ef-dots" id="efDots"></div>
+        <div class="ef-chain" id="efChain"></div>
+        <div class="ef-decomp" id="efDecomp"></div>
+      </div>
+      <div class="ef-cap" id="efCap" aria-live="polite"></div>
+      <div id="efReduced"></div>
+      <button class="btn" id="efContinue">Continue ▸</button>
+    </div>
+  </section>
+
+  <!-- =================== S5 BREAK A LINK =================== -->
+  <section class="screen" id="S5">
+    <div class="section-h">
+      <h2>🔗 Break a Link</h2>
+      <p>Now, REMOVE one link. What happens?</p>
+    </div>
+    <div class="ef-stage" id="breakStage" style="padding-top:24px">
+      <div class="ef-chain" id="breakChain"></div>
+      <div class="ef-decomp" id="breakDecomp"></div>
+    </div>
+    <div class="tap-hint center" id="breakHint">👆 Tap any one card to take it out of the chain.</div>
+    <div class="break-q" id="breakQ" style="display:none">
+      <div class="conseq" id="breakConseq" aria-live="polite"></div>
+      <div class="ask">Was the rest of the chain helped or hurt?</div>
+      <div class="break-btns">
+        <button class="btn amber" data-ans="HURT">Hurt</button>
+        <button class="btn blue" data-ans="BOTH">Helped &amp; Hurt</button>
+      </div>
+      <div id="breakResult" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- =================== S6 ROUND RESULT =================== -->
+  <section class="screen" id="S6">
+    <div class="section-h"><h2 id="resultTitle">Round complete!</h2></div>
+    <div class="center">
+      <div class="result-stars" id="resultStars"></div>
+      <div class="star-rule" id="starRule"></div>
+      <div class="trophy-strip" id="trophyStrip"></div>
+      <div class="recap" id="recapLine"></div>
+      <div class="result-actions" id="resultActions"></div>
+    </div>
+  </section>
+
+  <!-- =================== S7 FINAL =================== -->
+  <section class="screen" id="S7">
+    <div class="section-h"><h2 id="finalTitle">You finished!</h2></div>
+    <div class="center">
+      <div class="rank-badge" id="rankBadge"></div>
+      <div class="rank-msg" id="rankMsg"></div>
+      <div class="final-chains" id="finalChains"></div>
+      <div class="result-actions">
+        <button class="btn" id="playAgainBtn">↺ Play Again</button>
+        <button class="btn ghost" id="freeBuildBtn">🧩 Free Build</button>
+      </div>
+      <div class="close-line">Every chain, in every habitat, runs on energy from the same Sun.</div>
+    </div>
+  </section>
+</main>
+
+<!-- =================== TOAST =================== -->
+<div id="toast" role="status" aria-live="polite"><span class="ti"></span><span class="tx"></span></div>
+
+<!-- =================== HOW TO PLAY OVERLAY =================== -->
+<div class="overlay" id="howtoOverlay">
+  <div class="modal">
+    <h2>How to Play</h2>
+    <ol class="howto-list">
+      <li><b>Drag</b> cards into the glowing slots: Sun first, then the plant, then who eats who.</li>
+      <li>Build the <b>whole chain</b>, then watch the <b>energy</b> flow — and shrink — at each step.</li>
+      <li><b>Remove one link</b> and see what happens. Earn up to <b>3 stars</b> per habitat!</li>
+    </ol>
+    <button class="btn modal-close" data-close="howtoOverlay">Got it! ▸</button>
+  </div>
+</div>
+
+<!-- =================== KEY WORDS OVERLAY =================== -->
+<div class="overlay" id="kwOverlay">
+  <div class="modal">
+    <h2>Key Words</h2>
+    <div class="kw-table" id="kwTable"></div>
+    <button class="btn blue modal-close" data-close="kwOverlay">Close ▸</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   DATA
+   ============================================================ */
+const SLOTS=[
+  {n:1,role:'SUN',label_en:'Sun'},
+  {n:2,role:'PRODUCER',label_en:'Producer'},
+  {n:3,role:'CONSUMER1',label_en:'Consumer'},
+  {n:4,role:'CONSUMER2',label_en:'Consumer'},
+  {n:5,role:'PREDATOR',label_en:'Top Predator'},
+  {n:6,role:'DECOMPOSER',label_en:'Decomposer'}
+];
+const ROLE_ORDER=['SUN','PRODUCER','CONSUMER1','CONSUMER2','PREDATOR']; // main chain l-to-r
+
+const HABITATS=[
+  {
+    id:'garden',name_en:'Garden',emoji:'🌱',
+    teaser:'A bird hunts among the flowers.',
+    hc:'#58cc02',hcd:'#46a302',bg:'radial-gradient(circle at 30% 20%,#d7ffb8,transparent 60%),linear-gradient(160deg,#eefbe0,#fff)',
+    stage:'#f4fce9',
+    recap:'Sun → flower → caterpillar → sparrow → hawk. Energy flowed and shrank at every step!',
+    decompCap:'Decomposers return nutrients to the soil so producers can grow again.',
+    cards:[
+      {id:'g1',label_en:'Sun',role:'SUN',eats:'',emoji:'☀️',factline:'All energy in a food chain starts at the Sun.'},
+      {id:'g2',label_en:'Plant',role:'PRODUCER',eats:'sunlight',emoji:'🌻',factline:'Producers make their own food from sunlight.'},
+      {id:'g3',label_en:'Caterpillar',role:'CONSUMER1',eats:'plant',emoji:'🐛',factline:'A primary consumer eats plants.'},
+      {id:'g4',label_en:'Sparrow',role:'CONSUMER2',eats:'caterpillar',emoji:'🐦',factline:'This consumer eats the caterpillar.'},
+      {id:'g5',label_en:'Hawk',role:'PREDATOR',eats:'sparrow',emoji:'🦅',factline:'The top predator has no natural hunter in this chain.'},
+      {id:'g6',label_en:'Earthworm',role:'DECOMPOSER',eats:'dead matter',emoji:'🪱',factline:'Earthworms help break down dead matter and enrich the soil.'}
+    ],
+    distractor:{id:'gd',label_en:'Car',role:'NONE',eats:'',emoji:'🚗',factline:'A car is not alive — it belongs to no food chain.'},
+    breaks:{
+      SUN:{text:"No sunlight! The plant can't make food, so the whole chain starves.",ans:'HURT'},
+      PRODUCER:{text:"No plants! The caterpillar has nothing to eat — the chain breaks at the bottom.",ans:'HURT'},
+      CONSUMER1:{text:"The sparrow loses its food, but the plant grows more freely.",ans:'BOTH'},
+      CONSUMER2:{text:"The hawk goes hungry, but caterpillars increase and eat more plants.",ans:'BOTH'},
+      PREDATOR:{text:"Sparrows increase with no predator — they may eat too many caterpillars.",ans:'BOTH'},
+      DECOMPOSER:{text:"Dead leaves and animals pile up; the soil gets fewer nutrients over time.",ans:'HURT'}
+    }
+  },
+  {
+    id:'ocean',name_en:'Ocean',emoji:'🌊',
+    teaser:'A shark rules the open water.',
+    hc:'#1cb0f6',hcd:'#1391cf',bg:'radial-gradient(circle at 30% 20%,#bfe9ff,transparent 60%),linear-gradient(160deg,#e6f6ff,#fff)',
+    stage:'#eef8ff',
+    recap:'Sun → algae → small fish → big fish → shark. Energy flowed and shrank at every step!',
+    decompCap:'Decomposers return nutrients to the water and seabed so producers can grow again.',
+    cards:[
+      {id:'o1',label_en:'Sun',role:'SUN',eats:'',emoji:'☀️',factline:"Sunlight reaches the ocean's surface."},
+      {id:'o2',label_en:'Algae',role:'PRODUCER',eats:'sunlight',emoji:'🌿',factline:"Tiny algae are the ocean's producers — they make food from light."},
+      {id:'o3',label_en:'Small Fish',role:'CONSUMER1',eats:'algae',emoji:'🐟',factline:'Small fish eat algae.'},
+      {id:'o4',label_en:'Big Fish',role:'CONSUMER2',eats:'small fish',emoji:'🐠',factline:'Bigger fish eat smaller fish.'},
+      {id:'o5',label_en:'Shark',role:'PREDATOR',eats:'big fish',emoji:'🦈',factline:"The shark is the ocean's top predator."},
+      {id:'o6',label_en:'Crab',role:'DECOMPOSER',eats:'dead matter',emoji:'🦀',factline:'Crabs clean the seabed, helping recycle dead matter.'}
+    ],
+    distractor:{id:'od',label_en:'Bottle',role:'NONE',eats:'',emoji:'🧴',factline:'Trash is not food — and it harms real chains.'},
+    breaks:{
+      SUN:{text:"Without sunlight, algae can't grow — the ocean chain loses its base.",ans:'HURT'},
+      PRODUCER:{text:"No algae means small fish starve; the whole chain weakens.",ans:'HURT'},
+      CONSUMER1:{text:"Big fish lose food, but algae bloom without grazers.",ans:'BOTH'},
+      CONSUMER2:{text:"The shark goes hungry; small fish multiply.",ans:'BOTH'},
+      PREDATOR:{text:"Big fish increase with no top predator — the balance is lost.",ans:'BOTH'},
+      DECOMPOSER:{text:"Dead matter builds up on the seabed; nutrients aren't recycled.",ans:'HURT'}
+    }
+  },
+  {
+    id:'forest',name_en:'Forest',emoji:'🌳',
+    teaser:'An eagle watches from the treetops.',
+    hc:'#2e9e2e',hcd:'#1f7a1f',bg:'radial-gradient(circle at 30% 20%,#c9eec0,transparent 60%),linear-gradient(160deg,#e8f6e2,#fff)',
+    stage:'#f1f9ee',
+    recap:'Sun → oak tree → rabbit → fox → eagle. Energy flowed and shrank at every step!',
+    decompCap:'Decomposers return nutrients to the soil so producers can grow again.',
+    cards:[
+      {id:'f1',label_en:'Sun',role:'SUN',eats:'',emoji:'☀️',factline:'Energy enters the forest from the Sun.'},
+      {id:'f2',label_en:'Oak Tree',role:'PRODUCER',eats:'sunlight',emoji:'🌳',factline:'Trees are producers — they make food from light.'},
+      {id:'f3',label_en:'Rabbit',role:'CONSUMER1',eats:'leaves',emoji:'🐰',factline:'Rabbits eat leaves and plants.'},
+      {id:'f4',label_en:'Fox',role:'CONSUMER2',eats:'rabbit',emoji:'🦊',factline:'The fox eats the rabbit.'},
+      {id:'f5',label_en:'Eagle',role:'PREDATOR',eats:'fox',emoji:'🦅',factline:'The eagle is a top predator — it can hunt both foxes and rabbits.'},
+      {id:'f6',label_en:'Mushroom',role:'DECOMPOSER',eats:'dead matter',emoji:'🍄',factline:'Fungi break down dead plants and animals into soil nutrients.'}
+    ],
+    distractor:{id:'fd',label_en:'Rock',role:'NONE',eats:'',emoji:'🪨',factline:'A rock is non-living — not part of any food chain.'},
+    breaks:{
+      SUN:{text:"No sunlight, no tree growth — the forest chain collapses at the start.",ans:'HURT'},
+      PRODUCER:{text:"Rabbits lose their food; the chain breaks at the producer.",ans:'HURT'},
+      CONSUMER1:{text:"The fox goes hungry, but trees and plants grow more.",ans:'BOTH'},
+      CONSUMER2:{text:"The eagle loses prey; rabbits increase and eat more plants.",ans:'BOTH'},
+      PREDATOR:{text:"Foxes increase with no top predator — they hunt more rabbits, so rabbit numbers fall.",ans:'BOTH'},
+      DECOMPOSER:{text:"Dead leaves pile up; the soil loses nutrients over time.",ans:'HURT'}
+    }
+  }
+];
+
+const KEY_WORDS=[
+  {en:'Energy',kid:'The "go power" that makes living things move, grow, and stay warm.'},
+  {en:'Sun',kid:"Where every food chain's energy begins."},
+  {en:'Producer',kid:'A living thing that makes its own food from sunlight.'},
+  {en:'Consumer',kid:'A living thing that eats other living things.'},
+  {en:'Decomposer',kid:'Breaks down dead things and returns nutrients to soil/water.'},
+  {en:'Predator',kid:'An animal that hunts and eats other animals.'},
+  {en:'Prey',kid:'The animal that gets hunted and eaten.'},
+  {en:'Food chain',kid:'The path energy takes as one living thing eats another.'}
+];
+
+const ROLE_FEEDBACK={
+  SUN:'Yes! Every food chain starts at the Sun.',
+  PRODUCER:'Yes! Producers make their own food.',
+  CONSUMER1:'Right! A consumer eats other living things.',
+  CONSUMER2:'Right! A consumer eats other living things.',
+  PREDATOR:'Yes! The top predator has no natural hunter.',
+  DECOMPOSER:'Nice! Decomposers recycle dead matter.'
+};
+const ROLE_NICE={SUN:'the Sun',PRODUCER:'a producer',CONSUMER1:'a consumer',CONSUMER2:'a consumer',PREDATOR:'a top predator',DECOMPOSER:'a decomposer',NONE:'non-living'};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let muted=false;
+const STORE_KEY='btc_progress_v1';
+let progress={garden:null,ocean:null,forest:null}; // null=not done, else {stars}
+
+const state={
+  habIdx:null,        // index into HABITATS
+  freeBuild:false,
+  placements:{},      // slotN -> cardId
+  locked:new Set(),   // slotN locked (correct)
+  wrongCount:0,
+  roundCards:[],      // cards available this round (6 + maybe distractor)
+  trayOrder:[],       // stable shuffle of card ids
+  removedRole:null,   // S5 removed card role
+  star3:false,        // S5 best answer earned
+  includeDistractor:false
+};
+let selectedCardId=null;
+let drag=null;
+let justDragged=false;
+
+/* ============================================================
+   AUDIO (WebAudio beeps only)
+   ============================================================ */
+let actx=null;
+function ac(){ if(!actx){ try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){actx=null;} } return actx; }
+function beep(freq,dur,type,t0,vol){
+  if(muted) return;
+  const c=ac(); if(!c) return;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  const start=c.currentTime+(t0||0);
+  o.connect(g); g.connect(c.destination);
+  g.gain.setValueAtTime(0.0001,start);
+  g.gain.exponentialRampToValueAtTime(vol||0.16,start+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+  o.start(start); o.stop(start+dur+0.02);
+}
+function sfx(name){
+  if(muted) return;
+  if(!ac()) return;
+  if(name==='snap'){ beep(520,0.07,'triangle',0,0.12); }
+  else if(name==='ding'){ beep(660,0.1,'sine',0,0.15); beep(990,0.16,'sine',0.07,0.13); }
+  else if(name==='buzz'){ beep(170,0.16,'square',0,0.12); beep(150,0.16,'square',0.04,0.1); }
+  else if(name==='perfect'){ beep(523,0.14,'sine',0,0.16); beep(659,0.14,'sine',0.13,0.16); beep(784,0.26,'sine',0.26,0.17); beep(1047,0.3,'sine',0.42,0.14); }
+  else if(name==='soft'){ beep(440,0.18,'sine',0,0.12); }
+  else if(name==='select'){ beep(740,0.06,'sine',0,0.1); }
+  else if(name==='star'){ beep(880,0.1,'sine',0,0.14); beep(1175,0.18,'sine',0.09,0.13); }
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $=id=>document.getElementById(id);
+function hab(){ return HABITATS[state.habIdx]; }
+function cardById(id){
+  const h=hab();
+  let c=h.cards.find(x=>x.id===id);
+  if(!c && h.distractor.id===id) c=h.distractor;
+  return c;
+}
+function slotByN(n){ return SLOTS.find(s=>s.n===n); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function chainCardOfRole(role){ return hab().cards.find(c=>c.role===role); }
+function totalStars(){ return ['garden','ocean','forest'].reduce((s,k)=>s+(progress[k]?progress[k].stars:0),0); }
+function completedCount(){ return ['garden','ocean','forest'].filter(k=>progress[k]).length; }
+
+function saveProgress(){ try{localStorage.setItem(STORE_KEY,JSON.stringify(progress));}catch(e){} }
+function loadProgress(){ try{const r=localStorage.getItem(STORE_KEY); if(r) progress=JSON.parse(r);}catch(e){} }
+
+function updateStarCounter(){ $('starTotal').textContent=totalStars()+' / 9'; }
+
+/* ---- screen switching ---- */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  state.currentScreen=id;
+  window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});
+}
+
+/* ---- toast ---- */
+let toastTimer=null;
+function toast(text,type,ms){
+  const t=$('toast');
+  t.className='show '+(type||'info');
+  const icon=type==='good'?'✅':type==='warn'?'⚠️':type==='star'?'⭐':'💡';
+  t.querySelector('.ti').textContent=icon;
+  t.querySelector('.tx').innerHTML=text;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className='';}, ms||2600);
+}
+
+/* ============================================================
+   S2 — HABITAT SELECT
+   ============================================================ */
+function renderHabitatSelect(){
+  $('s2Title').textContent=state.freeBuild?'Free Build — pick any habitat':'Pick a habitat to build';
+  $('s2Sub').textContent=state.freeBuild?'Explore freely. No stars are counted here — just have fun!':'Build the energy chain in all three to become an Ecosystem Expert!';
+  const list=$('habitatList'); list.innerHTML='';
+  HABITATS.forEach((h,i)=>{
+    const done=progress[h.id];
+    const card=document.createElement('div');
+    card.className='habitat-card';
+    card.style.setProperty('--hc',h.hc);
+    card.style.setProperty('--hc-d',h.hcd);
+    card.setAttribute('role','button'); card.tabIndex=0;
+    card.setAttribute('aria-label',h.name_en+' habitat. '+h.teaser+(done?'. Completed, '+done.stars+' of 3 stars.':''));
+    let status;
+    if(state.freeBuild){ status='<span class="free-badge">🧩 Free build</span>'; }
+    else if(done){ status='<div class="hc-status done">✓ <span class="stars">'+'⭐'.repeat(done.stars)+'☆'.repeat(3-done.stars)+'</span></div>'; }
+    else { status='<div class="hc-status">Tap to start ▸</div>'; }
+    card.innerHTML=
+      '<div class="hc-bg" style="background:'+h.bg+'"></div>'+
+      '<div class="hc-emoji">'+h.emoji+'</div>'+
+      '<h3>'+h.name_en+'</h3>'+
+      '<div class="hc-teaser">'+h.teaser+'</div>'+
+      status;
+    const go=()=>{ sfx('select'); startHabitat(i); };
+    card.addEventListener('click',go);
+    card.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); }});
+    list.appendChild(card);
+  });
+}
+
+/* ============================================================
+   S3 — BUILD THE CHAIN
+   ============================================================ */
+function startHabitat(i){
+  state.habIdx=i;
+  state.placements={};
+  state.locked=new Set();
+  state.wrongCount=0;
+  state.removedRole=null;
+  state.star3=false;
+  selectedCardId=null;
+  // distractor on 2nd & 3rd habitat (rounds), and always in free build for challenge
+  state.includeDistractor = state.freeBuild ? true : (completedCount()>=1);
+  const h=hab();
+  state.roundCards = state.includeDistractor ? h.cards.concat([h.distractor]) : h.cards.slice();
+  state.trayOrder = shuffle(state.roundCards.map(c=>c.id));
+  document.documentElement.style.setProperty('--stage',h.stage);
+  renderBuild();
+  show('S3');
+}
+
+function renderKwStrip(){
+  const strip=$('kwStrip'); strip.innerHTML='';
+  const picks=['Producer','Consumer','Predator','Decomposer','Energy'];
+  picks.forEach(p=>{
+    const c=document.createElement('button');
+    c.className='kw-chip'; c.type='button';
+    c.textContent=p;
+    c.addEventListener('click',openKw);
+    strip.appendChild(c);
+  });
+}
+
+function buildCardEl(c,inSlot,slotN){
+  const el=document.createElement('div');
+  el.className='card'+(inSlot?' in-slot':'')+(slotN&&state.locked.has(slotN)?' locked':'');
+  el.dataset.card=c.id;
+  el.tabIndex=0;
+  el.setAttribute('role','button');
+  el.setAttribute('aria-label',c.label_en+', role '+ROLE_NICE[c.role]+(inSlot?(state.locked.has(slotN)?', locked in place':', placed in slot '+slotN):', in tray. Pick up to place.'));
+  el.innerHTML='<div class="card-emoji" aria-hidden="true">'+c.emoji+'</div>'+
+    '<div class="card-en">'+c.label_en+'</div>'+
+    (state.locked.has(slotN)?'<div class="lock-badge" aria-hidden="true">✓</div>':'');
+  if(!state.locked.has(slotN)) attachCardPointer(el,c.id,inSlot?slotN:null);
+  if(selectedCardId===c.id) el.classList.add('selected');
+  return el;
+}
+
+function buildSlotEl(s){
+  const wrap=document.createElement('div');
+  const cardId=state.placements[s.n];
+  if(cardId){
+    const slotBox=document.createElement('div');
+    slotBox.className='slot filled'+(state.locked.has(s.n)?' locked':'');
+    slotBox.dataset.slot=s.n;
+    slotBox.appendChild(buildCardEl(cardById(cardId),true,s.n));
+    attachSlotHandlers(slotBox,s.n);
+    return slotBox;
+  }
+  const slot=document.createElement('div');
+  slot.className='slot glow';
+  slot.dataset.slot=s.n;
+  slot.tabIndex=0;
+  slot.setAttribute('role','button');
+  slot.setAttribute('aria-label','Slot '+s.n+', '+s.label_en+', empty. '+(selectedCardId?'Tap to place the selected card.':'Tap a card first, then tap here.'));
+  slot.innerHTML='<div class="slot-num">'+s.n+'</div>'+
+    '<div class="slot-hint"><span class="sh-en">'+s.label_en+'</span></div>';
+  attachSlotHandlers(slot,s.n);
+  return slot;
+}
+
+function renderBuild(){
+  const h=hab();
+  $('buildTitle').textContent='Build the '+h.name_en+' chain';
+  const roundNo=state.freeBuild?'Free Build':('Habitat '+(completedCount()+ (progress[h.id]?0:1)));
+  $('roundPill').textContent=state.freeBuild?'🧩 Free Build':'Build the energy chain';
+  renderKwStrip();
+
+  const area=$('chainArea'); area.innerHTML='';
+  const mainRow=document.createElement('div'); mainRow.className='chain-main';
+  ROLE_ORDER.forEach((role,idx)=>{
+    const s=SLOTS.find(x=>x.role===role);
+    mainRow.appendChild(buildSlotEl(s));
+    if(idx<ROLE_ORDER.length-1){
+      const ar=document.createElement('div'); ar.className='arrow'; ar.textContent='→'; ar.setAttribute('aria-hidden','true');
+      mainRow.appendChild(ar);
+    }
+  });
+  area.appendChild(mainRow);
+
+  const dwrap=document.createElement('div'); dwrap.className='chain-decomp';
+  dwrap.innerHTML='<div class="decomp-link"><span class="updots" aria-hidden="true">⋮</span><span class="rec">♻ recycles to soil/water</span></div>';
+  dwrap.appendChild(buildSlotEl(SLOTS.find(x=>x.role==='DECOMPOSER')));
+  area.appendChild(dwrap);
+
+  // tray
+  const tray=$('tray'); tray.innerHTML='';
+  const placedIds=new Set(Object.values(state.placements));
+  const trayCards=state.trayOrder.filter(id=>!placedIds.has(id));
+  trayCards.forEach(id=>tray.appendChild(buildCardEl(cardById(id),false,null)));
+  tray.classList.toggle('empty',trayCards.length===0);
+
+  updateCheckBtn();
+}
+
+function updateCheckBtn(){
+  const filled=SLOTS.every(s=>state.placements[s.n]);
+  const btn=$('checkBtn');
+  btn.disabled=!filled;
+  btn.textContent=filled?'Check ✓':'Fill all 6 slots to check';
+}
+
+/* ---- placement logic ---- */
+function attemptPlace(cardId,slotN){
+  if(state.locked.has(slotN)) return;            // locked slot can't change
+  const occupant=state.placements[slotN];
+  if(occupant && state.locked.has(slotN)) return;
+  // remove card from any previous slot
+  for(const k in state.placements){ if(state.placements[k]===cardId) delete state.placements[k]; }
+  // displaced occupant returns to tray (unless it's the same card)
+  if(occupant && occupant!==cardId){ /* it just goes back to tray automatically by render */ }
+  state.placements[slotN]=cardId;
+  sfx('snap');
+  renderBuild();
+  // pop animation on the freshly placed card
+  const el=document.querySelector('.slot[data-slot="'+slotN+'"] .card');
+  if(el && !reduceMotion){ el.classList.add('pop'); setTimeout(()=>el&&el.classList.remove('pop'),460); }
+}
+function returnToTray(cardId){
+  for(const k in state.placements){
+    if(state.placements[k]===cardId){
+      if(state.locked.has(+k)) return; // can't remove locked
+      delete state.placements[k];
+    }
+  }
+  renderBuild();
+}
+
+/* ---- selection / tap ---- */
+function clearSelection(){
+  selectedCardId=null;
+  document.querySelectorAll('.card.selected').forEach(c=>c.classList.remove('selected'));
+}
+function onCardTap(cardId,fromSlot){
+  if(fromSlot!=null){
+    if(state.locked.has(fromSlot)) return;
+    returnToTray(cardId);
+    return;
+  }
+  // tray card -> toggle selection
+  if(selectedCardId===cardId){ clearSelection(); }
+  else { clearSelection(); selectedCardId=cardId; sfx('select');
+    const el=document.querySelector('.card[data-card="'+cardId+'"]');
+    if(el) el.classList.add('selected');
+    toast('Now tap a glowing slot to place <b>'+cardById(cardId).label_en+'</b>.','info',2000);
+  }
+}
+
+/* ---- pointer drag (mouse + touch unified) ---- */
+function attachCardPointer(el,cardId,fromSlot){
+  el.addEventListener('pointerdown',e=>{
+    if(fromSlot!=null && state.locked.has(fromSlot)) return;
+    if(e.pointerType==='mouse' && e.button!==0) return;
+    const r=el.getBoundingClientRect();
+    drag={cardId,fromSlot,el,startX:e.clientX,startY:e.clientY,offX:e.clientX-r.left,offY:e.clientY-r.top,w:r.width,h:r.height,moved:false,clone:null};
+    try{el.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag||drag.cardId!==cardId) return;
+    const dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
+    if(!drag.moved && Math.hypot(dx,dy)>8){
+      drag.moved=true; clearSelection();
+      const c=el.cloneNode(true);
+      c.classList.add('drag-clone'); c.classList.remove('selected');
+      c.style.width=drag.w+'px'; c.style.height=drag.h+'px';
+      document.body.appendChild(c); drag.clone=c;
+      el.style.opacity='.35';
+    }
+    if(drag.moved){
+      drag.clone.style.left=(e.clientX-drag.offX)+'px';
+      drag.clone.style.top=(e.clientY-drag.offY)+'px';
+      highlightDrop(e.clientX,e.clientY);
+    }
+  });
+  el.addEventListener('pointerup',e=>{
+    if(!drag||drag.cardId!==cardId) return;
+    if(drag.moved){
+      drag.clone.style.display='none';
+      const target=document.elementFromPoint(e.clientX,e.clientY);
+      if(drag.clone) drag.clone.remove();
+      el.style.opacity='';
+      clearDropHL();
+      const slotEl=target&&target.closest&&target.closest('[data-slot]');
+      const trayEl=target&&target.closest&&target.closest('#tray');
+      if(slotEl){ attemptPlace(cardId,+slotEl.dataset.slot); }
+      else if(trayEl){ returnToTray(cardId); }
+      else { renderBuild(); }
+      justDragged=true; setTimeout(()=>justDragged=false,60);
+    } else {
+      onCardTap(cardId,fromSlot);
+    }
+    drag=null;
+  });
+  el.addEventListener('pointercancel',()=>{
+    if(drag){ if(drag.clone) drag.clone.remove(); drag.el.style.opacity=''; }
+    clearDropHL(); drag=null;
+  });
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onCardTap(cardId,fromSlot); }
+  });
+}
+function highlightDrop(x,y){
+  clearDropHL();
+  const t=document.elementFromPoint(x,y);
+  const s=t&&t.closest&&t.closest('[data-slot]');
+  if(s && !state.locked.has(+s.dataset.slot)) s.classList.add('drop-hover');
+}
+function clearDropHL(){ document.querySelectorAll('.slot.drop-hover').forEach(s=>s.classList.remove('drop-hover')); }
+
+function attachSlotHandlers(slotEl,n){
+  slotEl.addEventListener('click',()=>{
+    if(justDragged) return;
+    if(state.locked.has(n)) return;
+    if(selectedCardId){ const id=selectedCardId; clearSelection(); attemptPlace(id,n); }
+    else if(state.placements[n]){ /* clicking filled slot bg: card handles its own tap */ }
+  });
+  slotEl.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      if(state.locked.has(n)) return;
+      if(selectedCardId){ const id=selectedCardId; clearSelection(); attemptPlace(id,n); }
+      else if(state.placements[n]){ returnToTray(state.placements[n]); }
+    }
+  });
+}
+
+/* ---- CHECK ---- */
+function onCheck(){
+  if(!SLOTS.every(s=>state.placements[s.n])) return;
+  clearSelection();
+  const wrong=[]; const newlyCorrect=[];
+  for(const s of SLOTS){
+    if(state.locked.has(s.n)) continue;
+    const card=cardById(state.placements[s.n]);
+    if(card.role===s.role) newlyCorrect.push(s.n);
+    else wrong.push({n:s.n,card});
+  }
+  // lock the correct ones now
+  newlyCorrect.forEach(n=>state.locked.add(n));
+
+  if(wrong.length===0){
+    SLOTS.forEach(s=>state.locked.add(s.n));
+    perfectChain();
+    return;
+  }
+  // tally + feedback
+  state.wrongCount+=wrong.length;
+  sfx('buzz');
+  // special: consumer swap (right roles, wrong slots)
+  const c3=cardById(state.placements[3]), c4=cardById(state.placements[4]);
+  const swap = c3&&c4&&c3.role==='CONSUMER2'&&c4.role==='CONSUMER1';
+  // distractor placed?
+  const distractorWrong=wrong.find(w=>w.card.role==='NONE');
+  let msg;
+  if(swap){ msg='Almost! The <b>plant-eater</b> comes before the <b>animal-eater</b>.'; }
+  else if(distractorWrong){ msg='Hmm — is it <b>alive</b>? Food chains are living things + the Sun. Try again.'; }
+  else { msg='Close! <b>'+wrong.length+'</b> card'+(wrong.length>1?'s are':' is')+' in the wrong spot — the rest are locked in.'; }
+  toast(msg,'warn',3200);
+
+  // shake wrong cards, then return to tray
+  const els=wrong.map(w=>document.querySelector('.slot[data-slot="'+w.n+'"] .card'));
+  els.forEach(el=>{ if(el){ el.classList.add('shake'); } });
+  const sn=wrong.map(w=>w.n);
+  setTimeout(()=>{
+    sn.forEach(n=>{ if(!state.locked.has(n)) delete state.placements[n]; });
+    renderBuild();
+    // glow the newly-locked correct cards
+    newlyCorrect.forEach(n=>{
+      const el=document.querySelector('.slot[data-slot="'+n+'"] .card');
+      if(el && !reduceMotion){ el.classList.add('glow-good'); setTimeout(()=>el&&el.classList.remove('glow-good'),700); }
+    });
+  }, reduceMotion?0:520);
+}
+
+function perfectChain(){
+  renderBuild();
+  // stagger ding through the locked cards + glow
+  ROLE_ORDER.concat(['DECOMPOSER']).forEach((role,i)=>{
+    const s=SLOTS.find(x=>x.role===role);
+    const el=document.querySelector('.slot[data-slot="'+s.n+'"] .card');
+    setTimeout(()=>{
+      if(el && !reduceMotion){ el.classList.add('glow-good'); setTimeout(()=>el&&el.classList.remove('glow-good'),700); }
+      beep(523+ i*90,0.12,'sine',0,0.14);
+    }, i* (reduceMotion?0:130));
+  });
+  sfx('perfect');
+  confetti();
+  toast('Perfect chain! Energy can flow. 🎉','good',2600);
+  $('checkBtn').disabled=true;
+  setTimeout(()=>startEnergyFlow(), reduceMotion?500:1400);
+}
+
+/* ============================================================
+   S4 — ENERGY FLOW
+   ============================================================ */
+let efAnims=[]; let efTimers=[];
+function clearEf(){ efAnims.forEach(a=>{try{a.cancel();}catch(e){}}); efAnims=[]; efTimers.forEach(t=>clearTimeout(t)); efTimers=[]; }
+
+function nodeEl(card,extraClass){
+  const n=document.createElement('div');
+  n.className='node'+(extraClass?' '+extraClass:'');
+  n.dataset.role=card.role;
+  n.setAttribute('aria-label',card.label_en);
+  n.innerHTML='<div class="node-emoji" aria-hidden="true">'+card.emoji+'</div>'+
+    '<div class="node-en">'+card.label_en+'</div>';
+  return n;
+}
+
+function renderChainNodes(chainEl,decompEl,opts){
+  opts=opts||{};
+  chainEl.innerHTML=''; if(decompEl) decompEl.innerHTML='';
+  ROLE_ORDER.forEach((role,i)=>{
+    const seg=document.createElement('div'); seg.className='ef-seg';
+    seg.appendChild(nodeEl(chainCardOfRole(role),opts.nodeClass));
+    if(i<ROLE_ORDER.length-1){ const a=document.createElement('div'); a.className='ef-arrow'; a.textContent='→'; a.setAttribute('aria-hidden','true'); seg.appendChild(a); }
+    chainEl.appendChild(seg);
+  });
+  if(decompEl){
+    decompEl.innerHTML='<div class="updots" aria-hidden="true">⋮ ♻ ⋮</div>';
+    decompEl.appendChild(nodeEl(chainCardOfRole('DECOMPOSER'),opts.nodeClass));
+  }
+}
+
+function startEnergyFlow(){
+  show('S4');
+  clearEf();
+  const h=hab();
+  renderChainNodes($('efChain'),$('efDecomp'),{});
+  $('efReduced').innerHTML='';
+  const cap=$('efCap');
+
+  const caps=[
+    'Watch the energy flow from the Sun, up the chain.',
+    'Most energy is <b>lost as heat and movement</b> at each step — so less is left for the next animal.',
+    'Only about <b>1 in 10</b> of the energy passes to the next level.'
+  ];
+  cap.innerHTML=caps[0];
+
+  if(reduceMotion){
+    $('efReduced').innerHTML='<div class="reduced-labels">'+
+      '<span>Lots</span><span>→ less</span><span>→ even less</span><span>→ least</span></div>';
+    cap.innerHTML='Energy <b>shrinks at every step</b>. Only a little reaches the top predator.';
+    glowDecomp();
+    return;
+  }
+
+  // measure node centers after layout
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const stage=$('efStage'), dotsLayer=$('efDots');
+    const stageR=stage.getBoundingClientRect();
+    const nodes=[...$('efChain').querySelectorAll('.node')];
+    const centers=nodes.map(n=>{ const r=n.getBoundingClientRect(); return {x:r.left-stageR.left+r.width/2, y:r.top-stageR.top+r.height/2}; });
+    dotsLayer.innerHTML='';
+    const counts=[10,4,2,1], sizes=[15,11,8,6];
+    for(let seg=0; seg<centers.length-1; seg++){
+      const a=centers[seg], b=centers[seg+1];
+      const cnt=counts[seg], sz=sizes[seg], dur=1700;
+      for(let k=0;k<cnt;k++){
+        const d=document.createElement('div'); d.className='edot';
+        d.style.width=sz+'px'; d.style.height=sz+'px';
+        d.style.left='0px'; d.style.top='0px';
+        dotsLayer.appendChild(d);
+        const an=d.animate([
+          {transform:'translate('+(a.x-sz/2)+'px,'+(a.y-sz/2)+'px) scale(.4)',opacity:0},
+          {transform:'translate('+(a.x-sz/2)+'px,'+(a.y-sz/2)+'px) scale(1)',opacity:1,offset:0.12},
+          {transform:'translate('+(b.x-sz/2)+'px,'+(b.y-sz/2)+'px) scale(.85)',opacity:1,offset:0.9},
+          {transform:'translate('+(b.x-sz/2)+'px,'+(b.y-sz/2)+'px) scale(.3)',opacity:0}
+        ],{duration:dur,iterations:Infinity,delay:(dur/cnt)*k,easing:'linear'});
+        efAnims.push(an);
+      }
+    }
+    // gentle hum
+    if(!muted){ const c=ac(); if(c){ const o=c.createOscillator(),g=c.createGain(); o.type='sine'; o.frequency.value=110; g.gain.value=0.03; o.connect(g);g.connect(c.destination); o.start(); efAnims.push({cancel:()=>{try{o.stop();}catch(e){}}}); } }
+
+    // cycle captions
+    efTimers.push(setTimeout(()=>{cap.style.opacity=0; setTimeout(()=>{cap.innerHTML=caps[1];cap.style.opacity=1;},250);},2600));
+    efTimers.push(setTimeout(()=>{cap.style.opacity=0; setTimeout(()=>{cap.innerHTML=caps[2];cap.style.opacity=1;},250);},5400));
+    efTimers.push(setTimeout(()=>{ glowDecomp(); cap.style.opacity=0; setTimeout(()=>{cap.innerHTML=h.decompCap;cap.style.opacity=1;},250); beep(523,0.12,'sine',0,0.12);},8000));
+  }));
+}
+function glowDecomp(){
+  const dn=$('efDecomp').querySelector('.node');
+  if(dn) dn.classList.add('glow-d');
+}
+
+/* ============================================================
+   S5 — BREAK A LINK
+   ============================================================ */
+function startBreak(){
+  clearEf();
+  show('S5');
+  state.removedRole=null;
+  $('breakQ').style.display='none';
+  $('breakResult').innerHTML='';
+  document.querySelectorAll('#breakQ .break-btns .btn').forEach(b=>b.disabled=false);
+  $('breakHint').style.display='';
+  renderChainNodes($('breakChain'),$('breakDecomp'),{nodeClass:'tappable'});
+  // attach tap handlers to all 6 nodes
+  const all=[...$('breakChain').querySelectorAll('.node'),...$('breakDecomp').querySelectorAll('.node')];
+  all.forEach(n=>{
+    n.tabIndex=0; n.setAttribute('role','button');
+    const role=n.dataset.role;
+    n.setAttribute('aria-label','Remove '+chainCardOfRole(role).label_en+' from the chain');
+    const go=()=>removeLink(role,n);
+    n.addEventListener('click',go);
+    n.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
+  });
+}
+
+function removeLink(role,nodeEl){
+  if(state.removedRole) return;            // only one removal
+  state.removedRole=role;
+  $('breakHint').style.display='none';
+  // remove tappable from all so only one removal
+  document.querySelectorAll('#breakChain .node, #breakDecomp .node').forEach(n=>{
+    n.classList.remove('tappable'); n.style.cursor='default'; n.tabIndex=-1;
+  });
+  nodeEl.classList.add('removed');
+  sfx('soft');
+  // dim downstream nodes for SUN / PRODUCER (whole chain affected)
+  if(!reduceMotion){
+    if(role==='SUN'||role==='PRODUCER'){
+      const order=ROLE_ORDER;
+      const idx=order.indexOf(role);
+      order.slice(idx+1).forEach((r,i)=>{
+        const dn=[...$('breakChain').querySelectorAll('.node')].find(x=>x.dataset.role===r);
+        if(dn) setTimeout(()=>dn.classList.add('dim'),300+i*200);
+      });
+    } else if(role!=='DECOMPOSER'){
+      // dim the predator just above (loses food)
+      const order=ROLE_ORDER;const idx=order.indexOf(role);
+      const above=order[idx+1];
+      if(above){ const dn=[...$('breakChain').querySelectorAll('.node')].find(x=>x.dataset.role===above); if(dn) setTimeout(()=>dn.classList.add('dim'),400); }
+    }
+  }
+  const info=hab().breaks[role];
+  const q=$('breakQ');
+  setTimeout(()=>{
+    $('breakConseq').textContent=info.text;
+    q.style.display='block';
+    q.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});
+  }, reduceMotion?0:900);
+}
+
+function answerBreak(ans){
+  if(!state.removedRole) return;
+  const info=hab().breaks[state.removedRole];
+  const res=$('breakResult');
+  // lock buttons
+  $('#breakQ');
+  document.querySelectorAll('#breakQ .break-btns .btn').forEach(b=>b.disabled=true);
+  if(ans===info.ans){
+    state.star3=true;
+    sfx('star');
+    res.innerHTML='<div style="color:var(--green-d);font-weight:800;font-size:1.05rem">✅ Right! Removing one link changes the whole chain — that\'s <b>interdependence</b>.</div>'+
+      '<div style="margin-top:6px;font-weight:800;color:var(--amber-d)">⭐ 3rd star earned!</div>';
+  } else {
+    sfx('soft');
+    res.innerHTML='<div style="color:var(--blue-d);font-weight:800;font-size:1.05rem">💡 Good thinking! Look again — did anything <b>else</b> get helped or hurt?</div>'+
+      '<div style="margin-top:4px;color:var(--graphite);font-weight:700">The best answer here was: <b>'+(info.ans==='HURT'?'Hurt':'Helped &amp; Hurt')+'</b>.</div>';
+  }
+  const cont=document.createElement('button');
+  cont.className='btn'; cont.style.marginTop='14px'; cont.textContent='Continue ▸';
+  cont.addEventListener('click',finishRound);
+  res.appendChild(cont);
+}
+
+/* ============================================================
+   S6 — ROUND RESULT
+   ============================================================ */
+function finishRound(){
+  const h=hab();
+  let stars=1;                                   // built correct chain
+  const lowWrong = state.wrongCount<=2;
+  if(lowWrong) stars++;                           // ≤2 wrong placements
+  if(state.star3) stars++;                        // best break answer
+  if(!state.freeBuild){
+    const prev=progress[h.id]?progress[h.id].stars:0;
+    progress[h.id]={stars:Math.max(prev,stars)};
+    saveProgress();
+    updateStarCounter();
+  }
+  // render S6
+  $('resultTitle').textContent= state.freeBuild ? ('Free build complete — '+h.name_en+'!') : ('You earned ⭐ × '+stars+' in the '+h.name_en+'!');
+  const sc=$('resultStars'); sc.innerHTML='';
+  for(let i=0;i<3;i++){
+    const s=document.createElement('span'); s.className='star-pop'; s.style.animationDelay=(i*0.18)+'s';
+    s.textContent=i<stars?'⭐':'☆';
+    sc.appendChild(s);
+  }
+  if(!reduceMotion){ for(let i=0;i<stars;i++){ efTimers.push(setTimeout(()=>sfx('star'), 200+i*220)); } }
+
+  const rule=$('starRule');
+  rule.innerHTML=
+    '<div class="sr got">⭐ Correct chain</div>'+
+    '<div class="sr '+(lowWrong?'got':'')+'">⭐ ≤2 wrong placements ('+state.wrongCount+')</div>'+
+    '<div class="sr '+(state.star3?'got':'')+'">⭐ Best Break-a-Link answer</div>';
+
+  // trophy strip = mini chain
+  renderMiniChain($('trophyStrip'),true);
+  $('recapLine').textContent=h.recap;
+
+  // actions
+  const act=$('resultActions'); act.innerHTML='';
+  const allDone=completedCount()>=3 && !state.freeBuild;
+  if(state.freeBuild){
+    const b1=mkBtn('🧩 Build another','btn',()=>{ renderHabitatSelect(); show('S2'); });
+    const b2=mkBtn('🏁 Back to Score','btn ghost',()=>{ showFinal(); });
+    act.append(b1,b2);
+  } else if(allDone){
+    const b1=mkBtn('See Final Score 🏆','btn',()=>showFinal());
+    const b2=mkBtn('↺ Replay this habitat','btn gray',()=>startHabitat(state.habIdx));
+    act.append(b1,b2);
+  } else {
+    const b1=mkBtn('Next Habitat ▸','btn',()=>{ renderHabitatSelect(); show('S2'); });
+    const b2=mkBtn('↺ Replay this habitat','btn gray',()=>startHabitat(state.habIdx));
+    act.append(b1,b2);
+  }
+  show('S6');
+}
+function mkBtn(label,cls,fn){ const b=document.createElement('button'); b.className=cls; b.textContent=label; b.addEventListener('click',fn); return b; }
+
+function renderMiniChain(container,withDecomp){
+  container.innerHTML='';
+  ROLE_ORDER.forEach((role,i)=>{
+    const c=chainCardOfRole(role);
+    const m=document.createElement('div'); m.className='mini-node';
+    m.innerHTML='<div class="me">'+c.emoji+'</div><div class="mn">'+c.label_en+'</div>';
+    container.appendChild(m);
+    if(i<ROLE_ORDER.length-1){ const a=document.createElement('span'); a.className='mini-arrow'; a.textContent='→'; container.appendChild(a); }
+  });
+  if(withDecomp){
+    const plus=document.createElement('span'); plus.className='mini-arrow'; plus.textContent='+'; container.appendChild(plus);
+    const c=chainCardOfRole('DECOMPOSER');
+    const m=document.createElement('div'); m.className='mini-node';
+    m.innerHTML='<div class="me">'+c.emoji+'</div><div class="mn">'+c.label_en+'</div>';
+    container.appendChild(m);
+  }
+}
+
+/* ============================================================
+   S7 — FINAL SCORE
+   ============================================================ */
+function showFinal(){
+  const total=totalStars();
+  $('finalTitle').textContent='You collected '+total+' of 9 stars!';
+  let rank,msg;
+  if(total<=3){ rank='Energy Explorer 🌱'; msg='Great start — you followed the Sun\'s energy!'; }
+  else if(total<=6){ rank='Chain Builder ⚡'; msg='You can build a chain and trace its energy!'; }
+  else { rank='Ecosystem Expert 🦅'; msg='You see how every living thing connects!'; }
+  $('rankBadge').innerHTML=rank;
+  $('rankBadge').style.color = total<=3?'var(--green)':total<=6?'var(--amber-d)':'var(--purple)';
+  $('rankMsg').textContent=msg;
+
+  const fc=$('finalChains'); fc.innerHTML='';
+  HABITATS.forEach(h=>{
+    const done=progress[h.id];
+    const row=document.createElement('div'); row.className='final-chain';
+    let head='<div class="fc-head"><span style="font-size:1.4rem">'+h.emoji+'</span>'+
+      '<span class="fc-name">'+h.name_en+'</span>'+
+      '<span style="margin-left:auto;font-weight:800;color:'+(done?'var(--green-d)':'var(--silver)')+'">'+
+      (done?('✓ '+'⭐'.repeat(done.stars)+'☆'.repeat(3-done.stars)):'Not built yet')+'</span></div>';
+    const rowChain=document.createElement('div'); rowChain.className='fc-row';
+    row.innerHTML=head;
+    // build a mini chain for this habitat
+    const saveIdx=state.habIdx; state.habIdx=HABITATS.indexOf(h);
+    renderMiniChain(rowChain,true);
+    state.habIdx=saveIdx;
+    row.appendChild(rowChain);
+    fc.appendChild(row);
+  });
+  if(total>=7){ confetti(); sfx('perfect'); }
+  show('S7');
+}
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+function confetti(){
+  if(reduceMotion) return;
+  const colors=['#58cc02','#1cb0f6','#ffc700','#a570ff','#cc348d','#ff9600'];
+  for(let i=0;i<46;i++){
+    const d=document.createElement('div'); d.className='confetti';
+    const sz=6+Math.random()*8;
+    d.style.width=sz+'px'; d.style.height=(sz*0.6)+'px';
+    d.style.left=(Math.random()*100)+'vw';
+    d.style.background=colors[i%colors.length];
+    document.body.appendChild(d);
+    const an=d.animate([
+      {transform:'translateY(-20px) rotate(0deg)',opacity:1},
+      {transform:'translateY('+(60+Math.random()*30)+'vh) rotate('+(360+Math.random()*360)+'deg)',opacity:1,offset:0.85},
+      {transform:'translateY('+(75+Math.random()*20)+'vh) rotate(720deg)',opacity:0}
+    ],{duration:1600+Math.random()*900,easing:'cubic-bezier(.2,.6,.4,1)'});
+    an.onfinish=()=>d.remove();
+  }
+}
+
+/* ============================================================
+   OVERLAYS / KEY WORDS
+   ============================================================ */
+function openKw(){
+  const t=$('kwTable'); t.innerHTML='';
+  KEY_WORDS.forEach(k=>{
+    const r=document.createElement('div'); r.className='kw-row';
+    r.innerHTML='<span class="kw-en">'+k.en+'</span>'+
+      '<span class="kw-kid">'+k.kid+'</span>';
+    t.appendChild(r);
+  });
+  $('kwOverlay').classList.add('show');
+}
+
+/* ============================================================
+   WIRE-UP
+   ============================================================ */
+function init(){
+  loadProgress();
+  updateStarCounter();
+
+  $('startBtn').addEventListener('click',()=>{ ac(); state.freeBuild=false; renderHabitatSelect(); show('S2'); });
+  $('howtoBtn').addEventListener('click',()=>$('howtoOverlay').classList.add('show'));
+  $('howtoBtn').addEventListener('click',()=>ac());
+  $('helpBtn').addEventListener('click',()=>$('howtoOverlay').classList.add('show'));
+  $('kwBtn').addEventListener('click',openKw);
+  $('brandHome').addEventListener('click',()=>{ if(confirmRestart()) goHome(); });
+
+  $('soundBtn').addEventListener('click',()=>{
+    muted=!muted;
+    const b=$('soundBtn');
+    b.textContent=muted?'🔇':'🔊';
+    b.classList.toggle('on',!muted);
+    b.setAttribute('aria-label', muted?'Sound off':'Sound on');
+    if(!muted){ ac(); sfx('select'); }
+  });
+
+  $('checkBtn').addEventListener('click',onCheck);
+  $('resetBtn').addEventListener('click',()=>{
+    // return all unlocked cards to tray
+    for(const k in state.placements){ if(!state.locked.has(+k)) delete state.placements[k]; }
+    clearSelection(); renderBuild();
+  });
+
+  $('efContinue').addEventListener('click',startBreak);
+
+  document.querySelectorAll('#breakQ .break-btns .btn').forEach(b=>{
+    b.addEventListener('click',()=>answerBreak(b.dataset.ans));
+  });
+
+  $('playAgainBtn').addEventListener('click',()=>{
+    progress={garden:null,ocean:null,forest:null}; saveProgress(); updateStarCounter();
+    state.freeBuild=false; goHome();
+  });
+  $('freeBuildBtn').addEventListener('click',()=>{ state.freeBuild=true; renderHabitatSelect(); show('S2'); });
+
+  // overlay close (button + backdrop)
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close).classList.remove('show')));
+  document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('show'); }));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show')); });
+}
+function confirmRestart(){
+  if(state.currentScreen==='S1'||state.currentScreen==='S2') return true;
+  return true; // always allow; non-destructive (progress saved)
+}
+function goHome(){ clearEf(); show('S1'); }
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+<footer style="max-width:920px;margin:28px auto 32px;padding:18px 26px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:#5b6472;font-weight:700;line-height:1.55;">
+  <div>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial</div>
+  <div>© 2026 Deenish Ramdial · All rights reserved.</div>
+</footer>
+</body>
+</html>

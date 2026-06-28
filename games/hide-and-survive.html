@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>🦎 Hide &amp; Survive — Camouflage &amp; Balance</title>
+<style>
+/* ============================================================
+   HIDE & SURVIVE — Grade 5 · Predator & Prey mini-game
+   Duolingo house style · warm light theme · fully offline · vanilla JS
+   ============================================================ */
+:root{
+  /* Brief palette */
+  --sky:#bfe3ff; --sand:#f3e2b8; --leaf:#7bbf5a; --snow:#eef6ff;
+  --night:#2d3a55; --warm:#ff8a3d; --good:#3bb273; --soft:#fff7e8; --ink:#243044;
+  /* Duolingo brand */
+  --duo:#58cc02; --duo-d:#46a302; --duo-dd:#3f8f01;
+  --blue:#1cb0f6; --blue-d:#1488c0;
+  --gold:#ffc700; --gold-d:#d9a400;
+  --warm-d:#e06f22; --good-d:#2c9760;
+  --muted:#6b7488; --line:rgba(36,48,68,.13);
+  --panel:#ffffff;
+  --radius:18px;
+  --font:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  line-height:1.45;
+  min-height:100vh;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+  background:
+    radial-gradient(1000px 520px at 86% -12%, #d7f2c0 0%, transparent 56%),
+    radial-gradient(900px 520px at 4% 112%, #cfe9ff 0%, transparent 55%),
+    linear-gradient(170deg,#f1faff 0%,#fff7e8 58%,#f1f9ec 100%);
+  background-attachment:fixed;
+}
+h1,h2,h3,h4{margin:0;line-height:1.15;font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+b{font-weight:700}
+.app{position:relative;z-index:2;max-width:1000px;margin:0 auto;padding:0 14px 60px;min-height:100vh}
+
+/* ============ TOP BAR ============ */
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:9px 0 11px;margin-bottom:4px;
+  background:linear-gradient(180deg,rgba(241,250,255,.97) 62%,rgba(241,250,255,0));backdrop-filter:blur(4px)}
+.tb-title{font-size:1.12rem;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--ink)}
+.tb-spacer{flex:1 1 10px}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:11px;height:11px;border-radius:50%;background:rgba(36,48,68,.16);transition:background .2s,transform .2s}
+.dot.on{background:var(--blue);transform:scale(1.25);box-shadow:0 0 0 4px rgba(28,176,246,.16)}
+.dot.done{background:var(--good)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);
+  font-weight:700;padding:6px 13px;border-radius:99px;font-size:.92rem;border:1px solid var(--line);white-space:nowrap;
+  box-shadow:0 2px 0 rgba(36,48,68,.06)}
+.chip.score{color:#9a7700;background:#fff6d6;border-color:rgba(217,164,0,.3)}
+.chip.round{color:#1379ad;background:#e3f4ff;border-color:rgba(28,176,246,.3)}
+.iconbtn{width:40px;height:40px;min-width:40px;border-radius:12px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);font-size:1.05rem;cursor:pointer;display:grid;place-items:center;
+  font-family:var(--font);transition:transform .08s,background .15s;box-shadow:0 2px 0 rgba(36,48,68,.07)}
+.iconbtn:hover{background:#f4f9ff}
+.iconbtn:active{transform:translateY(2px);box-shadow:none}
+.iconbtn.off{opacity:.45}
+.iconbtn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ============ SCREENS ============ */
+.screen{display:none;animation:fadeUp .42s cubic-bezier(.2,.7,.2,1)}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  box-shadow:0 12px 30px rgba(36,48,68,.08)}
+.card+.card{margin-top:14px}
+.center{text-align:center}
+.eyebrow{color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem}
+.ar{font-weight:700}
+.hl{color:var(--warm-d)}.hlg{color:var(--good-d)}.hlb{color:var(--blue-d)}
+
+/* ============ BUTTONS (Duolingo chunky 3D) ============ */
+.btn{font-family:var(--font);font-weight:700;font-size:1.02rem;border:none;cursor:pointer;
+  min-height:54px;padding:14px 26px;border-radius:15px;color:#fff;letter-spacing:.01em;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  background:var(--duo);box-shadow:0 5px 0 var(--duo-dd);transition:transform .07s,box-shadow .07s,filter .15s;
+  touch-action:manipulation;text-decoration:none}
+.btn:hover{filter:brightness(1.04)}
+.btn:active{transform:translateY(5px);box-shadow:0 0 0 var(--duo-dd)}
+.btn.blue{background:var(--blue);box-shadow:0 5px 0 var(--blue-d)}
+.btn.blue:active{box-shadow:0 0 0 var(--blue-d)}
+.btn.gold{background:var(--gold);color:#5a4500;box-shadow:0 5px 0 var(--gold-d)}
+.btn.gold:active{box-shadow:0 0 0 var(--gold-d)}
+.btn.warm{background:var(--warm);box-shadow:0 5px 0 var(--warm-d)}
+.btn.warm:active{box-shadow:0 0 0 var(--warm-d)}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 5px 0 #d6dbe4;border:1px solid var(--line)}
+.btn.ghost:active{box-shadow:0 0 0 #d6dbe4}
+.btn.sm{min-height:46px;padding:10px 18px;font-size:.94rem;box-shadow:0 4px 0 var(--duo-dd)}
+.btn.sm:active{box-shadow:0 0 0 var(--duo-dd)}
+.btn.sm.ghost{box-shadow:0 4px 0 #d6dbe4}.btn.sm.ghost:active{box-shadow:0 0 0 #d6dbe4}
+.btn.sm.blue{box-shadow:0 4px 0 var(--blue-d)}.btn.sm.blue:active{box-shadow:0 0 0 var(--blue-d)}
+.btn.sm.gold{box-shadow:0 4px 0 var(--gold-d)}.btn.sm.gold:active{box-shadow:0 0 0 var(--gold-d)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.25)}
+.btn:disabled:active{transform:none;box-shadow:0 5px 0 var(--duo-dd)}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:10px}
+
+/* ============ S0 TITLE ============ */
+.hero{text-align:center;padding:30px 20px 26px;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2.3rem,8.5vw,3.6rem);color:var(--duo);letter-spacing:-.02em;
+  text-shadow:0 4px 0 rgba(70,163,2,.18)}
+.hero .sub{color:var(--ink);font-size:clamp(1rem,3.6vw,1.32rem);margin-top:8px;font-weight:600}
+.hero .sub .ar{color:var(--warm-d)}
+.hero .tag{display:inline-block;margin-top:14px;background:#e3f4ff;color:var(--blue-d);
+  border:1px solid rgba(28,176,246,.3);font-weight:700;font-size:.8rem;padding:6px 15px;border-radius:99px;letter-spacing:.04em}
+.peekstrip{display:flex;justify-content:center;gap:clamp(6px,3vw,22px);margin:18px 0 6px;font-size:clamp(2.6rem,11vw,4rem);line-height:1}
+.peekstrip span{display:inline-block;animation:peek 2.8s ease-in-out infinite}
+.peekstrip span:nth-child(2){animation-delay:.35s}
+.peekstrip span:nth-child(3){animation-delay:.7s}
+.peekstrip span:nth-child(4){animation-delay:1.05s}
+@keyframes peek{0%,100%{transform:translateY(6px) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.cap{color:var(--muted);font-weight:600;font-size:.92rem;margin-top:6px}
+
+/* ============ KEY WORDS ============ */
+.sectionhead{display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:700;color:var(--ink);margin:2px 0 6px}
+.sectionhead .small{color:var(--muted);font-weight:600;font-size:.84rem}
+.kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:6px}
+.kw{background:#f7fbff;border:1px solid var(--line);border-radius:13px;padding:11px 13px}
+.kw .en{font-weight:700;font-size:1rem;color:var(--ink)}
+.kw .arr{font-size:1.18rem;color:var(--warm-d);font-weight:700;margin-top:1px}
+.kw .tr{color:var(--muted);font-size:.78rem;margin-top:3px;line-height:1.3}
+
+/* ============ HOW TO PLAY (S1) ============ */
+.howcard{display:flex;gap:14px;align-items:center;background:#f7fbff;border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px;margin:12px 0}
+.howcard .em{font-size:2.6rem;flex:0 0 auto;line-height:1}
+.howcard .t{font-size:1.06rem;color:var(--ink)}
+.howcard.a{background:#f1fbe9;border-color:rgba(88,204,2,.28)}
+.howcard.b{background:#eef7ff;border-color:rgba(28,176,246,.28)}
+.kchip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);
+  border-radius:99px;padding:2px 9px;font-weight:700;font-size:.86rem;color:var(--warm-d);vertical-align:middle}
+
+/* ============ ROUND 1 — SPOT IT ============ */
+.r1head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-bottom:8px}
+.leveldots{display:flex;gap:6px}
+.leveldots i{width:13px;height:13px;border-radius:50%;background:rgba(36,48,68,.16)}
+.leveldots i.on{background:var(--blue);transform:scale(1.18)}
+.leveldots i.done{background:var(--good)}
+.timerwrap{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.timerbar{flex:1;height:16px;border-radius:99px;background:rgba(36,48,68,.1);overflow:hidden;border:1px solid var(--line)}
+.timerbar>i{display:block;height:100%;width:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--good),#9be37b);transition:width 1s linear,background .3s}
+.timerbar.low>i{background:linear-gradient(90deg,var(--warm),#ffc089)}
+.timersec{font-weight:700;min-width:46px;text-align:right;font-variant-numeric:tabular-nums;font-size:1.05rem}
+.timersec .clock{font-size:1.1rem}
+
+.scene{position:relative;width:100%;height:clamp(280px,46vh,420px);border-radius:16px;overflow:hidden;
+  border:3px solid rgba(36,48,68,.14);box-shadow:inset 0 0 60px rgba(0,0,0,.06);cursor:crosshair;touch-action:manipulation}
+.critter{position:absolute;transform:translate(-50%,-50%);line-height:1;background:none;border:none;cursor:pointer;
+  padding:6px;min-width:44px;min-height:44px;display:grid;place-items:center;font-family:var(--font);
+  user-select:none;touch-action:manipulation;transition:transform .15s,filter .25s,opacity .25s;will-change:transform}
+.critter:hover{transform:translate(-50%,-50%) scale(1.07)}
+.critter.drift{animation:drift 7s ease-in-out infinite}
+@keyframes drift{0%,100%{margin-left:0;margin-top:0}25%{margin-left:10px;margin-top:-6px}50%{margin-left:-4px;margin-top:8px}75%{margin-left:-9px;margin-top:-3px}}
+.critter.lit{z-index:8;transform:translate(-50%,-50%) scale(1.65);transition:transform .35s cubic-bezier(.2,1.5,.4,1);filter:none !important;opacity:1 !important}
+.critter.lit::after{content:"";position:absolute;inset:-12px;border:4px solid var(--good);border-radius:50%;
+  box-shadow:0 0 0 7px rgba(59,178,115,.22);animation:ringp 1s ease-in-out infinite}
+.critter.lit.miss::after{border-color:var(--warm);box-shadow:0 0 0 7px rgba(255,138,61,.22)}
+@keyframes ringp{0%,100%{box-shadow:0 0 0 7px rgba(59,178,115,.22)}50%{box-shadow:0 0 0 12px rgba(59,178,115,0)}}
+.scene.dimall .critter:not(.lit){opacity:.3;filter:grayscale(.45)}
+.scene.locked{pointer-events:none}
+.ripple{position:absolute;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;
+  border:3px solid rgba(36,48,68,.5);pointer-events:none;display:grid;place-items:center;font-size:1.1rem;
+  animation:rip .65s ease-out forwards;z-index:9}
+@keyframes rip{0%{transform:translate(-50%,-50%) scale(.3);opacity:.95}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
+.hint-veil{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;z-index:6;
+  background:radial-gradient(circle 90px at var(--hx,50%) var(--hy,50%), transparent 0, transparent 64px, rgba(20,28,44,.74) 110px)}
+.hint-veil.show{opacity:1}
+
+.hintbanner{margin:10px 0 0;background:#f1fbe9;border:1px solid rgba(88,204,2,.3);border-radius:13px;
+  padding:11px 14px;font-weight:600;font-size:1rem;color:var(--ink)}
+.hintbanner b{color:var(--good-d)}
+.feedback{margin:12px 0 2px;border-radius:14px;padding:13px 16px;font-weight:700;font-size:1.04rem;display:none;animation:fadeUp .3s}
+.feedback.show{display:block}
+.feedback.ok{background:#eafaf0;border:1px solid rgba(59,178,115,.4);color:var(--good-d)}
+.feedback.miss{background:#fff2e6;border:1px solid rgba(255,138,61,.4);color:var(--warm-d)}
+.feedback .why{display:block;margin-top:5px;font-weight:600;color:var(--ink);font-size:.96rem}
+.feedback .why .kchip{margin-left:4px}
+
+/* ============ S3 RESULT — recap strip ============ */
+.bigcount{font-size:2.6rem;font-weight:700;color:var(--good-d);margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.recapstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:10px 0 4px}
+.recap{border-radius:13px;border:1px solid var(--line);overflow:hidden;text-align:center;background:#fff}
+.recap .sc{height:54px;display:grid;place-items:center;font-size:1.8rem}
+.recap .lab{padding:6px 4px 8px}
+.recap .lab .nm{font-weight:700;font-size:.72rem;line-height:1.1}
+.recap .lab .ar{color:var(--warm-d);font-size:.74rem}
+.recap .lab .mk{font-size:.78rem;margin-top:2px}
+.recap .lab .mk.ok{color:var(--good-d)}.recap .lab .mk.no{color:var(--warm-d)}
+
+/* ============ ROUND 2 — BALANCE ============ */
+.goalbanner{background:#eef7ff;border:1px solid rgba(28,176,246,.3);border-radius:14px;padding:12px 15px;
+  font-weight:700;font-size:1.04rem;color:var(--ink);margin-bottom:10px}
+.goalbanner .gtitle{color:var(--blue-d);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:2px}
+.meadow{border-radius:16px;border:1px solid var(--line);overflow:hidden;margin-bottom:12px}
+.herd{padding:10px 12px}
+.herd.prey{background:linear-gradient(180deg,#eafbe0,#dff5d0)}
+.herd.pred{background:linear-gradient(180deg,#fff1e2,#ffe6cf);border-top:1px dashed rgba(36,48,68,.18)}
+.herd.desertprey{background:linear-gradient(180deg,#f7ecc8,#efe0ad)}
+.herd.desertpred{background:linear-gradient(180deg,#e7eef6,#d8e3ee);border-top:1px dashed rgba(36,48,68,.18)}
+.herd-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:1rem;margin-bottom:4px}
+.herd-head .cnt{color:var(--ink)}
+.herd-head .mood{font-size:1.3rem;margin-left:auto;transition:transform .2s}
+.herd-row{display:flex;flex-wrap:wrap;gap:2px;min-height:42px;align-items:center;font-size:clamp(1.5rem,5.5vw,2rem);line-height:1.1}
+.herd-row span{display:inline-block;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* see-saw */
+.seesaw{position:relative;height:138px;margin:6px 0 6px}
+.beam-wrap{position:absolute;left:50%;top:54px;transform:translateX(-50%);width:min(360px,86%);height:0}
+.beam{position:relative;width:100%;height:16px;border-radius:99px;background:linear-gradient(90deg,#a7d57f,#ffbf86);
+  transform-origin:center;transition:transform .6s cubic-bezier(.3,1.2,.4,1);box-shadow:0 3px 0 rgba(36,48,68,.12)}
+.pan{position:absolute;top:50%;width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #fff;box-shadow:0 6px 14px rgba(36,48,68,.16);font-weight:700}
+.pan .pe{font-size:1.7rem;line-height:1}
+.pan .pn{font-size:1rem;color:var(--ink)}
+.pan.left{left:-8px;transform:translate(-50%,-50%);background:#eafbe0}
+.pan.right{right:-8px;transform:translate(50%,-50%);background:#ffeede}
+.fulcrum{position:absolute;left:50%;top:62px;transform:translateX(-50%);width:0;height:0;
+  border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:54px solid #c9d2dc;z-index:-1}
+.balzone{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);background:#eef0f3;color:var(--muted);
+  border:1px solid var(--line);border-radius:99px;padding:5px 16px;font-weight:700;font-size:.92rem;white-space:nowrap;
+  transition:background .3s,color .3s,box-shadow .3s}
+.balzone.good{background:#eafaf0;color:var(--good-d);border-color:rgba(59,178,115,.5);box-shadow:0 0 0 5px rgba(59,178,115,.16)}
+
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+.ctlbtn{font-family:var(--font);font-weight:700;font-size:1rem;border:none;cursor:pointer;min-height:58px;
+  border-radius:15px;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .07s,box-shadow .07s,filter .15s;touch-action:manipulation}
+.ctlbtn.addprey{background:var(--good);box-shadow:0 5px 0 var(--good-d)}
+.ctlbtn.delprey{background:#fff;color:var(--good-d);border:1px solid rgba(59,178,115,.4);box-shadow:0 5px 0 #d6dbe4}
+.ctlbtn.addpred{background:var(--warm);box-shadow:0 5px 0 var(--warm-d)}
+.ctlbtn.delpred{background:#fff;color:var(--warm-d);border:1px solid rgba(255,138,61,.4);box-shadow:0 5px 0 #d6dbe4}
+.ctlbtn:hover{filter:brightness(1.04)}
+.ctlbtn:active{transform:translateY(5px);box-shadow:0 0 0 currentColor !important}
+.ctlbtn:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.3)}
+.ctlbtn:disabled:active{transform:none}
+
+.coach{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:13px 15px;margin-top:14px;position:relative;box-shadow:0 6px 16px rgba(36,48,68,.07)}
+.coach .face{font-size:2rem;flex:0 0 auto;line-height:1}
+.coach .says{font-weight:600;font-size:1rem;color:var(--ink)}
+.coach .says b{color:var(--blue-d)}
+.r2timer{display:flex;align-items:center;gap:10px;margin:2px 0 10px}
+.r2timer .lab{font-weight:700;color:var(--ink);white-space:nowrap}
+.r2timer .bar{flex:1;height:14px;border-radius:99px;background:rgba(36,48,68,.1);overflow:hidden;border:1px solid var(--line)}
+.r2timer .bar>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--blue),#8fd6ff);transition:width 2s linear}
+.holdpips{display:inline-flex;gap:5px;margin-left:6px;vertical-align:middle}
+.holdpips i{width:12px;height:12px;border-radius:50%;background:rgba(36,48,68,.15);display:inline-block}
+.holdpips i.on{background:var(--good)}
+
+/* win / freeze overlay inside round2 */
+.r2overlay{position:absolute;inset:0;border-radius:16px;background:rgba(255,255,255,.86);backdrop-filter:blur(2px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;z-index:20;animation:fadeUp .3s}
+.r2overlay.show{display:flex}
+.r2overlay h3{font-size:1.5rem;margin-bottom:6px}
+.r2overlay.win h3{color:var(--good-d)}
+.r2overlay.fail h3{color:var(--warm-d)}
+.r2overlay p{font-size:1.02rem;max-width:420px;color:var(--ink)}
+.meadowstage{position:relative}
+
+/* ============ S5 RESULTS ============ */
+.resulthero{text-align:center}
+.bigstars{font-size:2.8rem;letter-spacing:5px;line-height:1}
+.scoreline{font-size:1.6rem;font-weight:700;color:#9a7700;margin-top:8px}
+.rank{font-size:1.4rem;font-weight:700;margin-top:4px;color:var(--duo)}
+.rankmsg{color:var(--muted);font-weight:600;margin-top:4px;font-size:.98rem}
+.best{color:var(--muted);font-weight:700;margin-top:6px;font-size:.9rem}
+.wrapup{background:#f7fbff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:1.02rem;line-height:1.5;margin-top:6px}
+.wrapup b{color:var(--good-d)}.wrapup .ar{color:var(--warm-d)}
+
+/* ============ MODAL ============ */
+.modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:16px;
+  background:rgba(36,48,68,.5);backdrop-filter:blur(3px)}
+.modal.show{display:flex;animation:fadeUp .25s}
+.modal .inner{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;max-width:560px;width:100%;
+  max-height:88vh;overflow:auto;box-shadow:0 24px 60px rgba(36,48,68,.3)}
+.modal h2{color:var(--ink);font-size:1.35rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.modal .closebar{display:flex;justify-content:flex-end;margin-top:16px}
+.learnlist{margin:6px 0 2px;padding:0;list-style:none}
+.learnlist li{background:#f7fbff;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin:9px 0;
+  font-size:1rem;display:flex;gap:10px;align-items:flex-start}
+.learnlist li .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--duo);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.learnlist li b{color:var(--good-d)}
+.helptip{background:#f7fbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:1rem}
+.helptip b{color:var(--blue-d)}
+
+/* quiz */
+.quizwrap{margin-top:4px}
+.qprompt{font-weight:700;font-size:1.06rem;margin:6px 0 10px}
+.qprompt .qn{color:var(--blue-d)}
+.qopts{display:grid;gap:9px}
+.qopt{background:#f7fbff;border:2px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;
+  font-family:var(--font);font-size:.98rem;color:var(--ink);text-align:left;font-weight:600;
+  transition:transform .08s,border-color .15s,background .15s;display:flex;gap:9px;align-items:center}
+.qopt:hover:not(.lock){border-color:var(--blue);transform:translateY(-1px)}
+.qopt.lock{cursor:default}
+.qopt.correct{border-color:var(--good);background:#eafaf0}
+.qopt.wrong{border-color:var(--warm);background:#fff2e6}
+.qopt .mk{margin-left:auto;font-weight:700}
+.qopt.correct .mk{color:var(--good-d)}.qopt.wrong .mk{color:var(--warm-d)}
+.qexplain{margin-top:10px;border-radius:13px;padding:12px 14px;font-weight:600;font-size:.96rem;display:none;animation:fadeUp .3s}
+.qexplain.show{display:block}
+.qexplain.ok{background:#eafaf0;border:1px solid rgba(59,178,115,.4)}
+.qexplain.ok b{color:var(--good-d)}
+.qexplain.no{background:#fff2e6;border:1px solid rgba(255,138,61,.4)}
+.qexplain.no b{color:var(--warm-d)}
+.qprogress{color:var(--muted);font-weight:700;font-size:.84rem;text-align:right}
+
+/* toast + confetti + pause */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:90;
+  background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:11px 18px;
+  font-weight:700;box-shadow:0 12px 30px rgba(36,48,68,.2);opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;font-size:1rem}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:85;overflow:hidden}
+.conf{position:absolute;top:-30px;font-size:1.6rem;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(540deg)}}
+.pauseveil{position:fixed;inset:0;z-index:75;display:none;align-items:center;justify-content:center;
+  background:rgba(36,48,68,.55);backdrop-filter:blur(4px);text-align:center;color:#fff;flex-direction:column;gap:14px}
+.pauseveil.show{display:flex}
+.pauseveil .pbig{font-size:3rem}
+.pauseveil h2{font-size:1.8rem}
+
+@media (max-width:640px){
+  .recapstrip{grid-template-columns:repeat(5,1fr);gap:6px}
+  .recap .sc{height:46px;font-size:1.5rem}
+  .card{padding:16px}
+  .kw-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+@media (max-width:420px){
+  .tb-title{font-size:1rem}
+  .chip{font-size:.82rem;padding:5px 10px}
+  .controls{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.05s !important}
+  .peekstrip span,.critter.drift{animation:none}
+  .conf{display:none}
+}
+/* ============ UNIT PILL ============ */
+.unit-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#e8f5d8,#d0efb7);
+  color:var(--good-d);border:1.5px solid rgba(88,204,2,.38);font-weight:700;font-size:.84rem;
+  padding:6px 16px;border-radius:99px;letter-spacing:.03em;margin:10px 0 2px}
+.tb-unit{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#e8f5d8,#d0efb7);
+  color:var(--good-d);border:1.5px solid rgba(88,204,2,.38);font-weight:700;font-size:.74rem;
+  padding:4px 11px;border-radius:99px;white-space:nowrap}
+/* ============ LIVES ============ */
+.lives-wrap{display:inline-flex;gap:3px;align-items:center}
+.lives-wrap .life{font-size:1.2rem;transition:opacity .25s,transform .25s;line-height:1}
+.lives-wrap .life.lost{opacity:.18;transform:scale(.75);filter:grayscale(1)}
+/* ============ POWER-UP ============ */
+.powerup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-top:8px}
+.pucard{background:#f7fbff;border:2px solid var(--line);border-radius:15px;padding:14px 12px 12px;cursor:pointer;
+  font-family:var(--font);text-align:center;transition:border-color .15s,transform .09s,background .15s;user-select:none}
+.pucard:hover{border-color:var(--duo);transform:translateY(-2px);background:#f1fbe9}
+.pucard .pu-icon{font-size:2rem;margin-bottom:5px;line-height:1}
+.pucard .pu-name{font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:3px}
+.pucard .pu-desc{font-size:.8rem;color:var(--muted);line-height:1.3}
+.pucard.chosen{border-color:var(--duo);background:#eafaf0;box-shadow:0 0 0 4px rgba(88,204,2,.18)}
+.chip.days{color:var(--good-d);background:#f0fbe6;border-color:rgba(88,204,2,.3)}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ TOP BAR ============ -->
+  <div class="topbar">
+    <div class="tb-title">🦎 Hide &amp; Survive</div>
+    <span class="tb-unit">🦎 Grade 5 · Unit 5 · Predator &amp; Prey</span>
+    <div class="dots" id="dots" aria-label="Progress"></div>
+    <div class="tb-spacer"></div>
+    <div class="chip days" id="daysChip" style="display:none">📅 0 days</div>
+    <div class="chip round" id="roundChip">Get Ready</div>
+    <div class="chip score" id="scoreChip">⭐ 0</div>
+    <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+    <button class="iconbtn" id="wordsBtn" title="Key words" aria-label="Key words">📖</button>
+    <button class="iconbtn" id="helpBtn" title="How to play" aria-label="Help">❓</button>
+    <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+    <button class="iconbtn" id="pauseBtn" title="Pause" aria-label="Pause" disabled>⏸</button>
+  </div>
+
+  <!-- ============ S0 — TITLE ============ -->
+  <section class="screen active" id="s0">
+    <div class="card hero">
+      <div class="eyebrow">Grade 5 · Science</div>
+      <div class="unit-pill">🦎 Grade 5 · Unit 5 · Predator &amp; Prey</div>
+      <h1>Hide &amp; Survive</h1>
+      <div class="sub">Camouflage &amp; Balance</div>
+      <div class="peekstrip" aria-hidden="true"><span>🦎</span><span>🐻‍❄️</span><span>🐯</span><span>🦗</span></div>
+      <div class="cap">How do animals hide — and what keeps nature in balance?</div>
+      <span class="tag">For curious Grade-5 scientists · Works offline</span>
+      <div class="btnrow">
+        <button class="btn" id="startBtn">▶ Start</button>
+        <button class="btn blue ghost sm" id="howBtn">❓ How to play</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sectionhead">📖 Key Words <span class="small">Science vocabulary</span></div>
+      <div class="kw-grid" id="kwGrid0"></div>
+    </div>
+  </section>
+
+  <!-- ============ S1 — HOW TO PLAY ============ -->
+  <section class="screen" id="s1">
+    <div class="card">
+      <div class="eyebrow center" style="margin-bottom:4px">How to play · 2 rounds</div>
+      <h2 class="center" style="font-size:1.5rem;color:var(--ink);margin-bottom:4px">Two science missions 🔎</h2>
+      <div class="howcard a">
+        <div class="em">🦎</div>
+        <div class="t"><b>Round 1 — Spot it.</b> An animal is hiding by <b class="hlg">camouflage</b>. Tap it before time runs out — you have <b>3 lives</b> per level!</div>
+      </div>
+      <div class="howcard b">
+        <div class="em">⚖️</div>
+        <div class="t"><b>Round 2 — Keep the Balance.</b> Predators eat prey. <b>Add</b> or <b>remove</b> animals and watch the <b class="hlb">balance</b> tip!</div>
+      </div>
+      <p class="center" style="color:var(--muted);font-weight:600;margin-top:6px">Tip: tap gently — there's no wrong answer that ends the game. Every try teaches you something! 🌿</p>
+      <div class="btnrow"><button class="btn" id="gotItBtn">Got it! ▶</button></div>
+    </div>
+  </section>
+
+  <!-- ============ S2 — ROUND 1 SPOT IT ============ -->
+  <section class="screen" id="s2">
+    <div class="card">
+      <div class="r1head">
+        <div class="eyebrow" id="r1eyebrow">Round 1 · Spot it</div>
+        <div class="leveldots" id="levelDots"></div>
+        <div class="lives-wrap" id="livesWrap">
+          <span class="life" id="life0">❤️</span><span class="life" id="life1">❤️</span><span class="life" id="life2">❤️</span>
+        </div>
+      </div>
+      <div class="timerwrap">
+        <span class="timersec"><span class="clock">⏱️</span> <span id="timerSec">18</span>s</span>
+        <div class="timerbar" id="timerBar"><i id="timerFill"></i></div>
+      </div>
+      <div class="hintbanner" id="hintBanner">Find the animal — it blends in!</div>
+      <div class="meadowstage">
+        <div class="scene" id="scene" aria-label="Hidden-animal scene">
+          <div class="hint-veil" id="hintVeil"></div>
+        </div>
+      </div>
+      <div class="feedback" id="r1feedback"></div>
+      <div class="btnrow">
+        <button class="btn gold sm" id="hintR1Btn">💡 Need a hint? (−5)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S3 — ROUND 1 RESULT ============ -->
+  <section class="screen" id="s3">
+    <div class="card center">
+      <div class="eyebrow">Round 1 complete</div>
+      <h2 style="font-size:1.5rem;color:var(--ink);margin-top:4px">You spotted hidden animals! ⭐</h2>
+      <div class="bigcount"><span id="spottedCount">0</span> / 5</div>
+      <p style="color:var(--muted);font-weight:600;max-width:440px;margin:0 auto">Here's what was hiding from you — look how each one matched its home.</p>
+      <div class="recapstrip" id="recapStrip"></div>
+      <div style="margin-top:16px;text-align:left">
+        <div class="sectionhead" style="margin-bottom:6px">🧬 Choose Your Adaptation <span class="small">— gives a real in-game edge!</span></div>
+        <p style="color:var(--muted);font-weight:600;font-size:.88rem;margin:0 0 8px">In nature, animals with the best adaptations survive. Pick <b>one trait</b> to carry into Round 2 &amp; bonus levels:</p>
+        <div class="powerup-grid" id="puGrid"></div>
+      </div>
+      <div class="btnrow">
+        <button class="btn gold sm" id="bonusR1Btn">🎁 Play 2 bonus scenes</button>
+        <button class="btn" id="toRound2Btn">Next: Keep the Balance ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S4 — ROUND 2 BALANCE ============ -->
+  <section class="screen" id="s4">
+    <div class="card">
+      <div class="r1head">
+        <div class="eyebrow" id="r2eyebrow">Round 2 · Keep the Balance</div>
+        <div class="leveldots" id="challengeDots"></div>
+      </div>
+      <div class="goalbanner" id="goalBanner"><span class="gtitle" id="goalTitle">Challenge</span><span id="goalText"></span></div>
+
+      <div class="r2timer" id="r2timerWrap" style="display:none">
+        <span class="lab">⏱️ <span id="r2timerSec">20</span>s left</span>
+        <div class="bar"><i id="r2timerFill"></i></div>
+      </div>
+      <div class="r2timer" id="r2holdWrap" style="display:none">
+        <span class="lab">Hold the Balance:</span>
+        <span class="holdpips" id="holdPips"><i></i><i></i><i></i></span>
+        <span style="color:var(--muted);font-weight:600;font-size:.9rem">keep it green for 3 turns</span>
+      </div>
+
+      <div class="meadowstage">
+        <div class="meadow" id="meadow">
+          <div class="herd prey" id="herdPrey">
+            <div class="herd-head"><span class="cnt" id="preyLabel">🐇 Rabbits: <b>0</b></span><span class="mood" id="preyMood">🙂</span></div>
+            <div class="herd-row" id="preyRow"></div>
+          </div>
+          <div class="herd pred" id="herdPred">
+            <div class="herd-head"><span class="cnt" id="predLabel">🦊 Foxes: <b>0</b></span><span class="mood" id="predMood">🙂</span></div>
+            <div class="herd-row" id="predRow"></div>
+          </div>
+        </div>
+
+        <div class="seesaw" aria-hidden="true">
+          <div class="fulcrum"></div>
+          <div class="beam-wrap"><div class="beam" id="beam">
+            <div class="pan left"><div class="pe" id="panPreyEmoji">🐇</div><div class="pn" id="panPreyN">0</div></div>
+            <div class="pan right"><div class="pe" id="panPredEmoji">🦊</div><div class="pn" id="panPredN">0</div></div>
+          </div></div>
+          <div class="balzone" id="balzone">Balance ⚖️</div>
+        </div>
+
+        <div class="r2overlay" id="r2overlay">
+          <h3 id="r2overTitle"></h3>
+          <p id="r2overText"></p>
+          <div class="btnrow"><button class="btn" id="r2overBtn">Continue ▶</button></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctlbtn addprey" data-act="addprey">➕ <span id="cAddPrey">🐇</span> Add prey</button>
+        <button class="ctlbtn addpred" data-act="addpred">➕ <span id="cAddPred">🦊</span> Add predator</button>
+        <button class="ctlbtn delprey" data-act="delprey">➖ <span id="cDelPrey">🐇</span> Remove prey</button>
+        <button class="ctlbtn delpred" data-act="delpred">➖ <span id="cDelPred">🦊</span> Remove predator</button>
+      </div>
+
+      <div class="coach">
+        <div class="face" id="coachFace">🌿</div>
+        <div class="says" id="coachSays">Tap ➕ / ➖ to keep both herds steady. Aim for the green <b>Balanced</b> zone!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ S5 — FINAL ============ -->
+  <section class="screen" id="s5">
+    <div class="card resulthero">
+      <div class="eyebrow">Final Results</div>
+      <div class="bigstars" id="resStars">☆☆☆</div>
+      <div class="scoreline" id="resScore">⭐ 0</div>
+      <div class="rank" id="resRank">Nature Explorer</div>
+      <div class="rankmsg" id="resRankMsg"></div>
+      <div class="best" id="resBest"></div>
+    </div>
+    <div class="card">
+      <div class="sectionhead">🌍 What you discovered</div>
+      <div class="wrapup" id="wrapup"></div>
+      <div class="btnrow">
+        <button class="btn gold sm" id="bonusR2Btn">🎁 Desert food web</button>
+        <button class="btn" id="againBtn">🔄 Play again</button>
+        <button class="btn blue" id="learnBtn">📖 What I learned</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sectionhead">📖 Key Words <span class="small">Science vocabulary</span></div>
+      <div class="kw-grid" id="kwGrid5"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="wordsModal">
+  <div class="inner">
+    <h2>📖 Key Words <span class="small" style="color:var(--muted);font-weight:600;font-size:.85rem">Science vocabulary</span></h2>
+    <p style="color:var(--muted);font-weight:600;font-size:.9rem">Learn these words — they are the key ideas in Predator &amp; Prey science!</p>
+    <div class="kw-grid" id="kwGridModal"></div>
+    <div class="closebar"><button class="btn sm ghost" data-close="wordsModal">Close</button></div>
+  </div>
+</div>
+
+<div class="modal" id="helpModal">
+  <div class="inner">
+    <h2>❓ How to play</h2>
+    <div class="helptip"><b>Round 1 — Spot it:</b> an animal is hiding by <b>camouflage</b>. Tap it before the timer bar empties. A wrong tap only costs a couple of seconds — keep looking! Stuck? Use the <b>💡 Hint</b> (it costs a few points).</div>
+    <div class="helptip"><b>Round 2 — Keep the Balance:</b> tap <b>➕ / ➖</b> to add or remove predators and prey. Every couple of seconds a new "season" happens: prey grow, predators eat. Keep the see-saw in the green <b>Balanced</b> zone!</div>
+    <div class="helptip">🔊 toggles sound · ⏸ pauses a round · 📖 shows the key words. There's no harsh "game over" — every try teaches you something.</div>
+    <div class="closebar"><button class="btn sm ghost" data-close="helpModal">Got it!</button></div>
+  </div>
+</div>
+
+<div class="modal" id="learnModal">
+  <div class="inner">
+    <h2>📖 What I learned</h2>
+    <ul class="learnlist">
+      <li><span class="n">1</span><span><b>Camouflage</b> = colours or shapes that match the background, so an animal is hard to see.</span></li>
+      <li><span class="n">2</span><span><b>Adaptations</b> like white fur, stripes, or a twig-shaped body are inherited and help animals survive.</span></li>
+      <li><span class="n">3</span><span><b>Predators eat prey</b>, and their two <b>populations</b> rise and fall together — the predator's rise comes a little <i>after</i> the prey's.</span></li>
+      <li><span class="n">4</span><span><b>Balance breaks</b> when there are too many predators OR too few prey — and losing a species hurts the whole food web.</span></li>
+    </ul>
+    <div class="quizwrap" id="quizWrap">
+      <div class="sectionhead" style="margin-top:14px">🧠 Quick brain check <span class="small">6 questions · just for fun</span></div>
+      <div class="qprogress" id="qProgress"></div>
+      <div class="qprompt" id="qPrompt"></div>
+      <div class="qopts" id="qOpts"></div>
+      <div class="qexplain" id="qExplain"></div>
+      <div class="btnrow" style="margin-top:12px"><button class="btn sm" id="qNextBtn" style="display:none">Next →</button></div>
+    </div>
+    <div class="closebar"><button class="btn sm ghost" data-close="learnModal">Close</button></div>
+  </div>
+</div>
+
+<div class="pauseveil" id="pauseVeil">
+  <div class="pbig">⏸️</div>
+  <h2>Paused</h2>
+  <button class="btn gold" id="resumeBtn">▶ Resume</button>
+</div>
+
+<div id="toast"></div>
+<div id="confetti" aria-hidden="true"></div>
+
+<script>
+"use strict";
+/* ===================== HELPERS ===================== */
+function $(id){return document.getElementById(id);}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+function rand(a,b){return a+Math.random()*(b-a);}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var _toastTid=0;
+function showToast(msg,dur){
+  var t=$('toast');t.innerHTML=msg;t.classList.add('show');
+  clearTimeout(_toastTid);_toastTid=setTimeout(function(){t.classList.remove('show');},dur||2400);
+}
+
+/* ===================== DATA ===================== */
+var KEYWORDS=[
+  ["Camouflage","blending in","Colours or shapes that match the background so an animal is hard to see."],
+  ["Adaptation","survival trait","A trait an animal is born with that helps it survive."],
+  ["Predator","the hunter","An animal that hunts and eats other animals."],
+  ["Prey","the hunted","An animal that gets hunted and eaten."],
+  ["Balance","ecosystem balance","When predator and prey numbers stay fairly steady over time."],
+  ["Population","species group","All the animals of one kind living in one place."],
+  ["Mimicry / disguise","copycat disguise","When an animal's look copies something else (like a twig) to fool others."],
+  ["Stripes","pattern breaking","Bands of colour that break up an animal's outline so its shape is hard to see."],
+  ["Blends in","disappears in background","Fits into the background so smoothly it seems to disappear."],
+  ["Desert","arid habitat","Sandy, dry habitat where pale colours hide animals out in the open."]
+];
+
+/* Round 1 levels (5 core). bg = scene background. n = decoy count. */
+var LEVELS=[
+  {id:"L1",name:"Green lizard",target:"🦎",habitat:"summer green leaves",
+   bg:"radial-gradient(circle at 30% 25%,#8fcf6c,transparent 45%),radial-gradient(circle at 75% 70%,#5fa843,transparent 50%),linear-gradient(135deg,#79bf58,#5aa843 60%,#4f9c3a)",
+   decoys:["🍃","🌿","🍀","🟢","🐢","💚","🫛","🌱"],n:10,timer:14,kwEn:"Camouflage",kwAr:"Camouflage",
+   why:"Green skin on green leaves — a predator's eyes slide right past it!",op:.87,drift:false},
+  {id:"L2",name:"Polar bear",target:"🐻‍❄️",habitat:"winter snow & ice",
+   bg:"radial-gradient(circle at 25% 30%,#ffffff,transparent 45%),linear-gradient(160deg,#eef6ff,#cfe3f5 55%,#bcd6ee)",
+   decoys:["❄️","⬜","🤍","🏔️","🌨️","🩵","🧊","🕊️"],n:13,timer:12,kwEn:"Adaptation",kwAr:"Adaptation",
+   why:"White fur blends into the snow, so the bear can sneak up close to seals.",op:.85,drift:false},
+  {id:"L3",name:"Tiger",target:"🐯",habitat:"dry autumn grass",
+   bg:"repeating-linear-gradient(96deg,#e6b85c 0,#e6b85c 16px,#d9a847 16px,#d9a847 32px),linear-gradient(180deg,#e9bd60,#cf9c3d)",
+   decoys:["🌾","🟫","🟧","🌻","🍂","🌵","🟡","🍁"],n:14,timer:10,kwEn:"Stripes",kwAr:"Stripes",
+   why:"Stripes break up the tiger's outline, so its shape is hard to see in the grass.",op:.82,drift:false},
+  {id:"L4",name:"Stick insect",target:"🦗",habitat:"brown forest twigs",
+   bg:"radial-gradient(circle at 60% 40%,#8a6a43,transparent 55%),linear-gradient(135deg,#7d5c39,#6f4f2e 60%,#5c4126)",
+   decoys:["🪵","🟤","〽️","🌿","🍂","🌰","🪨","🍄"],n:16,timer:9,kwEn:"Mimicry",kwAr:"Mimicry",
+   why:"Its body copies the look of a twig — a clever disguise, so predators pass it by.",op:.78,drift:false},
+  {id:"L5",name:"Chameleon",target:"🦎",habitat:"mottled leafy wall",
+   bg:"radial-gradient(circle at 20% 20%,#86c863,transparent 30%),radial-gradient(circle at 70% 30%,#5fa248,transparent 32%),radial-gradient(circle at 40% 75%,#6fb551,transparent 34%),radial-gradient(circle at 85% 80%,#4f9439,transparent 30%),linear-gradient(135deg,#6fb551,#4f9439)",
+   decoys:["🍃","🌿","🦋","🐜","🍀","🐝","🌱","🐸","🟢","🍀"],n:19,timer:7,kwEn:"Blend in",kwAr:"Blend in",
+   why:"A chameleon changes colour mostly to 'talk' and stay comfy — and it can help it blend in, too!",op:.72,drift:true}
+];
+/* Round 1 bonus scenes (2). */
+var BONUS=[
+  {id:"B1",name:"Fennec fox",target:"🦊",habitat:"desert dunes",
+   bg:"radial-gradient(circle at 30% 30%,#f7ecc8,transparent 50%),linear-gradient(160deg,#f3e2b8,#e8cf94 55%,#dcc079)",
+   decoys:["🟡","🟨","🐫","🌵","🌸","🌼","🟤","🪨"],n:12,timer:10,kwEn:"Desert camouflage",kwAr:"Desert camo",
+   why:"Sandy fur blends into the pale dunes, hiding desert animals out in the open.",op:.85,drift:false},
+  {id:"B2",name:"Crab",target:"🦀",habitat:"rocky pebble shore",
+   bg:"radial-gradient(circle at 25% 35%,#c3c7cd,transparent 45%),radial-gradient(circle at 70% 65%,#8d929b,transparent 48%),linear-gradient(135deg,#b9bcc2,#9a9ea6 60%,#868b94)",
+   decoys:["🪨","⚪","⚫","🩶","⬛","🌑","💿","🔘"],n:14,timer:10,kwEn:"Background match",kwAr:"Camouflage",
+   why:"A pebble-coloured shell matches the stones, so the crab disappears on the beach.",op:.82,drift:false}
+];
+
+/* Round 2 challenges (3 core + 1 bonus). mode: 'survive' (both alive at timer) or 'hold' (3 ticks in zone). */
+var CHALLENGES=[
+  {key:"C1",title:"Meet the meadow",goal:"Keep <b>both</b> animals alive for 20 seconds!",prey:6,pred:2,mode:"survive",timer:20,
+   preyEmoji:"🐇",predEmoji:"🦊",preyName:"Rabbits",predName:"Foxes",preyCls:"prey",predCls:"pred",
+   win:"🎉 Balanced! You're an ecosystem keeper!"},
+  {key:"C2",title:"Too many predators",goal:"Too many foxes! Bring the meadow back to the green <b>Balanced</b> zone.",prey:6,pred:8,mode:"hold",
+   preyEmoji:"🐇",predEmoji:"🦊",preyName:"Rabbits",predName:"Foxes",preyCls:"prey",predCls:"pred",
+   win:"🎉 You fixed it! Fewer foxes let the rabbits recover!"},
+  {key:"C3",title:"Too few prey",goal:"Not enough rabbits! Help the meadow reach <b>Balance</b>.",prey:2,pred:5,mode:"hold",
+   preyEmoji:"🐇",predEmoji:"🦊",preyName:"Rabbits",predName:"Foxes",preyCls:"prey",predCls:"pred",
+   win:"🎉 You did it! Enough rabbits brought the balance back!"},
+  {key:"B3",title:"Desert food web",goal:"Same idea, new home: 🦅 desert hawk and 🐀 jerboa on the sand.",prey:5,pred:3,mode:"hold",bonus:true,
+   preyEmoji:"🐀",predEmoji:"🦅",preyName:"Jerboas",predName:"Hawks",preyCls:"desertprey",predCls:"desertpred",
+   win:"🎉 Balanced in the desert too — every ecosystem needs it!"}
+];
+
+/* Brain-check questions (content pack §F). answer = 0-based index. */
+var QUIZ=[
+  {q:"You're playing hide-and-seek in a leafy green garden. Which outfit makes you HARDEST to find?",
+   opts:["A green shirt that matches the leaves","A bright orange jacket","A shiny white hat","A red and yellow striped scarf"],a:0,
+   ex:"Matching the green leaves is camouflage — colours that blend into the background make you hard to spot."},
+  {q:"A polar bear's white fur helps it stay hidden in the snow. What do we call a trait an animal is born with that helps it survive?",
+   opts:["A habit it learned at school","An adaptation","A mistake","A type of weather"],a:1,
+   ex:"An adaptation is an inherited trait, like white fur in snow, that helps an animal survive."},
+  {q:"A stick insect's body looks exactly like a brown twig. How does this help it stay alive?",
+   opts:["It runs faster than predators","Predators think it's just a twig and leave it alone","It makes loud noises to scare predators","It glows in the dark"],a:1,
+   ex:"Looking like a twig is a disguise — predators don't notice it because it copies something they don't want to eat."},
+  {q:"In a meadow, the number of foxes suddenly gets very high. What will most likely happen to the rabbits soon after?",
+   opts:["The rabbits will turn into foxes","The rabbits will grow bigger","The number of rabbits will drop because more get eaten","The rabbits will stop eating grass"],a:2,
+   ex:"More predators means more rabbits get eaten, so the rabbit population goes down."},
+  {q:"If almost all the rabbits in a meadow disappear, what will most likely happen to the foxes that eat them?",
+   opts:["Many foxes will go hungry, and their numbers will fall","The foxes will all grow longer tails","The foxes will start eating grass instead","Nothing will change for the foxes"],a:0,
+   ex:"Foxes need prey to eat. With almost no rabbits, many foxes starve and the fox population drops."},
+  {q:"A meadow is \"in balance.\" What does that mean?",
+   opts:["Every animal is exactly the same size","The numbers of predators and prey stay fairly steady over time","There are no predators left at all","All the animals eat the same food"],a:1,
+   ex:"Balance means predator and prey numbers stay fairly steady — no species grows too big or disappears."}
+];
+
+/* ===================== AUDIO (Web Audio blips) ===================== */
+var AU={ctx:null,muted:false};
+try{AU.muted=localStorage.getItem('hsMute')==='1';}catch(e){}
+function ac(){if(!AU.ctx){try{AU.ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AU.ctx;}
+function tone(freq,start,dur,type,vol){
+  var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.value=freq;
+  var t=c.currentTime+start;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol||0.16,t+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.02);
+}
+function sfx(name){
+  if(AU.muted)return;
+  var c=ac();if(c&&c.state==='suspended'){try{c.resume();}catch(e){}}
+  if(name==='click'){tone(520,0,0.07,'triangle',0.1);}
+  else if(name==='correct'){tone(660,0,0.12,'sine',0.18);tone(880,0.1,0.16,'sine',0.18);}
+  else if(name==='wrong'){tone(220,0,0.16,'sine',0.13);}
+  else if(name==='tick'){tone(440,0,0.06,'triangle',0.08);}
+  else if(name==='chime'){tone(784,0,0.14,'sine',0.15);tone(1047,0.09,0.2,'sine',0.15);}
+  else if(name==='win'){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.1,0.3,'triangle',0.16);});}
+  else if(name==='fail'){tone(330,0,0.2,'sine',0.13);tone(247,0.12,0.26,'sine',0.12);}
+  else if(name==='points'){tone(740,0,0.09,'sine',0.13);tone(988,0.07,0.13,'sine',0.13);}
+}
+
+/* ===================== POWER-UPS ===================== */
+var POWERUPS=[
+  {id:'camo',icon:'🎨',name:'Better Camouflage',desc:'+20 bonus points every time you spot the animal.'},
+  {id:'dash',icon:'💨',name:'Quick Dash',desc:'Wrong taps only cost 1 second (not 2).'},
+  {id:'night',icon:'🌙',name:'Night Vision',desc:'Hint spotlight stays lit for 3 seconds.'},
+  {id:'senses',icon:'👂',name:'Sharp Senses',desc:'One free wrong tap per level — no life lost!'}
+];
+var selectedPowerUp=null;
+function renderPowerUps(){
+  var grid=$('puGrid');if(!grid)return;grid.innerHTML='';
+  POWERUPS.forEach(function(p){
+    var d=document.createElement('div');d.className='pucard';d.dataset.pu=p.id;
+    d.innerHTML='<div class="pu-icon">'+p.icon+'</div><div class="pu-name">'+p.name+'</div><div class="pu-desc">'+p.desc+'</div>';
+    d.onclick=function(){choosePowerUp(p.id);};grid.appendChild(d);
+  });
+}
+function choosePowerUp(id){
+  selectedPowerUp=id;sfx('click');
+  document.querySelectorAll('.pucard').forEach(function(c){c.classList.toggle('chosen',c.dataset.pu===id);});
+  showToast('🧬 '+POWERUPS.find(function(p){return p.id===id;}).name+' chosen!',2000);
+}
+
+/* ===================== GAME STATE ===================== */
+var game={screen:0,scoreR1:0,scoreR1bonus:0,scoreR2:0,scoreR2bonus:0,spotted:0,paused:false,bonus1Done:false,bonus2Done:false,daysSurvived:0};
+function totalScore(){return game.scoreR1+game.scoreR1bonus+game.scoreR2+game.scoreR2bonus;}
+function updateDaysChip(){
+  var c=$('daysChip');c.style.display=game.daysSurvived>0?'':'none';
+  c.textContent='📅 '+game.daysSurvived+' day'+(game.daysSurvived===1?'':'s');
+}
+
+/* ===================== TOP BAR ===================== */
+var SCREENS=['s0','s1','s2','s3','s4','s5'];
+var ROUND_LABEL=['Get Ready','How to Play','Round 1 / 2','Round 1 done','Round 2 / 2','Results'];
+function buildDots(){var d=$('dots');d.innerHTML='';for(var i=0;i<6;i++){var s=document.createElement('span');s.className='dot';s.id='dot'+i;d.appendChild(s);}}
+function updateTopBar(){
+  $('scoreChip').innerHTML='⭐ '+totalScore();
+  $('roundChip').textContent=ROUND_LABEL[game.screen];
+  for(var i=0;i<6;i++){var dot=$('dot'+i);dot.className='dot';if(i<game.screen)dot.classList.add('done');if(i===game.screen)dot.classList.add('on');}
+  $('pauseBtn').disabled=!(game.screen===2||game.screen===4);
+}
+
+/* ===================== NAVIGATION ===================== */
+function goto(n){
+  stopR1Timer();stopR2Tick();
+  game.screen=n;
+  for(var i=0;i<SCREENS.length;i++){$(SCREENS[i]).classList.toggle('active',i===n);}
+  window.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+  updateTopBar();
+  if(n===3)renderResult();
+  if(n===5)renderFinal();
+}
+
+/* ===================== KEY WORDS ===================== */
+function renderKW(el){
+  var h='';
+  for(var i=0;i<KEYWORDS.length;i++){var k=KEYWORDS[i];
+    h+='<div class="kw"><div class="en">'+k[0]+'</div><div class="arr">'+k[1]+'</div><div class="tr">'+k[2]+'</div></div>';}
+  el.innerHTML=h;
+}
+
+/* ===================== ROUND 1 — SPOT IT ===================== */
+var r1={list:[],idx:0,bonusMode:false,timer:0,timeLeft:0,hintUsed:false,locked:false,target:null,tPos:null,results:[],lives:3,freehitUsed:false};
+function startRound1(){
+  r1.list=LEVELS;r1.idx=0;r1.bonusMode=false;r1.results=[];
+  game.scoreR1=0;game.spotted=0;
+  $('r1eyebrow').textContent='Round 1 · Spot it';
+  loadLevel();
+}
+function startBonusR1(){
+  r1.list=BONUS;r1.idx=0;r1.bonusMode=true;game.bonus1Done=true;
+  $('r1eyebrow').textContent='Bonus scenes · Spot it';
+  goto(2);
+  loadLevel();
+}
+function updateLivesUI(){
+  for(var i=0;i<3;i++){var el=$('life'+i);if(el)el.classList.toggle('lost',i>=r1.lives);}
+}
+function loadLevel(){
+  var L=r1.list[r1.idx];
+  r1.hintUsed=false;r1.locked=false;r1.lives=3;r1.freehitUsed=false;
+  // Apply timer bonus for Night Vision power-up in bonus mode
+  r1.timeLeft = L.timer + (selectedPowerUp==='night'&&r1.bonusMode?3:0);
+  updateLivesUI();
+  if(r1.idx>0){showToast('🌍 Habitat shift → '+L.habitat+'! New camouflage needed.',2200);}
+  // level dots
+  var dd=$('levelDots');dd.innerHTML='';
+  var total=r1.list.length;
+  for(var i=0;i<total;i++){var ic=document.createElement('i');if(i<r1.idx)ic.className='done';else if(i===r1.idx)ic.className='on';dd.appendChild(ic);}
+  // hint banner
+  $('hintBanner').innerHTML='🌍 <b>'+L.habitat+'</b> — find the <b>'+L.name+'</b>! <span class="kchip">'+L.kwEn+'</span>';
+  // feedback reset
+  var fb=$('r1feedback');fb.className='feedback';fb.innerHTML='';
+  $('hintR1Btn').disabled=false;
+  // scene
+  var scene=$('scene');
+  scene.className='scene';
+  scene.style.background=L.bg;
+  // clear previous critters but keep hint veil
+  Array.prototype.slice.call(scene.querySelectorAll('.critter,.ripple')).forEach(function(n){n.remove();});
+  var veil=$('hintVeil');veil.classList.remove('show');
+  placeCritters(L);
+  // timer
+  updateTimerUI();
+  startR1Timer();
+}
+function placeCritters(L){
+  var scene=$('scene');
+  var positions=[];
+  function farEnough(x,y){for(var i=0;i<positions.length;i++){var dx=positions[i].x-x,dy=positions[i].y-y;if(Math.sqrt(dx*dx+dy*dy)<13)return false;}return true;}
+  function spot(){var x,y,tries=0;do{x=rand(9,91);y=rand(13,87);tries++;}while(!farEnough(x,y)&&tries<60);positions.push({x:x,y:y});return{x:x,y:y};}
+  // decoys
+  for(var i=0;i<L.n;i++){
+    var d=L.decoys[i%L.decoys.length];
+    var p=spot();
+    var b=document.createElement('button');
+    b.className='critter'+(L.drift?' drift':'');
+    b.textContent=d;b.dataset.role='decoy';
+    b.style.left=p.x+'%';b.style.top=p.y+'%';
+    b.style.fontSize='clamp(28px,7vw,42px)';
+    b.style.animationDelay=(Math.random()*5).toFixed(2)+'s';
+    b.setAttribute('aria-label','a '+L.habitat+' decoy');
+    scene.appendChild(b);
+  }
+  // target
+  var tp=spot();r1.tPos=tp;
+  var t=document.createElement('button');
+  t.className='critter'+(L.drift?' drift':'');
+  t.textContent=L.target;t.dataset.role='target';
+  t.style.left=tp.x+'%';t.style.top=tp.y+'%';
+  t.style.fontSize='clamp(26px,6.4vw,38px)';
+  t.style.opacity=L.op;
+  t.style.filter='saturate(.9) contrast(.95)';
+  t.style.animationDelay=(Math.random()*5).toFixed(2)+'s';
+  t.setAttribute('aria-label','the hidden '+L.name);
+  scene.appendChild(t);
+  r1.target=t;
+  // scene click (handles target, decoy, empty)
+  scene.onclick=onSceneClick;
+}
+function onSceneClick(e){
+  if(r1.locked||game.paused)return;
+  var c=e.target.closest && e.target.closest('.critter');
+  if(c&&c.dataset.role==='target'){correctSpot();return;}
+  // wrong: decoy or empty
+  wrongSpot(e);
+}
+function wrongSpot(e){
+  sfx('wrong');
+  // ripple at click point
+  var scene=$('scene');var r=scene.getBoundingClientRect();
+  var x=clamp(e.clientX-r.left,8,r.width-8),y=clamp(e.clientY-r.top,8,r.height-8);
+  var rip=document.createElement('div');rip.className='ripple';rip.textContent='👀';
+  rip.style.left=x+'px';rip.style.top=y+'px';scene.appendChild(rip);
+  setTimeout(function(){rip.remove();},650);
+  // Sharp Senses: one free wrong tap per level
+  if(selectedPowerUp==='senses'&&!r1.freehitUsed){
+    r1.freehitUsed=true;
+    var fb=$('r1feedback');fb.className='feedback miss show';
+    fb.innerHTML='👂 Sharp Senses saved you! (free miss — no life lost)';
+    return;
+  }
+  // lose a life
+  r1.lives=Math.max(0,r1.lives-1);updateLivesUI();
+  // time penalty: Quick Dash = 1s, normal = 2s
+  var pen=(selectedPowerUp==='dash')?1:2;
+  r1.timeLeft=Math.max(1,r1.timeLeft-pen);updateTimerUI();
+  var fb=$('r1feedback');fb.className='feedback miss show';
+  fb.innerHTML='👀 Not quite — '+(r1.lives>0?r1.lives+' ❤️ left! <span style="font-weight:600">(−'+pen+'s)</span>':'No more lives! 💔');
+  if(r1.lives<=0){$('scene').classList.add('locked');setTimeout(livesFail,700);return;}
+}
+function livesFail(){
+  if(r1.locked)return;r1.locked=true;
+  stopR1Timer();sfx('fail');
+  var L=r1.list[r1.idx];
+  var scene=$('scene');scene.classList.add('dimall','locked');
+  r1.target.classList.add('lit','miss');
+  if(!r1.bonusMode){r1.results.push({target:L.target,bg:L.bg,kwEn:L.kwEn,kwAr:L.kwAr,name:L.name,found:false});}
+  game.daysSurvived++;updateDaysChip();
+  var fb=$('r1feedback');fb.className='feedback miss show';
+  fb.innerHTML='💔 No more lives! There it was — <b>'+L.name+'</b> hiding in the '+L.habitat+'!'
+    +'<span class="why">'+L.why+'</span>';
+  setTimeout(nextLevel,2400);
+}
+function correctSpot(){
+  if(r1.locked)return;r1.locked=true;
+  stopR1Timer();
+  sfx('correct');
+  var L=r1.list[r1.idx];
+  var scene=$('scene');scene.classList.add('dimall','locked');
+  r1.target.classList.add('lit');
+  // score: base 100 + secondsLeft*5 - hint + camo bonus
+  var pts=100+Math.round(r1.timeLeft)*5;
+  if(r1.hintUsed)pts-=5;pts=Math.max(0,pts);
+  if(selectedPowerUp==='camo')pts+=20;
+  if(r1.bonusMode){game.scoreR1bonus+=pts;}else{game.scoreR1+=pts;game.spotted++;
+    r1.results.push({target:L.target,bg:L.bg,kwEn:L.kwEn,kwAr:L.kwAr,name:L.name,found:true});}
+  game.daysSurvived++;updateDaysChip();
+  updateTopBar();
+  var fb=$('r1feedback');fb.className='feedback ok show';
+  fb.innerHTML='✅ Found it! Great eyes! <b>+'+pts+'</b>'+(selectedPowerUp==='camo'?' <b>+20 Camo Bonus!</b>':'')
+    +'<span class="why">Why it works: '+L.why+'</span>';
+  setTimeout(nextLevel,1900);
+}
+function timeoutSpot(){
+  if(r1.locked)return;r1.locked=true;
+  stopR1Timer();
+  sfx('fail');
+  var L=r1.list[r1.idx];
+  var scene=$('scene');scene.classList.add('dimall','locked');
+  r1.target.classList.add('lit','miss');
+  if(!r1.bonusMode){r1.results.push({target:L.target,bg:L.bg,kwEn:L.kwEn,kwAr:L.kwAr,name:L.name,found:false});}
+  game.daysSurvived++;updateDaysChip();
+  var fb=$('r1feedback');fb.className='feedback miss show';
+  fb.innerHTML='⏰ Time\'s up! See how it hid? <b>(0 for this scene)</b>'
+    +'<span class="why">'+L.why+'</span>';
+  setTimeout(nextLevel,2400);
+}
+function nextLevel(){
+  r1.idx++;
+  if(r1.idx<r1.list.length){loadLevel();}
+  else{
+    if(r1.bonusMode){
+      // bonus done -> back to result screen
+      goto(3);
+    }else{
+      goto(3);
+    }
+  }
+}
+/* hint */
+function useHintR1(){
+  if(r1.hintUsed||r1.locked||game.paused)return;
+  r1.hintUsed=true;$('hintR1Btn').disabled=true;
+  sfx('click');
+  if(!r1.bonusMode)game.scoreR1=Math.max(0,game.scoreR1);
+  // cost applied at scoring time (-5); show clue spotlight near target quadrant
+  var veil=$('hintVeil');
+  veil.style.setProperty('--hx',r1.tPos.x+'%');
+  veil.style.setProperty('--hy',r1.tPos.y+'%');
+  veil.classList.add('show');
+  var hintDur=(selectedPowerUp==='night')?3000:1600;
+  var fb=$('r1feedback');fb.className='feedback miss show';fb.innerHTML='💡 Here\'s a clue…'+(selectedPowerUp==='night'?' 🌙 Night Vision active!':'')+'<span style="font-weight:600"> (−5 points)</span>';
+  setTimeout(function(){veil.classList.remove('show');},hintDur);
+}
+/* timer */
+function startR1Timer(){stopR1Timer();r1.timer=setInterval(r1Tick,1000);}
+function stopR1Timer(){if(r1.timer){clearInterval(r1.timer);r1.timer=0;}}
+function r1Tick(){
+  if(game.paused)return;
+  r1.timeLeft-=1;
+  if(r1.timeLeft<=0){r1.timeLeft=0;updateTimerUI();timeoutSpot();return;}
+  updateTimerUI();
+  if(r1.timeLeft<=4)sfx('tick');
+}
+function updateTimerUI(){
+  var L=r1.list[r1.idx];
+  $('timerSec').textContent=Math.ceil(r1.timeLeft);
+  var pct=clamp(r1.timeLeft/L.timer*100,0,100);
+  $('timerFill').style.width=pct+'%';
+  $('timerBar').classList.toggle('low',r1.timeLeft<=Math.max(4,L.timer*0.3));
+}
+
+/* ===================== S3 RESULT ===================== */
+function renderResult(){
+  $('spottedCount').textContent=game.spotted;
+  var strip=$('recapStrip');strip.innerHTML='';
+  for(var i=0;i<r1.results.length;i++){
+    var r=r1.results[i];
+    var el=document.createElement('div');el.className='recap';
+    el.innerHTML='<div class="sc" style="background:'+r.bg+'">'+r.target+'</div>'
+      +'<div class="lab"><div class="nm">'+r.name+'</div><div class="ar">'+r.kwEn+'</div>'
+      +'<div class="mk '+(r.found?'ok':'no')+'">'+(r.found?'✅ found':'⏰ hid well')+'</div></div>';
+    strip.appendChild(el);
+  }
+  // hide bonus button if already played
+  $('bonusR1Btn').style.display = game.bonus1Done ? 'none':'';
+  // refresh power-up UI (restore chosen state after re-render)
+  renderPowerUps();
+  if(selectedPowerUp){
+    var chosen=document.querySelector('.pucard[data-pu="'+selectedPowerUp+'"]');
+    if(chosen)chosen.classList.add('chosen');
+  }
+}
+
+/* ===================== ROUND 2 — KEEP THE BALANCE ===================== */
+var r2={idx:0,prey:0,pred:0,cfg:null,tick:0,timeLeft:0,hold:0,prevPrey:0,balancedStreak:0,preyZero:0,predZero:0,
+        timerId:0,done:false,bonusMode:false};
+function startRound2(){
+  r2.idx=0;r2.bonusMode=false;game.scoreR2=0;game.scoreR2bonus=0;
+  $('r2eyebrow').textContent='Round 2 · Keep the Balance';
+  loadChallenge();
+}
+function startBonusR2(){
+  // play B3 (desert food web)
+  r2.idx=3;r2.bonusMode=true;game.bonus2Done=true;
+  $('r2eyebrow').textContent='Bonus · Desert food web';
+  goto(4);
+  loadChallenge();
+}
+function loadChallenge(){
+  stopR2Tick();
+  var C=CHALLENGES[r2.idx];r2.cfg=C;
+  r2.prey=C.prey;r2.pred=C.pred;r2.prevPrey=C.prey;
+  r2.tick=0;r2.hold=0;r2.balancedStreak=0;r2.preyZero=0;r2.predZero=0;r2.done=false;
+  r2.timeLeft=C.timer||0;
+  // challenge dots (only the 3 core; bonus shown separately)
+  var dd=$('challengeDots');dd.innerHTML='';
+  var coreN=3, cur = r2.bonusMode?3:r2.idx;
+  for(var i=0;i<coreN;i++){var ic=document.createElement('i');if(i<cur)ic.className='done';else if(i===cur)ic.className='on';dd.appendChild(ic);}
+  if(r2.bonusMode){dd.innerHTML='';var b=document.createElement('i');b.className='done';dd.appendChild(b);b=document.createElement('i');b.className='done';dd.appendChild(b);b=document.createElement('i');b.className='done';dd.appendChild(b);var bn=document.createElement('i');bn.className='on';dd.appendChild(bn);}
+  // banner
+  $('goalTitle').textContent=(C.bonus?'Bonus':'Challenge '+(r2.idx+1))+' · '+C.title;
+  $('goalText').innerHTML=' '+C.goal;
+  // herd classes + labels
+  $('herdPrey').className='herd '+C.preyCls;
+  $('herdPred').className='herd '+C.predCls;
+  $('preyLabel').innerHTML=C.preyEmoji+' '+C.preyName+': <b>'+r2.prey+'</b>';
+  $('predLabel').innerHTML=C.predEmoji+' '+C.predName+': <b>'+r2.pred+'</b>';
+  $('panPreyEmoji').textContent=C.preyEmoji;$('panPredEmoji').textContent=C.predEmoji;
+  $('cAddPrey').textContent=C.preyEmoji;$('cDelPrey').textContent=C.preyEmoji;
+  $('cAddPred').textContent=C.predEmoji;$('cDelPred').textContent=C.predEmoji;
+  // timer / hold UI
+  $('r2timerWrap').style.display = (C.mode==='survive')?'flex':'none';
+  $('r2holdWrap').style.display = (C.mode==='hold')?'flex':'none';
+  if(C.mode==='survive'){$('r2timerSec').textContent=r2.timeLeft;$('r2timerFill').style.transition='none';$('r2timerFill').style.width='100%';}
+  // overlay hidden, controls enabled
+  $('r2overlay').className='r2overlay';
+  setControls(true);
+  renderMeadow();updateCoach();
+  startR2Tick();
+}
+function setControls(on){
+  Array.prototype.slice.call(document.querySelectorAll('.ctlbtn')).forEach(function(b){b.disabled=!on;});
+}
+function inZone(){return Math.abs(r2.prey-2*r2.pred)<=2 && r2.prey>0 && r2.pred>0;}
+function renderMeadow(){
+  var C=r2.cfg;
+  $('preyLabel').innerHTML=C.preyEmoji+' '+C.preyName+': <b>'+r2.prey+'</b>';
+  $('predLabel').innerHTML=C.predEmoji+' '+C.predName+': <b>'+r2.pred+'</b>';
+  renderRow('preyRow',C.preyEmoji,r2.prey);
+  renderRow('predRow',C.predEmoji,r2.pred);
+  // moods
+  $('preyMood').textContent=moodFace(r2.prey,false);
+  $('predMood').textContent=moodFace(r2.pred,r2.pred>r2.prey);
+  // see-saw
+  var rot=clamp((r2.pred*2-r2.prey)*1.7,-20,20);
+  $('beam').style.transform='rotate('+rot+'deg)';
+  $('panPreyN').textContent=r2.prey;$('panPredN').textContent=r2.pred;
+  // balance zone glow
+  var bz=$('balzone');bz.classList.toggle('good',inZone());
+  // disable buttons at caps
+  document.querySelector('[data-act=addprey]').disabled=r2.done||r2.prey>=20;
+  document.querySelector('[data-act=delprey]').disabled=r2.done||r2.prey<=0;
+  document.querySelector('[data-act=addpred]').disabled=r2.done||r2.pred>=20;
+  document.querySelector('[data-act=delpred]').disabled=r2.done||r2.pred<=0;
+}
+function renderRow(id,emoji,n){
+  var row=$(id);var have=row.children.length;
+  if(n<have){for(var i=have-1;i>=n;i--)row.children[i].remove();}
+  else if(n>have){for(var j=have;j<n;j++){var s=document.createElement('span');s.textContent=emoji;row.appendChild(s);}}
+}
+function moodFace(n,hungry){
+  if(n<=0)return '💔';
+  if(hungry&&n>0)return '😟';
+  if(n>=8)return '😄';
+  if(n>=4)return '🙂';
+  if(n>=1)return '😟';
+  return '😢';
+}
+/* controls */
+function r2Act(act){
+  if(r2.done||game.paused)return;
+  if(act==='addprey'&&r2.prey<20){r2.prey++;sfx('click');}
+  else if(act==='delprey'&&r2.prey>0){r2.prey--;sfx('click');}
+  else if(act==='addpred'&&r2.pred<20){r2.pred++;sfx('click');}
+  else if(act==='delpred'&&r2.pred>0){r2.pred--;sfx('click');}
+  renderMeadow();updateCoach();
+}
+/* season tick engine */
+function startR2Tick(){stopR2Tick();r2.timerId=setInterval(seasonTick,2000);}
+function stopR2Tick(){if(r2.timerId){clearInterval(r2.timerId);r2.timerId=0;}}
+function seasonTick(){
+  if(game.paused||r2.done)return;
+  var C=r2.cfg;
+  // ---- win check FIRST (uses player-adjusted state) for HOLD mode ----
+  if(C.mode==='hold'){
+    if(inZone()){r2.hold++;}else{r2.hold=0;}
+    updateHoldPips();
+    if(r2.hold>=3){winChallenge();return;}
+  }
+  // ---- survive timer ----
+  if(C.mode==='survive'){
+    r2.timeLeft-=2;
+    if(r2.timeLeft<0)r2.timeLeft=0;
+    $('r2timerSec').textContent=r2.timeLeft;
+    var f=$('r2timerFill');f.style.transition='width 2s linear';f.style.width=(r2.timeLeft/C.timer*100)+'%';
+  }
+  // ---- apply rule engine ----
+  r2.prevPrey=r2.prey;
+  // 1 prey grow
+  if(r2.prey<12)r2.prey+=2;
+  var preyBefore=r2.prey;
+  // 2 predators eat
+  var eaten=Math.min(r2.prey,r2.pred);
+  r2.prey-=eaten;
+  // 3 predators' fate
+  if(r2.pred>0){ if(preyBefore>=r2.pred)r2.pred+=1; else r2.pred-=1; }
+  // extinction: no prey -> predators starve faster
+  if(r2.prey===0)r2.pred-=2;
+  // 4 clamp
+  r2.prey=clamp(r2.prey,0,20);r2.pred=clamp(r2.pred,0,20);
+  // 5 extinction counters
+  r2.preyZero = (r2.prey===0)?r2.preyZero+1:0;
+  r2.predZero = (r2.pred===0)?r2.predZero+1:0;
+  sfx('tick');
+  renderMeadow();updateCoach();
+  // extinction check
+  if(r2.preyZero>=2||r2.predZero>=2){failChallenge();return;}
+  // survive win at timer end
+  if(C.mode==='survive'&&r2.timeLeft<=0){
+    if(r2.prey>0&&r2.pred>0)winChallenge();else failChallenge();
+  }
+}
+function updateHoldPips(){
+  var pips=$('holdPips').children;
+  for(var i=0;i<pips.length;i++)pips[i].className=(i<r2.hold)?'on':'';
+}
+function updateCoach(){
+  var C=r2.cfg,txt,face;
+  var predL=C.predName.toLowerCase(),preyL=C.preyName.toLowerCase();
+  if(r2.done){return;} // overlay handles end states
+  if(r2.prey===0&&r2.preyZero>=1){
+    face='💔';txt='💔 The '+preyL+' are gone! With no prey, the predators <b>starve</b>. Tap ➕ to bring some back, fast!';
+  } else if(r2.pred===0&&r2.predZero>=1){
+    face='🐇';txt=C.preyEmoji+' Lots of '+preyL+' and no '+predL+'… they\'ll eat all the grass. Predators help keep things in check!';
+  } else if(r2.pred>r2.prey){
+    face=C.predEmoji;txt=C.predEmoji+' Too many '+predL+'! The '+preyL+' can\'t keep up — the '+predL+' will get <b>hungry</b>.';
+  } else if(r2.prey<=2&&r2.prey<=r2.prevPrey){
+    face=C.preyEmoji;txt=C.preyEmoji+' '+C.preyName+' are running out! With no prey, the predators <b>starve</b>.';
+  } else if(inZone()){
+    r2.balancedStreak++;
+    if(r2.balancedStreak>=2){face='🌿';txt='🌿 Nice! Both herds are steady — that\'s a <b>healthy balance</b>!';}
+    else{face='😊';txt='Balanced! 😊 Keep it in the green zone…';}
+  } else {
+    r2.balancedStreak=0;
+    face='🤔';txt='Tap ➕ / ➖ to keep both herds steady. Aim for the green <b>Balanced</b> zone! (about 2 '+preyL+' for each '+predL+')';
+  }
+  if(!inZone())r2.balancedStreak=0;
+  $('coachFace').textContent=face;
+  $('coachSays').innerHTML=txt;
+}
+function winChallenge(){
+  if(r2.done)return;r2.done=true;stopR2Tick();setControls(false);
+  sfx('win');confetti();
+  var C=r2.cfg;
+  if(r2.bonusMode){game.scoreR2bonus+=150;}else{game.scoreR2+=150;}
+  updateTopBar();
+  var ov=$('r2overlay');ov.className='r2overlay win show';
+  $('r2overTitle').innerHTML='Balanced! ⚖️';
+  $('r2overText').innerHTML=C.win+'<br><b>+150 points</b>';
+  $('r2overBtn').textContent = (lastChallenge()?'See my results ▶':'Next challenge ▶');
+}
+function failChallenge(){
+  if(r2.done)return;r2.done=true;stopR2Tick();setControls(false);
+  sfx('fail');
+  var C=r2.cfg;
+  var gone = r2.prey===0 ? C.preyName : C.predName;
+  var because = r2.prey===0
+    ? 'The '+C.preyName.toLowerCase()+' ran out, so the '+C.predName.toLowerCase()+' had nothing to eat.'
+    : 'All the '+C.predName.toLowerCase()+' were gone — without predators the '+C.preyName.toLowerCase()+' overgrow and wreck their own food.';
+  var ov=$('r2overlay');ov.className='r2overlay fail show';
+  $('r2overTitle').innerHTML='It collapsed 💔';
+  $('r2overText').innerHTML='<b>'+gone+' reached 0.</b> '+because
+    +'<br>In real food webs, losing one species hurts everyone. Let\'s try again 🔄';
+  $('r2overBtn').textContent='🔄 Try again';
+  $('coachFace').textContent='💔';
+  $('coachSays').innerHTML='💔 One species is gone. In real food webs, that hurts everyone.';
+}
+function lastChallenge(){return r2.bonusMode || r2.idx>=2;}
+function r2OverlayContinue(){
+  sfx('click');
+  if(!r2.done)return;
+  var failed = $('r2overlay').classList.contains('fail');
+  if(failed){loadChallenge();return;} // retry same challenge, no points lost
+  // won:
+  if(r2.bonusMode){goto(5);return;}
+  if(r2.idx<2){r2.idx++;loadChallenge();}
+  else{goto(5);} // finished C3
+}
+
+/* confetti */
+function confetti(){
+  if(RM)return;
+  var box=$('confetti');var ic=['🎉','🌿','⭐','🐇','🦊','✨','🍃'];
+  for(var i=0;i<26;i++){
+    var s=document.createElement('div');s.className='conf';s.textContent=ic[Math.floor(Math.random()*ic.length)];
+    s.style.left=rand(2,96)+'%';s.style.animationDuration=rand(1.8,3.4)+'s';s.style.animationDelay=rand(0,.5)+'s';
+    s.style.fontSize=rand(1.1,2.1)+'rem';box.appendChild(s);
+    (function(node){setTimeout(function(){node.remove();},4200);})(s);
+  }
+}
+
+/* ===================== S5 FINAL ===================== */
+function badgeFor(t){
+  if(t>=800)return{stars:3,name:"Ecosystem Keeper",msg:"Amazing! You can spot the hidden AND keep nature in balance."};
+  if(t>=400)return{stars:2,name:"Camouflage Detective",msg:"Sharp eyes! Few things stay hidden from you."};
+  return{stars:1,name:"Nature Explorer",msg:"Great start! You're seeing the hidden world."};
+}
+function renderFinal(){
+  var t=totalScore();var b=badgeFor(t);
+  var stars='';for(var i=0;i<3;i++)stars+=(i<b.stars?'⭐':'☆');
+  $('resStars').textContent=stars;
+  $('resScore').innerHTML='⭐ '+t+' points';
+  $('resRank').textContent=b.name;
+  $('resRankMsg').textContent=b.msg;
+  var best=0;try{best=parseInt(localStorage.getItem('hsBest')||'0',10);}catch(e){}
+  if(t>best){best=t;try{localStorage.setItem('hsBest',String(t));}catch(e){}}
+  $('resBest').textContent='Best score: '+best+(t>=best?' 🏆 new best!':'');
+  $('bonusR2Btn').style.display = game.bonus2Done ? 'none':'';
+  $('wrapup').innerHTML='Animals use <b>camouflage</b> (blending in) to match their surroundings so they are hard to see — a survival <b>adaptation</b>, not a choice. '
+    +'An ecosystem stays healthy only when <b>predator</b> and <b>prey</b> numbers stay in <b>balance</b> — too many predators or too few prey breaks it. '
+    +'You survived <b>'+game.daysSurvived+'</b> day'+(game.daysSurvived===1?'':'s')+'!';
+  if(t>=400&&!RM)setTimeout(confetti,300);
+}
+
+/* ===================== QUIZ ===================== */
+var quiz={i:0,answered:false,score:0};
+function startQuiz(){quiz.i=0;quiz.answered=false;quiz.score=0;renderQuiz();}
+function renderQuiz(){
+  var q=QUIZ[quiz.i];quiz.answered=false;
+  $('qProgress').textContent='Question '+(quiz.i+1)+' / '+QUIZ.length;
+  $('qPrompt').innerHTML='<span class="qn">Q'+(quiz.i+1)+'.</span> '+q.q;
+  var ex=$('qExplain');ex.className='qexplain';ex.innerHTML='';
+  $('qNextBtn').style.display='none';
+  var opts=$('qOpts');opts.innerHTML='';
+  for(var i=0;i<q.opts.length;i++){
+    (function(idx){
+      var btn=document.createElement('button');btn.className='qopt';
+      btn.innerHTML='<span>'+q.opts[idx]+'</span><span class="mk"></span>';
+      btn.onclick=function(){answerQuiz(idx,btn);};
+      opts.appendChild(btn);
+    })(i);
+  }
+}
+function answerQuiz(idx,btn){
+  if(quiz.answered)return;quiz.answered=true;
+  var q=QUIZ[quiz.i];var opts=$('qOpts').children;
+  for(var i=0;i<opts.length;i++){opts[i].classList.add('lock');}
+  var correct=(idx===q.a);
+  if(correct){btn.classList.add('correct');btn.querySelector('.mk').textContent='✓';quiz.score++;sfx('correct');}
+  else{btn.classList.add('wrong');btn.querySelector('.mk').textContent='✕';
+    opts[q.a].classList.add('correct');opts[q.a].querySelector('.mk').textContent='✓';sfx('wrong');}
+  var ex=$('qExplain');ex.className='qexplain '+(correct?'ok':'no')+' show';
+  ex.innerHTML=(correct?'<b>Correct! ✅</b> ':'<b>Good try! 👀</b> ')+q.ex;
+  $('qNextBtn').style.display = '';
+  $('qNextBtn').textContent = (quiz.i<QUIZ.length-1)?'Next →':'Finish ('+'see score)';
+}
+function nextQuiz(){
+  sfx('click');
+  if(quiz.i<QUIZ.length-1){quiz.i++;renderQuiz();}
+  else{
+    $('qPrompt').innerHTML='🧠 Brain check done!';
+    $('qProgress').textContent='';
+    $('qOpts').innerHTML='<div class="qexplain ok show" style="display:block"><b>You got '+quiz.score+' / '+QUIZ.length+' correct!</b> '
+      +(quiz.score>=5?'Wonderful — you really understand camouflage and balance! 🌟':quiz.score>=3?'Nice work — take another look at the key words and try again. 🌿':'Good effort! Replay the game and watch the coach tips. You\'ve got this! 💪')+'</div>';
+    $('qExplain').className='qexplain';$('qExplain').innerHTML='';
+    $('qNextBtn').style.display='';$('qNextBtn').textContent='↺ Try the quiz again';
+    $('qNextBtn').onclick=function(){$('qNextBtn').onclick=nextQuiz;startQuiz();};
+  }
+}
+
+/* ===================== PAUSE / VISIBILITY ===================== */
+function setPaused(p){
+  game.paused=p;
+  $('pauseVeil').classList.toggle('show',p);
+  $('pauseBtn').textContent=p?'▶':'⏸';
+}
+function togglePause(){
+  if(game.screen!==2&&game.screen!==4)return;
+  setPaused(!game.paused);
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden&&(game.screen===2||game.screen===4)&&!game.paused){setPaused(true);}
+});
+
+/* ===================== MUTE ===================== */
+function updateMuteBtn(){$('muteBtn').textContent=AU.muted?'🔇':'🔊';$('muteBtn').classList.toggle('off',AU.muted);}
+
+/* ===================== MODALS ===================== */
+function openModal(id){$(id).classList.add('show');}
+function closeModal(id){$(id).classList.remove('show');}
+
+/* ===================== WIRING ===================== */
+function init(){
+  buildDots();
+  renderKW($('kwGrid0'));renderKW($('kwGrid5'));renderKW($('kwGridModal'));
+  renderPowerUps();
+  updateMuteBtn();updateTopBar();
+
+  $('startBtn').onclick=function(){sfx('click');goto(1);};
+  $('howBtn').onclick=function(){sfx('click');openModal('helpModal');};
+  $('gotItBtn').onclick=function(){sfx('click');goto(2);startRound1();};
+
+  $('hintR1Btn').onclick=useHintR1;
+
+  $('bonusR1Btn').onclick=function(){sfx('click');startBonusR1();};
+  $('toRound2Btn').onclick=function(){sfx('click');goto(4);startRound2();};
+
+  // round2 controls
+  Array.prototype.slice.call(document.querySelectorAll('.ctlbtn')).forEach(function(b){
+    b.addEventListener('click',function(){r2Act(b.dataset.act);});
+  });
+  $('r2overBtn').onclick=r2OverlayContinue;
+
+  // final
+  $('bonusR2Btn').onclick=function(){sfx('click');startBonusR2();};
+  $('againBtn').onclick=function(){sfx('click');resetGame();goto(0);};
+  $('learnBtn').onclick=function(){sfx('click');startQuiz();$('qNextBtn').onclick=nextQuiz;openModal('learnModal');};
+
+  // top bar
+  $('wordsBtn').onclick=function(){sfx('click');openModal('wordsModal');};
+  $('helpBtn').onclick=function(){sfx('click');openModal('helpModal');};
+  $('muteBtn').onclick=function(){AU.muted=!AU.muted;try{localStorage.setItem('hsMute',AU.muted?'1':'0');}catch(e){}updateMuteBtn();if(!AU.muted)sfx('click');};
+  $('pauseBtn').onclick=function(){sfx('click');togglePause();};
+  $('resumeBtn').onclick=function(){sfx('click');setPaused(false);};
+
+  // modal close buttons + backdrop
+  Array.prototype.slice.call(document.querySelectorAll('[data-close]')).forEach(function(b){
+    b.onclick=function(){sfx('click');closeModal(b.dataset.close);};
+  });
+  Array.prototype.slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+    m.addEventListener('click',function(e){if(e.target===m)closeModal(m.id);});
+  });
+  // esc closes modals / resumes
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      Array.prototype.slice.call(document.querySelectorAll('.modal.show')).forEach(function(m){closeModal(m.id);});
+    }
+    if(e.key==='p'||e.key==='P'){togglePause();}
+  });
+}
+function resetGame(){
+  game.scoreR1=0;game.scoreR1bonus=0;game.scoreR2=0;game.scoreR2bonus=0;game.spotted=0;game.paused=false;
+  game.bonus1Done=false;game.bonus2Done=false;game.daysSurvived=0;
+  selectedPowerUp=null;
+  setPaused(false);
+  updateDaysChip();
+  renderPowerUps();
+  $('r1eyebrow').textContent='Round 1 · Spot it';
+  $('r2eyebrow').textContent='Round 2 · Keep the Balance';
+}
+init();
+</script>
+<footer style="max-width:920px;margin:28px auto 32px;padding:18px 26px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:#5b6472;font-weight:700;line-height:1.55;">
+  <div>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial</div>
+  <div>© 2026 Deenish Ramdial · All rights reserved.</div>
+</footer>
+</body>
+</html>
