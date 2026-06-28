@@ -1776,18 +1776,31 @@ const GAMES=[
 ];
 function vHome(){
   setCrumb('');
+  const slides=[];
+  for(let g=1;g<=5;g++){gradeUnits(g).forEach(u=>{if(u.live&&u.standards.some(s=>s.lessons&&s.lessons.length))slides.push({g,n:u.n,t:u.title});});}
   app.innerHTML=`
     <section class="home-hero">
       <div class="hero-inner">
         <h1>Science Explorers</h1>
         <p>Welcome to <b>Science Explorers</b>, where curious minds investigate the world through discovery and inquiry! Here, we learn to make a <b>claim</b>, support it with <b>evidence</b>, and explain our thinking using <b>reasoning</b> as we explore exciting scientific ideas. Get ready to ask questions, conduct investigations, and think like a real scientist!</p>
         <div class="cta"><button class="btn" onclick="openDemo()">▶ Try the free demo lesson</button></div>
+        <div class="unit-slideshow"><div class="us-slide anim" id="usSlide"><span class="us-badge">Grade ${slides[0].g} · Unit ${slides[0].n}</span><span class="us-title">${slides[0].t}</span></div></div>
+        <div class="us-dots" id="usDots">${[1,2,3,4,5].map(g=>`<span class="us-dot ${slides[0].g===g?'on':''}"></span>`).join('')}</div>
       </div>
     </section>
     <section style="padding-top:10px">
       <div class="eyebrow" style="text-align:center;font-size:1.05rem;font-weight:900;letter-spacing:.12em;color:#334155">Choose your grade</div>
       <div class="grade-cards">${[1,2,3,4,5].map(g=>{const ready=gradeUnits(g).some(u=>u.live&&u.standards.some(s=>s.lessons&&s.lessons.length));return `<button class="grade-card${ready?'':' soon'}" onclick="openGrade(${g})"><span class="gc-lbl">Grade</span><span class="gc-num">${g}</span><span class="gc-st">${ready?'Open ▸':'Coming soon'}</span></button>`;}).join('')}</div>
     </section>`;
+  let i=0;
+  window.__homeIv=setInterval(()=>{
+    const box=document.getElementById('usSlide');
+    if(!box){clearInterval(window.__homeIv);window.__homeIv=null;return;}
+    i=(i+1)%slides.length;
+    box.innerHTML=`<span class="us-badge">Grade ${slides[i].g} · Unit ${slides[i].n}</span><span class="us-title">${slides[i].t}</span>`;
+    box.classList.remove('anim');void box.offsetWidth;box.classList.add('anim');
+    document.querySelectorAll('#usDots .us-dot').forEach((d,k)=>d.classList.toggle('on',slides[i].g===(k+1)));
+  },2600);
 }
 function gamesSection(){
   return `<section style="padding-top:8px;margin-top:10px;border-top:1px dashed var(--line)">
