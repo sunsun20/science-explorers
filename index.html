@@ -1769,13 +1769,13 @@ function go(view,a,b,c){
   ({home:vHome,units:vUnits,unit:vUnit,lesson:vLesson,sheet:vSheet,assess:vAssess,resources:vResources}[view]||vHome)(a,b,c);
 }
 
+const GAMES=[
+  {emoji:'🌙',name:'Moon Tracker',unit:'Unit 4 · Phases of the Moon',href:'games/moon-tracker.html',c:'#6366f1'},
+  {emoji:'🔗',name:'Build the Chain',unit:'Unit 3 · Food Chains & Energy',href:'games/food-chain.html',c:'#16a34a'},
+  {emoji:'🦎',name:'Hide & Survive',unit:'Unit 5 · Predator & Prey',href:'games/hide-and-survive.html',c:'#d97706'}
+];
 function vHome(){
   setCrumb('');
-  const GAMES=[
-    {emoji:'🌙',name:'Moon Tracker',unit:'Unit 4 · Phases of the Moon',href:'games/moon-tracker.html',c:'#6366f1'},
-    {emoji:'🔗',name:'Build the Chain',unit:'Unit 3 · Food Chains & Energy',href:'games/food-chain.html',c:'#16a34a'},
-    {emoji:'🦎',name:'Hide & Survive',unit:'Unit 5 · Predator & Prey',href:'games/hide-and-survive.html',c:'#d97706'}
-  ];
   app.innerHTML=`
     <section class="home-hero">
       <div class="hero-inner">
@@ -1787,10 +1787,12 @@ function vHome(){
     <section style="padding-top:10px">
       <div class="eyebrow" style="text-align:center;font-size:1.05rem;font-weight:900;letter-spacing:.12em;color:#334155">Choose your grade</div>
       <div class="grade-cards">${[1,2,3,4,5].map(g=>{const ready=gradeUnits(g).some(u=>u.live&&u.standards.some(s=>s.lessons&&s.lessons.length));return `<button class="grade-card${ready?'':' soon'}" onclick="openGrade(${g})"><span class="gc-lbl">Grade</span><span class="gc-num">${g}</span><span class="gc-st">${ready?'Open ▸':'Coming soon'}</span></button>`;}).join('')}</div>
-    </section>
-    <section style="padding-top:6px">
-      <div class="eyebrow" style="text-align:center;font-size:1.05rem;font-weight:900;letter-spacing:.12em;color:#334155">🎮 Science Games <span style="font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:0">· Grade 5 · play to learn</span></div>
-      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:780px;margin:14px auto 14px">${GAMES.map(g=>`<a href="${g.href}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-top:5px solid ${g.c};border-radius:16px;padding:14px 18px;min-width:162px">${'<span style=\"font-size:2rem;line-height:1\">'+g.emoji+'</span>'}<span style="font-weight:800;color:#1f2937">${g.name}</span><span style="font-size:.78rem;color:var(--muted);text-align:center">${g.unit}</span><span style="font-weight:800;color:#0f7a44;font-size:.82rem">Play ▸</span></a>`).join('')}</div>
+    </section>`;
+}
+function gamesSection(){
+  return `<section style="padding-top:8px;margin-top:10px;border-top:1px dashed var(--line)">
+      <div class="eyebrow" style="font-size:1.05rem;font-weight:900;letter-spacing:.1em;color:#334155">🎮 Science Games <span style="font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:0">· play to learn</span></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 6px">${GAMES.map(g=>`<a href="${g.href}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-top:5px solid ${g.c};border-radius:16px;padding:14px 18px;min-width:170px">${'<span style=\"font-size:2rem;line-height:1\">'+g.emoji+'</span>'}<span style="font-weight:800;color:#1f2937">${g.name}</span><span style="font-size:.78rem;color:var(--muted);text-align:center">${g.unit}</span><span style="font-weight:800;color:#0f7a44;font-size:.82rem">Play ▸</span></a>`).join('')}</div>
     </section>`;
 }
 function openGrade(g){cur.grade=g;cur.unit=null;cur.std=null;go('units');}
@@ -1803,7 +1805,8 @@ function vUnits(){
       return `<div class="ucard ${has?'live':''}" style="--uc:${t.a};--ucd:${t.d};--ucs:${t.soft}" ${has?`onclick="openUnit('${u.id}')"`:''}>
         <span class="u-n">Unit ${u.n}</span><h3 style="color:${t.d}">${u.title}</h3>
         <p>${u.standards.length?u.standards.length+' standard'+(u.standards.length>1?'s':''):'Coming soon'}</p>
-        <span class="pill ${has?'live':'soon'}">${has?'Open':'Coming soon'}</span></div>`;}).join('')}</div>`:`<div class="panel" style="margin-top:16px">Grade ${cur.grade} units are coming soon! 🚧</div>`}</section>`;
+        <span class="pill ${has?'live':'soon'}">${has?'Open':'Coming soon'}</span></div>`;}).join('')}</div>`:`<div class="panel" style="margin-top:16px">Grade ${cur.grade} units are coming soon! 🚧</div>`}
+    ${cur.grade===5?gamesSection():''}</section>`;
 }
 function openUnit(id){cur.unit=gUnits().find(u=>u.id===id);cur.std=null;cur.li=0;go('unit');}
 function openDemo(){cur.grade=5;cur.unit=UNITS.find(u=>u.id==='matter');cur.std=0;cur.li=0;go('lesson');}
