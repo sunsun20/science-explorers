@@ -79,8 +79,8 @@
   .pill{align-self:flex-start;font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:99px}
   .pill.live{background:var(--ucs,#e7f6ee);color:var(--ucd,#0f7a44)}.pill.soon{background:#f0f2f5;color:var(--silver)}
   /* grade picker on the home page */
-  .grade-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:18px auto 8px;max-width:760px}
-  .grade-card{cursor:pointer;font:inherit;background:var(--card);border:1px solid var(--line);border-top:5px solid #2563eb;border-radius:16px;padding:16px 20px;min-width:118px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .1s,box-shadow .12s}
+  .grade-cards{display:flex;gap:14px;justify-content:center;flex-wrap:nowrap;margin:18px auto 8px;max-width:1040px}
+  .grade-card{cursor:pointer;font:inherit;background:var(--card);border:1px solid var(--line);border-top:5px solid #2563eb;border-radius:16px;padding:16px 12px;min-width:0;flex:1 1 0;max-width:190px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .1s,box-shadow .12s}
   .grade-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1)}
   .grade-card .gc-lbl{font-weight:900;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:#475569}
   .grade-card .gc-num{font-weight:900;font-size:2.8rem;line-height:1.05;color:#1d4ed8;-webkit-text-stroke:.6px currentColor}

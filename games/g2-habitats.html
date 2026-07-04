@@ -101,7 +101,7 @@
   .choice:hover{border-color:var(--line);transform:translateY(-2px)}
   .choice:active{transform:translateY(2px);box-shadow:0 2px 0 #eee}
   .choice .ce{font-size:3rem;line-height:1}
-  .choice .ct{font-family:var(--head);font-weight:700;font-size:1.1rem;color:var(--charcoal)}
+  .choice .ct{font-family:var(--head);font-weight:700;font-size:clamp(0.72rem,1.5vw,1.05rem);color:var(--charcoal);overflow-wrap:break-word;hyphens:auto;text-align:center;width:100%}
   .choice.sel{border-color:var(--sky);background:#eaf8ff;box-shadow:0 5px 0 #cfeeff}
   .choice.right{border-color:var(--good);background:#eaffd6;box-shadow:0 5px 0 #c7f0a0;animation:bounce .4s}
   .choice.wrong{border-color:var(--bad);background:#ffecec;box-shadow:0 5px 0 #ffd0d0;animation:shake .35s}
