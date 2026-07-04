@@ -237,9 +237,9 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
 .pyramid{display:flex;flex-direction:column;align-items:center;gap:5px}
 .pyramid .plv{color:#fff;font-weight:800;font-size:.82rem;text-align:center;border-radius:8px;padding:7px 4px;display:flex;flex-direction:column;line-height:1.1}
 .pyramid .plv small{font-weight:700;opacity:.92;font-size:.74rem}
-.pyramid .l4{width:30%;background:#cc348d}
-.pyramid .l3{width:50%;background:#a570ff}
-.pyramid .l2{width:72%;background:#1cb0f6}
+.pyramid .l4{width:30%;background:#0c2a50}
+.pyramid .l3{width:50%;background:#E0A800}
+.pyramid .l2{width:72%;background:#0d9488}
 .pyramid .l1{width:100%;background:var(--green)}
 .web-box{display:flex;flex-direction:column;align-items:center;gap:4px}
 .web-prod{font-size:2rem;text-align:center;position:relative}
@@ -324,6 +324,8 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
 
 /* ---------- confetti ---------- */
 .confetti{position:fixed;top:-12px;z-index:250;pointer-events:none;border-radius:2px}
+/* ---------- fixed restart ---------- */
+#restartBtn{width:auto!important;padding:0 12px!important;font-size:.8rem!important;letter-spacing:.01em;gap:4px}
 
 /* footer */
 .foot-note{text-align:center;color:var(--silver);font-weight:700;font-size:.8rem;margin-top:30px}
@@ -353,7 +355,7 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
   <div class="tb-sp"></div>
   <div class="star-counter" id="starCounter" aria-live="polite"><span class="st">⭐</span><span id="starTotal">0 / 9</span></div>
   <button class="icon-btn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
-  <button class="icon-btn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
+  <button class="icon-btn" id="restartBtn" title="Restart — back to title screen" aria-label="Restart game" onclick="restartGame()">🏠 Restart</button>
   <button class="icon-btn" id="kwBtn" title="Key Words" aria-label="Key Words">📖</button>
   <button class="icon-btn" id="helpBtn" title="How to Play" aria-label="How to play">❓</button>
   <button class="icon-btn on" id="soundBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -1472,7 +1474,7 @@ function showFinal(){
   else if(total<=6){ rank='Chain Builder ⚡'; msg='You can build a chain and trace its energy!'; }
   else { rank='Ecosystem Expert 🦅'; msg='You see how every living thing connects!'; }
   $('rankBadge').innerHTML=rank;
-  $('rankBadge').style.color = total<=3?'var(--green)':total<=6?'var(--amber-d)':'var(--purple)';
+  $('rankBadge').style.color = total<=3?'var(--green)':total<=6?'var(--amber-d)':'#0c2a50';
   $('rankMsg').textContent=msg;
 
   const fc=$('finalChains'); fc.innerHTML='';
@@ -1501,11 +1503,12 @@ function showFinal(){
    ============================================================ */
 function confetti(){
   if(reduceMotion) return;
-  const colors=['#58cc02','#1cb0f6','#ffc700','#a570ff','#cc348d','#ff9600'];
+  const colors=['#E0A800','#ffc700','#f59e0b','#d97706','#fbbf24','#ffb347'];
   for(let i=0;i<46;i++){
     const d=document.createElement('div'); d.className='confetti';
     const sz=6+Math.random()*8;
-    d.style.width=sz+'px'; d.style.height=(sz*0.6)+'px';
+    d.style.width=sz+'px'; d.style.height=(sz*0.6+(Math.random()>.5?sz*0.4:0))+'px';
+    d.style.borderRadius=Math.random()>.5?'50%':'2px';
     d.style.left=(Math.random()*100)+'vw';
     d.style.background=colors[i%colors.length];
     document.body.appendChild(d);
@@ -1586,6 +1589,16 @@ function confirmRestart(){
   return true; // always allow; non-destructive (progress saved)
 }
 function goHome(){ clearEf(); show('S1'); }
+
+function restartGame(){
+  clearEf();
+  progress={garden:null,ocean:null,forest:null};
+  saveProgress();
+  updateStarCounter();
+  state.freeBuild=false;
+  selectedCardId=null;
+  show('S1');
+}
 
 document.addEventListener('DOMContentLoaded',init);
 </script>

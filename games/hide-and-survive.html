@@ -326,8 +326,10 @@ b{font-weight:700}
   transition:opacity .25s,transform .25s;font-size:1rem}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:85;overflow:hidden}
-.conf{position:absolute;top:-30px;font-size:1.6rem;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(108vh) rotate(540deg)}}
+.conf{position:absolute;top:-12px;pointer-events:none;animation:fall linear forwards;border-radius:2px}
+@keyframes fall{to{transform:translateY(108vh) rotate(720deg);opacity:0}}
+/* restart btn */
+#restartBtn{width:auto!important;padding:0 11px!important;font-size:.8rem!important;letter-spacing:.01em;display:inline-flex!important;align-items:center;gap:4px}
 .pauseveil{position:fixed;inset:0;z-index:75;display:none;align-items:center;justify-content:center;
   background:rgba(36,48,68,.55);backdrop-filter:blur(4px);text-align:center;color:#fff;flex-direction:column;gap:14px}
 .pauseveil.show{display:flex}
@@ -385,7 +387,7 @@ b{font-weight:700}
     <div class="chip round" id="roundChip">Get Ready</div>
     <div class="chip score" id="scoreChip">⭐ 0</div>
     <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
-    <button class="iconbtn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
+    <button class="iconbtn" id="restartBtn" title="Restart — back to title screen" aria-label="Restart game">🏠 Restart</button>
     <button class="iconbtn" id="wordsBtn" title="Key words" aria-label="Key words">📖</button>
     <button class="iconbtn" id="helpBtn" title="How to play" aria-label="Help">❓</button>
     <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -1247,15 +1249,22 @@ function r2OverlayContinue(){
   else{goto(5);} // finished C3
 }
 
-/* confetti */
+/* confetti — gold glitter only */
 function confetti(){
   if(RM)return;
-  var box=$('confetti');var ic=['🎉','🌿','⭐','🐇','🦊','✨','🍃'];
-  for(var i=0;i<26;i++){
-    var s=document.createElement('div');s.className='conf';s.textContent=ic[Math.floor(Math.random()*ic.length)];
-    s.style.left=rand(2,96)+'%';s.style.animationDuration=rand(1.8,3.4)+'s';s.style.animationDelay=rand(0,.5)+'s';
-    s.style.fontSize=rand(1.1,2.1)+'rem';box.appendChild(s);
-    (function(node){setTimeout(function(){node.remove();},4200);})(s);
+  var box=$('confetti');
+  var gold=['#E0A800','#ffc700','#f59e0b','#d97706','#fbbf24','#ffb347'];
+  for(var i=0;i<36;i++){
+    var s=document.createElement('div');s.className='conf';
+    var sz=Math.floor(rand(5,11));
+    s.style.width=sz+'px';s.style.height=sz+'px';
+    s.style.background=gold[Math.floor(Math.random()*gold.length)];
+    s.style.borderRadius=Math.random()>.5?'50%':'2px';
+    s.style.left=rand(2,96)+'%';
+    s.style.animationDuration=rand(1.8,3.2)+'s';
+    s.style.animationDelay=rand(0,.5)+'s';
+    box.appendChild(s);
+    (function(node){setTimeout(function(){node.remove();},4000);})(s);
   }
 }
 
@@ -1357,6 +1366,7 @@ function init(){
   updateMuteBtn();updateTopBar();
 
   $('startBtn').onclick=function(){sfx('click');goto(1);};
+  $('restartBtn').onclick=function(){sfx('click');stopR1Timer();stopR2Tick();setPaused(false);resetGame();goto(0);};
   $('howBtn').onclick=function(){sfx('click');openModal('helpModal');};
   $('gotItBtn').onclick=function(){sfx('click');goto(2);startRound1();};
 

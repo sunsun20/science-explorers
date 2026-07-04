@@ -55,6 +55,12 @@
   .iconbtn:hover{background:#fafafa;border-color:var(--line)}
   .iconbtn:active{transform:translateY(2px)}
   .iconbtn.off{opacity:.6}
+  .restart-btn{height:38px;border-radius:12px;border:2px solid var(--line);
+    background:var(--tint);color:var(--text-c);font-family:var(--head);font-weight:800;font-size:.76rem;
+    cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:0 12px;white-space:nowrap;
+    transition:transform .08s,background .15s}
+  .restart-btn:hover{filter:brightness(.96)}
+  .restart-btn:active{transform:translateY(2px)}
 
   /* ===== progress + stars ===== */
   .hud{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
@@ -160,7 +166,7 @@
     <span class="unit-pill">🌱 Grade 1 · Unit 2 · Plant &amp; Animal Parts</span>
     <span class="spacer"></span>
     <button class="iconbtn" id="homeBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
-    <button class="iconbtn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
+    <button class="restart-btn" id="restartBtn" title="Restart game — return to title" aria-label="Restart game" onclick="location.reload()">🏠 Restart</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
   </header>
 
@@ -248,7 +254,7 @@ var GAME = {
   function yay(){blip(523.25,.10);setTimeout(function(){blip(783.99,.14)},90);confetti(10)}
   function nope(){blip(196,.18)}
   function win(){[523,659,784,1047].forEach(function(f,i){setTimeout(function(){blip(f,.16)},i*120)});confetti(60)}
-  function confetti(n){var em=['🎉','⭐','✨','🌟','🎊','🌈','💛','💫'];for(var i=0;i<n;i++){(function(){var s=document.createElement('div');s.className='confetti';s.textContent=em[Math.floor(Math.random()*em.length)];s.style.left=(Math.random()*100)+'vw';s.style.fontSize=(16+Math.random()*22)+'px';s.style.animationDuration=(1.3+Math.random()*1.3)+'s';s.style.animationDelay=(Math.random()*0.25)+'s';document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},2800)})()}}
+  function confetti(n){var chars=['✦','◆','◇','✧','⬟','✴','⬡','✸'];var golds=['#E0A800','#F5C518','#D4A017','#C9A227','#B8860B','#FFD700','#FFC125','#DAA520'];for(var i=0;i<n;i++){(function(){var s=document.createElement('div');s.className='confetti';s.textContent=chars[Math.floor(Math.random()*chars.length)];s.style.color=golds[Math.floor(Math.random()*golds.length)];s.style.left=(Math.random()*100)+'vw';s.style.fontSize=(12+Math.random()*16)+'px';s.style.animationDuration=(1.3+Math.random()*1.3)+'s';s.style.animationDelay=(Math.random()*0.25)+'s';document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},2800)})()}}
 
   var mute=$('muteBtn');
   function renderMute(){mute.textContent=muted?'🔇':'🔊';mute.classList.toggle('off',muted);mute.setAttribute('aria-pressed',muted?'true':'false')}

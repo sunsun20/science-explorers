@@ -76,6 +76,7 @@
     font-family:var(--font);transition:transform .08s,background .15s}
   .iconbtn:hover{background:var(--panel2)}
   .iconbtn:active{transform:translateY(1px)}
+  #restartBtn{width:auto;padding:0 11px;font-size:.8rem;letter-spacing:.01em;display:inline-flex;align-items:center;gap:4px}
 
   /* ============ SCREENS ============ */
   .screen{display:none;animation:fadeUp .4s cubic-bezier(.2,.7,.2,1)}
@@ -324,7 +325,7 @@
     <div class="chip" id="scoreChip">Moon Points: 0</div>
     <div class="starmeter" id="topStars" aria-label="Mastery stars">☆☆☆</div>
     <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
-    <button class="iconbtn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
+    <button class="iconbtn" id="restartBtn" title="Restart — back to title screen" aria-label="Restart game" onclick="restartMoon()">🏠 Restart</button>
     <button class="iconbtn" id="wordsBtn" title="Key Words" aria-label="Key words">📖</button>
     <button class="iconbtn" id="helpBtn" title="Help — replay tips" aria-label="Help">?</button>
     <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -1138,6 +1139,15 @@ $('homeBtn').onclick=function(){
   updateTopBar();
   goto(0);
 };
+
+/* ======================= RESTART ======================= */
+function restartMoon(){
+  game.scoreR1=0; game.scoreR2=0; game.scoreBonus=0; game.bonusGiven=false;
+  try{$('bonusBtn').disabled=false;}catch(e){}
+  s0cyc=0;
+  updateTopBar();
+  goto(0);
+}
 
 /* ======================= STAR FIELD ======================= */
 function buildStarfield(){
