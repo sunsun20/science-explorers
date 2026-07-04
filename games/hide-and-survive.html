@@ -383,6 +383,7 @@ b{font-weight:700}
     <div class="chip round" id="roundChip">Get Ready</div>
     <div class="chip score" id="scoreChip">⭐ 0</div>
     <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+    <button class="iconbtn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
     <button class="iconbtn" id="wordsBtn" title="Key words" aria-label="Key words">📖</button>
     <button class="iconbtn" id="helpBtn" title="How to play" aria-label="Help">❓</button>
     <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -422,6 +423,10 @@ b{font-weight:700}
       <div class="howcard b">
         <div class="em">⚖️</div>
         <div class="t"><b>Round 2 — Keep the Balance.</b> Predators eat prey. <b>Add</b> or <b>remove</b> animals and watch the <b class="hlb">balance</b> tip!</div>
+      </div>
+      <div class="howcard" style="background:#fff6ee;border-color:rgba(255,138,61,.3)">
+        <div class="em">🐸</div>
+        <div class="t"><b>First, the basics.</b> A <b class="hl">predator</b> hunts and eats other animals. The <b class="hl">prey</b> is the animal that gets hunted. Surprise: many animals are <b>both</b>! A frog eats insects (predator) but a heron eats the frog (prey). An animal's role depends on <b>who is eating whom</b>.</div>
       </div>
       <p class="center" style="color:var(--muted);font-weight:600;margin-top:6px">Tip: tap gently — there's no wrong answer that ends the game. Every try teaches you something! 🌿</p>
       <div class="btnrow"><button class="btn" id="gotItBtn">Got it! ▶</button></div>
@@ -586,13 +591,14 @@ b{font-weight:700}
   <div class="inner">
     <h2>📖 What I learned</h2>
     <ul class="learnlist">
-      <li><span class="n">1</span><span><b>Camouflage</b> = colours or shapes that match the background, so an animal is hard to see.</span></li>
-      <li><span class="n">2</span><span><b>Adaptations</b> like white fur, stripes, or a twig-shaped body are inherited and help animals survive.</span></li>
-      <li><span class="n">3</span><span><b>Predators eat prey</b>, and their two <b>populations</b> rise and fall together — the predator's rise comes a little <i>after</i> the prey's.</span></li>
-      <li><span class="n">4</span><span><b>Balance breaks</b> when there are too many predators OR too few prey — and losing a species hurts the whole food web.</span></li>
+      <li><span class="n">1</span><span>A <b>predator</b> hunts and eats other animals; the <b>prey</b> is the animal that gets hunted. Many animals are <b>both</b> — a frog eats insects (predator) but a heron eats the frog (prey).</span></li>
+      <li><span class="n">2</span><span><b>Camouflage</b> = colours or shapes that match the background, so an animal is hard to see.</span></li>
+      <li><span class="n">3</span><span><b>Adaptations</b> like white fur, stripes, sharp senses, or speed are inherited and help animals hunt or escape.</span></li>
+      <li><span class="n">4</span><span><b>Predators eat prey</b>, and their two <b>populations</b> rise and fall together — the predator's rise comes a little <i>after</i> the prey's.</span></li>
+      <li><span class="n">5</span><span><b>Balance breaks</b> when there are too many predators OR too few prey — and losing a species hurts the whole food web.</span></li>
     </ul>
     <div class="quizwrap" id="quizWrap">
-      <div class="sectionhead" style="margin-top:14px">🧠 Quick brain check <span class="small">6 questions · just for fun</span></div>
+      <div class="sectionhead" style="margin-top:14px">🧠 Quick brain check <span class="small">9 questions · just for fun</span></div>
       <div class="qprogress" id="qProgress"></div>
       <div class="qprompt" id="qPrompt"></div>
       <div class="qopts" id="qOpts"></div>
@@ -693,6 +699,15 @@ var CHALLENGES=[
 
 /* Brain-check questions (content pack §F). answer = 0-based index. */
 var QUIZ=[
+  {q:"A fox chases and catches a rabbit. What role is the rabbit playing in this situation?",
+   opts:["Prey — it is being hunted and eaten","Predator — it is the hunter","Producer — it makes its own food","Decomposer — it breaks things down"],a:0,
+   ex:"The rabbit is being hunted by the fox, so the rabbit is the prey. A predator is the one doing the hunting."},
+  {q:"A frog eats insects but is eaten by a heron. Which statement is true?",
+   opts:["The frog is both a predator and prey","The frog is only a predator","The frog is only prey","The frog is neither a predator nor prey"],a:0,
+   ex:"The frog acts as a predator when it eats insects, and as prey when it is eaten by the heron — so it is both!"},
+  {q:"A snake hunts and eats frogs, but a hawk swoops down and eats the snake. What role does the snake play?",
+   opts:["Both predator and prey — it depends on who is eating whom","Only a predator, always","Only prey, always","Neither, because it eats and is eaten"],a:0,
+   ex:"The snake is a predator to the frog and prey to the hawk. An animal's role depends on who is doing the eating."},
   {q:"You're playing hide-and-seek in a leafy green garden. Which outfit makes you HARDEST to find?",
    opts:["A green shirt that matches the leaves","A bright orange jacket","A shiny white hat","A red and yellow striped scarf"],a:0,
    ex:"Matching the green leaves is camouflage — colours that blend into the background make you hard to spot."},
@@ -1304,7 +1319,7 @@ function nextQuiz(){
     $('qPrompt').innerHTML='🧠 Brain check done!';
     $('qProgress').textContent='';
     $('qOpts').innerHTML='<div class="qexplain ok show" style="display:block"><b>You got '+quiz.score+' / '+QUIZ.length+' correct!</b> '
-      +(quiz.score>=5?'Wonderful — you really understand camouflage and balance! 🌟':quiz.score>=3?'Nice work — take another look at the key words and try again. 🌿':'Good effort! Replay the game and watch the coach tips. You\'ve got this! 💪')+'</div>';
+      +(quiz.score>=7?'Wonderful — you really understand predators, prey, camouflage and balance! 🌟':quiz.score>=5?'Nice work — take another look at the key words and try again. 🌿':'Good effort! Replay the game and watch the coach tips. You\'ve got this! 💪')+'</div>';
     $('qExplain').className='qexplain';$('qExplain').innerHTML='';
     $('qNextBtn').style.display='';$('qNextBtn').textContent='↺ Try the quiz again';
     $('qNextBtn').onclick=function(){$('qNextBtn').onclick=nextQuiz;startQuiz();};

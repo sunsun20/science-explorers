@@ -143,6 +143,7 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
 .slot .slot-num{position:absolute;top:5px;left:8px;font-weight:900;color:var(--silver);font-size:.85rem}
 .slot .slot-hint{display:flex;flex-direction:column;gap:2px;color:var(--silver);font-weight:800;font-size:.82rem;margin-top:6px;text-align:center}
 .slot .slot-hint .sh-ar{font-size:.9rem}
+.slot .slot-hint .sh-lv{font-size:.66rem;color:var(--green-d);font-weight:800;background:var(--green-soft);border-radius:7px;padding:1px 6px;margin-top:2px}
 .slot.glow{animation:slotGlow 1.8s ease-in-out infinite}
 @keyframes slotGlow{0%,100%{border-color:var(--silver);box-shadow:0 0 0 rgba(88,204,2,0)}
   50%{border-color:var(--green);box-shadow:0 0 16px rgba(88,204,2,.35)}}
@@ -226,6 +227,40 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
 .ef-cap b{color:var(--amber-d)}
 .reduced-labels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;font-weight:800;color:var(--amber-d)}
 .reduced-labels span{background:var(--amber-bg);border:2px solid var(--amber);border-radius:10px;padding:5px 11px}
+
+/* ---------- S4L learn cards ---------- */
+.learn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:10px 0 18px}
+.learn-card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:20px}
+.learn-card h3{color:var(--green);font-size:1.25rem;margin-bottom:12px}
+.learn-card p{font-weight:700;color:var(--charcoal);font-size:1rem;margin:12px 0 0}
+.learn-card b{color:var(--green-d)}
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:5px}
+.pyramid .plv{color:#fff;font-weight:800;font-size:.82rem;text-align:center;border-radius:8px;padding:7px 4px;display:flex;flex-direction:column;line-height:1.1}
+.pyramid .plv small{font-weight:700;opacity:.92;font-size:.74rem}
+.pyramid .l4{width:30%;background:#cc348d}
+.pyramid .l3{width:50%;background:#a570ff}
+.pyramid .l2{width:72%;background:#1cb0f6}
+.pyramid .l1{width:100%;background:var(--green)}
+.web-box{display:flex;flex-direction:column;align-items:center;gap:4px}
+.web-prod{font-size:2rem;text-align:center;position:relative}
+.web-prod::after{content:"⋀";display:block;font-size:1.5rem;color:var(--silver);line-height:.6;margin-top:2px}
+.web-prod .wl,.wnode .wl{font-size:.72rem;font-weight:800;color:var(--graphite)}
+.web-cons{display:flex;gap:18px;justify-content:center}
+.wnode{font-size:1.8rem;text-align:center}
+
+/* ---------- S4Q quiz ---------- */
+.quiz-card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:22px;max-width:680px;margin:10px auto 0}
+.quiz-q{font-family:var(--head);font-weight:700;color:var(--charcoal);font-size:1.2rem;margin-bottom:16px;line-height:1.3}
+.quiz-opts{display:flex;flex-direction:column;gap:11px}
+.quiz-opt{text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 16px;font-family:var(--body);
+  font-weight:800;color:var(--charcoal);font-size:1rem;cursor:pointer;box-shadow:0 3px 0 var(--line);transition:transform .06s,box-shadow .06s,border-color .12s}
+.quiz-opt:hover{border-color:var(--blue)}
+.quiz-opt:active{transform:translateY(3px);box-shadow:0 0 0 var(--line)}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-soft);box-shadow:0 3px 0 var(--green-d)}
+.quiz-opt.wrong{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 3px 0 var(--amber-d)}
+.quiz-opt:disabled{cursor:default}
+.quiz-fb{font-weight:800;color:var(--charcoal);font-size:1rem;margin-top:14px;min-height:24px}
+.quiz-fb.good{color:var(--green-d)}.quiz-fb.bad{color:var(--amber-d)}
 
 /* ---------- S5 break a link ---------- */
 .break-q{background:#fff;border:2px solid var(--line);border-radius:18px;padding:18px;margin-top:14px;text-align:center}
@@ -318,6 +353,7 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
   <div class="tb-sp"></div>
   <div class="star-counter" id="starCounter" aria-live="polite"><span class="st">⭐</span><span id="starTotal">0 / 9</span></div>
   <button class="icon-btn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+  <button class="icon-btn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
   <button class="icon-btn" id="kwBtn" title="Key Words" aria-label="Key Words">📖</button>
   <button class="icon-btn" id="helpBtn" title="How to Play" aria-label="How to play">❓</button>
   <button class="icon-btn on" id="soundBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -384,6 +420,42 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
     </div>
   </section>
 
+  <!-- =================== S4L LEARN: PYRAMID, WEB & LEVELS =================== -->
+  <section class="screen" id="S4L">
+    <div class="section-h"><h2>🔺 Science Lab</h2><p>Two big ideas before you break a link.</p></div>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <h3>🔺 The Energy Pyramid &amp; the 10% Rule</h3>
+        <div class="pyramid" id="pyramidBox" aria-hidden="true"></div>
+        <p>When energy passes to the next level, <b>only about 10%</b> moves up. The other 90% is used for moving, growing and staying warm, and is lost as <b>heat</b>. <b>Level 1 (producers)</b> has the most energy, so it is the widest. That is why top predators are always <b>rare</b>.</p>
+      </div>
+      <div class="learn-card">
+        <h3>🕸️ Food Chain vs Food Web</h3>
+        <div class="web-box" id="webBox" aria-hidden="true">
+          <div class="web-prod">🌿<div class="wl">Grass</div></div>
+          <div class="web-cons">
+            <div class="wnode">🦗<div class="wl">Grasshopper</div></div>
+            <div class="wnode">🐰<div class="wl">Rabbit</div></div>
+            <div class="wnode">🐭<div class="wl">Mouse</div></div>
+          </div>
+        </div>
+        <p>A <b>food chain</b> shows one straight path. But in nature most animals eat more than one thing, so many chains overlap into a <b>food web</b>. One producer can feed several animals that <b>branch out</b>. A web is a better model because if one animal runs low, others have <b>backup food</b>.</p>
+      </div>
+    </div>
+    <div class="center"><button class="btn" id="learnContinue">Take the Science Check ▸</button></div>
+  </section>
+
+  <!-- =================== S4Q SCIENCE CHECK QUIZ =================== -->
+  <section class="screen" id="S4Q">
+    <div class="section-h"><h2>🧠 Science Check</h2><p id="quizProg">Question 1</p></div>
+    <div class="quiz-card">
+      <div class="quiz-q" id="quizQ" aria-live="polite"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-fb" id="quizFb" aria-live="polite"></div>
+      <div class="center"><button class="btn" id="quizNext" style="display:none">Next ▸</button></div>
+    </div>
+  </section>
+
   <!-- =================== S5 BREAK A LINK =================== -->
   <section class="screen" id="S5">
     <div class="section-h">
@@ -444,6 +516,7 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
     <ol class="howto-list">
       <li><b>Drag</b> cards into the glowing slots: Sun first, then the plant, then who eats who.</li>
       <li>Build the <b>whole chain</b>, then watch the <b>energy</b> flow — and shrink — at each step.</li>
+      <li>Learn the <b>energy pyramid</b> and <b>food web</b>, then ace the <b>Science Check</b>.</li>
       <li><b>Remove one link</b> and see what happens. Earn up to <b>3 stars</b> per habitat!</li>
     </ol>
     <button class="btn modal-close" data-close="howtoOverlay">Got it! ▸</button>
@@ -465,12 +538,12 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
    DATA
    ============================================================ */
 const SLOTS=[
-  {n:1,role:'SUN',label_en:'Sun'},
-  {n:2,role:'PRODUCER',label_en:'Producer'},
-  {n:3,role:'CONSUMER1',label_en:'Consumer'},
-  {n:4,role:'CONSUMER2',label_en:'Consumer'},
-  {n:5,role:'PREDATOR',label_en:'Top Predator'},
-  {n:6,role:'DECOMPOSER',label_en:'Decomposer'}
+  {n:1,role:'SUN',label_en:'Sun',level:'Energy source'},
+  {n:2,role:'PRODUCER',label_en:'Producer',level:'Level 1'},
+  {n:3,role:'CONSUMER1',label_en:'Primary consumer',level:'Level 2'},
+  {n:4,role:'CONSUMER2',label_en:'Secondary consumer',level:'Level 3'},
+  {n:5,role:'PREDATOR',label_en:'Tertiary consumer',level:'Level 4'},
+  {n:6,role:'DECOMPOSER',label_en:'Decomposer',level:'Recycler'}
 ];
 const ROLE_ORDER=['SUN','PRODUCER','CONSUMER1','CONSUMER2','PREDATOR']; // main chain l-to-r
 
@@ -560,8 +633,61 @@ const KEY_WORDS=[
   {en:'Decomposer',kid:'Breaks down dead things and returns nutrients to soil/water.'},
   {en:'Predator',kid:'An animal that hunts and eats other animals.'},
   {en:'Prey',kid:'The animal that gets hunted and eaten.'},
-  {en:'Food chain',kid:'The path energy takes as one living thing eats another.'}
+  {en:'Food chain',kid:'One straight path energy takes as one living thing eats another.'},
+  {en:'Food web',kid:'Many food chains that overlap — one producer can feed several animals that branch out.'},
+  {en:'Trophic level',kid:'A feeding level: producer (1), primary (2), secondary (3) and tertiary (4) consumers.'},
+  {en:'10% rule',kid:'Only about 10% of energy passes to the next level; the other 90% is lost as heat.'},
+  {en:'Energy pyramid',kid:'A diagram showing energy at each level — widest (most) at the bottom, narrow at the top.'}
 ];
+
+/* Science Check questions — wording pulled from the Unit 3 lesson source
+   (questions_foodweb.js / units_foodweb.js). Covers all 7 required skills. */
+const QUIZ_BANK=[
+  {skill:'Sun as original energy source',
+   q:'Where does almost all the energy in a food chain come from at the very start?',
+   options:['The Moon','The wind','The Sun','The soil'],answer:2,
+   explain:'The Sun gives plants the energy to make food, so it is the start of the energy in a food chain.'},
+  {skill:'Producers, consumers, decomposers',
+   q:'A green plant uses sunlight to make its own food. What role does the plant play?',
+   options:['Consumer','Decomposer','Producer','Predator'],answer:2,
+   explain:'Plants are producers because they make their own food using sunlight through photosynthesis.'},
+  {skill:'Decomposers',
+   q:'A mushroom grows on a fallen log and breaks it down. What is the mushroom’s job?',
+   options:['It makes food from sunlight','It hunts other animals','It breaks down dead things and returns nutrients to the soil','It eats only living plants'],answer:2,
+   explain:'A mushroom is a decomposer — it breaks down dead material and recycles nutrients to the soil.'},
+  {skill:'Primary/secondary/tertiary consumers',
+   q:'Food chain: Algae → Shrimp → Small fish → Tuna. Which animal is the tertiary (third) consumer?',
+   options:['The tuna','The small fish','The shrimp','The algae'],answer:0,
+   explain:'Shrimp is the primary consumer, small fish the secondary, and the tuna that eats the small fish is the tertiary (third) consumer.'},
+  {skill:'Energy transfer up the chain',
+   q:'Look at this food chain: grass → grasshopper. What does the arrow show?',
+   options:['Where the animal sleeps','Which way the energy goes as food','How fast the animal runs','The colour of the grass'],answer:1,
+   explain:'The arrow points the way energy flows — from the food to the eater — as one living thing is eaten.'},
+  {skill:'Food chain vs food web',
+   q:'A hawk in a food web eats both snakes AND mice. A disease kills almost all the mice. Why might the hawks still survive?',
+   options:['A food web gives the hawk more than one food choice, so it can eat more snakes','Hawks can make their own food from sunlight','The hawks become producers','Losing mice means more energy reaches the hawks'],answer:0,
+   explain:'Unlike a single chain, a food web has many connections, so the hawk can switch to other prey like snakes when one food runs out.'},
+  {skill:'10% rule of energy transfer',
+   q:'Energy moves up a food chain. About how much of the energy is passed on to the next level?',
+   options:['About 10%','About 50%','About 90%','All 100%'],answer:0,
+   explain:'Only about 10% of the energy moves up — the other 90% is used for life processes and lost as heat.'},
+  {skill:'Energy pyramid',
+   q:'An energy pyramid is wide at the bottom and narrow at the top. Why are there usually only a few top predators?',
+   options:['So little energy is left at the top that it can only support a few animals','Top predators are bigger, so each needs less energy','Producers block sunlight from the predators','Decomposers eat the top predators first'],answer:0,
+   explain:'Energy shrinks at every level, so the small amount left at the top can only feed a few large predators.'}
+];
+
+function renderPyramid(){
+  const box=$('pyramidBox'); if(!box) return; box.innerHTML='';
+  const levels=[
+    {cls:'l4',label:'Level 4',sub:'Tertiary — least energy'},
+    {cls:'l3',label:'Level 3',sub:'Secondary consumers'},
+    {cls:'l2',label:'Level 2',sub:'Primary consumers'},
+    {cls:'l1',label:'Level 1',sub:'Producers — most energy'}
+  ];
+  levels.forEach(l=>{ const d=document.createElement('div'); d.className='plv '+l.cls;
+    d.innerHTML=l.label+'<small>'+l.sub+'</small>'; box.appendChild(d); });
+}
 
 const ROLE_FEEDBACK={
   SUN:'Yes! Every food chain starts at the Sun.',
@@ -591,7 +717,10 @@ const state={
   trayOrder:[],       // stable shuffle of card ids
   removedRole:null,   // S5 removed card role
   star3:false,        // S5 best answer earned
-  includeDistractor:false
+  includeDistractor:false,
+  quizSet:[],         // 3 questions chosen for this round
+  quizIdx:0,          // current quiz question index
+  quizCorrect:0       // correct answers this round
 };
 let selectedCardId=null;
 let drag=null;
@@ -766,7 +895,8 @@ function buildSlotEl(s){
   slot.setAttribute('role','button');
   slot.setAttribute('aria-label','Slot '+s.n+', '+s.label_en+', empty. '+(selectedCardId?'Tap to place the selected card.':'Tap a card first, then tap here.'));
   slot.innerHTML='<div class="slot-num">'+s.n+'</div>'+
-    '<div class="slot-hint"><span class="sh-en">'+s.label_en+'</span></div>';
+    '<div class="slot-hint"><span class="sh-en">'+s.label_en+'</span>'+
+    (s.level?'<span class="sh-lv">'+s.level+'</span>':'')+'</div>';
   attachSlotHandlers(slot,s.n);
   return slot;
 }
@@ -1096,6 +1226,85 @@ function glowDecomp(){
 }
 
 /* ============================================================
+   S4L — SCIENCE LAB (pyramid + food web teach) → S4Q — QUIZ
+   ============================================================ */
+function startLearn(){
+  clearEf();
+  renderPyramid();
+  show('S4L');
+}
+
+function pickQuiz(){
+  // Always teach/assess the two gap skills (pyramid + food web) every round,
+  // then ROTATE deterministically through the remaining skills so that across
+  // the three habitats EVERY one of the 7 required skills is assessed at least once.
+  const must=QUIZ_BANK.filter(q=>q.skill==='Energy pyramid'||q.skill==='Food chain vs food web');
+  const rest=QUIZ_BANK.filter(q=>!must.includes(q));
+  // how many non-free rounds have already been completed → use as a cursor
+  const done=completedCount();
+  const picks=[];
+  // take two rotating extras per round so all six non-gap items are covered in 3 rounds
+  for(let k=0;k<2;k++){ if(rest.length) picks.push(rest[(done*2+k)%rest.length]); }
+  return shuffle(must.concat(picks));
+}
+
+function startQuiz(){
+  state.quizSet=pickQuiz();
+  state.quizIdx=0;
+  state.quizCorrect=0;
+  show('S4Q');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const q=state.quizSet[state.quizIdx];
+  $('quizProg').textContent='Question '+(state.quizIdx+1)+' of '+state.quizSet.length;
+  $('quizQ').innerHTML=q.q;
+  const fb=$('quizFb'); fb.className='quiz-fb'; fb.textContent='';
+  $('quizNext').style.display='none';
+  const opts=$('quizOpts'); opts.innerHTML='';
+  q.options.forEach((text,i)=>{
+    const b=document.createElement('button');
+    b.className='quiz-opt'; b.type='button'; b.textContent=text;
+    b.addEventListener('click',()=>answerQuiz(i,b));
+    opts.appendChild(b);
+  });
+}
+
+function answerQuiz(choice,btn){
+  const q=state.quizSet[state.quizIdx];
+  const opts=[...document.querySelectorAll('#quizOpts .quiz-opt')];
+  if(opts[0].disabled) return;               // already answered
+  opts.forEach(o=>o.disabled=true);
+  const fb=$('quizFb');
+  if(choice===q.answer){
+    state.quizCorrect++;
+    btn.classList.add('correct');
+    sfx('ding');
+    fb.className='quiz-fb good';
+    fb.innerHTML='✅ '+q.explain;
+  }else{
+    btn.classList.add('wrong');
+    opts[q.answer].classList.add('correct');
+    sfx('buzz');
+    fb.className='quiz-fb bad';
+    fb.innerHTML='💡 '+q.explain;
+  }
+  $('quizNext').style.display='';
+  $('quizNext').textContent=(state.quizIdx<state.quizSet.length-1)?'Next ▸':'Continue ▸';
+}
+
+function nextQuiz(){
+  if(state.quizIdx<state.quizSet.length-1){
+    state.quizIdx++;
+    renderQuizQuestion();
+    window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});
+  }else{
+    startBreak();
+  }
+}
+
+/* ============================================================
    S5 — BREAK A LINK
    ============================================================ */
 function startBreak(){
@@ -1210,7 +1419,9 @@ function finishRound(){
 
   // trophy strip = mini chain
   renderMiniChain($('trophyStrip'),true);
-  $('recapLine').textContent=h.recap;
+  const qTotal=state.quizSet.length||0;
+  const quizLine=qTotal?(' 🧠 Science Check: '+state.quizCorrect+' / '+qTotal+' correct.'):'';
+  $('recapLine').textContent=h.recap+quizLine;
 
   // actions
   const act=$('resultActions'); act.innerHTML='';
@@ -1351,7 +1562,9 @@ function init(){
     clearSelection(); renderBuild();
   });
 
-  $('efContinue').addEventListener('click',startBreak);
+  $('efContinue').addEventListener('click',startLearn);
+  $('learnContinue').addEventListener('click',startQuiz);
+  $('quizNext').addEventListener('click',nextQuiz);
 
   document.querySelectorAll('#breakQ .break-btns .btn').forEach(b=>{
     b.addEventListener('click',()=>answerBreak(b.dataset.ans));

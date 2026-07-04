@@ -324,6 +324,7 @@
     <div class="chip" id="scoreChip">Moon Points: 0</div>
     <div class="starmeter" id="topStars" aria-label="Mastery stars">☆☆☆</div>
     <button class="iconbtn" id="menuBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
+    <button class="iconbtn" id="quitBtn" title="Quit — end this game" aria-label="Quit the game" onclick="if(confirm('Quit and end this game? You will go back to the start screen.')){location.reload();}">🚪</button>
     <button class="iconbtn" id="wordsBtn" title="Key Words" aria-label="Key words">📖</button>
     <button class="iconbtn" id="helpBtn" title="Help — replay tips" aria-label="Help">?</button>
     <button class="iconbtn" id="muteBtn" title="Sound on/off" aria-label="Toggle sound">🔊</button>
@@ -431,7 +432,7 @@
     <div class="card resulthero">
       <div class="eyebrow">Results</div>
       <div class="bigstars" id="resStars">☆☆☆</div>
-      <div class="scoreline" id="resScore">Moon Points: 0 / 100</div>
+      <div class="scoreline" id="resScore">Moon Points: 0 / 130</div>
       <div class="rank" id="resRank"></div>
       <div class="best" id="resBest"></div>
     </div>
@@ -498,8 +499,10 @@ var KEYWORDS=[
  ["Waning","shrinking — the lit part gets smaller (Full→New)"],
  ["Crescent","a thin curved sliver of light"],
  ["Gibbous","more than half lit, bulging"],
- ["Reflect","bounces the Sun's light toward Earth"],
- ["Orbit","the Moon's path around Earth"]
+ ["Reflect","the Moon bounces the Sun's light toward Earth — it makes no light of its own"],
+ ["Light source","makes its own light, like the Sun and other stars"],
+ ["Orbit","the Moon's curved path around Earth — one trip ≈ 29.5 days"],
+ ["Same side","the same face of the Moon always points toward Earth"]
 ];
 
 /* Round 2 questions: cur = current phase idx; opts = 3 phase idx (correct = (cur+1)%8). */
@@ -511,9 +514,27 @@ var R2Q=[
  {cur:6, opts:[7,1,4], why:"A shrinking sliver, now lit on the <b>left</b> — <b>Waning Crescent</b>."},
  {cur:7, opts:[0,4,2], why:"Back to <b>New Moon</b> — the cycle repeats about every <b>29.5 days</b>, one lunar month."}
 ];
-/* Concept bonus (Q7): +0, vocab reinforcement, text options */
-var Q7={q:"<b>Waxing</b> means the lit part is…?", opts:[{t:"Growing",ok:true},{t:"Shrinking",ok:false},{t:"Staying the same",ok:false}],
-        why:"<b>Waxing</b> = growing (New → Full). <b>Waning</b> = shrinking (Full → New)."};
+/* Concept checks: text-option questions pulled from the Unit 4 lesson. +5 each. */
+var CONCEPT=[
+ {q:"Where does the Moon get its light?",
+  opts:[{t:"It makes its own light, like a fire",ok:false},{t:"It reflects light from the Sun",ok:true},{t:"It glows because it is very hot",ok:false}],
+  why:"The Moon makes <b>no light of its own</b> — it works like a mirror, reflecting sunlight toward Earth."},
+ {q:"Which one MAKES its own light?",
+  opts:[{t:"The Moon",ok:false},{t:"A planet",ok:false},{t:"The Sun (a star)",ok:true}],
+  why:"The <b>Sun is a star</b>, and stars make their own light. The Moon and planets only reflect it."},
+ {q:"What does the Moon move around — what does it <b>orbit</b>?",
+  opts:[{t:"The Sun",ok:false},{t:"The Earth",ok:true},{t:"A star",ok:false}],
+  why:"The Moon travels in a curved path — an <b>orbit</b> — around <b>Earth</b>."},
+ {q:"About how long is one full cycle of Moon phases?",
+  opts:[{t:"About 7 days",ok:false},{t:"About 29.5 days",ok:true},{t:"About 365 days",ok:false}],
+  why:"One full lunar cycle takes about <b>29.5 days</b> — almost one month."},
+ {q:"Why do we always see the <b>same side</b> of the Moon?",
+  opts:[{t:"The Moon never spins at all",ok:false},{t:"The Moon spins once each time it orbits Earth",ok:true},{t:"Earth's shadow hides the other side",ok:false}],
+  why:"The Moon turns around once in the same time it takes to orbit Earth, so the <b>same side always faces us</b>."},
+ {q:"When more than half the Moon is lit, but it is not full, the shape is called…?",
+  opts:[{t:"Crescent",ok:false},{t:"Quarter",ok:false},{t:"Gibbous",ok:true}],
+  why:"A <b>gibbous</b> Moon is more than half lit but not yet full. <b>Crescent</b> = a thin sliver; <b>Quarter</b> = exactly half."}
+];
 
 var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -607,7 +628,7 @@ function buildDots(){
   var d=$('dots'); d.innerHTML='';
   for(var i=0;i<6;i++){ var s=document.createElement('span'); s.className='dot'; s.id='dot'+i; d.appendChild(s); }
 }
-function overallStars(score){ return score>=85?3:score>=65?2:score>=40?1:0; }
+function overallStars(score){ return score>=110?3:score>=80?2:score>=50?1:0; }
 function starString(n,total){ total=total||3; var s=''; for(var i=0;i<total;i++){ s+= (i<n?'⭐':'☆'); } return s; }
 function updateTopBar(){
   $('scoreChip').textContent='Moon Points: '+totalScore();
@@ -655,31 +676,40 @@ function renderKW(el){
 /* ======================= S1 PRIMER ======================= */
 var primerStep=0;
 var PRIMER=[
-  {h:"The Moon changes shape each night.",
-   body:"It makes no light of its own — it reflects sunlight, like a ball lit by a flashlight.",
+  {h:"The Moon makes NO light of its own.",
+   body:"The Moon looks bright, but it makes no light. It works like a giant <b class='hl'>mirror</b> — it <b class='hl'>reflects sunlight</b> back toward Earth. Without the Sun, the Moon would be completely dark. The <b class='hla'>Sun is a star</b>, and stars MAKE their own light. The Moon, planets and mirrors only <b>reflect</b> light.",
    moons:true},
+  {h:"The Moon orbits Earth.",
+   body:"The Moon travels in a curved path — an <b class='hl'>orbit</b> — around <b>Earth</b>. One full trip takes about <b class='hl'>29.5 days</b>, almost one month. As the Moon orbits, we see different amounts of its sunlit side — and that makes the <b>phases</b> you'll put in order.",
+   orbit:true},
+  {h:"The same side always faces us.",
+   body:"As the Moon orbits Earth, the <b class='hl'>same side always faces us</b>. That is why we always see the same craters and 'seas.' The far side is <b>not</b> always dark — it gets just as much sunlight; we just never see it from Earth.",
+   sameface:true},
   {h:"Waxing vs Waning",
    body:"<div class='ww-row'><div class='ww-box wax'><div style='font-size:1.8rem'>🌒→🌕</div><div class='big'>Waxing = GROWING</div><div class='tip'>lit on the right →</div></div>"+
-        "<div class='ww-box wan'><div style='font-size:1.8rem'>🌖→🌘</div><div class='big'>Waning = SHRINKING</div><div class='tip'>← lit on the left</div></div></div>"},
+        "<div class='ww-box wan'><div style='font-size:1.8rem'>🌖→🌘</div><div class='big'>Waning = SHRINKING</div><div class='tip'>← lit on the left</div></div></div>"+
+        "<p class='tip center' style='margin-top:10px'>Shapes to know: <b class='hl'>Crescent</b> (thin sliver) · <b class='hl'>Quarter</b> (half lit) · <b class='hl'>Gibbous</b> (more than half) · <b class='hl'>Full</b> (all lit) · <b>New</b> (dark).</p>"},
   {h:"Try it at home!",
-   body:"In a dark room, shine a flashlight (the Sun) on a ball (the Moon) and turn the ball around — you can make every phase yourself. 🔦⚪"}
+   body:"In a dark room, shine a flashlight (the Sun) on a ball (the Moon) and turn the ball around — you can make every phase yourself. The ball stays dark until the light hits it — just like the Moon. 🔦⚪"}
 ];
 function renderPrimer(step){
   primerStep=step;
   var P=PRIMER[step];
   var moonsHtml='';
   if(P.moons){
-    moonsHtml='<div class="pmoon">';
-    for(var i=0;i<8;i++){ moonsHtml+=moonSVG(PHASES[i].lit,PHASES[i].side,40); }
-    moonsHtml+='</div>';
+    moonsHtml='<div class="pmoon" style="align-items:center"><span style="font-size:2rem">☀️</span><span style="font-size:1.2rem;color:var(--muted)">→</span>'+moonSVG(100,'full',54)+'<span style="font-size:1.2rem;color:var(--muted)">→</span><span style="font-size:1.5rem">🌎</span></div>';
+  } else if(P.orbit){
+    moonsHtml='<div class="pmoon" style="align-items:center;gap:10px"><span style="font-size:2.4rem">🌎</span><span style="font-size:1.5rem;color:var(--gold)">↻</span>'+moonSVG(50,'right',46)+'</div><p class="tip center">🌙 orbits 🌎 in ≈ 29.5 days</p>';
+  } else if(P.sameface){
+    moonsHtml='<div class="pmoon" style="align-items:center;gap:8px"><span style="font-size:2.2rem">🌎</span><span style="font-size:1.2rem;color:var(--muted)">◜◝</span>'+moonSVG(100,'full',50)+'</div><p class="tip center">Same face toward Earth at every point in the orbit</p>';
   }
   $('primerBody').innerHTML='<h2 class="center">'+P.h+'</h2>'+moonsHtml+'<p class="center" style="margin-top:6px">'+P.body+'</p>';
-  var dh=''; for(var k=0;k<3;k++){ dh+='<i class="'+(k===step?'on':'')+'"></i>'; }
+  var dh=''; for(var k=0;k<PRIMER.length;k++){ dh+='<i class="'+(k===step?'on':'')+'"></i>'; }
   $('primerDots').innerHTML=dh;
   $('primerBack').style.visibility = step===0?'hidden':'visible';
-  $('primerNext').textContent = step===2 ? "Let's Play →" : "Next →";
+  $('primerNext').textContent = step===(PRIMER.length-1) ? "Let's Play →" : "Next →";
 }
-$('primerNext').onclick=function(){ sfx('click'); if(primerStep<2) renderPrimer(primerStep+1); else goto(2); };
+$('primerNext').onclick=function(){ sfx('click'); if(primerStep<(PRIMER.length-1)) renderPrimer(primerStep+1); else goto(2); };
 $('primerBack').onclick=function(){ sfx('click'); if(primerStep>0) renderPrimer(primerStep-1); };
 
 /* ======================= S2 ROUND 1 — drag & drop ======================= */
@@ -910,10 +940,11 @@ function winRound1(){
 $('r1continue').onclick=function(){ sfx('click'); goto(3); };
 
 /* ======================= S3 ROUND 2 — predictor ======================= */
-var r2={ order:[], qi:0, tries:0, answered:false, opts:[], stage:'q' };
+var r2={ order:[], qi:0, ci:0, corder:[], tries:0, answered:false, opts:[], stage:'q' };
 function initRound2(){
   r2.order=shuffle([0,1,2,3,4,5]);
-  r2.qi=0; r2.stage='q';
+  r2.corder=shuffle([0,1,2,3,4,5]);
+  r2.qi=0; r2.ci=0; r2.stage='q';
   renderR2();
 }
 function buildOptsForQ(qObj){
@@ -945,16 +976,17 @@ function renderR2(){
     var btns=$('r2opts').querySelectorAll('.opt');
     btns.forEach(function(b){ b.onclick=function(){ answerR2(+b.dataset.opt, b); }; });
   } else {
-    // Q7 concept bonus
+    // concept-check bank: reflects light / stars make light / orbit / 29.5 days / same face / shapes
     r2.stage='concept';
-    $('qcount').textContent='Bonus vocab · just for fun (+0)';
-    $('r2timeline').innerHTML='<div class="tl-card cur" style="min-width:auto;padding:14px 20px"><div style="font-size:2.4rem">🌒→🌕</div><div class="tname">Waxing</div></div>';
-    $('r2prompt').innerHTML=Q7.q;
-    var oo=shuffle(Q7.opts.slice());
+    var C=CONCEPT[r2.corder[r2.ci]];
+    $('qcount').textContent='Science Check · Q '+(r2.ci+1)+' / '+CONCEPT.length;
+    $('r2timeline').innerHTML='<div class="tl-card cur" style="min-width:auto;padding:12px 20px"><div style="font-size:2rem">🌙❓</div><div class="tname">Science Check</div></div>';
+    $('r2prompt').innerHTML=C.q;
+    var oo=shuffle(C.opts.slice());
     r2.opts=oo;
     var ch='';
     for(var j=0;j<oo.length;j++){
-      ch+='<button class="opt" data-ok="'+(oo[j].ok?'1':'0')+'" data-i="'+j+'"><span class="oname" style="font-size:1.05rem">'+oo[j].t+'</span><span class="mark"></span></button>';
+      ch+='<button class="opt" data-ok="'+(oo[j].ok?'1':'0')+'" data-i="'+j+'"><span class="oname" style="font-size:1rem">'+oo[j].t+'</span><span class="mark"></span></button>';
     }
     $('r2opts').innerHTML=ch;
     var cbtns=$('r2opts').querySelectorAll('.opt');
@@ -1007,21 +1039,29 @@ function answerR2(pickIdx, btn){
 function answerConcept(isOk, btn){
   if(r2.answered) return;
   r2.answered=true;
+  var C=CONCEPT[r2.corder[r2.ci]];
   var bs=$('r2opts').querySelectorAll('.opt');
-  if(isOk){ btn.classList.add('correct'); btn.querySelector('.mark').textContent='✓'; sfx('correct'); }
-  else {
+  if(isOk){
+    btn.classList.add('correct'); btn.querySelector('.mark').textContent='✓'; sfx('correct');
+    game.scoreR2+=5; updateTopBar();
+  } else {
     btn.classList.add('wrong'); btn.querySelector('.mark').textContent='↔';
     bs.forEach(function(b){ if(b.dataset.ok==='1'){ b.classList.add('correct'); b.querySelector('.mark').textContent='✓'; } });
     sfx('wrong');
   }
   lockOpts();
-  var w=$('r2why'); w.className='why ok show';
-  w.innerHTML=(isOk?'✓ Exactly! ':'')+Q7.why+' <span class="pts">(+0 — just for fun)</span>';
+  var w=$('r2why'); w.className=(isOk?'why ok show':'why amber show');
+  w.innerHTML=(isOk?'✓ Exactly! ':'')+C.why+(isOk?' <span class="pts hlg">+5</span>':' <span class="pts hla">+0</span>');
   $('r2next').style.display='';
 }
 $('r2next').onclick=function(){
   sfx('click');
-  if(r2.stage==='concept'){ goto(4); return; }
+  if(r2.stage==='concept'){
+    r2.ci++;
+    if(r2.ci<CONCEPT.length){ renderR2(); }
+    else { goto(4); }
+    return;
+  }
   r2.qi++;
   if(r2.qi<6){ renderR2(); }
   else { r2.stage='q'; renderR2(); } // renderR2 will switch to concept when qi>=6
@@ -1043,11 +1083,11 @@ function renderResults(){
   var total=totalScore();
   var stars=overallStars(total);
   $('resStars').textContent=starString(stars,3);
-  $('resScore').textContent='Moon Points: '+total+' / 100';
+  $('resScore').textContent='Moon Points: '+total+' / 130';
   var rank;
-  if(total>=85) rank='🌟 Moon Master — you know the whole cycle!';
-  else if(total>=65) rank='🌙 Sky Watcher — great tracking!';
-  else if(total>=40) rank='✨ Rising Crescent — keep watching the Moon!';
+  if(total>=110) rank='🌟 Moon Master — you know the whole cycle!';
+  else if(total>=80) rank='🌙 Sky Watcher — great tracking!';
+  else if(total>=50) rank='✨ Rising Crescent — keep watching the Moon!';
   else rank='🚀 Good start, explorer — tap Play Again and you\'ll grow like a waxing Moon!';
   $('resRank').textContent=rank;
   // reference strip
@@ -1060,7 +1100,7 @@ function renderResults(){
     if(total>prev){ localStorage.setItem('moonBest', String(total)); best=total; }
     else best=prev;
   }catch(e){ best=null; }
-  $('resBest').textContent = (best!=null) ? ('Best so far: '+best+' / 100') : '';
+  $('resBest').textContent = (best!=null) ? ('Best so far: '+best+' / 130') : '';
   sfx('win');
 }
 

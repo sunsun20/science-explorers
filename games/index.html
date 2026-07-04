@@ -5,158 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Science Explorers — Games</title>
 <style>
-  /* ===== Duolingo-style brand tokens (from DESIGN.md) ===== */
   :root{
-    --duo:#58cc02;          /* Duo Green — primary action */
-    --duo-d:#46a302;        /* darker green */
-    --duo-dd:#3f8f01;       /* button under-shadow */
-    --duo-light:#d7ffb8;    /* green tint */
-    --sky:#1cb0f6;          /* Sky Blue — links/secondary */
-    --sky-d:#1492cf;
-    --yellow:#ffc700;
-    --grape:#a570ff;
-    --grape-d:#7d49d6;
-    --pink:#cc348d;
-    --night:#3b4cca;        /* moon card accent */
-    --night-d:#2c3aa0;
-    --teal:#13b6a6;
-    --teal-d:#0e9387;
-    --ink:#3c3c3c;          /* primary text */
-    --charcoal:#4b4b4b;
-    --graphite:#777;        /* body copy */
-    --silver:#afafaf;
-    --cloud:#e5e5e5;        /* borders */
-    --snow:#ffffff;
+    --duo:#58cc02;--duo-dd:#3f8f01;--duo-light:#d7ffb8;
+    --sky:#1cb0f6;--sky-d:#1492cf;
+    --ink:#3c3c3c;--charcoal:#4b4b4b;--graphite:#777;--silver:#afafaf;
+    --cloud:#e5e5e5;--snow:#ffffff;
     --head:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
     --body:'Nunito Sans','Varela Round','Trebuchet MS',system-ui,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{
-    font-family:var(--body);
-    color:var(--ink);
+    font-family:var(--body);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;
     background:
       radial-gradient(1200px 520px at 50% -8%, #eaf9ff 0%, rgba(234,249,255,0) 60%),
       radial-gradient(900px 460px at 92% 6%, #fff7d6 0%, rgba(255,247,214,0) 55%),
       radial-gradient(900px 460px at 6% 14%, #f0ffe0 0%, rgba(240,255,224,0) 55%),
       var(--snow);
-    min-height:100vh;
-    overflow-x:hidden;
-    -webkit-text-size-adjust:100%;
   }
-  h1,h2,h3,.headline{font-family:var(--head);font-weight:700;margin:0;line-height:1.15;letter-spacing:-.01em}
+  h1,h2,h3{font-family:var(--head);font-weight:700;margin:0;line-height:1.15;letter-spacing:-.01em}
 
-  /* ===== Top bar ===== */
-  .topbar{
-    max-width:1140px;margin:0 auto;padding:18px 20px 6px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-  }
-  .brand{display:flex;align-items:center;gap:11px;font-family:var(--head);font-weight:700;color:var(--duo);font-size:1.35rem;letter-spacing:.2px}
-  .brand .logo{
-    width:46px;height:46px;border-radius:14px;background:var(--duo);
-    box-shadow:0 4px 0 var(--duo-dd);
-    display:grid;place-items:center;font-size:1.55rem;
-    animation:bob 3.2s ease-in-out infinite;
-  }
-  .mute-btn{
-    min-width:48px;min-height:48px;border:2px solid var(--cloud);background:#fff;border-radius:14px;
-    font-size:1.25rem;cursor:pointer;display:grid;place-items:center;color:var(--charcoal);
-    transition:background .15s,transform .05s,border-color .15s;
-  }
-  .mute-btn:hover{background:#f7fff0;border-color:var(--duo-light)}
+  .topbar{max-width:1140px;margin:0 auto;padding:18px 20px 6px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--head);font-weight:700;color:var(--duo);font-size:1.35rem}
+  .brand .logo{width:46px;height:46px;border-radius:14px;background:var(--duo);box-shadow:0 4px 0 var(--duo-dd);display:grid;place-items:center;font-size:1.55rem;animation:bob 3.2s ease-in-out infinite}
+  .mute-btn{min-width:48px;min-height:48px;border:2px solid var(--cloud);background:#fff;border-radius:14px;font-size:1.25rem;cursor:pointer;display:grid;place-items:center;color:var(--charcoal);transition:background .15s,transform .05s}
   .mute-btn:active{transform:translateY(2px)}
   .mute-btn.off{opacity:.62}
 
-  /* ===== Hero / welcome ===== */
   .hero{max-width:900px;margin:8px auto 4px;padding:14px 22px 0;text-align:center}
-  .hero h1{
-    font-size:clamp(40px,8vw,64px);color:var(--duo);letter-spacing:-.02em;line-height:1.05;
-    text-shadow:0 2px 0 rgba(63,143,1,.14);
-  }
+  .hero h1{font-size:clamp(38px,8vw,60px);color:var(--duo);letter-spacing:-.02em;text-shadow:0 2px 0 rgba(63,143,1,.14)}
   .hero h1 .wave{display:inline-block;animation:wave 2.6s ease-in-out infinite;transform-origin:70% 70%}
-  .welcome{
-    font-size:clamp(16px,2.6vw,20px);color:var(--charcoal);font-weight:600;margin:14px auto 2px;max-width:640px;line-height:1.5;
-  }
+  .welcome{font-size:clamp(15px,2.6vw,19px);color:var(--charcoal);font-weight:600;margin:12px auto 2px;max-width:640px;line-height:1.5}
   .welcome .pick{color:var(--sky);font-weight:700}
 
-  /* ===== Cards grid ===== */
-  .grid{
-    max-width:1080px;margin:26px auto 10px;padding:0 20px 20px;
-    display:grid;gap:22px;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  }
-  .card{
-    position:relative;display:flex;flex-direction:column;text-decoration:none;
-    background:#fff;border:3px solid var(--c-line);border-radius:22px;
-    padding:24px 22px 22px;overflow:hidden;
-    box-shadow:0 8px 0 var(--c-shadow);
-    transition:transform .12s ease, box-shadow .12s ease;
-    min-height:300px;
-  }
+  /* grade picker */
+  .grades{max-width:1080px;margin:20px auto 4px;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .gtab{font-family:var(--head);font-weight:700;font-size:1.02rem;color:var(--charcoal);background:#fff;border:2px solid var(--cloud);
+    border-radius:14px;padding:10px 18px;cursor:pointer;box-shadow:0 4px 0 #e9e9e9;transition:transform .06s,border-color .12s}
+  .gtab:active{transform:translateY(2px);box-shadow:0 2px 0 #e9e9e9}
+  .gtab.on{color:#fff;background:var(--sky);border-color:var(--sky);box-shadow:0 4px 0 var(--sky-d)}
+
+  .grid{max-width:1080px;margin:20px auto 10px;padding:0 20px 10px;display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .card{position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border:3px solid var(--c-line);
+    border-radius:22px;padding:22px 20px 20px;overflow:hidden;box-shadow:0 8px 0 var(--c-shadow);transition:transform .12s,box-shadow .12s;min-height:268px}
   .card:hover{transform:translateY(-4px);box-shadow:0 12px 0 var(--c-shadow)}
   .card:active{transform:translateY(4px);box-shadow:0 4px 0 var(--c-shadow)}
   .card:focus-visible{outline:4px solid var(--sky);outline-offset:3px}
-  /* soft colour wash in the corner */
-  .card::before{
-    content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;
-    background:var(--c-wash);opacity:.55;pointer-events:none;
-  }
-  .badge{
-    align-self:flex-start;position:relative;z-index:1;
-    font-family:var(--body);font-weight:800;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
-    color:#fff;background:var(--c-main);border-radius:99px;padding:6px 13px;margin-bottom:14px;
-  }
-  .emoji{
-    position:relative;z-index:1;font-size:4.6rem;line-height:1;margin:2px 0 12px;
-    filter:drop-shadow(0 6px 6px rgba(0,0,0,.10));
-    animation:float 4.2s ease-in-out infinite;
-  }
-  .card:nth-child(2) .emoji{animation-delay:.5s}
-  .card:nth-child(3) .emoji{animation-delay:1s}
-  .card h2{position:relative;z-index:1;font-size:1.78rem;color:var(--c-text);letter-spacing:-.01em}
-  .card .unit{position:relative;z-index:1;color:var(--graphite);font-weight:600;font-size:.98rem;margin-top:10px;line-height:1.4}
-  .play{
-    position:relative;z-index:1;margin-top:auto;padding-top:18px;
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-  }
-  .play .go{
-    font-family:var(--head);font-weight:700;font-size:1.05rem;color:#fff;
-    background:var(--c-main);border-radius:14px;padding:11px 20px;
-    box-shadow:0 4px 0 var(--c-shadow);
-    display:inline-flex;align-items:center;gap:9px;letter-spacing:.3px;
-  }
-  .play .arrow{font-size:1.2rem;transition:transform .15s}
+  .card::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:var(--c-wash);opacity:.55;pointer-events:none}
+  .badge{align-self:flex-start;position:relative;z-index:1;font-family:var(--body);font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--c-main);border-radius:99px;padding:6px 13px;margin-bottom:12px}
+  .emoji{position:relative;z-index:1;font-size:4.2rem;line-height:1;margin:2px 0 10px;filter:drop-shadow(0 6px 6px rgba(0,0,0,.10));animation:float 4.2s ease-in-out infinite}
+  .card h2{position:relative;z-index:1;font-size:1.55rem;color:var(--c-text)}
+  .card .unit{position:relative;z-index:1;color:var(--graphite);font-weight:600;font-size:.95rem;margin-top:8px;line-height:1.4}
+  .play{position:relative;z-index:1;margin-top:auto;padding-top:16px}
+  .play .go{font-family:var(--head);font-weight:700;font-size:1.02rem;color:#fff;background:var(--c-main);border-radius:14px;padding:10px 18px;box-shadow:0 4px 0 var(--c-shadow);display:inline-flex;align-items:center;gap:9px}
+  .play .arrow{transition:transform .15s}
   .card:hover .play .arrow{transform:translateX(4px)}
 
-  /* per-card colour themes */
-  .c-moon{--c-main:var(--night);--c-shadow:var(--night-d);--c-line:#d7dcff;--c-wash:#dfe5ff;--c-text:#2c3aa0}
-  .c-chain{--c-main:var(--duo);--c-shadow:var(--duo-dd);--c-line:#cdeeb1;--c-wash:var(--duo-light);--c-text:#3f8f01}
-  .c-hide{--c-main:var(--sky);--c-shadow:var(--sky-d);--c-line:#bfe8ff;--c-wash:#d6f1ff;--c-text:#1379ad}
+  .foot{max-width:820px;margin:6px auto 0;padding:14px 22px 6px;text-align:center;color:var(--graphite)}
+  .foot .sky-note{display:inline-block;background:#fff;border:2px solid var(--cloud);border-radius:16px;padding:12px 20px;font-weight:600;color:var(--charcoal);line-height:1.5}
+  .foot .tip{margin-top:12px;font-size:.92rem;color:var(--silver)}
 
-  /* ===== Footer ===== */
-  .foot{
-    max-width:820px;margin:6px auto 0;padding:18px 22px 40px;text-align:center;color:var(--graphite);
-  }
-  .foot .sky-note{
-    display:inline-block;background:#fff;border:2px solid var(--cloud);border-radius:16px;
-    padding:12px 20px;font-weight:600;color:var(--charcoal);line-height:1.5;
-  }
-  .foot .sky-note .moon{font-size:1.2rem}
-  .foot .tip{margin-top:14px;font-size:.92rem;color:var(--silver)}
+  footer.credit{max-width:920px;margin:22px auto 32px;padding:18px 26px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:var(--head);color:#5b6472;font-weight:700;line-height:1.55}
 
-  /* ===== Animations ===== */
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   @keyframes wave{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(16deg)}20%{transform:rotate(-8deg)}}
-  @media (prefers-reduced-motion:reduce){
-    .emoji,.brand .logo,.hero h1 .wave{animation:none}
-    .card{transition:none}
-  }
-  @media (max-width:520px){
-    .grid{gap:16px}
-    .card{min-height:0;padding:20px 18px}
-    .emoji{font-size:3.8rem}
-  }
+  @media (prefers-reduced-motion:reduce){.emoji,.brand .logo,.hero h1 .wave{animation:none}.card{transition:none}}
+  @media (max-width:520px){.grid{gap:14px}.card{min-height:0;padding:18px 16px}.emoji{font-size:3.6rem}}
 </style>
 </head>
 <body>
@@ -168,107 +83,118 @@
 
   <section class="hero">
     <h1>Science <span class="wave">👋</span> Explorers</h1>
-    <p class="welcome">Hi, scientists! Pick a game below and let's discover how the world works — one fun challenge at a time. Every player is welcome here. <span class="pick">Tap a card to play!</span></p>
+    <p class="welcome">Hi, scientists! Choose your grade, then tap a game to play. Every player is welcome here. <span class="pick">Pick a grade below!</span></p>
   </section>
 
-  <main class="grid">
-
-    <a class="card c-moon" href="moon-tracker.html" data-blip="moon">
-      <span class="badge">Grade 5 · Unit 4</span>
-      <span class="emoji">🌙</span>
-      <h2>Moon Tracker</h2>
-      <div class="unit">Phases of the Moon</div>
-      <div class="play"><span class="go">Play <span class="arrow">→</span></span></div>
-    </a>
-
-    <a class="card c-chain" href="food-chain.html" data-blip="chain">
-      <span class="badge">Grade 5 · Unit 3</span>
-      <span class="emoji">🌿</span>
-      <h2>Build the Chain</h2>
-      <div class="unit">Food Chains &amp; Energy</div>
-      <div class="play"><span class="go">Play <span class="arrow">→</span></span></div>
-    </a>
-
-    <a class="card c-hide" href="hide-and-survive.html" data-blip="hide">
-      <span class="badge">Grade 5 · Unit 5</span>
-      <span class="emoji">🦎</span>
-      <h2>Hide &amp; Survive</h2>
-      <div class="unit">Predator &amp; Prey</div>
-      <div class="play"><span class="go">Play <span class="arrow">→</span></span></div>
-    </a>
-
-  </main>
+  <nav class="grades" id="grades" aria-label="Choose a grade"></nav>
+  <main class="grid" id="grid"></main>
 
   <footer class="foot">
-    <div class="sky-note"><span class="moon">🌙</span> Many cultures, one sky — people everywhere watch the same Moon to mark seasons, festivals and time.</div>
+    <div class="sky-note"><span>🌙</span> Many cultures, one sky — people everywhere study the same world.</div>
     <div class="tip">Works offline · No internet needed · Have fun, explorers!</div>
   </footer>
 
+  <footer class="credit">
+    <div>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial</div>
+    <div>© 2026 Deenish Ramdial · All rights reserved.</div>
+  </footer>
+
 <script>
-(function(){
-  "use strict";
+"use strict";
+/* colour themes */
+var T = {
+  orange:{main:'#f76707',shadow:'#d9480f',line:'#ffd8a8',wash:'#ffe8cc',text:'#e8590c'},
+  green:{main:'#40c057',shadow:'#2f9e44',line:'#b2f2bb',wash:'#d3f9d8',text:'#2b8a3e'},
+  pink:{main:'#e64980',shadow:'#c2255c',line:'#ffdeeb',wash:'#fff0f6',text:'#a61e4d'},
+  indigo:{main:'#4c6ef5',shadow:'#3b5bdb',line:'#dbe4ff',wash:'#edf2ff',text:'#364fc7'},
+  teal:{main:'#15aabf',shadow:'#0c8599',line:'#c5f6fa',wash:'#e3fafc',text:'#0b7285'},
+  amber:{main:'#f59f00',shadow:'#e67700',line:'#ffec99',wash:'#fff9db',text:'#e67700'},
+  blue:{main:'#1c7ed6',shadow:'#1864ab',line:'#a5d8ff',wash:'#e7f5ff',text:'#1864ab'},
+  red:{main:'#fa5252',shadow:'#e03131',line:'#ffc9c9',wash:'#fff5f5',text:'#c92a2a'},
+  violet:{main:'#9c36b5',shadow:'#862e9c',line:'#eebefa',wash:'#f8f0fc',text:'#862e9c'},
+  night:{main:'#3b4cca',shadow:'#2c3aa0',line:'#d7dcff',wash:'#dfe5ff',text:'#2c3aa0'},
+  duo:{main:'#58cc02',shadow:'#3f8f01',line:'#cdeeb1',wash:'#d7ffb8',text:'#3f8f01'},
+  skyc:{main:'#1cb0f6',shadow:'#1492cf',line:'#bfe8ff',wash:'#d6f1ff',text:'#1379ad'}
+};
+/* all games */
+var GAMES = [
+  {g:1,u:1,name:'Light & Sound Lab',sub:'Light & Sound',e:'💡',f:'g1-light-sound.html',t:'orange'},
+  {g:1,u:2,name:'Body Parts Match',sub:'Plant & Animal Parts',e:'🌱',f:'g1-plant-animal-parts.html',t:'green'},
+  {g:1,u:3,name:'Baby Match!',sub:'Parents & Their Young',e:'🐤',f:'g1-parents-young.html',t:'pink'},
+  {g:1,u:4,name:'Sky Patterns',sub:'Patterns in the Sky',e:'🌤️',f:'g1-sky-patterns.html',t:'indigo'},
 
-  /* ---------- Tiny Web Audio "blip" engine (no external files) ---------- */
-  var muted = false, ctx = null;
-  try { muted = localStorage.getItem('sx_muted') === '1'; } catch(e){}
+  {g:2,u:1,name:'Material Master',sub:'Materials & Matter',e:'🧱',f:'g2-materials.html',t:'teal'},
+  {g:2,u:2,name:'Grow & Pollinate',sub:'What Plants Need',e:'🌱',f:'g2-plants-need.html',t:'green'},
+  {g:2,u:3,name:'Habitat Homes',sub:'Living Things & Habitats',e:'🏞️',f:'g2-habitats.html',t:'amber'},
+  {g:2,u:4,name:'Fast, Slow & Maps',sub:'Earth Changes: Land & Water',e:'🌋',f:'g2-earth-land-water.html',t:'blue'},
 
-  function audio(){
-    if(!ctx){
-      try{ ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch(e){ ctx = null; }
-    }
-    return ctx;
-  }
-  function blip(freq, dur){
-    if(muted) return;
-    var a = audio(); if(!a) return;
-    if(a.state === 'suspended'){ try{ a.resume(); }catch(e){} }
-    try{
-      var o = a.createOscillator(), g = a.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(freq, a.currentTime);
-      g.gain.setValueAtTime(0.0001, a.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.16, a.currentTime + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + dur);
-      o.connect(g); g.connect(a.destination);
-      o.start(); o.stop(a.currentTime + dur + 0.02);
-    }catch(e){}
-  }
-  function happyChirp(){ blip(523.25, 0.10); setTimeout(function(){ blip(783.99, 0.12); }, 90); }
+  {g:3,u:1,name:'Push, Pull & Magnets',sub:'Forces & Motion',e:'🧲',f:'g3-forces-motion.html',t:'red'},
+  {g:3,u:2,name:'Life Cycle Builder',sub:'Life Cycles & Traits',e:'🦋',f:'g3-life-cycles.html',t:'green'},
+  {g:3,u:3,name:'Adapt to Survive',sub:'Survival & Adaptations',e:'🦎',f:'g3-adaptations.html',t:'violet'},
+  {g:3,u:4,name:'Weather Watcher',sub:'Weather & Climate',e:'⛅',f:'g3-weather-climate.html',t:'blue'},
 
-  /* ---------- Mute toggle ---------- */
-  var btn = document.getElementById('muteBtn');
-  function renderMute(){
-    btn.textContent = muted ? '🔇' : '🔊';
-    btn.classList.toggle('off', muted);
-    btn.setAttribute('aria-pressed', muted ? 'true' : 'false');
-  }
-  renderMute();
-  btn.addEventListener('click', function(){
-    muted = !muted;
-    try{ localStorage.setItem('sx_muted', muted ? '1' : '0'); }catch(e){}
-    renderMute();
-    if(!muted) blip(660, 0.10); // little confirmation chirp
+  {g:4,u:1,name:'Energy Lab',sub:'Energy',e:'⚡',f:'g4-energy.html',t:'amber'},
+  {g:4,u:2,name:'Wave Lab',sub:'Waves & Information',e:'🌊',f:'g4-waves.html',t:'indigo'},
+  {g:4,u:3,name:'Senses & Structures',sub:'Structures & Senses',e:'🧠',f:'g4-structures-senses.html',t:'pink'},
+  {g:4,u:4,name:'Rock Layers & Erosion',sub:"Earth's Surface & History",e:'🪨',f:'g4-earth-surface.html',t:'orange'},
+  {g:4,u:5,name:'Resources & Hazards',sub:'Natural Resources & Hazards',e:'🌍',f:'g4-resources-hazards.html',t:'teal'},
+
+  {g:5,u:3,name:'Build the Chain',sub:'Food Chains & Energy',e:'🌿',f:'food-chain.html',t:'duo'},
+  {g:5,u:4,name:'Moon Tracker',sub:'Phases of the Moon',e:'🌙',f:'moon-tracker.html',t:'night'},
+  {g:5,u:5,name:'Hide & Survive',sub:'Predator & Prey',e:'🦎',f:'hide-and-survive.html',t:'skyc'}
+];
+
+var current = 1;
+var gradesEl = document.getElementById('grades');
+var gridEl = document.getElementById('grid');
+
+function makeTabs(){
+  [1,2,3,4,5].forEach(function(g){
+    var b = document.createElement('button');
+    b.className = 'gtab' + (g===current?' on':'');
+    b.textContent = 'Grade ' + g;
+    b.setAttribute('aria-pressed', g===current?'true':'false');
+    b.addEventListener('click', function(){ current=g; chirp(); render(); });
+    gradesEl.appendChild(b);
   });
-
-  /* ---------- Friendly tap sound on each card ---------- */
-  var tones = { moon:392.00, chain:523.25, hide:659.25 };
-  var cards = document.querySelectorAll('.card');
-  cards.forEach(function(card){
-    function ping(){ blip(tones[card.getAttribute('data-blip')] || 523, 0.12); }
-    // pointerdown gives instant feedback on both touch and mouse
-    card.addEventListener('pointerdown', ping, {passive:true});
+}
+function render(){
+  Array.prototype.forEach.call(gradesEl.children, function(b,i){
+    var on = (i+1)===current; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false');
   });
+  gridEl.innerHTML = '';
+  GAMES.filter(function(x){return x.g===current}).forEach(function(x){
+    var th = T[x.t];
+    var a = document.createElement('a');
+    a.className = 'card'; a.href = x.f;
+    a.style.cssText = '--c-main:'+th.main+';--c-shadow:'+th.shadow+';--c-line:'+th.line+';--c-wash:'+th.wash+';--c-text:'+th.text;
+    a.innerHTML =
+      '<span class="badge">Grade '+x.g+' · Unit '+x.u+'</span>'+
+      '<span class="emoji">'+x.e+'</span>'+
+      '<h2>'+x.name+'</h2>'+
+      '<div class="unit">'+x.sub+'</div>'+
+      '<div class="play"><span class="go">Play <span class="arrow">→</span></span></div>';
+    a.addEventListener('pointerdown', chirp, {passive:true});
+    gridEl.appendChild(a);
+  });
+}
 
-  // gentle hello chirp once the user first interacts (browsers require a gesture)
-  var greeted = false;
-  function greet(){ if(greeted) return; greeted = true; happyChirp(); }
-  window.addEventListener('pointerdown', greet, {once:true, passive:true});
-})();
+/* tiny sound */
+var muted=false, ac=null;
+try{ muted = localStorage.getItem('sx_muted')==='1'; }catch(e){}
+function ctx(){ if(!ac){ try{ ac=new(window.AudioContext||window.webkitAudioContext)(); }catch(e){ ac=null; } } return ac; }
+function chirp(){ if(muted) return; var a=ctx(); if(!a) return; if(a.state==='suspended'){try{a.resume()}catch(e){}}
+  try{ var o=a.createOscillator(),g=a.createGain(); o.type='sine'; o.frequency.setValueAtTime(523.25,a.currentTime);
+    g.gain.setValueAtTime(.0001,a.currentTime); g.gain.exponentialRampToValueAtTime(.14,a.currentTime+.01);
+    g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.12); o.connect(g); g.connect(a.destination);
+    o.start(); o.stop(a.currentTime+.14);}catch(e){} }
+var mute=document.getElementById('muteBtn');
+function renderMute(){ mute.textContent=muted?'🔇':'🔊'; mute.classList.toggle('off',muted); mute.setAttribute('aria-pressed',muted?'true':'false'); }
+renderMute();
+mute.addEventListener('click', function(){ muted=!muted; try{localStorage.setItem('sx_muted',muted?'1':'0')}catch(e){} renderMute(); if(!muted) chirp(); });
+
+makeTabs();
+render();
 </script>
-<footer style="max-width:920px;margin:28px auto 32px;padding:18px 26px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:#5b6472;font-weight:700;line-height:1.55;">
-  <div>Science Explorers · A Grades 1–5 science classroom by Deenish Ramdial</div>
-  <div>© 2026 Deenish Ramdial · All rights reserved.</div>
-</footer>
 </body>
 </html>
