@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Systems Field Lab – Grade 4</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#0c2a50;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px 16px 20px 16px;
+}
+
+/* ── Permanent Restart button ── */
+#restart-btn{
+  position:fixed;top:14px;left:14px;
+  background:rgba(13,148,136,0.9);
+  color:#fff;border:none;border-radius:999px;
+  padding:8px 16px;font-size:14px;font-weight:700;
+  cursor:pointer;z-index:1000;
+  box-shadow:0 2px 10px rgba(0,0,0,0.4);
+  transition:background 0.18s;
+}
+#restart-btn:hover{background:#0d9488;}
+
+/* ── Card ── */
+.card{
+  background:#0a1f3d;
+  border-radius:20px;
+  padding:28px 28px 24px;
+  max-width:660px;width:100%;
+  border:1px solid rgba(224,168,0,0.22);
+  box-shadow:0 8px 40px rgba(0,0,0,0.5);
+}
+
+/* ── Pill label ── */
+.pill{
+  background:rgba(224,168,0,0.13);
+  border:1.5px solid #E0A800;
+  color:#E0A800;
+  border-radius:999px;
+  padding:7px 22px;
+  font-size:15px;font-weight:700;
+  display:inline-block;
+  letter-spacing:0.2px;
+}
+
+/* ── Title screen ── */
+.title-center{text-align:center;margin-bottom:18px;}
+.title-h1{color:#E0A800;font-size:30px;font-weight:800;text-align:center;margin-bottom:10px;line-height:1.2;}
+.title-sub{color:#7fb3d0;font-size:15px;text-align:center;margin-bottom:22px;line-height:1.6;}
+.std-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.std-badge{
+  background:rgba(13,148,136,0.18);border:1px solid #0d9488;
+  color:#5eead4;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;
+}
+.btn-start{
+  display:block;width:100%;
+  background:linear-gradient(135deg,#E0A800,#c8890a);
+  color:#0c2a50;border:none;border-radius:14px;
+  padding:15px;font-size:20px;font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 22px rgba(224,168,0,0.35);
+  transition:transform 0.1s,box-shadow 0.2s;
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 7px 30px rgba(224,168,0,0.5);}
+.btn-start:active{transform:translateY(0);}
+
+/* ── Game screen ── */
+.progress-top{
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:8px;
+  color:#7fb3d0;font-size:13px;
+}
+.progress-bar-bg{background:rgba(255,255,255,0.1);border-radius:999px;height:8px;margin-bottom:16px;}
+.progress-bar-fill{
+  background:linear-gradient(90deg,#0d9488,#E0A800);
+  border-radius:999px;height:8px;
+  transition:width 0.45s ease;
+}
+.lives{display:flex;gap:5px;align-items:center;}
+.heart{font-size:17px;}
+.score-label{color:#E0A800;font-weight:700;font-size:14px;}
+.std-tag{
+  display:inline-block;
+  background:rgba(13,148,136,0.14);
+  border:1px solid rgba(13,148,136,0.5);
+  color:#5eead4;border-radius:6px;
+  padding:2px 9px;font-size:11px;font-weight:700;
+  margin-bottom:10px;
+}
+.scene-wrap{
+  background:rgba(255,255,255,0.03);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.07);
+  margin-bottom:16px;
+  text-align:center;
+  padding:10px;
+  overflow:hidden;
+}
+.scene-wrap svg{max-width:100%;height:auto;display:block;margin:0 auto;}
+.question-text{
+  color:#e8f4f8;font-size:17px;font-weight:700;
+  text-align:center;margin-bottom:18px;line-height:1.5;
+}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.opt-btn{
+  background:rgba(255,255,255,0.06);
+  border:2px solid rgba(255,255,255,0.13);
+  border-radius:12px;padding:13px 11px;
+  color:#d6eaf8;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+  text-align:center;line-height:1.35;
+  min-height:54px;
+}
+.opt-btn:hover:not(:disabled){
+  background:rgba(13,148,136,0.25);
+  border-color:#0d9488;color:#5eead4;
+}
+.opt-btn.correct{background:rgba(5,150,105,0.28);border-color:#10b981;color:#6ee7b7;}
+.opt-btn.wrong{background:rgba(220,38,38,0.2);border-color:#ef4444;color:#fca5a5;}
+.opt-btn:disabled{cursor:default;}
+.feedback{
+  text-align:center;font-size:15px;font-weight:700;
+  min-height:24px;margin-bottom:10px;
+}
+.feedback.correct{color:#6ee7b7;}
+.feedback.wrong{color:#fca5a5;}
+.explanation{
+  background:rgba(224,168,0,0.07);
+  border:1px solid rgba(224,168,0,0.28);
+  border-radius:10px;padding:11px 15px;
+  color:#fde68a;font-size:13px;line-height:1.55;
+  margin-bottom:13px;display:none;
+}
+.btn-next{
+  display:none;width:100%;
+  background:#0d9488;color:#fff;border:none;
+  border-radius:12px;padding:12px;font-size:15px;font-weight:700;
+  cursor:pointer;transition:background 0.18s;
+}
+.btn-next:hover{background:#0f766e;}
+
+/* ── End screen ── */
+.end-wrap{text-align:center;}
+.end-icon{font-size:62px;margin-bottom:14px;}
+.end-title{color:#E0A800;font-size:27px;font-weight:800;margin-bottom:10px;}
+.end-score{color:#5eead4;font-size:52px;font-weight:900;margin-bottom:10px;}
+.end-msg{color:#7fb3d0;font-size:15px;margin-bottom:26px;line-height:1.55;}
+.btn-play{
+  display:inline-block;
+  background:linear-gradient(135deg,#E0A800,#c8890a);
+  color:#0c2a50;border:none;border-radius:14px;
+  padding:14px 42px;font-size:18px;font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 22px rgba(224,168,0,0.35);
+}
+
+/* ── Screens ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── Gold glitter particle ── */
+.particle{
+  position:fixed;pointer-events:none;
+  z-index:9999;
+  animation:gfall linear forwards;
+}
+@keyframes gfall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(340px) rotate(420deg);opacity:0;}
+}
+
+/* ── QR card (desktop only) ───────────────────────────────────── */
+.qr-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin:18px auto 0;
+  background:rgba(255,255,255,0.06);
+  border:1.5px solid rgba(224,168,0,0.35);
+  border-radius:14px;padding:12px 18px;
+  max-width:160px;
+}
+.qr-card img{border-radius:6px;display:block;}
+.qr-card p{color:rgba(255,255,255,0.75);font-size:11.5px;text-align:center;line-height:1.35;margin:0;}
+
+/* ── Mobile responsive (@media 820px) ─────────────────────────── */
+@media(max-width:820px){
+  /* hide QR card on small screens */
+  .qr-card{display:none!important;}
+
+  /* layout helpers */
+  #app,
+  .card{max-width:100%!important;padding:14px 10px 40px!important;}
+
+  /* stack 2-col grids to 1 col */
+  .choices,
+  .choices-grid,
+  #choicesGrid,
+  #choicesDiv,
+  .options-grid,
+  .sort-columns{
+    grid-template-columns:1fr!important;
+    flex-direction:column!important;
+  }
+
+  /* enlarge tap targets ≥48px */
+  .choice,.choice-btn,.c-btn,.opt-btn,.btn-gold,.btn-start,
+  .btn-primary,.start-btn,.btn-play,#start-btn,.btn-next,
+  .next-btn,.btn-check,.choice-btn,.play-again-btn{
+    min-height:48px!important;padding-top:12px!important;padding-bottom:12px!important;
+    font-size:16px!important;
+  }
+
+  /* standards grid → 1 col */
+  .standards-grid,.stds-summary{grid-template-columns:1fr!important;}
+
+  /* hero title size */
+  .hero h1,.title-h1,#titleScreen h1,h1.game-title{font-size:clamp(22px,7vw,36px)!important;}
+
+  /* SVG illustrations: full width */
+  .q-svg,.q-art svg,#qSvg,.svg-wrap svg,.scene-wrap svg{
+    width:100%!important;height:auto!important;
+  }
+
+  /* fixed restart button: smaller on mobile */
+  #restartBtn,#restart-btn{padding:7px 12px!important;font-size:13px!important;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- Permanent Restart — visible on EVERY screen -->
+<button id="restart-btn" onclick="restartGame()">🏠 Restart</button>
+
+<div class="card">
+
+  <!-- ══ TITLE SCREEN ══ -->
+  <div id="screen-title" class="screen active">
+    <div class="title-center">
+      <span class="pill">🌍 Grade 4 · Topic 5 · Earth's Systems</span>
+    </div>
+    <h1 class="title-h1">Earth Systems Field Lab</h1>
+    <p class="title-sub">
+      Step into the field! Discover how water, wind, ice, and plants reshape
+      our planet — then decode Earth's patterns by reading maps like a scientist.
+    </p>
+    <div class="std-badges">
+      <span class="std-badge">4-ESS2-1 · Weathering &amp; Erosion</span>
+      <span class="std-badge">4-ESS2-2 · Earth Feature Maps</span>
+    </div>
+
+    <!-- Title landscape SVG -->
+    <div class="scene-wrap" style="margin-bottom:24px;">
+      <svg width="560" height="170" viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg">
+        <!-- Deep sky -->
+        <rect width="560" height="170" fill="#0c1a2a"/>
+        <!-- Stars -->
+        <circle cx="30"  cy="18" r="1.2" fill="#E0A800" opacity=".55"/>
+        <circle cx="90"  cy="12" r="1.5" fill="#E0A800" opacity=".4"/>
+        <circle cx="200" cy="22" r="1"   fill="#E0A800" opacity=".6"/>
+        <circle cx="350" cy="10" r="1.3" fill="#E0A800" opacity=".45"/>
+        <circle cx="480" cy="20" r="1"   fill="#E0A800" opacity=".5"/>
+        <circle cx="530" cy="8"  r="1.5" fill="#E0A800" opacity=".4"/>
+        <!-- Mountain range -->
+        <polygon points="0,130 55,38 110,130"  fill="#1e3a5f"/>
+        <polygon points="70,130 140,22 210,130" fill="#243f6a"/>
+        <polygon points="170,130 240,42 310,130" fill="#1e3a5f"/>
+        <polygon points="280,130 350,55 420,130" fill="#243f6a"/>
+        <polygon points="390,130 450,40 510,130" fill="#1e3a5f"/>
+        <polygon points="460,130 530,58 560,110 560,130" fill="#243f6a"/>
+        <!-- Snow caps -->
+        <polygon points="55,38  72,66  38,66"  fill="#c8dde8" opacity=".7"/>
+        <polygon points="140,22 160,54 120,54" fill="#c8dde8" opacity=".7"/>
+        <polygon points="240,42 258,72 222,72" fill="#c8dde8" opacity=".65"/>
+        <polygon points="350,55 367,82 333,82" fill="#c8dde8" opacity=".65"/>
+        <polygon points="450,40 468,70 432,70" fill="#c8dde8" opacity=".7"/>
+        <!-- Ground -->
+        <rect x="0" y="130" width="560" height="40" fill="#152a10"/>
+        <!-- River winding at base -->
+        <path d="M 120 135 C 155 140 175 148 210 150 C 245 152 268 148 300 152 C 330 156 360 152 400 154"
+              stroke="#0d9488" stroke-width="5" fill="none" opacity=".9"/>
+        <!-- Wind streaks upper-left -->
+        <path d="M 12 75 Q 50 70 85 74"  stroke="#E0A800" stroke-width="2"   fill="none" opacity=".45"/>
+        <path d="M 18 88 Q 60 83 92 87"  stroke="#E0A800" stroke-width="1.5" fill="none" opacity=".35"/>
+        <!-- Gold sparkles -->
+        <text x="490" y="55" font-size="14" fill="#E0A800" opacity=".75">✦</text>
+        <text x="28"  y="120" font-size="10" fill="#E0A800" opacity=".5">✦</text>
+        <text x="540" y="100" font-size="10" fill="#E0A800" opacity=".4">✦</text>
+      </svg>
+    </div>
+
+
+<!-- ── QR CARD (desktop only) ───────────── -->
+<div class="qr-card">
+  <img src="data:image/png;base64,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" alt="QR code" width="96" height="96">
+  <p>&#128241; Scan to play on a phone or iPad!</p>
+</div>
+    <button class="btn-start" id="start-btn" onclick="startGame()">▶ Start Field Lab</button>
+  </div><!-- /screen-title -->
+
+  <!-- ══ GAME SCREEN ══ -->
+  <div id="screen-game" class="screen">
+    <!-- Progress bar -->
+    <div>
+      <div class="progress-top">
+        <span id="q-label">Question 1 / 10</span>
+        <div class="lives" id="lives-display"></div>
+        <span class="score-label">⭐ <span id="score-val">0</span></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Standard tag -->
+    <div style="text-align:center;margin-bottom:8px;">
+      <span class="std-tag" id="std-tag">4-ESS2-1</span>
+    </div>
+
+    <!-- Scene illustration -->
+    <div class="scene-wrap" id="scene-wrap"></div>
+
+    <!-- Question text -->
+    <p class="question-text" id="question-text"></p>
+
+    <!-- Answer buttons -->
+    <div class="options-grid" id="options-grid"></div>
+
+    <!-- Feedback / explanation / next -->
+    <div class="feedback" id="feedback"></div>
+    <div class="explanation" id="explanation"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+  </div><!-- /screen-game -->
+
+  <!-- ══ END SCREEN ══ -->
+  <div id="screen-end" class="screen">
+    <div class="end-wrap">
+      <div class="end-icon" id="end-icon">🌍</div>
+      <h2 class="end-title" id="end-title">Field Lab Complete!</h2>
+      <div class="end-score" id="end-score">0 / 10</div>
+      <p class="end-msg" id="end-msg"></p>
+      <button class="btn-play" onclick="restartGame()">🔄 Play Again</button>
+    </div>
+  </div><!-- /screen-end -->
+
+</div><!-- /card -->
+
+<script>
+/* ───────────────── SVG SCENE BUILDERS ───────────────── */
+
+function sceneCanyon(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a2f4a"/>
+    <!-- Left canyon wall with rock layers -->
+    <rect x="0"   y="0" width="160" height="175" fill="#8B4513"/>
+    <rect x="0"   y="28" width="160" height="13" fill="#CD7F32" opacity=".7"/>
+    <rect x="0"   y="58" width="160" height="13" fill="#d4a056" opacity=".65"/>
+    <rect x="0"   y="88" width="160" height="11" fill="#CD7F32" opacity=".6"/>
+    <rect x="0"   y="118" width="160" height="10" fill="#d4a056" opacity=".55"/>
+    <!-- Right canyon wall -->
+    <rect x="360" y="0" width="160" height="175" fill="#8B4513"/>
+    <rect x="360" y="28" width="160" height="13" fill="#CD7F32" opacity=".7"/>
+    <rect x="360" y="58" width="160" height="13" fill="#d4a056" opacity=".65"/>
+    <rect x="360" y="88" width="160" height="11" fill="#CD7F32" opacity=".6"/>
+    <rect x="360" y="118" width="160" height="10" fill="#d4a056" opacity=".55"/>
+    <!-- Sky gap -->
+    <rect x="160" y="0"   width="200" height="125" fill="#1a2f4a"/>
+    <!-- Canyon floor -->
+    <rect x="160" y="125" width="200" height="50"  fill="#5a3a1a"/>
+    <!-- River at base -->
+    <ellipse cx="260" cy="162" rx="72" ry="11" fill="#0d9488" opacity=".88"/>
+    <ellipse cx="255" cy="160" rx="46" ry="6"  fill="#5eead4" opacity=".28"/>
+    <!-- Small boulders -->
+    <ellipse cx="185" cy="152" rx="9" ry="6" fill="#6b4423"/>
+    <ellipse cx="335" cy="155" rx="7" ry="5" fill="#6b4423"/>
+    <!-- Label -->
+    <text x="260" y="22" text-anchor="middle" fill="#E0A800" font-size="14" font-weight="bold" font-family="Arial">Deep Canyon — River Below</text>
+  </svg>`;
+}
+
+function sceneRoundRocks(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#0a2035"/>
+    <!-- Water surface -->
+    <path d="M0 110 Q130 100 260 110 Q390 120 520 110 L520 175 L0 175Z" fill="#0d4060"/>
+    <!-- Current lines -->
+    <path d="M0 95 Q130 85 260 95 Q390 105 520 95" stroke="#0d9488" stroke-width="1.5" fill="none" opacity=".45"/>
+    <!-- River bed -->
+    <rect x="0" y="138" width="520" height="37" fill="#5a3a1a"/>
+    <!-- Rounded rocks -->
+    <ellipse cx="55"  cy="153" rx="34" ry="20" fill="#8B7355"/>
+    <ellipse cx="55"  cy="151" rx="28" ry="14" fill="#9B8060" opacity=".65"/>
+    <ellipse cx="135" cy="148" rx="26" ry="17" fill="#7a6545"/>
+    <ellipse cx="135" cy="146" rx="20" ry="12" fill="#9B8060" opacity=".6"/>
+    <ellipse cx="215" cy="155" rx="38" ry="20" fill="#8B7355"/>
+    <ellipse cx="215" cy="152" rx="31" ry="14" fill="#a09070" opacity=".6"/>
+    <ellipse cx="305" cy="150" rx="28" ry="17" fill="#7a6545"/>
+    <ellipse cx="305" cy="148" rx="22" ry="12" fill="#9B8060" opacity=".6"/>
+    <ellipse cx="385" cy="153" rx="30" ry="18" fill="#8B7355"/>
+    <ellipse cx="385" cy="151" rx="24" ry="13" fill="#a09070" opacity=".6"/>
+    <ellipse cx="465" cy="150" rx="26" ry="16" fill="#7a6545"/>
+    <ellipse cx="465" cy="148" rx="20" ry="11" fill="#9B8060" opacity=".6"/>
+    <!-- Pebbles -->
+    <ellipse cx="95"  cy="168" rx="11" ry="7" fill="#9B8060"/>
+    <ellipse cx="175" cy="168" rx="9"  ry="6" fill="#7a6545"/>
+    <ellipse cx="260" cy="168" rx="13" ry="7" fill="#8B7355"/>
+    <ellipse cx="345" cy="168" rx="10" ry="6" fill="#9B8060"/>
+    <ellipse cx="430" cy="168" rx="12" ry="7" fill="#8B7355"/>
+    <!-- Flow arrow -->
+    <path d="M 28 80 L 75 80" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".75"/>
+    <polygon points="75,76 84,80 75,84" fill="#E0A800" opacity=".75"/>
+    <text x="35" y="72" fill="#E0A800" font-size="12" font-family="Arial" opacity=".85">flow</text>
+    <!-- Label -->
+    <text x="260" y="22" text-anchor="middle" fill="#5eead4" font-size="14" font-weight="bold" font-family="Arial">River Bed — Smooth Rounded Rocks</text>
+  </svg>`;
+}
+
+function sceneDunes(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a1a2e"/>
+    <!-- Stars -->
+    <circle cx="60"  cy="22" r="1.2" fill="#E0A800" opacity=".5"/>
+    <circle cx="200" cy="14" r="1.5" fill="#E0A800" opacity=".4"/>
+    <circle cx="380" cy="25" r="1.2" fill="#E0A800" opacity=".5"/>
+    <circle cx="470" cy="16" r="1.5" fill="#E0A800" opacity=".4"/>
+    <!-- Distant dunes (dark) -->
+    <path d="M0 135 Q70 95 140 115 Q210 135 280 105 Q340 78 420 108 Q470 125 520 98 L520 175 L0 175Z" fill="#4a3008"/>
+    <!-- Main dunes -->
+    <path d="M-10 175 Q70 78 200 138 Q265 168 520 175Z" fill="#c8890a"/>
+    <path d="M250 175 Q340 88 460 128 Q495 142 530 175Z" fill="#a06808"/>
+    <!-- Dune ridge lines (shadow side) -->
+    <path d="M110 148 Q155 118 200 135" stroke="#7a4500" stroke-width="2" fill="none" opacity=".55"/>
+    <path d="M330 160 Q375 126 435 145" stroke="#7a4500" stroke-width="2" fill="none" opacity=".5"/>
+    <!-- Sand particles blowing -->
+    <circle cx="130" cy="60" r="2.5" fill="#E0A800" opacity=".5"/>
+    <circle cx="150" cy="66" r="2"   fill="#d4a017" opacity=".45"/>
+    <circle cx="108" cy="68" r="1.5" fill="#c8890a" opacity=".5"/>
+    <circle cx="370" cy="52" r="2.5" fill="#E0A800" opacity=".45"/>
+    <circle cx="395" cy="58" r="2"   fill="#d4a017" opacity=".4"/>
+    <!-- Wind arrows -->
+    <path d="M 22 58 L 68 58" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".85"/>
+    <polygon points="68,54 78,58 68,62" fill="#E0A800" opacity=".85"/>
+    <text x="24" y="49" fill="#E0A800" font-size="13" font-family="Arial" font-weight="bold" opacity=".9">Wind</text>
+    <path d="M 300 48 L 346 48" stroke="#E0A800" stroke-width="2" fill="none" opacity=".65"/>
+    <polygon points="346,44 355,48 346,52" fill="#E0A800" opacity=".65"/>
+    <!-- Label -->
+    <text x="260" y="22" text-anchor="middle" fill="#E0A800" font-size="14" font-weight="bold" font-family="Arial">Sand Dunes in a Desert</text>
+  </svg>`;
+}
+
+function sceneRootCrack(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a2510"/>
+    <!-- Ground line -->
+    <rect x="0" y="118" width="520" height="57" fill="#2a1a0a"/>
+    <!-- Left half of boulder -->
+    <polygon points="100,30 250,24 260,118 85,118" fill="#6b6b5a"/>
+    <polygon points="100,30 250,24 260,118 85,118" fill="#8a8a72" opacity=".3"/>
+    <!-- Right half of boulder -->
+    <polygon points="270,24 420,30 435,118 268,118" fill="#5a5a4a"/>
+    <polygon points="270,24 420,30 435,118 268,118" fill="#8a8a72" opacity=".25"/>
+    <!-- Crack gap in centre -->
+    <polygon points="250,24 270,24 270,118 260,118" fill="#1a2510"/>
+    <!-- Rock texture lines -->
+    <line x1="120" y1="52" x2="220" y2="62" stroke="#4a4a3a" stroke-width="1.5" opacity=".55"/>
+    <line x1="110" y1="82" x2="225" y2="88" stroke="#4a4a3a" stroke-width="1"   opacity=".4"/>
+    <line x1="290" y1="52" x2="400" y2="57" stroke="#4a4a3a" stroke-width="1.5" opacity=".55"/>
+    <line x1="285" y1="82" x2="405" y2="90" stroke="#4a4a3a" stroke-width="1"   opacity=".4"/>
+    <!-- Roots growing into crack -->
+    <path d="M260 100 C248 108 234 114 218 118" stroke="#3d7a20" stroke-width="3.5" fill="none"/>
+    <path d="M260 112 C244 115 228 118 212 120" stroke="#3d7a20" stroke-width="2.5" fill="none"/>
+    <path d="M262 100 C274 108 288 114 304 118" stroke="#3d7a20" stroke-width="3.5" fill="none"/>
+    <path d="M262 112 C278 116 292 118 310 120" stroke="#3d7a20" stroke-width="2.5" fill="none"/>
+    <!-- Plant stem growing upward through crack -->
+    <line x1="260" y1="24" x2="260" y2="-4" stroke="#3d7a20" stroke-width="4"/>
+    <!-- Leaves -->
+    <ellipse cx="244" cy="8"  rx="22" ry="9"  fill="#4a9a28" transform="rotate(-28 244 8)"/>
+    <ellipse cx="277" cy="2"  rx="22" ry="9"  fill="#4a9a28" transform="rotate(28 277 2)"/>
+    <ellipse cx="260" cy="-2" rx="16" ry="7"  fill="#5aaa35"/>
+    <!-- Force arrows -->
+    <path d="M238 72 L218 72" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".85"/>
+    <polygon points="218,68 210,72 218,76" fill="#E0A800" opacity=".85"/>
+    <path d="M282 72 L302 72" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".85"/>
+    <polygon points="302,68 310,72 302,76" fill="#E0A800" opacity=".85"/>
+    <!-- Label -->
+    <text x="260" y="165" text-anchor="middle" fill="#E0A800" font-size="13" font-family="Arial">Plant roots push the crack wider</text>
+  </svg>`;
+}
+
+function sceneFreeze(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#0a1a2e"/>
+    <!-- Divider -->
+    <line x1="260" y1="0" x2="260" y2="175" stroke="rgba(224,168,0,0.35)" stroke-width="1.5" stroke-dasharray="6,5"/>
+    <!-- Labels top -->
+    <text x="130" y="20" text-anchor="middle" fill="#5eead4" font-size="13" font-family="Arial" font-weight="bold">SUMMER</text>
+    <text x="390" y="20" text-anchor="middle" fill="#a8d4f0" font-size="13" font-family="Arial" font-weight="bold">WINTER</text>
+    <!-- Left boulder (summer, narrow crack) -->
+    <polygon points="40,38 210,32 218,148 28,148" fill="#6b6b5a"/>
+    <polygon points="40,38 210,32 218,148 28,148" fill="#8a8a72" opacity=".32"/>
+    <!-- Narrow crack (water) -->
+    <path d="M128 34 L122 90 L130 148" stroke="#0d9488" stroke-width="5" fill="none" opacity=".9"/>
+    <!-- Water drops -->
+    <circle cx="126" cy="58" r="5"   fill="#0d9488" opacity=".82"/>
+    <circle cx="124" cy="80" r="4"   fill="#0d9488" opacity=".75"/>
+    <circle cx="125" cy="100" r="3.5" fill="#0d9488" opacity=".65"/>
+    <!-- Text -->
+    <text x="130" y="168" text-anchor="middle" fill="#5eead4" font-size="12" font-family="Arial">Narrow crack · liquid water</text>
+    <!-- Right boulder (winter, wide crack+ice) -->
+    <polygon points="308,35 475,40 480,150 300,150" fill="#6b6b5a"/>
+    <polygon points="308,35 475,40 480,150 300,150" fill="#8a8a72" opacity=".3"/>
+    <!-- Wide crack with ice fill -->
+    <path d="M390 36 L374 92 L386 150" stroke="#a8d4f0" stroke-width="13" fill="none" opacity=".72"/>
+    <!-- Ice crystals -->
+    <text x="371" y="68"  fill="#dff2ff" font-size="20" font-family="Arial">❄</text>
+    <text x="366" y="98"  fill="#dff2ff" font-size="17" font-family="Arial">❄</text>
+    <text x="370" y="126" fill="#dff2ff" font-size="15" font-family="Arial">❄</text>
+    <!-- Expansion arrows -->
+    <path d="M356 90 L335 90" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".85"/>
+    <polygon points="335,86 326,90 335,94" fill="#E0A800" opacity=".85"/>
+    <path d="M408 90 L430 90" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".85"/>
+    <polygon points="430,86 439,90 430,94" fill="#E0A800" opacity=".85"/>
+    <!-- Snowflakes -->
+    <text x="300" y="30" fill="#c8e8ff" font-size="13" opacity=".55">❄</text>
+    <text x="478" y="35" fill="#c8e8ff" font-size="13" opacity=".5">❄</text>
+    <text x="468" y="22" fill="#c8e8ff" font-size="11" opacity=".45">*</text>
+    <text x="305" y="22" fill="#c8e8ff" font-size="11" opacity=".4">*</text>
+    <!-- Text -->
+    <text x="390" y="168" text-anchor="middle" fill="#a8d4f0" font-size="12" font-family="Arial">Wide crack · ICE expands!</text>
+  </svg>`;
+}
+
+function sceneGlacier(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a2a3a"/>
+    <!-- Left valley wall -->
+    <polygon points="0,0 135,0 180,175 0,175" fill="#5a6a7a"/>
+    <polygon points="0,0 135,0 180,175 0,175" fill="#8a9aaa" opacity=".28"/>
+    <line x1="55"  y1="0" x2="120" y2="175" stroke="#4a5a6a" stroke-width="2" opacity=".38"/>
+    <line x1="95"  y1="0" x2="155" y2="175" stroke="#4a5a6a" stroke-width="1.5" opacity=".28"/>
+    <!-- Right valley wall -->
+    <polygon points="520,0 385,0 340,175 520,175" fill="#5a6a7a"/>
+    <polygon points="520,0 385,0 340,175 520,175" fill="#8a9aaa" opacity=".28"/>
+    <line x1="465" y1="0" x2="400" y2="175" stroke="#4a5a6a" stroke-width="2" opacity=".38"/>
+    <line x1="425" y1="0" x2="365" y2="175" stroke="#4a5a6a" stroke-width="1.5" opacity=".28"/>
+    <!-- Valley floor (flat U-bottom) -->
+    <rect x="180" y="138" width="160" height="37" fill="#3a4a3a"/>
+    <!-- Glacier filling upper valley -->
+    <path d="M135 0 L385 0 L345 130 L180 130Z" fill="#a8d4f0" opacity=".68"/>
+    <path d="M135 0 L385 0 L345 130 L180 130Z" fill="white" opacity=".2"/>
+    <!-- Ice texture lines -->
+    <line x1="180" y1="28"  x2="345" y2="28"  stroke="white" stroke-width="1" opacity=".28"/>
+    <line x1="182" y1="58"  x2="348" y2="58"  stroke="white" stroke-width="1" opacity=".28"/>
+    <line x1="184" y1="90"  x2="350" y2="90"  stroke="white" stroke-width="1" opacity=".28"/>
+    <!-- U shape label with brace -->
+    <path d="M185 155 L185 172 L335 172 L335 155" stroke="#E0A800" stroke-width="1.5" fill="none" opacity=".75"/>
+    <text x="260" y="168" text-anchor="middle" fill="#E0A800" font-size="14" font-family="Arial" font-weight="bold">U</text>
+    <!-- Moving ice arrow -->
+    <path d="M260 28 L260 118" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".82"/>
+    <polygon points="256,118 260,128 264,118" fill="#E0A800" opacity=".82"/>
+    <text x="278" y="78" fill="#E0A800" font-size="12" font-family="Arial" opacity=".85">Glacier</text>
+    <text x="278" y="92" fill="#E0A800" font-size="12" font-family="Arial" opacity=".85">moves</text>
+    <!-- Title -->
+    <text x="260" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">Glacier-carved U-shaped Valley</text>
+  </svg>`;
+}
+
+function sceneTopoMap(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a2f4a"/>
+    <!-- Map panel -->
+    <rect x="10" y="8" width="500" height="159" fill="#0f2035" rx="10" stroke="#E0A800" stroke-width="1" opacity=".8"/>
+    <!-- Grid -->
+    <line x1="10" y1="60"  x2="510" y2="60"  stroke="#E0A800" stroke-width=".4" opacity=".14"/>
+    <line x1="10" y1="108" x2="510" y2="108" stroke="#E0A800" stroke-width=".4" opacity=".14"/>
+    <line x1="130" y1="8"  x2="130" y2="167" stroke="#E0A800" stroke-width=".4" opacity=".14"/>
+    <line x1="260" y1="8"  x2="260" y2="167" stroke="#E0A800" stroke-width=".4" opacity=".14"/>
+    <line x1="390" y1="8"  x2="390" y2="167" stroke="#E0A800" stroke-width=".4" opacity=".14"/>
+    <!-- Topographic contours centred at 240, 93 -->
+    <ellipse cx="240" cy="93" rx="175" ry="72" fill="none" stroke="#5eead4" stroke-width="1.5" opacity=".6"/>
+    <ellipse cx="240" cy="93" rx="135" ry="55" fill="none" stroke="#5eead4" stroke-width="1.5" opacity=".67"/>
+    <ellipse cx="240" cy="93" rx="97"  ry="38" fill="none" stroke="#5eead4" stroke-width="2"   opacity=".75"/>
+    <ellipse cx="240" cy="93" rx="62"  ry="24" fill="none" stroke="#5eead4" stroke-width="2"   opacity=".82"/>
+    <ellipse cx="240" cy="93" rx="32"  ry="13" fill="none" stroke="#E0A800" stroke-width="2.5" opacity=".9"/>
+    <!-- Summit -->
+    <circle cx="240" cy="93" r="5.5" fill="#E0A800"/>
+    <text x="252" cy="97" fill="#E0A800" font-size="11" font-family="Arial">▲ Summit</text>
+    <!-- Elevation labels -->
+    <text x="420" y="98"  fill="#5eead4" font-size="12" font-family="Arial" opacity=".8">100 m</text>
+    <text x="420" y="76"  fill="#5eead4" font-size="12" font-family="Arial" opacity=".8">200 m</text>
+    <text x="356" y="64"  fill="#5eead4" font-size="12" font-family="Arial" opacity=".8">300 m</text>
+    <text x="320" y="78"  fill="#5eead4" font-size="12" font-family="Arial" opacity=".8">400 m</text>
+    <text x="283" y="88"  fill="#E0A800" font-size="11" font-family="Arial" opacity=".9">500 m</text>
+    <!-- North arrow -->
+    <text x="30" y="32" fill="#E0A800" font-size="13" font-family="Arial" font-weight="bold">N↑</text>
+    <!-- Map title -->
+    <text x="260" y="26" text-anchor="middle" fill="#E0A800" font-size="13" font-weight="bold" font-family="Arial">Topographic Map (Contour Lines)</text>
+  </svg>`;
+}
+
+function sceneDendritic(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#1a2f4a"/>
+    <rect x="10" y="8" width="500" height="159" fill="#1a3520" rx="10" stroke="#E0A800" stroke-width="1" opacity=".8"/>
+    <!-- Main river (wide, at bottom) -->
+    <path d="M25 158 Q130 148 260 153 Q380 158 495 150" stroke="#0d9488" stroke-width="7" fill="none"/>
+    <!-- 4 major tributaries -->
+    <path d="M100 158 Q88 120 72 82 Q60 55 46 28"  stroke="#0d9488" stroke-width="4" fill="none"/>
+    <path d="M200 155 Q192 118 178 85 Q168 58 158 28" stroke="#0d9488" stroke-width="4" fill="none"/>
+    <path d="M320 154 Q330 116 342 84 Q352 57 360 28" stroke="#0d9488" stroke-width="4" fill="none"/>
+    <path d="M430 152 Q438 118 450 85 Q458 58 465 28" stroke="#0d9488" stroke-width="4" fill="none"/>
+    <!-- Minor branches — set 1 -->
+    <path d="M72 82 Q50 68 34 52"   stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M72 82 Q88 65 100 50"  stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M46 28 Q30 16 18 12"   stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <path d="M46 28 Q60 15 74 12"   stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <!-- Minor branches — set 2 -->
+    <path d="M178 85 Q156 70 138 56" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M178 85 Q195 68 208 54" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M158 28 Q144 15 132 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <path d="M158 28 Q170 15 184 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <!-- Minor branches — set 3 -->
+    <path d="M342 84 Q322 68 306 55" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M342 84 Q358 68 374 55" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M360 28 Q346 14 336 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <path d="M360 28 Q375 14 388 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <!-- Minor branches — set 4 -->
+    <path d="M450 85 Q432 70 418 57" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M450 85 Q466 68 478 57" stroke="#0d9488" stroke-width="2.2" fill="none"/>
+    <path d="M465 28 Q453 14 444 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <path d="M465 28 Q476 14 490 12" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+    <!-- Ocean bar -->
+    <rect x="10" y="160" width="500" height="7" fill="#0a3a5a" rx="0" opacity=".8"/>
+    <text x="260" y="167" text-anchor="middle" fill="#5eead4" font-size="11" font-family="Arial">Ocean</text>
+    <!-- North & title -->
+    <text x="30"  y="26" fill="#E0A800" font-size="13" font-family="Arial" font-weight="bold">N↑</text>
+    <text x="260" y="26" text-anchor="middle" fill="#E0A800" font-size="13" font-weight="bold" font-family="Arial">River Drainage Pattern Map</text>
+  </svg>`;
+}
+
+function sceneMountainRange(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <rect width="520" height="175" fill="#0a2a3d"/>
+    <rect x="10" y="8" width="500" height="159" fill="#0a2a3d" rx="10" stroke="#E0A800" stroke-width="1" opacity=".8"/>
+    <!-- Continent 1 (left) -->
+    <polygon points="25,30 185,22 200,90 190,160 85,165 25,130" fill="#1a4a20"/>
+    <!-- Continent 2 (right) -->
+    <polygon points="310,22 495,28 505,108 488,165 330,170 300,125" fill="#1a4a20"/>
+    <!-- Mountain chain on RIGHT edge of continent 1 -->
+    <polygon points="190,26 200,9  212,26"  fill="#8B7355"/>
+    <polygon points="192,40 205,18 218,40"  fill="#9B8060"/>
+    <polygon points="193,58 208,34 222,58"  fill="#8B7355"/>
+    <polygon points="191,76 208,52 222,76"  fill="#9B8060"/>
+    <polygon points="190,95 207,70 222,95"  fill="#8B7355"/>
+    <polygon points="188,114 206,90 220,114" fill="#9B8060"/>
+    <polygon points="186,132 204,110 218,132" fill="#8B7355"/>
+    <polygon points="185,150 202,130 216,150" fill="#9B8060"/>
+    <!-- Snow caps left range -->
+    <polygon points="200,9  207,22 193,22" fill="white" opacity=".7"/>
+    <polygon points="205,18 213,32 197,32" fill="white" opacity=".65"/>
+    <polygon points="208,34 215,48 201,48" fill="white" opacity=".6"/>
+    <!-- Mountain chain on LEFT edge of continent 2 -->
+    <polygon points="308,27 318,10 328,27" fill="#8B7355"/>
+    <polygon points="305,44 317,22 330,44" fill="#9B8060"/>
+    <polygon points="303,62 316,40 330,62" fill="#8B7355"/>
+    <polygon points="301,80 315,58 328,80" fill="#9B8060"/>
+    <polygon points="299,98 313,76 326,98" fill="#8B7355"/>
+    <polygon points="297,116 312,94 325,116" fill="#9B8060"/>
+    <polygon points="296,134 311,114 324,134" fill="#8B7355"/>
+    <polygon points="296,152 310,132 323,152" fill="#9B8060"/>
+    <!-- Snow caps right range -->
+    <polygon points="318,10 325,22 311,22" fill="white" opacity=".7"/>
+    <polygon points="317,22 324,36 310,36" fill="white" opacity=".65"/>
+    <polygon points="316,40 323,54 309,54" fill="white" opacity=".6"/>
+    <!-- Ocean labels -->
+    <text x="260" y="100" text-anchor="middle" fill="#5eead4" font-size="13" font-family="Arial" font-weight="bold">Ocean</text>
+    <!-- Annotation arrow -->
+    <text x="80"  y="88" text-anchor="middle" fill="#E0A800" font-size="11" font-family="Arial">Mountains at</text>
+    <text x="80"  y="101" text-anchor="middle" fill="#E0A800" font-size="11" font-family="Arial">continent edge</text>
+    <path d="M130 95 L182 82" stroke="#E0A800" stroke-width="1.5" fill="none" opacity=".7"/>
+    <polygon points="182,82 179,74 186,78" fill="#E0A800" opacity=".7"/>
+    <!-- Legend -->
+    <rect x="380" y="148" width="14" height="12" fill="#1a4a20"/>
+    <text x="400" y="159" fill="#7fb3d0" font-size="11" font-family="Arial">Land</text>
+    <rect x="440" y="148" width="14" height="12" fill="#8B7355"/>
+    <text x="458" y="159" fill="#7fb3d0" font-size="11" font-family="Arial">Mtns</text>
+    <!-- Title -->
+    <text x="260" y="24" text-anchor="middle" fill="#E0A800" font-size="13" font-weight="bold" font-family="Arial">World Map — Mountain Chain Pattern</text>
+  </svg>`;
+}
+
+function sceneDelta(){
+  return `<svg width="520" height="175" viewBox="0 0 520 175" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ocean -->
+    <rect width="520" height="175" fill="#0a2a3d"/>
+    <!-- Land above delta -->
+    <rect x="0" y="0" width="520" height="95" fill="#1a4a20"/>
+    <!-- River channel above delta -->
+    <rect x="232" y="0" width="56" height="78" fill="#0d9488"/>
+    <!-- Delta land mass (fan) -->
+    <path d="M232 78 L115 175 L405 175 L288 78Z" fill="#1a4a20"/>
+    <!-- Delta distributaries fanning out -->
+    <path d="M260 78 L260 175" stroke="#0d9488" stroke-width="7" fill="none"/>
+    <path d="M258 90 L200 175" stroke="#0d9488" stroke-width="4.5" fill="none"/>
+    <path d="M262 90 L320 175" stroke="#0d9488" stroke-width="4.5" fill="none"/>
+    <path d="M255 110 L160 175" stroke="#0d9488" stroke-width="3" fill="none"/>
+    <path d="M265 110 L360 175" stroke="#0d9488" stroke-width="3" fill="none"/>
+    <path d="M252 132 L130 175" stroke="#0d9488" stroke-width="2" fill="none"/>
+    <path d="M268 132 L390 175" stroke="#0d9488" stroke-width="2" fill="none"/>
+    <!-- Sediment deposition shading -->
+    <path d="M168 168 Q260 158 352 168 Q310 176 260 178 Q210 176 168 168Z" fill="#5a3a1a" opacity=".45"/>
+    <!-- Direction arrow -->
+    <path d="M260 48 L260 70" stroke="#E0A800" stroke-width="2.5" fill="none" opacity=".8"/>
+    <polygon points="256,70 260,80 264,70" fill="#E0A800" opacity=".8"/>
+    <!-- Labels -->
+    <text x="260" y="38" text-anchor="middle" fill="#5eead4" font-size="13" font-family="Arial" font-weight="bold">River</text>
+    <text x="260" y="112" text-anchor="middle" fill="#E0A800" font-size="14" font-family="Arial" font-weight="bold">Δ Delta</text>
+    <text x="70"  y="162" fill="#5eead4" font-size="12" font-family="Arial">Ocean</text>
+    <text x="410" y="162" fill="#5eead4" font-size="12" font-family="Arial">Ocean</text>
+    <text x="260" y="170" text-anchor="middle" fill="#E0A800" font-size="11" font-family="Arial">Fan-shaped sediment deposit</text>
+    <!-- Land label -->
+    <text x="90"  y="48" fill="#4a8a54" font-size="12" font-family="Arial" font-weight="bold">Land</text>
+  </svg>`;
+}
+
+/* ───────────────── QUESTION DATA ───────────────── */
+const QUESTIONS = [
+  {
+    std:'4-ESS2-1', scene:sceneCanyon(),
+    q:"A deep canyon was carved through rock layers over thousands of years. What force most likely created this canyon?",
+    opts:["Wind blowing sand","Water from a river","Plant roots growing","Heavy snowfall"],
+    ans:1,
+    exp:"Rivers carry water that slowly cuts through rock, carving canyons. The Colorado River carved the Grand Canyon over millions of years — a powerful example of water erosion!"
+  },
+  {
+    std:'4-ESS2-1', scene:sceneRoundRocks(),
+    q:"Rocks found on a river bed are smooth and rounded, not sharp or jagged. What process made them this way?",
+    opts:["Ice cracking them","Wind drying them out","Water tumbling them together","Plant roots covering them"],
+    ans:2,
+    exp:"Water erosion tumbles rocks against each other as they travel downstream. Over time, the sharp edges wear away and rocks become smooth and rounded — like natural rock-polishing!"
+  },
+  {
+    std:'4-ESS2-1', scene:sceneDunes(),
+    q:"In a dry desert, loose sand piles up into wave-shaped hills called dunes. What force builds and moves these dunes?",
+    opts:["Flooding water","Wind blowing","Ice melting","Root pressure"],
+    ans:1,
+    exp:"Wind picks up loose sand particles and carries them, depositing them into dune shapes. This is called wind erosion (or aeolian erosion). Dunes can slowly migrate as wind keeps moving the sand."
+  },
+  {
+    std:'4-ESS2-1', scene:sceneRootCrack(),
+    q:"A boulder has a large crack running through it, with plant roots growing inside. What is the plant doing to the rock over time?",
+    opts:["Protecting the rock","Breaking the rock apart","Smoothing the rock surface","Heating the rock"],
+    ans:1,
+    exp:"As plant roots grow, they push outward with great force. This is called biological weathering — living things like plants and tree roots can split rocks apart as the roots expand year after year."
+  },
+  {
+    std:'4-ESS2-1', scene:sceneFreeze(),
+    q:"Water seeps into a tiny crack in a rock. In winter the water freezes and expands. What happens to the crack?",
+    opts:["The crack disappears","The rock melts away","The crack grows bigger and wider","The rock becomes smoother"],
+    ans:2,
+    exp:"Water expands by about 9% when it freezes. This ice wedging (freeze-thaw weathering) pushes the crack wider with each winter. After many cycles of freezing and thawing, the rock can split apart completely."
+  },
+  {
+    std:'4-ESS2-1', scene:sceneGlacier(),
+    q:"This valley has smooth, steep sides shaped like the letter U. A massive, slow-moving river of ice formed it long ago. What carved this valley?",
+    opts:["A rushing river","A glacier (moving ice sheet)","Strong desert winds","Ocean waves"],
+    ans:1,
+    exp:"Glaciers are enormous rivers of compacted ice that move slowly downhill. As they move, they scrape and erode the rock below into wide U-shaped valleys. Rivers carve narrower V-shaped valleys instead."
+  },
+  {
+    std:'4-ESS2-2', scene:sceneTopoMap(),
+    q:"A map shows rings of curved lines. The rings get smaller and closer together toward a central point. What Earth feature do these rings show?",
+    opts:["A flat river delta","An open flat plain","A mountain or hill","An underwater ocean trench"],
+    ans:2,
+    exp:"Topographic maps use contour lines to show elevation. Rings circling toward a high central point represent a mountain or hill. Lines close together mean a steep slope; lines far apart mean a gentle slope."
+  },
+  {
+    std:'4-ESS2-2', scene:sceneDendritic(),
+    q:"On a map, rivers spread out in a pattern that looks like tree branches or leaf veins. What does this branching pattern tell scientists about the land?",
+    opts:["The land is perfectly flat everywhere","Small streams join into bigger rivers flowing downhill","The river flows in a full circle","Wind controls which way the water flows"],
+    ans:1,
+    exp:"This is called a dendritic (branching) drainage pattern. It forms on gently sloping land where small streams flow downhill and join bigger rivers. The pattern shows the direction water flows across the landscape."
+  },
+  {
+    std:'4-ESS2-2', scene:sceneMountainRange(),
+    q:"On a world map, mountain chains form long lines along the edges of continents and ocean floors. What does this repeating pattern suggest?",
+    opts:["Mountains grow randomly in all locations","Mountains form where Earth's tectonic plates push together","Mountains only appear near hot deserts","Mountains form wherever rivers slow down"],
+    ans:1,
+    exp:"Mountains often form in long chains because Earth's tectonic plates collide and push rock upward at their boundaries. Spotting this pattern on maps helps scientists identify where plates meet around the globe."
+  },
+  {
+    std:'4-ESS2-2', scene:sceneDelta(),
+    q:"A map shows a river getting wider and splitting into many smaller channels as it reaches the ocean, forming a fan or triangle shape. What landform is this?",
+    opts:["A waterfall","A canyon","A river delta","A mountain pass"],
+    ans:2,
+    exp:"A river delta forms where a river slows down at the ocean and drops the sediment it was carrying. The deposited material builds up over time into a distinctive fan or triangle shape — the Greek letter delta (Δ) gives it its name!"
+  }
+];
+
+/* ───────────────── GAME STATE ───────────────── */
+let curQ = 0, score = 0, lives = 3, answered = false;
+
+/* ───────────────── SCREEN CONTROL ───────────────── */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ───────────────── TITLE → GAME ───────────────── */
+function startGame(){
+  curQ = 0; score = 0; lives = 3; answered = false;
+  showScreen('screen-game');
+  loadQ();
+}
+
+/* ───────────────── RESTART (any screen) ───────────────── */
+function restartGame(){
+  curQ = 0; score = 0; lives = 3; answered = false;
+  showScreen('screen-title');
+}
+
+/* ───────────────── LIVES DISPLAY ───────────────── */
+function renderLives(){
+  let h = '';
+  for(let i=0;i<3;i++) h += `<span class="heart" style="opacity:${i<lives?1:0.18}">❤️</span>`;
+  document.getElementById('lives-display').innerHTML = h;
+}
+
+/* ───────────────── LOAD QUESTION ───────────────── */
+function loadQ(){
+  answered = false;
+  const q = QUESTIONS[curQ];
+  const total = QUESTIONS.length;
+
+  document.getElementById('q-label').textContent   = `Question ${curQ+1} / ${total}`;
+  document.getElementById('prog-fill').style.width = `${(curQ/total)*100}%`;
+  document.getElementById('score-val').textContent  = score;
+  renderLives();
+
+  document.getElementById('std-tag').textContent    = q.std;
+  document.getElementById('scene-wrap').innerHTML   = q.scene;
+  document.getElementById('question-text').textContent = q.q;
+
+  // Options
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  q.opts.forEach((txt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = txt;
+    btn.onclick = () => pickAnswer(i);
+    grid.appendChild(btn);
+  });
+
+  // Reset feedback area
+  const fb = document.getElementById('feedback');
+  fb.textContent = ''; fb.className = 'feedback';
+  document.getElementById('explanation').style.display = 'none';
+  document.getElementById('btn-next').style.display    = 'none';
+}
+
+/* ───────────────── ANSWER CHECK ───────────────── */
+function pickAnswer(idx){
+  if(answered) return;
+  answered = true;
+
+  const q    = QUESTIONS[curQ];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const fb  = document.getElementById('feedback');
+  const exp = document.getElementById('explanation');
+
+  if(idx === q.ans){
+    score++;
+    btns[idx].classList.add('correct');
+    fb.textContent = '✓ Correct! Great observation, Field Scientist!';
+    fb.className   = 'feedback correct';
+    spawnGlitter();
+  } else {
+    lives--;
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.textContent = '✗ Not quite — here is what happened:';
+    fb.className   = 'feedback wrong';
+  }
+
+  exp.textContent      = q.exp;
+  exp.style.display    = 'block';
+  document.getElementById('score-val').textContent = score;
+  renderLives();
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.style.display = 'block';
+  const isLast = (curQ + 1 >= QUESTIONS.length) || (lives <= 0);
+  nextBtn.textContent   = isLast ? 'See Results →' : 'Next Question →';
+}
+
+/* ───────────────── NEXT QUESTION ───────────────── */
+function nextQuestion(){
+  curQ++;
+  if(curQ >= QUESTIONS.length || lives <= 0){
+    showEnd();
+  } else {
+    loadQ();
+  }
+}
+
+/* ───────────────── END SCREEN ───────────────── */
+function showEnd(){
+  showScreen('screen-end');
+  const total = QUESTIONS.length;
+  const pct   = Math.round((score/total)*100);
+
+  document.getElementById('end-score').textContent = `${score} / ${total}`;
+
+  let icon, title, msg;
+  if(pct >= 90){
+    icon='🏆'; title='Expert Field Scientist!';
+    msg='Outstanding! You mastered weathering, erosion, and Earth\'s map patterns. You are ready to lead your own geological expedition!';
+  } else if(pct >= 70){
+    icon='🌍'; title='Field Lab Complete!';
+    msg='Great work! You understand how water, wind, ice, and plants shape our planet, and how to read Earth\'s features on maps.';
+  } else if(pct >= 50){
+    icon='🔬'; title='Good Effort, Scientist!';
+    msg='You are learning! Review how each agent of erosion works, then study topographic and drainage map patterns. Try again — you can do it!';
+  } else {
+    icon='📚'; title='Keep Exploring!';
+    msg='Earth\'s Systems take practice. Review weathering agents (water, wind, ice, plants) and how maps show mountains, rivers, and deltas — then try again!';
+  }
+
+  document.getElementById('end-icon').textContent  = icon;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-msg').textContent   = msg;
+
+  // Celebration glitter burst
+  for(let i=0;i<4;i++) setTimeout(()=>spawnGlitter(), i*350);
+}
+
+/* ───────────────── GOLD GLITTER PARTICLES ───────────────── */
+function spawnGlitter(){
+  const GOLD = ['#E0A800','#c8890a','#f5c518','#fde68a','#d4a017','#b8860b','#ffd700'];
+  for(let i=0;i<30;i++){
+    const el   = document.createElement('div');
+    el.className = 'particle';
+    const sz   = 4 + Math.random()*7;
+    const col  = GOLD[Math.floor(Math.random()*GOLD.length)];
+    const isStar = Math.random() < 0.35;
+    const dur  = 1100 + Math.random()*1100;
+    const sx   = Math.random()*window.innerWidth;
+    const sy   = -15 + Math.random()*80;
+
+    if(isStar){
+      el.style.cssText = `left:${sx}px;top:${sy}px;font-size:${sz+6}px;color:${col};background:transparent;border-radius:0;animation-duration:${dur}ms;`;
+      el.textContent = '✦';
+    } else {
+      el.style.cssText = `left:${sx}px;top:${sy}px;width:${sz}px;height:${sz}px;background:${col};border-radius:${Math.random()<0.5?'50%':'3px'};animation-duration:${dur}ms;box-shadow:0 0 5px ${col};`;
+    }
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), dur+120);
+  }
+}
+
+/* ── Boot ── */
+showScreen('screen-title');
+</script>
+</body>
+</html>

@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  Topic: Forces and Motion
+  Standards: 5-PS2-1 — Support an argument that the gravitational force exerted by Earth on objects is directed down.
+  Teacher note: Round 1 "Gravity Traps" probes common misconceptions (rising ball, top of arc, sideways throw,
+  heavy vs light, roll-off path). Round 2 "Beat the Clock" is a timed quick-fire (true/false + arrow picks) with a
+  streak bonus. Round 3 keeps evidence/argument reasoning, now timed too. Great for class discussion after Round 3.
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌍 Gravity Force! — Forces &amp; Motion</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a237e 55%, #1565C0 100%);
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .screen { display: none; width: 100%; max-width: 820px; animation: fadeIn 0.4s ease; }
+    .screen.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── TITLE ── */
+    .title-card {
+      background: rgba(255,255,255,0.07);
+      border: 2px solid rgba(255,255,255,0.18);
+      border-radius: 28px;
+      padding: 40px 36px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+    .game-title {
+      font-size: 54px; font-weight: 900; line-height: 1.05;
+      background: linear-gradient(90deg,#f5c518,#e6a800,#f5c518);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 6px;
+    }
+    .subtitle { font-size: 21px; color: #90CAF9; margin-bottom: 28px; }
+    .how-to {
+      background: rgba(0,0,0,0.28); border-radius: 16px;
+      padding: 22px 26px; text-align: left; margin-bottom: 28px;
+    }
+    .how-to h3 { color: #FFD700; font-size: 19px; margin-bottom: 14px; text-align:center; }
+    .how-to p { font-size: 18px; line-height: 1.75; color: #E3F2FD; margin-bottom: 6px; }
+    .btn-start {
+      background: linear-gradient(135deg,#f5c518,#e6a800);
+      color: #1a0a00; border: none; border-radius: 18px;
+      padding: 18px 52px; font-size: 24px; font-weight: 800;
+      cursor: pointer; transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 26px rgba(224,168,0,.55);
+    }
+    .btn-start:hover { transform:translateY(-3px); box-shadow:0 12px 34px rgba(224,168,0,.7); }
+
+    /* ── GAME HEADER ── */
+    .game-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+    }
+    .round-badge {
+      background: linear-gradient(135deg,#0c2a50,#1565c0);
+      border-radius: 50px; padding: 8px 22px; font-size: 18px; font-weight: 700;
+    }
+    .score-display { font-size: 22px; font-weight: 700; color: #FFD700; }
+    .lives-display { font-size: 30px; letter-spacing: 3px; }
+    .progress-bar {
+      background: rgba(255,255,255,0.14); border-radius: 8px;
+      height: 10px; margin-bottom: 18px; overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg,#0d9488,#4dd0e1);
+      height: 100%; border-radius: 8px; transition: width .4s ease;
+    }
+
+    /* ── SCENE ── */
+    .scene-container {
+      background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.14);
+      border-radius: 20px; padding: 18px; margin-bottom: 18px;
+      text-align: center; min-height: 190px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .scene-container svg { max-width: 100%; height: auto; }
+
+    /* ── QUESTION ── */
+    .question-text {
+      font-size: 21px; font-weight: 600; color: #E3F2FD;
+      text-align: center; margin-bottom: 22px; line-height: 1.55; min-height: 64px;
+    }
+
+    /* ── ARROW BUTTONS (cross layout) ── */
+    .arrow-grid {
+      display: grid; grid-template-columns: repeat(3,100px);
+      grid-template-rows: repeat(3,100px); gap: 10px;
+      justify-content: center; margin: 0 auto;
+    }
+    .arrow-btn {
+      background: rgba(255,255,255,0.11); border: 3px solid rgba(255,255,255,0.28);
+      border-radius: 18px; font-size: 52px; cursor: pointer;
+      transition: all .2s; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .arrow-btn:hover:not(.disabled) { background:rgba(255,255,255,.24); border-color:#FFD700; transform:scale(1.06); }
+    .arrow-btn.correct  { background:rgba(76,175,80,.45); border-color:#4CAF50; }
+    .arrow-btn.wrong    { background:rgba(244,67,54,.45);  border-color:#F44336; }
+    .arrow-btn.center   { background:transparent; border:none; cursor:default; pointer-events:none; }
+    .arrow-btn .arrow-label { font-size:12px; font-weight:700; color:rgba(255,255,255,.65); margin-top:2px; }
+    .arrow-btn.disabled { pointer-events:none; }
+
+    /* ── CHOICE BUTTONS ── */
+    .choices-grid { display: grid; grid-template-columns:1fr 1fr; gap: 14px; max-width:700px; margin:0 auto; }
+    .choice-btn {
+      background: rgba(255,255,255,0.1); border: 3px solid rgba(255,255,255,0.24);
+      border-radius: 16px; padding: 18px 16px; font-size: 18px; font-weight: 600;
+      cursor: pointer; color: #fff; text-align: left;
+      transition: all .2s; line-height: 1.4;
+      overflow-wrap: break-word; word-break: break-word;
+    }
+    .choice-btn:hover:not(.disabled) { background:rgba(255,255,255,.22); border-color:#FFD700; }
+    .choice-btn.correct { background:rgba(76,175,80,.45);  border-color:#4CAF50; }
+    .choice-btn.wrong   { background:rgba(244,67,54,.45);   border-color:#F44336; }
+    .choice-btn.disabled{ pointer-events:none; }
+
+    /* ── FEEDBACK ── */
+    .feedback-box {
+      border-radius: 16px; padding: 15px 20px; font-size: 19px; font-weight: 600;
+      text-align: center; margin-top: 18px; display: none; animation: popIn .3s ease;
+    }
+    .feedback-box.correct { background:rgba(76,175,80,.28); border:2px solid #4CAF50; color:#C8E6C9; }
+    .feedback-box.wrong   { background:rgba(244,67,54,.28); border:2px solid #F44336; color:#FFCDD2; }
+    @keyframes popIn { from{transform:scale(.8);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+    .next-btn {
+      background: linear-gradient(135deg,#1565C0,#42A5F5);
+      color:#fff; border:none; border-radius:14px;
+      padding:15px 42px; font-size:20px; font-weight:700;
+      cursor:pointer; margin-top:16px; display:none;
+      box-shadow:0 4px 18px rgba(21,101,192,.5); transition:all .2s;
+    }
+    .next-btn:hover { transform:translateY(-2px); box-shadow:0 8px 26px rgba(21,101,192,.7); }
+
+    /* ── END SCREEN ── */
+    .end-card {
+      background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.18);
+      border-radius: 28px; padding: 40px 34px; text-align:center;
+      backdrop-filter: blur(12px);
+    }
+    .end-title { font-size: 46px; font-weight:900; margin-bottom:10px; }
+    .end-score { font-size: 78px; font-weight:900; color:#FFD700; margin:18px 0; }
+    .end-message { font-size: 22px; color:#90CAF9; margin-bottom:28px; line-height:1.5; }
+    .standard-box {
+      background:rgba(0,0,0,.3); border-left:4px solid #FFD700;
+      border-radius:8px; padding:16px 18px; text-align:left;
+      margin-bottom:28px; font-size:16px; color:#B3E5FC; line-height:1.6;
+    }
+    .btn-again {
+      background: linear-gradient(135deg,#f5c518,#e6a800);
+      color:#1a0a00; border:none; border-radius:18px;
+      padding:18px 50px; font-size:23px; font-weight:800;
+      cursor:pointer; box-shadow:0 6px 26px rgba(224,168,0,.5);
+      transition:transform .15s, box-shadow .15s;
+    }
+    .btn-again:hover { transform:translateY(-3px); box-shadow:0 12px 34px rgba(224,168,0,.7); }
+
+    @media(max-width:520px){
+      .game-title{font-size:36px;}
+      .choices-grid{grid-template-columns:1fr;}
+      .question-text{font-size:18px;}
+      .arrow-grid{grid-template-columns:repeat(3,82px); grid-template-rows:repeat(3,82px);}
+      .arrow-btn{font-size:42px;}
+    }
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn-start{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    .choices-grid{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+
+<style>
+  /* ── TIMER BAR (Round 2 & 3) ── */
+  .timer-wrap{ display:none; align-items:center; gap:10px; margin:-4px 0 16px; }
+  .timer-wrap.show{ display:flex; }
+  .timer-icon{ font-size:20px; }
+  .timer-track{ flex:1; height:14px; background:rgba(255,255,255,.14); border-radius:8px; overflow:hidden; }
+  .timer-bar{ height:100%; width:100%; background:linear-gradient(90deg,#4CAF50,#FFEB3B); border-radius:8px; transition:width .12s linear; }
+  .timer-bar.warn{ background:linear-gradient(90deg,#FF9800,#F44336); }
+  .timer-num{ font-size:16px; font-weight:800; color:#FFD700; min-width:28px; text-align:right; }
+
+  /* ── STREAK BADGE ── */
+  .streak-badge{ font-size:16px; font-weight:800; color:#FFD700; text-shadow:0 0 10px rgba(255,215,0,.7);
+    opacity:0; transform:scale(.5); transition:all .25s ease; white-space:nowrap; }
+  .streak-badge.show{ opacity:1; transform:scale(1); }
+  @keyframes streakPulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.18);} }
+  .streak-badge.pulse{ animation:streakPulse .5s ease; }
+
+  /* ── TRUE / FALSE BUTTONS ── */
+  .tf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:520px; margin:0 auto; }
+  .tf-btn{ background:rgba(255,255,255,.1); border:3px solid rgba(255,255,255,.24); border-radius:18px;
+    padding:26px 16px; font-size:24px; font-weight:800; cursor:pointer; color:#fff; transition:all .2s; }
+  .tf-btn:hover:not(.disabled){ background:rgba(255,255,255,.22); border-color:#FFD700; transform:scale(1.04); }
+  .tf-btn.correct{ background:rgba(76,175,80,.45); border-color:#4CAF50; }
+  .tf-btn.wrong{ background:rgba(244,67,54,.45); border-color:#F44336; }
+  .tf-btn.disabled{ pointer-events:none; }
+
+  /* ── GOLD GLITTER ── */
+  .glitter{ position:fixed; pointer-events:none; z-index:2000; font-size:20px; will-change:transform,opacity; }
+
+  @media(max-width:520px){
+    .tf-grid{ grid-template-columns:1fr; }
+    .tf-btn{ padding:18px; font-size:20px; }
+  }
+</style>
+</head>
+<body>
+
+<button onclick="resetGame()" title="Return to title screen" style="position:fixed;bottom:18px;right:18px;z-index:999;background:linear-gradient(135deg,#f5c518,#e6a800);color:#1a0a00;border:none;border-radius:50px;padding:9px 20px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #0007;letter-spacing:.2px">🏠 Restart</button>
+
+<!-- ═══════════ TITLE SCREEN ═══════════ -->
+<div id="title-screen" class="screen active">
+  <div class="title-card">
+    <div style="display:inline-block;background:rgba(13,148,136,.18);border:1.5px solid #0d9488;border-radius:50px;padding:6px 22px;font-size:.95rem;color:#90CAF9;margin-bottom:14px;letter-spacing:.3px">🧲 Grade 5 · Topic 2 · Forces and Motion</div>
+    <div class="game-title">🌍 GRAVITY FORCE!</div>
+    <div class="subtitle">Forces &amp; Motion · Grade 5 · Standard 5-PS2-1</div>
+    <div class="how-to">
+      <h3>📋 How to Play</h3>
+      <p>🎯 <strong>Goal:</strong> Prove you understand which way Earth's gravity pulls — across 15 tricky challenges!</p>
+      <p>🕳️ <strong>Round 1 — Gravity Traps:</strong> Sneaky scenes that test what you <em>really</em> know about gravity.</p>
+      <p>⏱️ <strong>Round 2 — Beat the Clock:</strong> 10 seconds each! Quick true/false &amp; arrow picks. Build a 🔥 streak for bonus points.</p>
+      <p>🧪 <strong>Round 3 — Evidence &amp; Arguments:</strong> Choose the best evidence — and beat the timer!</p>
+      <p>❤️ 3 lives · ⭐ base 10 pts + 🔥 streak bonus. Wrong answers cost a life but always teach you why!</p>
+    </div>
+    <button class="btn-start" onclick="startGame()">🚀 Start Game!</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAAChElEQVR4nO1ZQYrkMAwsxYY+Oj/opzg/a+ZJ+wP3U/YBA/axwUFLSZ3e02QblmVtGGGSQC5lpSSVK6I4i305fQ18v/+7/EArr6FmrRmpdGTV0pN/ltxHzy+0ZlUlfi2h5p5UK4JqUNU6Pv4FgMgG3NFuj2vhA9DbhiZxEHxnEZ/3VCT9uHxK+Fz7ithLHAPfu+/b1nnL+7UELePh+xP/tWiFOuetnOfh/11E0G4RObYtApea2flFZB0C33noEUhkjrUg9k+PPgN/Ou+ZK2lP2vlQOA6Qp8APgFtIJbDzF6QCZK3gXubIfz4yDz77dpDJpRn4H47mEyrxk/ZgFWAC/iwAHmuOqaBt+5pDRWwbUrlUk0Yj4DsNPWSb0SYHLV4L/kX6BPwpBv5Yz87D5IcJ+L/4jd3GyrYj7yvzv1+5RsH3dagVr9HGataUv40znaF+QaiwVm8nl9cpgLNYZ+B/9RHm5xfbiK159Bvk+mEDC/ua0bbYJNT7LjIKvtNQ5pyC3whjyq1yCji1+gz87ySMVS6VJxdsF5hH/wSvYquC5zizQTABfjXauJGSaETw6kfINEP+1ch/tCATD+ylbJ4YP/8L2s0FsxtZ0VS0WyhBZ5i/1T4BmcPmb86V0YkVMX7+4f6DdyEn/28XQmfgf6XadM3wOvw6hcIc/cfCduHIrZfSzg0T5H9BExFanRTPbYtJH7LxFOYu6P/Hdx6LtU0129YO7C5+Vm5nn8C/Wg7/GaHSeb5UU3G403zDGPjeep9lRTTlwLM8vbgPqrhh8H0VapPXbCs1LfHU/+yrdfz+s7wkRG9m2ALhJ+n0pNAyAL73/n8FPzmCi5mfQ3/K9//T0/jX+f8FyE7/fPAPxLwAAAAASUVORK5CYII=" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════ GAME SCREEN ═══════════ -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <div class="round-badge" id="round-badge">Round 1 · Gravity Traps</div>
+    <div class="streak-badge" id="streak-badge"></div>
+    <div class="score-display">⭐ <span id="score-val">0</span> pts</div>
+    <div class="lives-display" id="lives-display">❤️❤️❤️</div>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="timer-wrap" id="timer-wrap">
+    <span class="timer-icon">⏱️</span>
+    <div class="timer-track"><div class="timer-bar" id="timer-bar"></div></div>
+    <span class="timer-num" id="timer-num">10</span>
+  </div>
+  <div class="scene-container" id="scene-el"></div>
+  <div class="question-text" id="q-text"></div>
+  <div id="answer-area"></div>
+  <div class="feedback-box" id="feedback-box"></div>
+  <div style="text-align:center">
+    <button class="next-btn" id="next-btn" onclick="nextQ()">Next ➜</button>
+  </div>
+</div>
+
+<!-- ═══════════ END SCREEN ═══════════ -->
+<div id="end-screen" class="screen">
+  <div class="end-card">
+    <div class="end-title" id="end-title">🏆 Mission Complete!</div>
+    <div class="end-score" id="end-score">0 pts</div>
+    <div class="end-message" id="end-message"></div>
+    <div class="standard-box">
+      <strong>🔬 Standard 5-PS2-1 recap:</strong> Earth's gravitational force on objects at its surface is always directed <em>downward</em> — toward Earth's centre. It never switches off: a rising ball, a ball at the top of its arc, and a ball thrown sideways are all pulled straight down. With no air, heavy and light objects fall at the same rate. Evidence: released objects fall to the ground, rivers flow downhill, raindrops fall down.
+    </div>
+    <button class="btn-again" onclick="resetGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────── SVG SCENES ─────────────────────────── */
+const SVG = {
+
+/* ── ROUND 1: GRAVITY TRAPS ── */
+throwUp:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#E3F2FD"/>
+  <rect y="170" width="300" height="15" fill="#66BB6A"/>
+  <ellipse cx="80" cy="167" rx="18" ry="8" fill="#FFCC80"/>
+  <path d="M66,167 Q80,150 94,167" fill="none" stroke="#FFB74D" stroke-width="3"/>
+  <circle cx="160" cy="72" r="20" fill="#FF6B35"/>
+  <circle cx="153" cy="66" r="6" fill="#FF8A65" opacity="0.5"/>
+  <text x="160" y="77" fill="#fff" font-size="12" text-anchor="middle" font-weight="bold" font-family="Arial">Ball</text>
+  <line x1="160" y1="48" x2="160" y2="20" stroke="#2196F3" stroke-width="5"/>
+  <polygon points="160,13 153,26 167,26" fill="#2196F3"/>
+  <text x="172" y="30" fill="#2196F3" font-size="12" font-weight="bold" font-family="Arial">Rising ↑</text>
+  <text x="22" y="105" fill="#E53935" font-size="15" font-weight="bold" font-family="Arial">Gravity = ?</text>
+  <text x="40" y="162" fill="#2E7D32" font-size="11" font-family="Arial">Just thrown straight up</text>
+</svg>`,
+
+topArc:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#FFF3E0"/>
+  <rect y="170" width="300" height="15" fill="#8D6E63"/>
+  <path d="M28,165 Q150,18 272,165" stroke="#90A4AE" stroke-width="2" stroke-dasharray="6,5" fill="none"/>
+  <circle cx="150" cy="40" r="18" fill="#7B1FA2"/>
+  <circle cx="144" cy="35" r="5" fill="#9C27B0" opacity="0.55"/>
+  <text x="150" y="45" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold" font-family="Arial">Ball</text>
+  <text x="150" y="74" fill="#E65100" font-size="14" text-anchor="middle" font-weight="bold" font-family="Arial">v = 0 (at the top!)</text>
+  <text x="90" y="110" fill="#E53935" font-size="15" text-anchor="middle" font-weight="bold" font-family="Arial">Gravity = ?</text>
+  <text x="150" y="162" fill="#5D4037" font-size="11" text-anchor="middle" font-family="Arial">The very top of its path</text>
+</svg>`,
+
+throwSide:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#E1F5FE"/>
+  <rect y="170" width="300" height="15" fill="#66BB6A"/>
+  <rect x="0" y="60" width="66" height="110" fill="#A1887F"/>
+  <rect x="0" y="60" width="66" height="10" fill="#8D6E63"/>
+  <circle cx="92" cy="55" r="16" fill="#009688"/>
+  <circle cx="87" cy="50" r="5" fill="#4DB6AC" opacity="0.6"/>
+  <text x="92" y="60" fill="#fff" font-size="10" text-anchor="middle" font-weight="bold" font-family="Arial">Ball</text>
+  <line x1="110" y1="55" x2="152" y2="55" stroke="#2196F3" stroke-width="5"/>
+  <polygon points="160,55 147,48 147,62" fill="#2196F3"/>
+  <text x="112" y="42" fill="#2196F3" font-size="12" font-weight="bold" font-family="Arial">Thrown sideways →</text>
+  <text x="150" y="118" fill="#E53935" font-size="15" text-anchor="middle" font-weight="bold" font-family="Arial">Gravity = ?</text>
+</svg>`,
+
+dropTogether:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#ECEFF1"/>
+  <rect y="172" width="300" height="13" fill="#8D6E63"/>
+  <line x1="150" y1="0" x2="150" y2="172" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="7,4"/>
+  <line x1="24" y1="50" x2="276" y2="50" stroke="#90A4AE" stroke-width="2" stroke-dasharray="4,4"/>
+  <text x="150" y="34" fill="#455A64" font-size="12" text-anchor="middle" font-weight="bold" font-family="Arial">Released at the SAME height</text>
+  <circle cx="80" cy="78" r="22" fill="#37474F"/>
+  <circle cx="72" cy="70" r="6" fill="#607D8B" opacity="0.6"/>
+  <text x="80" y="118" fill="#263238" font-size="13" text-anchor="middle" font-weight="bold" font-family="Arial">Heavy Ball</text>
+  <circle cx="222" cy="78" r="13" fill="#C0CA33"/>
+  <circle cx="217" cy="73" r="4" fill="#E6EE9C" opacity="0.7"/>
+  <text x="222" y="118" fill="#33691E" font-size="13" text-anchor="middle" font-weight="bold" font-family="Arial">Light Ball</text>
+  <text x="150" y="158" fill="#E53935" font-size="14" text-anchor="middle" font-weight="bold" font-family="Arial">Which lands first?</text>
+</svg>`,
+
+rollOff:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#FFFDE7"/>
+  <rect y="172" width="300" height="13" fill="#795548"/>
+  <rect x="18" y="82" width="126" height="12" rx="2" fill="#8D6E63"/>
+  <rect x="30" y="94" width="10" height="78" fill="#6D4C41"/>
+  <rect x="122" y="94" width="10" height="78" fill="#6D4C41"/>
+  <circle cx="150" cy="72" r="12" fill="#F44336"/>
+  <circle cx="146" cy="68" r="3" fill="#EF9A9A" opacity="0.7"/>
+  <line x1="164" y1="72" x2="192" y2="72" stroke="#2196F3" stroke-width="4"/>
+  <polygon points="200,72 189,66 189,78" fill="#2196F3"/>
+  <text x="150" y="54" fill="#2196F3" font-size="11" text-anchor="middle" font-weight="bold" font-family="Arial">Rolling →</text>
+  <text x="230" y="150" fill="#37474F" font-size="12" text-anchor="middle" font-weight="bold" font-family="Arial">Which path?</text>
+</svg>`,
+
+/* ── ROUND 2: BEAT THE CLOCK ── */
+flyBall:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#B3E5FC"/>
+  <rect y="170" width="300" height="15" fill="#66BB6A"/>
+  <path d="M24,160 Q150,20 276,160" stroke="#4FC3F7" stroke-width="2" stroke-dasharray="6,5" fill="none"/>
+  <ellipse cx="60" cy="152" rx="16" ry="8" fill="#FFCC80"/>
+  <circle cx="205" cy="66" r="17" fill="#FF6B35"/>
+  <circle cx="199" cy="60" r="5" fill="#FF8A65" opacity="0.5"/>
+  <text x="205" y="71" fill="#fff" font-size="10" text-anchor="middle" font-weight="bold" font-family="Arial">Ball</text>
+  <text x="150" y="108" fill="#E53935" font-size="13" text-anchor="middle" font-weight="bold" font-family="Arial">Already left the hand…</text>
+  <text x="150" y="160" fill="#1565C0" font-size="12" text-anchor="middle" font-family="Arial">Is gravity still pulling it?</text>
+</svg>`,
+
+raindrop:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#4A6FA5"/>
+  <ellipse cx="90" cy="46" rx="58" ry="28" fill="#B0BEC5"/>
+  <ellipse cx="128" cy="38" rx="46" ry="26" fill="#CFD8DC"/>
+  <ellipse cx="72" cy="52" rx="38" ry="20" fill="#ECEFF1"/>
+  <ellipse cx="170" cy="48" rx="38" ry="22" fill="#B0BEC5"/>
+  <rect y="160" width="300" height="25" fill="#1A237E" opacity="0.5"/>
+  <rect x="270" y="85" width="9" height="75" fill="#1A237E" opacity="0.8"/>
+  <rect x="273" y="65" width="3" height="24" fill="#1A237E" opacity="0.8"/>
+  <path d="M55,76 Q57,96 55,104 Q53,96 55,76" fill="#64B5F6"/>
+  <path d="M95,88 Q97,108 95,116 Q93,108 95,88" fill="#64B5F6"/>
+  <path d="M135,70 Q137,90 135,98 Q133,90 135,70" fill="#90CAF9"/>
+  <path d="M175,82 Q177,102 175,110 Q173,102 175,82" fill="#64B5F6"/>
+  <path d="M215,72 Q217,92 215,100 Q213,92 215,72" fill="#90CAF9"/>
+  <ellipse cx="55" cy="162" rx="10" ry="3" fill="#90CAF9" opacity="0.5"/>
+  <ellipse cx="135" cy="165" rx="9" ry="3" fill="#90CAF9" opacity="0.5"/>
+  <line x1="95" y1="118" x2="95" y2="140" stroke="#FFD700" stroke-width="3.5"/>
+  <polygon points="95,146 89,134 101,134" fill="#FFD700"/>
+  <text x="108" y="138" fill="#FFD700" font-size="13" font-family="Arial" font-weight="bold">Gravity?</text>
+  <text x="60" y="180" fill="rgba(255,255,255,0.6)" font-size="12" font-family="Arial">A rainy afternoon 🌧️</text>
+</svg>`,
+
+bird:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#87CEEB"/>
+  <ellipse cx="55" cy="38" rx="48" ry="20" fill="white" opacity="0.8"/>
+  <ellipse cx="82" cy="30" rx="36" ry="17" fill="white" opacity="0.9"/>
+  <ellipse cx="240" cy="46" rx="42" ry="18" fill="white" opacity="0.7"/>
+  <ellipse cx="268" cy="38" rx="30" ry="15" fill="white" opacity="0.8"/>
+  <ellipse cx="174" cy="105" rx="44" ry="17" fill="#ECEFF1"/>
+  <circle cx="218" cy="95" r="13" fill="#ECEFF1"/>
+  <path d="M230,93 L252,91 L231,98Z" fill="#FF8F00"/>
+  <circle cx="222" cy="92" r="3.5" fill="#1A237E"/>
+  <circle cx="223" cy="91" r="1.2" fill="white"/>
+  <path d="M174,103 Q145,76 115,86 Q135,96 154,100 Q149,103 124,106 Q149,110 174,107" fill="#B0BEC5" stroke="#90A4AE" stroke-width="1"/>
+  <path d="M174,103 Q204,76 232,84 Q214,94 194,99 Q202,101 222,103 Q202,108 174,107" fill="#CFD8DC" stroke="#90A4AE" stroke-width="1"/>
+  <path d="M130,108 Q112,114 105,122" stroke="#B0BEC5" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <line x1="170" y1="122" x2="163" y2="138" stroke="#FF8F00" stroke-width="3"/>
+  <line x1="180" y1="122" x2="186" y2="138" stroke="#FF8F00" stroke-width="3"/>
+  <line x1="52" y1="95" x2="52" y2="158" stroke="#E53935" stroke-width="4" stroke-dasharray="6,4"/>
+  <polygon points="52,165 45,152 59,152" fill="#E53935"/>
+  <text x="62" y="132" fill="#E53935" font-size="13" font-family="Arial" font-weight="bold">Gravity?</text>
+  <rect y="170" width="300" height="15" fill="#1B5E20"/>
+  <ellipse cx="75" cy="170" rx="38" ry="11" fill="#2E7D32"/>
+  <ellipse cx="200" cy="168" rx="46" ry="13" fill="#388E3C"/>
+</svg>`,
+
+camel:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#FF9800"/>
+    <stop offset="100%" stop-color="#FFE0B2"/>
+  </linearGradient></defs>
+  <rect width="300" height="140" fill="url(#sky2)"/>
+  <rect y="140" width="300" height="45" fill="#C2956C"/>
+  <ellipse cx="50" cy="145" rx="75" ry="22" fill="#BDA882"/>
+  <ellipse cx="240" cy="148" rx="90" ry="20" fill="#D2B48C"/>
+  <ellipse cx="168" cy="122" rx="52" ry="28" fill="#C69C6D"/>
+  <ellipse cx="158" cy="98" rx="24" ry="20" fill="#BF8A50"/>
+  <ellipse cx="192" cy="103" rx="17" ry="15" fill="#C69C6D"/>
+  <path d="M214,100 Q219,90 222,80" stroke="#C69C6D" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <ellipse cx="228" cy="102" rx="20" ry="15" fill="#C69C6D"/>
+  <ellipse cx="245" cy="107" rx="9" ry="6" fill="#BF8A50"/>
+  <ellipse cx="249" cy="107" rx="3" ry="2" fill="#A0784A"/>
+  <circle cx="232" cy="97" r="4.5" fill="#2C1810"/>
+  <circle cx="234" cy="96" r="1.8" fill="white"/>
+  <path d="M228,88 L223,78 L233,82Z" fill="#BF8A50"/>
+  <rect x="126" y="147" width="11" height="32" rx="5" fill="#BF8A50"/>
+  <rect x="148" y="147" width="11" height="32" rx="5" fill="#C69C6D"/>
+  <rect x="172" y="147" width="11" height="32" rx="5" fill="#BF8A50"/>
+  <rect x="193" y="147" width="11" height="32" rx="5" fill="#C69C6D"/>
+  <ellipse cx="132" cy="179" rx="9" ry="4" fill="#8D6E63"/>
+  <ellipse cx="154" cy="179" rx="9" ry="4" fill="#8D6E63"/>
+  <ellipse cx="178" cy="179" rx="9" ry="4" fill="#8D6E63"/>
+  <ellipse cx="199" cy="179" rx="9" ry="4" fill="#8D6E63"/>
+  <path d="M116,122 Q100,122 94,132" stroke="#BF8A50" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <line x1="44" y1="72" x2="44" y2="138" stroke="#E53935" stroke-width="4"/>
+  <polygon points="44,144 37,131 51,131" fill="#E53935"/>
+  <text x="52" y="112" fill="#E53935" font-size="13" font-family="Arial" font-weight="bold">g = ?</text>
+  <text x="80" y="182" fill="rgba(93,64,55,0.7)" font-size="11" font-family="Arial">The Desert 🐪</text>
+</svg>`,
+
+/* ── ROUND 3: EVIDENCE & ARGUMENTS ── */
+evidence:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="175" fill="#E8EAF6"/>
+  <rect y="174" width="300" height="11" fill="#8D6E63"/>
+  <circle cx="50" cy="58" r="17" fill="#E53935"/>
+  <rect x="49" y="41" width="4" height="8" fill="#5D4037"/>
+  <path d="M46,45 Q41,38 51,43" stroke="#2E7D32" stroke-width="2" fill="none"/>
+  <line x1="50" y1="76" x2="50" y2="104" stroke="#E53935" stroke-width="3" stroke-dasharray="4,4" opacity="0.4"/>
+  <line x1="50" y1="107" x2="50" y2="132" stroke="#E53935" stroke-width="4"/>
+  <polygon points="50,139 43,126 57,126" fill="#E53935"/>
+  <circle cx="150" cy="48" r="19" fill="#fff" stroke="#212121" stroke-width="2"/>
+  <path d="M138,40 L150,48 L162,40 M138,56 L150,48 M162,56 L150,48" stroke="#212121" stroke-width="1.5" fill="none"/>
+  <line x1="150" y1="68" x2="150" y2="96" stroke="#212121" stroke-width="3" stroke-dasharray="4,4" opacity="0.4"/>
+  <line x1="150" y1="99" x2="150" y2="128" stroke="#E53935" stroke-width="4"/>
+  <polygon points="150,135 143,122 157,122" fill="#E53935"/>
+  <rect x="238" y="33" width="20" height="33" rx="5" fill="#B3E5FC" stroke="#29B6F6" stroke-width="2"/>
+  <rect x="242" y="26" width="12" height="10" rx="3" fill="#4FC3F7"/>
+  <line x1="250" y1="67" x2="250" y2="100" stroke="#29B6F6" stroke-width="3" stroke-dasharray="4,4" opacity="0.4"/>
+  <line x1="250" y1="103" x2="250" y2="128" stroke="#E53935" stroke-width="4"/>
+  <polygon points="250,135 243,122 257,122" fill="#E53935"/>
+  <text x="150" y="162" fill="#B71C1C" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">All objects fall DOWN!</text>
+</svg>`,
+
+argument:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#FFF8E1"/>
+  <circle cx="68" cy="65" r="20" fill="#FFCCBC"/>
+  <path d="M48,86 Q68,144 88,86" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="1"/>
+  <path d="M48,56 Q68,44 88,56 Q86,52 68,46 Q50,52 48,56Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <rect x="48" y="54" width="40" height="7" rx="3" fill="#E53935" opacity="0.8"/>
+  <circle cx="62" cy="67" r="3" fill="#5D4037"/>
+  <circle cx="74" cy="67" r="3" fill="#5D4037"/>
+  <path d="M62,76 Q68,82 74,76" stroke="#5D4037" stroke-width="2" fill="none"/>
+  <rect x="102" y="26" width="184" height="90" rx="13" fill="white" stroke="#FFA000" stroke-width="2.5"/>
+  <polygon points="102,60 88,74 108,70" fill="white" stroke="#FFA000" stroke-width="2.5"/>
+  <text x="194" y="50" fill="#E65100" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">Omar says:</text>
+  <text x="194" y="70" fill="#37474F" font-size="13" font-family="Arial" text-anchor="middle">"Gravity pulls</text>
+  <text x="194" y="88" fill="#37474F" font-size="13" font-family="Arial" text-anchor="middle">objects SIDEWAYS</text>
+  <text x="194" y="106" fill="#37474F" font-size="13" font-family="Arial" text-anchor="middle">too, not just down!"</text>
+  <line x1="106" y1="152" x2="166" y2="152" stroke="#F44336" stroke-width="4"/>
+  <polygon points="173,152 161,146 161,158" fill="#F44336"/>
+  <text x="182" y="160" fill="#F44336" font-size="26" font-family="Arial" font-weight="bold">✗</text>
+  <text x="68" y="178" fill="#37474F" font-size="13" font-family="Arial" text-anchor="middle">Is Omar correct?</text>
+</svg>`,
+
+iss:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#0A0A1A"/>
+  <circle cx="14" cy="18" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="42" cy="7" r="1" fill="white" opacity="0.7"/>
+  <circle cx="270" cy="14" r="2" fill="white" opacity="0.8"/>
+  <circle cx="292" cy="38" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="98" cy="4" r="1" fill="white" opacity="0.8"/>
+  <circle cx="230" cy="28" r="1" fill="white" opacity="0.7"/>
+  <circle cx="58" cy="48" r="1.5" fill="white" opacity="0.5"/>
+  <circle cx="195" cy="9" r="1" fill="white" opacity="0.9"/>
+  <ellipse cx="150" cy="218" rx="210" ry="95" fill="#1565C0"/>
+  <path d="M5,185 Q75,170 150,180 Q225,170 295,185" fill="#2196F3" opacity="0.45"/>
+  <ellipse cx="55" cy="183" rx="28" ry="7" fill="rgba(255,255,255,0.35)"/>
+  <ellipse cx="230" cy="180" rx="32" ry="8" fill="rgba(255,255,255,0.28)"/>
+  <rect x="112" y="55" width="76" height="19" rx="4" fill="#B0BEC5"/>
+  <rect x="56" y="50" width="52" height="28" rx="3" fill="#1565C0" stroke="#42A5F5" stroke-width="1.5"/>
+  <line x1="56" y1="60" x2="108" y2="60" stroke="#90CAF9" stroke-width="1"/>
+  <line x1="56" y1="70" x2="108" y2="70" stroke="#90CAF9" stroke-width="1"/>
+  <rect x="192" y="50" width="52" height="28" rx="3" fill="#1565C0" stroke="#42A5F5" stroke-width="1.5"/>
+  <line x1="192" y1="60" x2="244" y2="60" stroke="#90CAF9" stroke-width="1"/>
+  <line x1="192" y1="70" x2="244" y2="70" stroke="#90CAF9" stroke-width="1"/>
+  <rect x="137" y="53" width="26" height="22" rx="6" fill="#ECEFF1"/>
+  <rect x="140" y="50" width="20" height="28" rx="6" fill="#E0E0E0"/>
+  <circle cx="160" cy="104" r="9" fill="#E0E0E0"/>
+  <line x1="160" y1="113" x2="160" y2="126" stroke="#E0E0E0" stroke-width="4"/>
+  <line x1="155" y1="118" x2="147" y2="124" stroke="#E0E0E0" stroke-width="3"/>
+  <line x1="165" y1="118" x2="173" y2="124" stroke="#E0E0E0" stroke-width="3"/>
+  <line x1="160" y1="99" x2="148" y2="74" stroke="#FFD700" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <line x1="50" y1="64" x2="50" y2="144" stroke="#FF5722" stroke-width="4"/>
+  <polygon points="50,152 42,138 58,138" fill="#FF5722"/>
+  <text x="8" y="106" fill="#FF5722" font-size="12" font-family="Arial" font-weight="bold">Gravity</text>
+  <text x="8" y="120" fill="#FF5722" font-size="12" font-family="Arial" font-weight="bold">still</text>
+  <text x="8" y="134" fill="#FF5722" font-size="12" font-family="Arial" font-weight="bold">pulls ↓?</text>
+</svg>`,
+
+evidence2:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="112" fill="#87CEEB"/>
+  <path d="M0,112 Q56,94 112,104 Q168,114 224,138 Q264,152 300,163" stroke="#8D6E63" stroke-width="3" fill="none"/>
+  <path d="M0,112 Q56,94 112,104 Q168,114 224,138 Q264,152 300,163 L300,185 L0,185Z" fill="#D2B48C"/>
+  <path d="M0,108 Q56,92 112,100 Q168,110 224,133 Q264,148 300,158" stroke="#1E88E5" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <path d="M0,108 Q56,92 112,100 Q168,110 224,133 Q264,148 300,158" stroke="#42A5F5" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <polygon points="75,97 64,92 68,101" fill="#1565C0"/>
+  <polygon points="168,112 157,107 161,116" fill="#1565C0"/>
+  <polygon points="258,142 247,137 251,146" fill="#1565C0"/>
+  <rect x="18" y="74" width="5" height="36" fill="#5D4037"/>
+  <ellipse cx="21" cy="74" rx="16" ry="9" fill="#2E7D32"/>
+  <rect x="276" y="140" width="5" height="26" fill="#5D4037"/>
+  <ellipse cx="279" cy="140" rx="13" ry="7" fill="#388E3C"/>
+  <text x="8" y="84" fill="#37474F" font-size="12" font-family="Arial" font-weight="bold">HIGH</text>
+  <text x="260" y="180" fill="#37474F" font-size="12" font-family="Arial" font-weight="bold">LOW</text>
+  <line x1="150" y1="22" x2="150" y2="52" stroke="#E53935" stroke-width="4"/>
+  <polygon points="150,60 143,47 157,47" fill="#E53935"/>
+  <text x="160" y="46" fill="#E53935" font-size="13" font-family="Arial" font-weight="bold">Gravity ↓</text>
+  <text x="6" y="174" fill="#1565C0" font-size="11" font-family="Arial">River flows downhill = evidence!</text>
+</svg>`,
+
+construct:`<svg width="300" height="185" viewBox="0 0 300 185">
+  <rect width="300" height="185" fill="#E8F5E9"/>
+  <rect x="8" y="8" width="284" height="132" rx="10" fill="#2E7D32"/>
+  <text x="144" y="38" fill="rgba(255,255,255,0.9)" font-size="15" font-family="Arial" font-weight="bold" text-anchor="middle">Build the Argument!</text>
+  <line x1="24" y1="46" x2="276" y2="46" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <circle cx="48" cy="78" r="12" fill="#E53935"/>
+  <line x1="48" y1="66" x2="48" y2="93" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-dasharray="3,2"/>
+  <polygon points="48,98 41,87 55,87" fill="rgba(255,255,255,0.65)"/>
+  <path d="M118,63 Q118,78 118,83" stroke="#90CAF9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M132,66 Q132,81 132,86" stroke="#90CAF9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="125" cy="60" rx="17" ry="8" fill="#B0BEC5"/>
+  <polygon points="118,89 111,79 125,79" fill="#90CAF9"/>
+  <polygon points="132,92 125,82 139,82" fill="#90CAF9"/>
+  <line x1="158" y1="78" x2="186" y2="78" stroke="#FFD700" stroke-width="3"/>
+  <polygon points="192,78 182,72 182,84" fill="#FFD700"/>
+  <rect x="198" y="63" width="74" height="38" rx="6" fill="rgba(255,255,255,0.14)"/>
+  <text x="235" y="80" fill="white" font-size="12" font-family="Arial" text-anchor="middle">Gravity</text>
+  <text x="235" y="94" fill="white" font-size="12" font-family="Arial" text-anchor="middle">= DOWN ↓</text>
+  <text x="24" y="120" fill="rgba(255,255,255,0.78)" font-size="13" font-family="Arial">Evidence + Reasoning = Argument</text>
+  <rect x="8" y="150" width="284" height="28" rx="8" fill="#FFF9C4"/>
+  <text x="150" y="169" fill="#F57F17" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">Complete the scientific argument!</text>
+</svg>`
+
+}; // end SVG
+
+/* ─────────────────────────── QUESTIONS ─────────────────────────── */
+const ROUND_NAMES = { 1:'Gravity Traps', 2:'Beat the Clock', 3:'Evidence & Arguments' };
+
+const QUESTIONS = [
+  // ── ROUND 1 · GRAVITY TRAPS (indices 0-4) ──
+  {
+    round:1, type:'choice',
+    scene:'throwUp',
+    text:'You throw a ball straight up. While it is still RISING, which way does Earth\'s gravity pull it?',
+    options:[
+      'Downward, toward the ground',
+      'Upward, the same way it is moving',
+      'No gravity acts while it rises',
+      'Sideways, until it slows down'
+    ],
+    answer:0,
+    explain:'Gravity pulls DOWN even while the ball rises — that downward pull is exactly what slows it, stops it, then brings it back.'
+  },
+  {
+    round:1, type:'choice',
+    scene:'topArc',
+    text:'At the very TOP of its path the ball stops for an instant (speed = 0). Which way is gravity pulling it now?',
+    options:[
+      'Upward, holding it at the top',
+      'Straight down, toward Earth\'s centre',
+      'Nowhere — with zero speed there is no gravity',
+      'It depends how hard it was thrown'
+    ],
+    answer:1,
+    explain:'Gravity never switches off. Even at the top with zero speed, it still pulls straight down — so the ball begins to fall.'
+  },
+  {
+    round:1, type:'choice',
+    scene:'throwSide',
+    text:'A ball is thrown sideways (horizontally) off a ledge. Which way does gravity pull it as it flies?',
+    options:[
+      'Sideways, the way it was thrown',
+      'It curves upward first',
+      'Straight down toward Earth',
+      'Gravity waits until it stops moving'
+    ],
+    answer:2,
+    explain:'No matter which way an object moves, Earth\'s gravity still pulls it straight down — that\'s why the path curves toward the ground.'
+  },
+  {
+    round:1, type:'choice',
+    scene:'dropTogether',
+    text:'A heavy ball and a light ball are dropped from the same height (ignore air). Which lands first?',
+    options:[
+      'They land at the SAME time',
+      'The heavy ball — gravity pulls it harder',
+      'The light ball — it is easier to pull',
+      'Neither — the light ball floats'
+    ],
+    answer:0,
+    explain:'Without air resistance, gravity speeds up all objects equally — so they land together, no matter their weight.'
+  },
+  {
+    round:1, type:'choice',
+    scene:'rollOff',
+    text:'A ball rolls off the edge of a table. Which path does it follow down to the floor?',
+    options:[
+      'It floats gently straight down',
+      'It curves downward in an arc as it falls',
+      'Straight sideways, then a sharp drop',
+      'It shoots upward before landing'
+    ],
+    answer:1,
+    explain:'Gravity pulls the ball down the whole time it moves forward, so its path curves into a smooth downward arc.'
+  },
+
+  // ── ROUND 2 · BEAT THE CLOCK (indices 5-9, timed) ──
+  {
+    round:2, type:'tf',
+    scene:'flyBall',
+    text:'TRUE or FALSE: Once a ball leaves your hand, gravity stops pulling on it.',
+    answer:'false',
+    explain:'False! Gravity never lets go — it keeps pulling the ball straight down the entire time it is in the air.'
+  },
+  {
+    round:2, type:'arrow',
+    scene:'raindrop',
+    text:'Quick! A raindrop is falling in a storm. Which way does gravity pull it?',
+    answer:'down',
+    explain:'Down! Gravity pulls every raindrop straight toward the ground — toward Earth\'s centre.'
+  },
+  {
+    round:2, type:'tf',
+    scene:'dropTogether',
+    text:'TRUE or FALSE: With no air, a heavy ball and a light ball dropped together hit the ground at the same time.',
+    answer:'true',
+    explain:'True! Gravity speeds up all objects equally, so with no air resistance they land together.'
+  },
+  {
+    round:2, type:'arrow',
+    scene:'bird',
+    text:'Quick! A heron glides over the wetland. Even while flying, which way does gravity pull it?',
+    answer:'down',
+    explain:'Down! Gravity pulls the bird down constantly — its wings push air down to make lift that balances it.'
+  },
+  {
+    round:2, type:'tf',
+    scene:'camel',
+    text:'TRUE or FALSE: Everywhere on Earth\'s surface, gravity pulls objects toward Earth\'s centre — downward.',
+    answer:'true',
+    explain:'True! On every part of Earth\'s surface, the gravitational force points down toward the centre.'
+  },
+
+  // ── ROUND 3 · EVIDENCE & ARGUMENTS (indices 10-14, timed) ──
+  {
+    round:3, type:'choice',
+    scene:'evidence',
+    text:'Which observation BEST supports the argument that gravity is directed downward?',
+    options:[
+      'Objects float in random directions in space',
+      'All objects released from rest fall toward the ground',
+      'Helium balloons rise upward through air',
+      'Clouds move sideways in the wind'
+    ],
+    answer:1,
+    explain:'Objects always falling toward the ground when released is direct evidence that gravitational force is directed downward.'
+  },
+  {
+    round:3, type:'choice',
+    scene:'argument',
+    text:'Omar says: "Gravity can pull objects sideways too, not just down." Is Omar correct?',
+    options:[
+      'Yes — gravity pulls in all directions equally',
+      'Yes — near mountains it pulls sideways',
+      'No — Earth\'s gravity on surface objects is always directed downward',
+      'No — gravity only pulls very heavy objects'
+    ],
+    answer:2,
+    explain:'Omar is wrong. Earth\'s gravitational force on objects at its surface is always directed downward (toward Earth\'s centre).'
+  },
+  {
+    round:3, type:'choice',
+    scene:'iss',
+    text:'Astronauts on the ISS appear to float. Which statement about Earth\'s gravity there is TRUE?',
+    options:[
+      'Earth\'s gravity is zero at the ISS',
+      'Earth\'s gravity still pulls the ISS and astronauts downward',
+      'Gravity reverses direction in space',
+      'Gravity only works at Earth\'s surface'
+    ],
+    answer:1,
+    explain:'Earth\'s gravity still acts on the ISS, pulling it downward. The ISS "falls" in a curve matching Earth\'s surface — creating apparent weightlessness.'
+  },
+  {
+    round:3, type:'choice',
+    scene:'evidence2',
+    text:'Which is the STRONGEST real-world evidence that Earth\'s gravity is directed downward?',
+    options:[
+      'The sun rises in the east every morning',
+      'Water in rivers always flows downhill toward the sea',
+      'Wind blows in different directions each day',
+      'Shadows change length throughout the day'
+    ],
+    answer:1,
+    explain:'Water always flowing downhill is direct evidence of gravity pulling matter toward Earth\'s centre — always directed downward.'
+  },
+  {
+    round:3, type:'choice',
+    scene:'construct',
+    text:'Complete the argument: "We know Earth\'s gravitational force is directed downward because..."',
+    options:[
+      '...objects move in random directions when released.',
+      '...objects always fall toward Earth\'s surface when released from rest.',
+      '...lighter objects naturally float upward.',
+      '...the moon pulls objects upward during high tide.'
+    ],
+    answer:1,
+    explain:'Objects always falling toward Earth\'s surface when released is the core evidence that gravitational force is directed downward.'
+  }
+];
+
+/* ─────────────────────────── GAME STATE ─────────────────────────── */
+let score = 0;
+let lives = 3;
+let qIndex = 0;
+let answered = false;
+let streak = 0;
+let correctCount = 0;
+
+const TOTAL = QUESTIONS.length; // 15
+const TIME = 10;                 // seconds per timed question
+let timer = null;
+let timeLeft = 0;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  score = 0; lives = 3; qIndex = 0; answered = false; streak = 0; correctCount = 0;
+  showScreen('game-screen');
+  renderQ();
+}
+
+function resetGame() {
+  stopTimer();
+  score = 0; lives = 3; qIndex = 0; answered = false; streak = 0; correctCount = 0;
+  document.getElementById('streak-badge').classList.remove('show');
+  document.getElementById('timer-wrap').classList.remove('show');
+  showScreen('title-screen');
+}
+
+/* ─── RENDER QUESTION ─── */
+function renderQ() {
+  stopTimer();
+  const q = QUESTIONS[qIndex];
+
+  // Header
+  document.getElementById('round-badge').textContent = 'Round ' + q.round + ' · ' + ROUND_NAMES[q.round];
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  updateStreakBadge();
+
+  // Progress
+  document.getElementById('progress-fill').style.width = (qIndex / TOTAL * 100) + '%';
+
+  // Scene
+  document.getElementById('scene-el').innerHTML = SVG[q.scene] || '';
+
+  // Question text
+  document.getElementById('q-text').textContent = q.text;
+
+  // Answer area
+  const area = document.getElementById('answer-area');
+  area.innerHTML = '';
+
+  if (q.type === 'arrow') {
+    area.innerHTML = buildArrowGrid();
+    document.querySelectorAll('.arrow-btn[data-dir]').forEach(btn => {
+      btn.addEventListener('click', () => handleArrow(btn.dataset.dir));
+    });
+  } else if (q.type === 'tf') {
+    area.innerHTML = buildTF();
+    document.querySelectorAll('.tf-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleTF(btn.dataset.val));
+    });
+  } else {
+    area.innerHTML = buildChoices(q.options);
+    document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+      btn.addEventListener('click', () => handleChoice(i));
+    });
+  }
+
+  // Feedback + next
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+
+  answered = false;
+
+  // Timer for Rounds 2 & 3
+  if (q.round >= 2) {
+    startTimer();
+  } else {
+    document.getElementById('timer-wrap').classList.remove('show');
+  }
+}
+
+function buildArrowGrid() {
+  // 3x3 grid: center = object icon, four cardinal buttons
+  return `<div class="arrow-grid">
+    <div class="arrow-btn center"></div>
+    <button class="arrow-btn" data-dir="up">⬆️<span class="arrow-label">UP</span></button>
+    <div class="arrow-btn center"></div>
+    <button class="arrow-btn" data-dir="left">⬅️<span class="arrow-label">LEFT</span></button>
+    <div class="arrow-btn center" style="font-size:36px;">🌍</div>
+    <button class="arrow-btn" data-dir="right">➡️<span class="arrow-label">RIGHT</span></button>
+    <div class="arrow-btn center"></div>
+    <button class="arrow-btn" data-dir="down">⬇️<span class="arrow-label">DOWN</span></button>
+    <div class="arrow-btn center"></div>
+  </div>`;
+}
+
+function buildChoices(opts) {
+  return `<div class="choices-grid">${opts.map((o,i)=>`<button class="choice-btn" data-idx="${i}">${o}</button>`).join('')}</div>`;
+}
+
+function buildTF() {
+  return `<div class="tf-grid">
+    <button class="tf-btn" data-val="true">✅ True</button>
+    <button class="tf-btn" data-val="false">❌ False</button>
+  </div>`;
+}
+
+/* ─── TIMER ─── */
+function startTimer() {
+  const wrap = document.getElementById('timer-wrap');
+  wrap.classList.add('show');
+  timeLeft = TIME;
+  updateTimerUI();
+  timer = setInterval(() => {
+    timeLeft -= 0.1;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      updateTimerUI();
+      stopTimer();
+      timeUp();
+      return;
+    }
+    updateTimerUI();
+  }, 100);
+}
+
+function updateTimerUI() {
+  const bar = document.getElementById('timer-bar');
+  const pct = Math.max(0, timeLeft / TIME * 100);
+  bar.style.width = pct + '%';
+  bar.classList.toggle('warn', timeLeft <= 3);
+  document.getElementById('timer-num').textContent = Math.max(0, Math.ceil(timeLeft));
+}
+
+function stopTimer() {
+  if (timer) { clearInterval(timer); timer = null; }
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  revealCorrect();
+  finish(false, true);
+}
+
+function revealCorrect() {
+  const q = QUESTIONS[qIndex];
+  if (q.type === 'arrow') {
+    document.querySelectorAll('.arrow-btn[data-dir]').forEach(b => {
+      b.classList.add('disabled');
+      if (b.dataset.dir === q.answer) b.classList.add('correct');
+    });
+  } else if (q.type === 'tf') {
+    document.querySelectorAll('.tf-btn').forEach(b => {
+      b.classList.add('disabled');
+      if (b.dataset.val === q.answer) b.classList.add('correct');
+    });
+  } else {
+    document.querySelectorAll('.choice-btn').forEach((b, i) => {
+      b.classList.add('disabled');
+      if (i === q.answer) b.classList.add('correct');
+    });
+  }
+}
+
+/* ─── ANSWER HANDLERS ─── */
+function handleArrow(dir) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = QUESTIONS[qIndex];
+  const correct = dir === q.answer;
+
+  document.querySelectorAll('.arrow-btn[data-dir]').forEach(btn => {
+    btn.classList.add('disabled');
+    if (btn.dataset.dir === q.answer) btn.classList.add('correct');
+    if (btn.dataset.dir === dir && !correct) btn.classList.add('wrong');
+  });
+
+  finish(correct, false);
+}
+
+function handleChoice(idx) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = QUESTIONS[qIndex];
+  const correct = idx === q.answer;
+
+  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.answer) btn.classList.add('correct');
+    if (i === idx && !correct) btn.classList.add('wrong');
+  });
+
+  finish(correct, false);
+}
+
+function handleTF(val) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = QUESTIONS[qIndex];
+  const correct = val === q.answer;
+
+  document.querySelectorAll('.tf-btn').forEach(btn => {
+    btn.classList.add('disabled');
+    if (btn.dataset.val === q.answer) btn.classList.add('correct');
+    if (btn.dataset.val === val && !correct) btn.classList.add('wrong');
+  });
+
+  finish(correct, false);
+}
+
+/* ─── RESOLVE ANSWER ─── */
+function finish(correct, timeout) {
+  const q = QUESTIONS[qIndex];
+  let earned = 0, bonus = 0;
+
+  if (correct) {
+    streak++;
+    correctCount++;
+    bonus = streak >= 2 ? (streak - 1) * 5 : 0;
+    earned = 10 + bonus;
+    score += earned;
+    if (bonus > 0) goldGlitter();
+  } else {
+    lives--;
+    streak = 0;
+  }
+
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('lives-display').textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3 - Math.max(lives,0));
+  updateStreakBadge();
+
+  const fb = document.getElementById('feedback-box');
+  if (correct) {
+    fb.className = 'feedback-box correct';
+    const bonusTxt = bonus > 0
+      ? ` <span style="color:#FFD700">(+${earned} — 10 +${bonus} streak 🔥)</span>`
+      : ` <span style="color:#FFD700">(+10)</span>`;
+    fb.innerHTML = '✅ Correct!' + bonusTxt + ' ' + q.explain;
+  } else {
+    fb.className = 'feedback-box wrong';
+    const lead = timeout ? '⏰ Time\'s up! ' : '❌ Not quite — ';
+    fb.innerHTML = lead + q.explain;
+  }
+  fb.style.display = 'block';
+
+  if (lives <= 0) {
+    document.getElementById('next-btn').textContent = 'See Results ➜';
+  } else {
+    document.getElementById('next-btn').textContent = 'Next ➜';
+  }
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function updateStreakBadge() {
+  const b = document.getElementById('streak-badge');
+  if (streak >= 2) {
+    b.textContent = '🔥 ' + streak + ' streak';
+    b.classList.add('show');
+    b.classList.remove('pulse');
+    void b.offsetWidth; // restart animation
+    b.classList.add('pulse');
+  } else {
+    b.classList.remove('show');
+    b.textContent = '';
+  }
+}
+
+/* ─── GOLD GLITTER ─── */
+function goldGlitter() {
+  const rect = document.getElementById('scene-el').getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const em = ['✨','⭐','🌟','💫'];
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('div');
+    s.className = 'glitter';
+    s.textContent = em[i % em.length];
+    s.style.left = cx + 'px';
+    s.style.top = cy + 'px';
+    document.body.appendChild(s);
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 50 + Math.random() * 110;
+    const dx = Math.cos(ang) * dist;
+    const dy = Math.sin(ang) * dist - 30;
+    s.animate([
+      { transform: 'translate(-50%,-50%) scale(0.4)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.15)`, opacity: 0 }
+    ], { duration: 850 + Math.random() * 450, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => s.remove();
+  }
+}
+
+/* ─── NEXT QUESTION ─── */
+function nextQ() {
+  if (lives <= 0) { showEnd(); return; }
+  qIndex++;
+  if (qIndex >= TOTAL) { showEnd(); return; }
+  renderQ();
+}
+
+/* ─── END SCREEN ─── */
+function showEnd() {
+  stopTimer();
+  document.getElementById('timer-wrap').classList.remove('show');
+  document.getElementById('streak-badge').classList.remove('show');
+  showScreen('end-screen');
+
+  const pct = correctCount / TOTAL;
+  let title, msg;
+
+  if (lives <= 0) {
+    title = '💫 Game Over!';
+    msg = `You answered ${correctCount} of ${TOTAL} correctly before running out of lives. Gravity is tricky — try again for a perfect run!`;
+  } else if (pct === 1) {
+    title = '🏆 PERFECT! Gravity Master!';
+    msg = 'Flawless! Every trap, every timer, every argument — you nailed them all. Earth\'s gravity ALWAYS pulls objects DOWNWARD!';
+    goldGlitter();
+  } else if (pct >= 0.8) {
+    title = '🌟 Excellent Work!';
+    msg = `Strong understanding of gravity's direction! You got ${correctCount}/${TOTAL}. Review the tricky ones and go again!`;
+  } else if (pct >= 0.6) {
+    title = '👍 Good Effort!';
+    msg = `You got ${correctCount}/${TOTAL}. Remember: Earth's gravity always acts downward toward Earth's centre. Beat the clock next time!`;
+  } else {
+    title = '📚 Keep Practising!';
+    msg = `You got ${correctCount}/${TOTAL}. Gravity is always directed downward — toward Earth's centre. Review the standard and play again!`;
+  }
+
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-score').textContent = score + ' pts';
+  document.getElementById('end-message').textContent = msg;
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

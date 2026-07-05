@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<!--
+  Topic: Earth's Place in the Universe
+  Standards: 5-ESS1-1 (apparent brightness vs distance), 5-ESS1-2 (shadows, day/night, seasonal stars)
+  Teacher note: Three escalating rounds — star brightness sorting, shadow pattern sequencing,
+  and night-sky identification; requires no internet; works offline on any modern browser.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Explorer — Earth's Place in the Universe</title>
+<style>
+  :root {
+    --bg:    #05050f;
+    --navy:  #0c2a50;
+    --gold:  #E0A800;
+    --teal:  #0d9488;
+    --wrong: #c0392b;
+    --text:  #e8eaf6;
+    --card:  #071828;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI',Arial,sans-serif;
+    font-size:19px;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ── STARS BACKGROUND ── */
+  #starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+  /* ── SCREENS ── */
+  .screen{
+    position:relative;z-index:1;
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    min-height:100vh;padding:24px 16px;text-align:center;
+  }
+  .screen.active{display:flex;}
+
+  /* ── PERMANENT HOME BUTTON ── */
+  #home-btn{
+    position:fixed;top:10px;right:14px;z-index:9999;
+    background:rgba(12,42,80,0.88);
+    border:1.5px solid rgba(224,168,0,0.5);
+    border-radius:24px;
+    padding:7px 16px;
+    font-size:14px;font-weight:700;
+    color:var(--gold);
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+    transition:background 0.18s,border-color 0.18s;
+    white-space:nowrap;
+  }
+  #home-btn:hover{background:var(--navy);border-color:var(--gold);}
+
+  /* ── PILL LABEL ── */
+  .pill-label{
+    background:rgba(13,148,136,0.18);
+    border:1.5px solid rgba(13,148,136,0.45);
+    border-radius:999px;
+    padding:6px 20px;
+    font-size:15px;font-weight:700;
+    color:#b2ede8;
+    margin-bottom:16px;
+    letter-spacing:0.4px;
+    text-align:center;
+  }
+
+  /* ── TITLE ── */
+  #titleScreen h1{
+    font-size:clamp(2rem,6vw,3.4rem);
+    color:var(--gold);
+    text-shadow:0 0 24px rgba(224,168,0,0.5);
+    margin-bottom:10px;
+    letter-spacing:2px;
+  }
+  #titleScreen .subtitle{color:#a8c8e8;font-size:1.2rem;margin-bottom:28px;}
+  .how-box{
+    background:var(--navy);
+    border:2px solid rgba(13,148,136,0.35);
+    border-radius:16px;
+    padding:22px 28px;
+    max-width:640px;
+    text-align:left;
+    line-height:1.7;
+    margin-bottom:32px;
+  }
+  .how-box h3{color:var(--gold);margin-bottom:10px;font-size:1.1rem;}
+  .how-box li{margin-left:18px;margin-bottom:4px;}
+
+  /* ── BUTTONS ── */
+  .btn{
+    background:linear-gradient(135deg,var(--gold),#c08600);
+    color:#080400;
+    border:none;
+    border-radius:12px;
+    padding:16px 40px;
+    font-size:1.2rem;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 20px rgba(224,168,0,0.4);
+    transition:transform .12s,box-shadow .12s;
+    min-width:180px;
+    touch-action:manipulation;
+  }
+  .btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(224,168,0,0.6);}
+  .btn:active{transform:scale(.97);}
+  .btn-teal{background:linear-gradient(135deg,var(--teal),#0a7068);color:#fff;box-shadow:0 4px 20px rgba(13,148,136,0.4);}
+  .btn-teal:hover{box-shadow:0 8px 28px rgba(13,148,136,0.6);}
+
+  /* ── HUD ── */
+  #hud{
+    position:fixed;top:0;left:0;right:0;z-index:10;
+    display:none;
+    background:rgba(5,5,15,.88);
+    backdrop-filter:blur(6px);
+    padding:10px 24px;
+    flex-wrap:wrap;gap:8px;
+    align-items:center;justify-content:space-between;
+    border-bottom:1px solid rgba(13,148,136,0.25);
+  }
+  #hud.visible{display:flex;}
+  .hud-pill{
+    background:var(--navy);
+    border-radius:20px;
+    padding:6px 16px;
+    font-size:.95rem;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  #livesDisplay span{color:var(--wrong);font-size:1.2rem;}
+  #roundLabel{color:var(--gold);font-weight:700;}
+
+  /* ── GAME SCREEN ── */
+  #gameScreen{padding-top:80px;}
+  #questionBox{
+    background:var(--navy);
+    border:2px solid rgba(13,148,136,0.35);
+    border-radius:18px;
+    padding:28px 32px;
+    max-width:720px;
+    width:100%;
+    margin-bottom:24px;
+  }
+  #questionBox .round-tag{
+    font-size:.85rem;color:var(--gold);
+    margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;
+  }
+  #questionBox .qtext{font-size:1.25rem;line-height:1.5;color:#fff;}
+  #questionBox .qhint{font-size:.95rem;color:#a0b8d0;margin-top:6px;}
+
+  /* ── SVG DIAGRAM AREA ── */
+  #diagramArea{
+    max-width:720px;width:100%;
+    margin-bottom:20px;
+  }
+  #diagramArea svg{border-radius:14px;background:transparent;}
+
+  /* ── ANSWER OPTIONS ── */
+  #optionsGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    max-width:680px;
+    width:100%;
+  }
+  .opt-btn{
+    background:var(--card);
+    border:2px solid rgba(13,148,136,0.3);
+    border-radius:14px;
+    padding:18px 14px;
+    font-size:1.05rem;
+    color:var(--text);
+    cursor:pointer;
+    transition:border-color .15s,background .15s,transform .1s;
+    touch-action:manipulation;
+    line-height:1.4;
+    overflow-wrap:break-word;word-break:break-word;
+  }
+  .opt-btn:hover{border-color:var(--teal);background:#0d1e30;transform:scale(1.02);}
+  .opt-btn.correct{border-color:var(--teal)!important;background:rgba(13,148,136,0.18)!important;color:#b2ede8!important;}
+  .opt-btn.wrong{border-color:var(--wrong)!important;background:rgba(192,57,43,0.18)!important;color:#ff9090!important;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+
+  /* DRAG-DROP zone */
+  #dragArea{
+    max-width:720px;width:100%;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .drag-pool{
+    display:flex;flex-wrap:wrap;gap:12px;
+    justify-content:center;
+    background:var(--navy);
+    border:2px dashed rgba(13,148,136,0.35);
+    border-radius:14px;
+    padding:18px;
+    min-height:80px;
+  }
+  .drag-slots{
+    display:flex;flex-wrap:wrap;gap:12px;
+    justify-content:center;
+  }
+  .slot{
+    width:140px;min-height:72px;
+    background:#050f1c;
+    border:2px dashed rgba(13,148,136,0.4);
+    border-radius:12px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:.9rem;color:#4a6080;
+    position:relative;
+    transition:border-color .15s,background .15s;
+    padding-bottom:24px;
+  }
+  .slot.drag-over{border-color:var(--gold);background:rgba(224,168,0,0.08);}
+  .slot.filled{border-style:solid;border-color:rgba(13,148,136,0.6);color:var(--text);}
+  .slot .slot-label{
+    font-size:.72rem;color:rgba(13,148,136,0.9);
+    position:absolute;bottom:4px;left:2px;right:2px;text-align:center;
+    pointer-events:none;
+    overflow-wrap:break-word;word-break:break-word;white-space:normal;
+    line-height:1.2;
+  }
+  .drag-card{
+    background:linear-gradient(135deg,var(--navy),#071828);
+    border:2px solid rgba(13,148,136,0.5);
+    border-radius:10px;
+    padding:10px 16px;
+    cursor:grab;
+    font-size:1rem;
+    color:var(--text);
+    user-select:none;
+    touch-action:none;
+    transition:box-shadow .1s,transform .1s;
+    overflow-wrap:break-word;word-break:break-word;
+  }
+  .drag-card:hover{box-shadow:0 4px 16px rgba(13,148,136,0.4);transform:scale(1.04);}
+  .drag-card.dragging{opacity:.5;transform:scale(1.08);}
+
+  /* SEQUENCE builder */
+  #seqArea{max-width:720px;width:100%;}
+  .seq-pool{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    background:var(--navy);
+    border:2px dashed rgba(13,148,136,0.3);
+    border-radius:14px;
+    padding:16px;
+    min-height:70px;
+    margin-bottom:14px;
+  }
+  .seq-built{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    background:#050f1c;
+    border:2px solid rgba(13,148,136,0.3);
+    border-radius:14px;
+    padding:14px;
+    min-height:60px;
+    margin-bottom:14px;
+  }
+  .seq-card{
+    background:linear-gradient(135deg,var(--navy),#071828);
+    border:2px solid rgba(13,148,136,0.5);
+    border-radius:10px;
+    padding:10px 16px;
+    cursor:pointer;
+    font-size:1rem;
+    color:var(--text);
+    user-select:none;
+    transition:box-shadow .1s,transform .1s;
+    overflow-wrap:break-word;word-break:break-word;
+  }
+  .seq-card:hover{box-shadow:0 4px 16px rgba(13,148,136,0.4);transform:scale(1.04);}
+  #checkSeqBtn{margin-top:6px;}
+
+  /* ── FEEDBACK BAR ── */
+  #feedbackBar{
+    max-width:720px;width:100%;
+    border-radius:14px;
+    padding:14px 20px;
+    font-size:1rem;
+    line-height:1.5;
+    margin-top:14px;
+    display:none;
+    font-weight:500;
+  }
+  #feedbackBar.good{background:rgba(13,148,136,0.15);border:2px solid var(--teal);color:#b2ede8;}
+  #feedbackBar.bad{background:rgba(192,57,43,0.15);border:2px solid var(--wrong);color:#ff9090;}
+
+  /* ── NEXT ── */
+  #nextBtn{margin-top:20px;display:none;}
+
+  /* ── END SCREEN ── */
+  #endScreen .trophy{font-size:5rem;margin-bottom:10px;}
+  #endScreen h2{font-size:2.2rem;color:var(--gold);margin-bottom:8px;}
+  #endScreen .final-score{font-size:1.8rem;color:#b2ede8;margin-bottom:6px;}
+  #endScreen .rank-msg{color:#a8c8e8;font-size:1.1rem;margin-bottom:28px;}
+  #endScreen .summary{
+    background:var(--navy);border:1px solid rgba(13,148,136,0.3);
+    border-radius:14px;padding:18px 24px;max-width:520px;
+    margin-bottom:28px;text-align:left;font-size:.95rem;line-height:1.8;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progressWrap{
+    max-width:720px;width:100%;
+    height:8px;background:rgba(12,42,80,0.8);
+    border-radius:99px;margin-bottom:18px;overflow:hidden;
+  }
+  #progressBar{height:100%;background:var(--teal);border-radius:99px;transition:width .4s;}
+
+  /* ── TIMER BAR (round 3) ── */
+  #timerWrap{
+    max-width:720px;width:100%;
+    height:8px;background:rgba(12,42,80,0.8);
+    border-radius:99px;margin-bottom:12px;overflow:hidden;
+    display:none;
+  }
+  #timerBar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .15s linear;}
+
+  /* ── GOLD GLITTER ── */
+  @keyframes glitter{
+    0%{opacity:0;transform:translateY(0) scale(0.8) rotate(0deg);}
+    30%{opacity:1;}
+    100%{opacity:0;transform:translateY(-70px) scale(1.3) rotate(180deg);}
+  }
+  .glitter-p{
+    position:fixed;pointer-events:none;z-index:9998;
+    font-size:13px;animation:glitter 1.3s ease forwards;
+  }
+
+  @media(max-width:520px){
+    #optionsGrid{grid-template-columns:1fr;}
+    .slot{width:110px;}
+  }
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    #optionsGrid{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- Permanent Restart button — visible on every screen -->
+<button id="home-btn" onclick="goHome()">🏠 Restart</button>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-pill" id="roundLabel">Round 1</div>
+  <div class="hud-pill">Q <span id="qNum">1</span> / <span id="qTotal">12</span></div>
+  <div class="hud-pill">Score: <span id="scoreVal">0</span></div>
+  <div class="hud-pill" id="livesDisplay">Lives: <span id="livesVal">❤️❤️❤️</span></div>
+</div>
+
+<!-- TITLE SCREEN -->
+<div class="screen active" id="titleScreen">
+  <div class="pill-label">🌟 Grade 5 · Topic 6 · Earth's Place in the Universe</div>
+  <div style="font-size:4rem;margin-bottom:8px;">🌌</div>
+  <h1>Star Explorer</h1>
+  <div class="subtitle">Earth's Place in the Universe · Grade 5</div>
+
+  <!-- Decorative solar system SVG -->
+  <svg width="320" height="120" viewBox="0 0 320 120" style="margin-bottom:22px;">
+    <defs>
+      <radialGradient id="sun_g" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff7a0"/>
+        <stop offset="50%" stop-color="#E0A800"/>
+        <stop offset="100%" stop-color="#c06000"/>
+      </radialGradient>
+      <radialGradient id="earth_g" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#90caf9"/>
+        <stop offset="60%" stop-color="#1565c0"/>
+        <stop offset="100%" stop-color="#0a2a6e"/>
+      </radialGradient>
+      <radialGradient id="mars_g" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#ef9a9a"/>
+        <stop offset="100%" stop-color="#b71c1c"/>
+      </radialGradient>
+      <radialGradient id="jup_g" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#ffe0b2"/>
+        <stop offset="100%" stop-color="#bf360c"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="60" cy="60" rx="52" ry="16" fill="none" stroke="#ffffff18" stroke-width="1"/>
+    <ellipse cx="60" cy="60" rx="90" ry="26" fill="none" stroke="#ffffff18" stroke-width="1"/>
+    <ellipse cx="60" cy="60" rx="128" ry="38" fill="none" stroke="#ffffff18" stroke-width="1"/>
+    <circle cx="60" cy="60" r="28" fill="url(#sun_g)"/>
+    <circle cx="60" cy="60" r="34" fill="none" stroke="rgba(224,168,0,0.3)" stroke-width="8"/>
+    <circle cx="148" cy="52" r="10" fill="url(#earth_g)"/>
+    <ellipse cx="145" cy="50" rx="4" ry="3" fill="#2e7d32" opacity=".7" transform="rotate(-20,145,50)"/>
+    <circle cx="185" cy="76" r="7" fill="url(#mars_g)"/>
+    <circle cx="256" cy="46" r="16" fill="url(#jup_g)"/>
+    <line x1="240" y1="46" x2="272" y2="46" stroke="#bf360c" stroke-width="3" opacity=".4"/>
+    <line x1="242" y1="51" x2="270" y2="51" stroke="#ffe0b2" stroke-width="2" opacity=".4"/>
+  </svg>
+
+  <div class="how-box">
+    <h3>🚀 How to Play</h3>
+    <ul>
+      <li><b>Round 1</b> — Multiple-choice: Stars, brightness &amp; distance (4 pts each)</li>
+      <li><b>Round 2</b> — Drag &amp; drop: Shadow patterns &amp; day/night (5 pts each)</li>
+      <li><b>Round 3</b> — Timed sequence: Seasonal star patterns (6 pts, 20 s timer)</li>
+      <li>You have <b>3 lives ❤️</b> — wrong answers cost one life</li>
+      <li>Wrong answers reveal an explanation — read &amp; learn!</li>
+    </ul>
+  </div>
+  <button class="btn" id="start-btn" onclick="startGame()">🌟 Launch Mission</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACbklEQVR4nO1ZW4rjMBAsWYb9lG+Qo7SvNjeTYS8yB1iQPwMyvVS3HXY/JhlYllHDNCFRLAKlUvUzSfHMjunpNvC9/2/8QBvfc5PcgFI7uOjFr0X66PxCm6hqVuWCp5A/n/QI+EHORbWq1g70UrNqbryU4fFP52d5w77OQNb6o6Hv62D4PrL5sUpFU5Kfndcx/xoF3/RJ/Tf6bNZK2ajpJ4z+H/Hnr5dtSgD8lzn5vWiHoJwP+1fjm17u73TbtGz3Bfdbxb7yFMCxYN7XAfB9In4WoxoWQg08zBcQQz+VAb+dC/psUXsiMfxXmbM84WZVmPh7qSg1gv5hhFdzXqGELB17LNUY/KvVDOS8Qx5r8t9C4K8w/bP+vMx9GSH8t0lWZcFMzqn/q3gGryNC/u2ef0k4/CznoRACv5jnEvl1Cn61uCQh8INmmK/6weKPBvFfJU5XDigbT77WzmgE/JUlqKcA17xngVJ5FzH8V1wwrHxAOflF9BD6V5Y9bIG5sCzGdy+nJQT+TB+g4M92zCs3Ly0i6Eev4Q+vwLQURz8TSj1ub/cbqx1rJIE9cXK42Prr8b3uv2BjiGPZ2HMBc6kzoO/sywbA98LUAr71XBbwbZZlWaDGiP/NGkbKnlHo7L9sq4eI/270X5s84DyOhSAZHv+EPaWUKPU9zdhYRZsXc5bYRsD3wvScNrOK8LLZu+BTSNOLn08D7Kfk01oh//va97VjSwvye5D5D07aPfK4FygHoTH4pzELbB3bkdaZCzkW4cNR8H1oev3b8oif3svYREsj8L+llIx/q4IsfuYmPgvFAPieWvr+//Sp/W/+fwOlQyaYdD2vCQAAAABJRU5ErkJggg==" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen" id="gameScreen">
+  <div id="progressWrap"><div id="progressBar" style="width:0%"></div></div>
+  <div id="timerWrap"><div id="timerBar" style="width:100%"></div></div>
+  <div id="questionBox">
+    <div class="round-tag" id="roundTag"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="qhint" id="qhint"></div>
+  </div>
+  <div id="diagramArea"></div>
+  <div id="optionsGrid"></div>
+  <div id="dragArea" style="display:none"></div>
+  <div id="seqArea" style="display:none"></div>
+  <div id="feedbackBar"></div>
+  <button class="btn btn-teal" id="nextBtn" onclick="nextQuestion()">Next ➜</button>
+</div>
+
+<!-- END SCREEN -->
+<div class="screen" id="endScreen">
+  <div class="trophy" id="trophyEmoji">🏆</div>
+  <h2>Mission Complete!</h2>
+  <div class="final-score">Score: <span id="finalScore">0</span> / <span id="maxScore">0</span></div>
+  <div class="rank-msg" id="rankMsg"></div>
+  <div class="summary" id="summaryBox"></div>
+  <button class="btn" onclick="goHome()">🏠 Play Again</button>
+</div>
+
+<script>
+// ── STARFIELD (white/silver ambient — not celebration particles) ──
+(function(){
+  const c=document.getElementById('starfield');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  const stars=Array.from({length:220},()=>({
+    x:Math.random()*innerWidth,
+    y:Math.random()*innerHeight,
+    r:Math.random()*1.8+.3,
+    a:Math.random(),
+    da:(Math.random()-.5)*.008
+  }));
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.a+=s.da;
+      if(s.a<0||s.a>1)s.da*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── GOLD GLITTER ──
+function spawnGlitter(){
+  const sym=['✦','✧','◆','●','▪','✦'];
+  const cols=['#E0A800','#c08600','#f5d060','#a87000','#ffc400'];
+  for(let i=0;i<14;i++){
+    const g=document.createElement('div');
+    g.className='glitter-p';
+    g.textContent=sym[Math.floor(Math.random()*sym.length)];
+    g.style.left=(15+Math.random()*70)+'vw';
+    g.style.top=(30+Math.random()*50)+'vh';
+    g.style.color=cols[Math.floor(Math.random()*cols.length)];
+    g.style.animationDelay=(Math.random()*0.6)+'s';
+    document.body.appendChild(g);
+    setTimeout(()=>g.remove(),2000);
+  }
+}
+
+// ── QUESTIONS ──
+// Round 1: MC (brightness & distance) — 5 questions
+const round1 = [
+  {
+    q: "A star looks very bright in the night sky. What does this MOST likely mean?",
+    opts: ["It is the largest star in the universe","It is relatively close to Earth","It is hotter than all other stars","It has more planets around it"],
+    ans: 1,
+    exp: "Apparent brightness depends mainly on distance. A nearby star looks brighter even if it is smaller than far-away stars.",
+    diagram: makeBrightnessCompareSVG
+  },
+  {
+    q: "The Sun looks much brighter than other stars we see at night. Why?",
+    opts: ["The Sun is the only star in our galaxy","The Sun is extremely close to Earth compared to other stars","The Sun is bigger than every other star","Other stars produce no light of their own"],
+    ans: 1,
+    exp: "The Sun is our nearest star — only ~150 million km away. The next nearest star (Proxima Centauri) is ~4.2 light-years away, so sunlight vastly dominates.",
+    diagram: makeSunVsStarSVG
+  },
+  {
+    q: "Two stars are identical in size and brightness. Star A is 10 light-years away; Star B is 100 light-years away. How do they appear from Earth?",
+    opts: ["Both look equally bright","Star A looks dimmer","Star A looks brighter","We cannot see either star"],
+    ans: 2,
+    exp: "The closer a star is, the brighter it appears. Star A is 10× closer, so it appears much brighter even though the stars are identical.",
+    diagram: null
+  },
+  {
+    q: "Which tool do scientists use to measure the distance to nearby stars?",
+    opts: ["A shadow stick (gnomon)","Stellar parallax — observing the star's apparent shift as Earth orbits","A telescope that measures star colour only","A thermometer measuring star heat"],
+    ans: 1,
+    exp: "Parallax measures how much a nearby star seems to 'shift' against background stars as Earth moves around the Sun. Greater shift = closer star.",
+    diagram: null
+  },
+  {
+    q: "A student argues: 'The brightest star in the night sky must be the biggest star.' Is this correct?",
+    opts: ["Yes — brightness always reflects size","No — brightness also depends on distance from Earth","Yes — hotter stars are always bigger","No — brightness only depends on colour"],
+    ans: 1,
+    exp: "A small but nearby star can outshine a huge but distant star. Both distance and intrinsic luminosity affect apparent brightness.",
+    diagram: null
+  }
+];
+
+// Round 2: Drag-and-drop (shadows / day-night) — 4 questions
+const round2 = [
+  {
+    q: "Drag each shadow description to the correct time of day.",
+    hint: "Think: where is the Sun at each time?",
+    type: "drag",
+    items: ["Very long shadow pointing West","Short shadow (almost no shadow)","Very long shadow pointing East","No shadow at all"],
+    slots: ["Sunrise (6 am)","Solar Noon (12 pm)","Sunset (6 pm)","Midnight"],
+    correctOrder: [0,1,2,3],
+    exp: "At sunrise the Sun is low in the East → long westward shadow. At noon it's overhead → shortest shadow. At sunset low in West → long eastward shadow. At midnight no sunlight → no shadow.",
+    diagram: makeShadowDiagramSVG
+  },
+  {
+    q: "Drag the events to show what causes Day and Night on Earth.",
+    hint: "It's Earth that spins, not the Sun that moves.",
+    type: "drag",
+    items: ["Earth rotates toward the Sun","Sunlight hits that side","That side has DAY","The other side is in shadow — NIGHT"],
+    slots: ["Step 1","Step 2","Step 3","Step 4"],
+    correctOrder: [0,1,2,3],
+    exp: "Earth's rotation (spinning on its axis once every ~24 hours) causes day and night. The side facing the Sun has day; the side turned away has night.",
+    diagram: makeDayNightSVG
+  },
+  {
+    q: "Drag the shadow features to the correct season in the Northern Hemisphere.",
+    hint: "In summer the Sun is higher in the sky — shorter shadows.",
+    type: "drag",
+    items: ["Shortest midday shadows","Longest midday shadows","Medium shadows — days equal nights","Medium shadows — nights longer"],
+    slots: ["Summer Solstice (June)","Winter Solstice (Dec)","Spring Equinox (Mar)","Autumn Equinox (Sep)"],
+    correctOrder: [0,1,2,3],
+    exp: "At summer solstice the Sun is highest → shortest shadows. At winter solstice the Sun is lowest → longest shadows. Equinoxes have balanced day/night.",
+    diagram: null
+  },
+  {
+    q: "A shadow stick is placed outdoors at 8 am, 12 pm, and 4 pm. Drag to match each measurement.",
+    hint: "Shadow length changes as the Sun moves across the sky.",
+    type: "drag",
+    items: ["Long shadow pointing West","Shortest shadow of the day","Long shadow pointing East"],
+    slots: ["8 am","12 pm","4 pm"],
+    correctOrder: [0,1,2],
+    exp: "Early morning (8 am): Sun in East → shadow points West, long. Noon: Sun overhead → shadow shortest. Late afternoon (4 pm): Sun in West → shadow points East, long.",
+    diagram: null
+  }
+];
+
+// Round 3: Sequence (seasonal stars) — 3 timed challenges
+const round3 = [
+  {
+    q: "Put these facts about seasonal star patterns in logical ORDER (click in order 1→4).",
+    hint: "Why do we see different constellations in different seasons?",
+    type: "seq",
+    items: [
+      "Earth orbits the Sun over one year",
+      "At each orbital position Earth faces a different region of space at night",
+      "Different star constellations appear in that night-sky region",
+      "So the same constellation returns each year at the same season"
+    ],
+    correctOrder: [0,1,2,3],
+    exp: "Earth's yearly orbit around the Sun changes which part of space faces us at night — that is why Orion is a winter constellation and Scorpius a summer one.",
+    diagram: makeSeasonalStarsSVG
+  },
+  {
+    q: "A student sees Orion high in the winter sky. Arrange these 4 events in ORDER to explain why.",
+    hint: "Think about Earth's position in its orbit.",
+    type: "seq",
+    items: [
+      "Earth is on the side of its orbit facing Orion at night (winter)",
+      "The Sun is between Earth and Orion during summer — Orion is hidden in daytime sky",
+      "Earth moves to the opposite side six months later",
+      "Orion becomes visible in the night sky each winter"
+    ],
+    correctOrder: [1,2,0,3],
+    exp: "In summer Orion is in the direction of the Sun (daytime sky). Six months later Earth is on the other side of the Sun, so Orion appears in the winter night sky.",
+    diagram: null
+  },
+  {
+    q: "Sequence the steps scientists follow to use stars to track seasons.",
+    hint: "Observation → record → pattern → predict.",
+    type: "seq",
+    items: [
+      "Observe which constellations are visible each month",
+      "Record data in a star chart over a full year",
+      "Identify the repeating seasonal pattern",
+      "Predict which stars will be visible next year at the same season"
+    ],
+    correctOrder: [0,1,2,3],
+    exp: "Science follows observation → data recording → pattern recognition → prediction. Ancient navigators and farmers used seasonal stars to track time long before calendars.",
+    diagram: null
+  }
+];
+
+// ── STATE ──
+let allQuestions=[];
+let qIdx=0;
+let score=0;
+let lives=3;
+let answered=false;
+let timerInterval=null;
+let timerSec=0;
+const TIMER_MAX=20;
+let wrongCount=0;
+let correctCount=0;
+
+// drag state
+let dragSrc=null;
+let slotContents=[];
+
+// seq state
+let seqPool=[];
+let seqBuilt=[];
+
+function buildQuestions(){
+  allQuestions=[];
+  round1.forEach((q,i)=>allQuestions.push({...q,round:1,pts:4,rIdx:i}));
+  round2.forEach((q,i)=>allQuestions.push({...q,round:2,pts:5,rIdx:i}));
+  round3.forEach((q,i)=>allQuestions.push({...q,round:3,pts:6,rIdx:i}));
+}
+
+function maxPossible(){
+  return round1.length*4 + round2.length*5 + round3.length*6;
+}
+
+// ── SCREENS ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame(){
+  buildQuestions();
+  qIdx=0; score=0; lives=3; wrongCount=0; correctCount=0;
+  updateHUD();
+  document.getElementById('hud').classList.add('visible');
+  showScreen('gameScreen');
+  renderQuestion();
+}
+
+function goHome(){
+  clearTimer();
+  qIdx=0; score=0; lives=3; wrongCount=0; correctCount=0;
+  document.getElementById('hud').classList.remove('visible');
+  showScreen('titleScreen');
+}
+
+// ── HUD ──
+function updateHUD(){
+  const q=allQuestions[qIdx]||{round:1};
+  document.getElementById('roundLabel').textContent='Round '+q.round;
+  document.getElementById('qNum').textContent=qIdx+1;
+  document.getElementById('qTotal').textContent=allQuestions.length;
+  document.getElementById('scoreVal').textContent=score;
+  const hearts=['❤️❤️❤️','❤️❤️🖤','❤️🖤🖤','🖤🖤🖤'][3-lives]||'🖤🖤🖤';
+  document.getElementById('livesVal').textContent=hearts;
+  const pct=(qIdx/allQuestions.length)*100;
+  document.getElementById('progressBar').style.width=pct+'%';
+}
+
+// ── RENDER QUESTION ──
+function renderQuestion(){
+  answered=false;
+  clearTimer();
+  hideFeedback();
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('optionsGrid').style.display='none';
+  document.getElementById('dragArea').style.display='none';
+  document.getElementById('seqArea').style.display='none';
+  document.getElementById('timerWrap').style.display='none';
+  document.getElementById('diagramArea').innerHTML='';
+
+  if(qIdx>=allQuestions.length){showEnd();return;}
+  const q=allQuestions[qIdx];
+  updateHUD();
+
+  document.getElementById('roundTag').textContent='Round '+q.round+' — '+
+    (q.round===1?'Stars & Distance':q.round===2?'Shadows & Day/Night':'Seasonal Stars');
+  document.getElementById('qtext').textContent=q.q;
+  document.getElementById('qhint').textContent=q.hint||'';
+
+  if(q.diagram){
+    document.getElementById('diagramArea').innerHTML='';
+    const svgEl=q.diagram();
+    if(svgEl) document.getElementById('diagramArea').appendChild(svgEl);
+  }
+
+  if(q.type==='drag') renderDrag(q);
+  else if(q.type==='seq') renderSeq(q);
+  else renderMC(q);
+}
+
+// ── MULTIPLE CHOICE ──
+function renderMC(q){
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  grid.style.display='grid';
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>handleMC(q,i,btn);
+    grid.appendChild(btn);
+  });
+}
+
+function handleMC(q,chosen,btn){
+  if(answered)return;
+  answered=true;
+  const allBtns=document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b=>b.disabled=true);
+  if(chosen===q.ans){
+    btn.classList.add('correct');
+    score+=q.pts;
+    correctCount++;
+    showFeedback(true,'✅ Correct! '+q.exp);
+    spawnGlitter();
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.ans].classList.add('correct');
+    lives--;
+    wrongCount++;
+    showFeedback(false,'❌ Not quite. '+q.exp);
+    if(lives<=0)setTimeout(showEnd,1800);
+  }
+  updateHUD();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+// ── DRAG & DROP ──
+function renderDrag(q){
+  const area=document.getElementById('dragArea');
+  area.innerHTML='';
+  area.style.display='flex';
+
+  const idxArr=q.items.map((_,i)=>i);
+  const shuffled=[...idxArr].sort(()=>Math.random()-.5);
+
+  slotContents=new Array(q.slots.length).fill(null);
+
+  const pool=document.createElement('div');
+  pool.className='drag-pool';
+  pool.id='dragPool';
+
+  shuffled.forEach(i=>{
+    const card=createDragCard(q.items[i],i);
+    pool.appendChild(card);
+  });
+  area.appendChild(pool);
+
+  const slotsRow=document.createElement('div');
+  slotsRow.className='drag-slots';
+  q.slots.forEach((label,si)=>{
+    const slot=document.createElement('div');
+    slot.className='slot';
+    slot.dataset.slot=si;
+    const lbl=document.createElement('div');
+    lbl.className='slot-label';
+    lbl.textContent=label;
+    slot.appendChild(lbl);
+    setupSlotEvents(slot,q);
+    slotsRow.appendChild(slot);
+  });
+  area.appendChild(slotsRow);
+
+  const checkBtn=document.createElement('button');
+  checkBtn.className='btn';
+  checkBtn.textContent='Check Answer ✓';
+  checkBtn.id='checkDragBtn';
+  checkBtn.onclick=()=>checkDrag(q);
+  area.appendChild(checkBtn);
+}
+
+function createDragCard(text,dataIdx){
+  const card=document.createElement('div');
+  card.className='drag-card';
+  card.textContent=text;
+  card.dataset.idx=dataIdx;
+  card.draggable=true;
+  card.addEventListener('dragstart',e=>{
+    dragSrc=card;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+  });
+  card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+  setupTouchDrag(card);
+  return card;
+}
+
+function setupSlotEvents(slot,q){
+  slot.addEventListener('dragover',e=>{e.preventDefault();slot.classList.add('drag-over');});
+  slot.addEventListener('dragleave',()=>slot.classList.remove('drag-over'));
+  slot.addEventListener('drop',e=>{
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    if(!dragSrc)return;
+    dropCardOnSlot(slot,dragSrc,q);
+  });
+  slot.addEventListener('click',()=>{
+    const existing=slot.querySelector('.drag-card');
+    if(existing){
+      const si=parseInt(slot.dataset.slot);
+      slotContents[si]=null;
+      slot.classList.remove('filled');
+      slot.removeChild(existing);
+      document.getElementById('dragPool').appendChild(existing);
+    }
+  });
+}
+
+function dropCardOnSlot(slot,card,q){
+  const si=parseInt(slot.dataset.slot);
+  const existing=slot.querySelector('.drag-card');
+  if(existing && existing!==card){
+    const oldSi=slotContents.findIndex(v=>v===parseInt(existing.dataset.idx));
+    if(oldSi>=0) slotContents[oldSi]=null;
+    document.getElementById('dragPool').appendChild(existing);
+  }
+  if(card.parentElement) card.parentElement.removeChild(card);
+  slot.appendChild(card);
+  slot.classList.add('filled');
+  slotContents[si]=parseInt(card.dataset.idx);
+}
+
+function setupTouchDrag(card){
+  let clone=null,startX,startY;
+  card.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse')return;
+    e.preventDefault();
+    const r=card.getBoundingClientRect();
+    startX=e.clientX-r.left;
+    startY=e.clientY-r.top;
+    clone=card.cloneNode(true);
+    clone.style.cssText=`position:fixed;width:${r.width}px;opacity:.8;pointer-events:none;z-index:9999;top:${r.top}px;left:${r.left}px;`;
+    document.body.appendChild(clone);
+    card.style.opacity='.3';
+    card.setPointerCapture(e.pointerId);
+  },{passive:false});
+  card.addEventListener('pointermove',e=>{
+    if(!clone)return;
+    e.preventDefault();
+    clone.style.top=(e.clientY-startY)+'px';
+    clone.style.left=(e.clientX-startX)+'px';
+  },{passive:false});
+  card.addEventListener('pointerup',e=>{
+    if(!clone)return;
+    clone.remove();clone=null;
+    card.style.opacity='';
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const slot=el&&(el.classList.contains('slot')?el:el.closest('.slot'));
+    if(slot) dropCardOnSlot(slot,card,null);
+  });
+}
+
+function checkDrag(q){
+  if(answered)return;
+  const filled=slotContents.filter(v=>v!==null);
+  if(filled.length<q.slots.length){
+    showFeedback(false,'⚠️ Please fill all slots before checking!');
+    return;
+  }
+  answered=true;
+  document.getElementById('checkDragBtn').disabled=true;
+  let allCorrect=true;
+  for(let i=0;i<q.correctOrder.length;i++){
+    if(slotContents[i]!==q.correctOrder[i]){allCorrect=false;break;}
+  }
+  if(allCorrect){
+    score+=q.pts;
+    correctCount++;
+    showFeedback(true,'✅ Perfect! '+q.exp);
+    spawnGlitter();
+  } else {
+    lives--;
+    wrongCount++;
+    showFeedback(false,'❌ Not quite. Correct order shown above. '+q.exp);
+    if(lives<=0)setTimeout(showEnd,2000);
+  }
+  updateHUD();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+// ── SEQUENCE ──
+function renderSeq(q){
+  const area=document.getElementById('seqArea');
+  area.innerHTML='';
+  area.style.display='block';
+  seqPool=[...q.items.map((_,i)=>i)].sort(()=>Math.random()-.5);
+  seqBuilt=[];
+
+  const pool=document.createElement('div');
+  pool.className='seq-pool';
+  pool.id='seqPool';
+
+  const built=document.createElement('div');
+  built.className='seq-built';
+  built.id='seqBuilt';
+
+  const instruct=document.createElement('div');
+  instruct.style.cssText='color:#a0b8d0;font-size:.9rem;margin-bottom:8px;';
+  instruct.textContent='Click items in the POOL to add them. Click items in YOUR SEQUENCE to remove.';
+  area.appendChild(instruct);
+  area.appendChild(pool);
+
+  const arrow=document.createElement('div');
+  arrow.style.cssText='color:var(--gold);text-align:center;font-size:1.4rem;margin:4px 0;';
+  arrow.textContent='▼ Your sequence ▼';
+  area.appendChild(arrow);
+  area.appendChild(built);
+
+  const checkBtn=document.createElement('button');
+  checkBtn.className='btn';
+  checkBtn.textContent='Submit Sequence ✓';
+  checkBtn.id='checkSeqBtn';
+  checkBtn.onclick=()=>checkSeq(q);
+  area.appendChild(checkBtn);
+
+  refreshSeqUI(q);
+
+  document.getElementById('timerWrap').style.display='block';
+  startTimer(q);
+}
+
+function refreshSeqUI(q){
+  const pool=document.getElementById('seqPool');
+  const built=document.getElementById('seqBuilt');
+  if(!pool||!built)return;
+  pool.innerHTML='';
+  built.innerHTML='';
+
+  seqPool.forEach(idx=>{
+    const card=document.createElement('div');
+    card.className='seq-card';
+    card.textContent=q.items[idx];
+    card.onclick=()=>{
+      seqPool=seqPool.filter(v=>v!==idx);
+      seqBuilt.push(idx);
+      refreshSeqUI(q);
+    };
+    pool.appendChild(card);
+  });
+
+  seqBuilt.forEach((idx,pos)=>{
+    const card=document.createElement('div');
+    card.className='seq-card';
+    card.style.borderColor='#E0A800';
+    card.textContent=(pos+1)+'. '+q.items[idx];
+    card.onclick=()=>{
+      seqBuilt=seqBuilt.filter(v=>v!==idx);
+      seqPool.push(idx);
+      refreshSeqUI(q);
+    };
+    built.appendChild(card);
+  });
+}
+
+function startTimer(q){
+  timerSec=TIMER_MAX;
+  const bar=document.getElementById('timerBar');
+  bar.style.width='100%';
+  timerInterval=setInterval(()=>{
+    timerSec--;
+    bar.style.width=(timerSec/TIMER_MAX*100)+'%';
+    if(timerSec<=0){
+      clearTimer();
+      if(!answered) autoFailSeq(q);
+    }
+  },1000);
+}
+
+function clearTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+}
+
+function autoFailSeq(q){
+  answered=true;
+  lives--;
+  wrongCount++;
+  showFeedback(false,'⏱️ Time up! '+q.exp);
+  updateHUD();
+  const btn=document.getElementById('checkSeqBtn');
+  if(btn)btn.disabled=true;
+  document.getElementById('nextBtn').style.display='block';
+  if(lives<=0)setTimeout(showEnd,2000);
+}
+
+function checkSeq(q){
+  if(answered)return;
+  if(seqBuilt.length<q.items.length){
+    showFeedback(false,'⚠️ Place all items in your sequence first!');
+    return;
+  }
+  clearTimer();
+  answered=true;
+  document.getElementById('checkSeqBtn').disabled=true;
+  const correct=q.correctOrder;
+  let ok=true;
+  for(let i=0;i<correct.length;i++){
+    if(seqBuilt[i]!==correct[i]){ok=false;break;}
+  }
+  if(ok){
+    score+=q.pts;
+    correctCount++;
+    showFeedback(true,'✅ Perfect sequence! '+q.exp);
+    spawnGlitter();
+  } else {
+    lives--;
+    wrongCount++;
+    const corrStr=correct.map((ci,pos)=>(pos+1)+'. '+q.items[ci]).join(' → ');
+    showFeedback(false,'❌ Not quite. Correct: '+corrStr+'. '+q.exp);
+    if(lives<=0)setTimeout(showEnd,2200);
+  }
+  updateHUD();
+  document.getElementById('nextBtn').style.display='block';
+}
+
+// ── FEEDBACK ──
+function showFeedback(good,msg){
+  const bar=document.getElementById('feedbackBar');
+  bar.textContent=msg;
+  bar.className='';
+  bar.classList.add(good?'good':'bad');
+  bar.style.display='block';
+}
+function hideFeedback(){
+  const bar=document.getElementById('feedbackBar');
+  bar.style.display='none';
+}
+
+// ── NEXT ──
+function nextQuestion(){
+  qIdx++;
+  if(qIdx>=allQuestions.length){showEnd();return;}
+  renderQuestion();
+}
+
+// ── END ──
+function showEnd(){
+  clearTimer();
+  document.getElementById('hud').classList.remove('visible');
+  const max=maxPossible();
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('maxScore').textContent=max;
+  const pct=score/max;
+  let emoji='🌟',msg='';
+  if(pct>=.9){emoji='🏆';msg='Outstanding! You are a Star Explorer! 🚀';}
+  else if(pct>=.7){emoji='🌟';msg='Great work, Space Cadet! Keep exploring!';}
+  else if(pct>=.5){emoji='🌙';msg='Good effort! Review the explanations and try again.';}
+  else{emoji='🌍';msg='Keep studying — the universe awaits! Review and retry.';}
+  document.getElementById('trophyEmoji').textContent=emoji;
+  document.getElementById('rankMsg').textContent=msg;
+  document.getElementById('summaryBox').innerHTML=
+    `<b>Questions answered:</b> ${correctCount} correct, ${wrongCount} wrong<br>
+     <b>Lives remaining:</b> ${lives>0?lives:0}/3<br>
+     <b>Key facts to remember:</b><br>
+     • Apparent brightness depends on a star's distance from Earth.<br>
+     • The Sun looks brightest because it is our nearest star.<br>
+     • Shadows are shortest at noon (Sun highest), longest at sunrise/sunset.<br>
+     • Earth's rotation causes day and night (≈24 hours).<br>
+     • Earth's orbit causes seasonal star patterns (≈365 days).`;
+  showScreen('endScreen');
+  spawnGlitter();
+}
+
+// ── SVG DIAGRAMS ──
+function makeBrightnessCompareSVG(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('viewBox','0 0 600 160');
+  svg.setAttribute('aria-label','Two stars at different distances from Earth');
+  svg.innerHTML=`
+    <defs>
+      <radialGradient id="bigstar" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="60%" stop-color="#E0A800"/>
+        <stop offset="100%" stop-color="#c06000" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="farstar" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="100%" stop-color="#0d9488" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="600" height="160" rx="14" fill="#05050f"/>
+    <circle cx="300" cy="120" r="22" fill="#1565c0"/>
+    <ellipse cx="293" cy="114" rx="8" ry="6" fill="#2e7d32" opacity=".8" transform="rotate(-15,293,114)"/>
+    <text x="300" y="152" text-anchor="middle" fill="#90caf9" font-size="13">Earth</text>
+    <circle cx="120" cy="50" r="32" fill="url(#bigstar)" opacity=".9"/>
+    <circle cx="120" cy="50" r="18" fill="#fff7a0"/>
+    <text x="120" y="100" text-anchor="middle" fill="#E0A800" font-size="13" font-weight="bold">Star A</text>
+    <text x="120" y="114" text-anchor="middle" fill="#aaa" font-size="11">Closer — looks BRIGHTER</text>
+    <line x1="138" y1="64" x2="282" y2="110" stroke="rgba(224,168,0,0.4)" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="200" y="85" fill="#E0A800" font-size="11" text-anchor="middle">Nearby</text>
+    <circle cx="530" cy="38" r="14" fill="url(#farstar)" opacity=".7"/>
+    <circle cx="530" cy="38" r="7" fill="#fff"/>
+    <text x="530" y="72" text-anchor="middle" fill="#0d9488" font-size="13" font-weight="bold">Star B</text>
+    <text x="530" y="86" text-anchor="middle" fill="#aaa" font-size="11">Far — looks DIMMER</text>
+    <line x1="516" y1="50" x2="320" y2="112" stroke="rgba(13,148,136,0.4)" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="430" y="72" fill="#0d9488" font-size="11" text-anchor="middle">Very far</text>
+  `;
+  return svg;
+}
+
+function makeSunVsStarSVG(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('viewBox','0 0 600 140');
+  svg.innerHTML=`
+    <defs>
+      <radialGradient id="sun2" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="50%" stop-color="#E0A800"/>
+        <stop offset="100%" stop-color="#c06000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="600" height="140" rx="14" fill="#05050f"/>
+    <circle cx="80" cy="70" r="48" fill="url(#sun2)" opacity=".95"/>
+    <circle cx="80" cy="70" r="30" fill="#fff7a0"/>
+    <text x="80" y="128" text-anchor="middle" fill="#E0A800" font-size="13" font-weight="bold">Our Sun</text>
+    <text x="80" y="142" text-anchor="middle" fill="#aaa" font-size="10">~150 million km</text>
+    <circle cx="260" cy="70" r="16" fill="#1565c0"/>
+    <ellipse cx="255" cy="65" rx="5" ry="4" fill="#2e7d32" opacity=".8"/>
+    <text x="260" y="95" text-anchor="middle" fill="#90caf9" font-size="12">Earth</text>
+    <line x1="108" y1="108" x2="244" y2="108" stroke="rgba(224,168,0,0.55)" stroke-width="1.5"/>
+    <line x1="108" y1="103" x2="108" y2="113" stroke="rgba(224,168,0,0.55)" stroke-width="1.5"/>
+    <line x1="244" y1="103" x2="244" y2="113" stroke="rgba(224,168,0,0.55)" stroke-width="1.5"/>
+    <circle cx="520" cy="40" r="5" fill="#fff"/>
+    <circle cx="540" cy="25" r="4" fill="#fffde7"/>
+    <circle cx="505" cy="60" r="3" fill="#e3f2fd"/>
+    <circle cx="555" cy="55" r="4" fill="#fff"/>
+    <text x="530" y="90" text-anchor="middle" fill="#0d9488" font-size="13" font-weight="bold">Distant Stars</text>
+    <text x="530" y="104" text-anchor="middle" fill="#aaa" font-size="10">4+ light-years away</text>
+    <text x="530" y="118" text-anchor="middle" fill="#aaa" font-size="10">appear tiny &amp; dim</text>
+  `;
+  return svg;
+}
+
+function makeShadowDiagramSVG(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('viewBox','0 0 600 160');
+  svg.innerHTML=`
+    <defs>
+      <radialGradient id="sunsh" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="100%" stop-color="#E0A800" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="600" height="160" rx="14" fill="#1a1000"/>
+    <rect x="0" y="120" width="600" height="40" rx="0" fill="#8d6e63"/>
+    <rect x="0" y="118" width="600" height="4" fill="#a1887f"/>
+    <circle cx="50" cy="90" r="22" fill="url(#sunsh)"/>
+    <circle cx="50" cy="90" r="12" fill="#E0A800"/>
+    <text x="50" y="112" text-anchor="middle" fill="#E0A800" font-size="10">Sunrise</text>
+    <circle cx="300" cy="20" r="22" fill="url(#sunsh)"/>
+    <circle cx="300" cy="20" r="12" fill="#fff7a0"/>
+    <text x="300" y="44" text-anchor="middle" fill="#E0A800" font-size="10">Noon</text>
+    <circle cx="550" cy="90" r="22" fill="url(#sunsh)"/>
+    <circle cx="550" cy="90" r="12" fill="#c06000"/>
+    <text x="550" y="112" text-anchor="middle" fill="#E0A800" font-size="10">Sunset</text>
+    <line x1="120" y1="118" x2="120" y2="90" stroke="#fff" stroke-width="3"/>
+    <circle cx="120" cy="86" r="7" fill="#fff"/>
+    <line x1="120" y1="118" x2="200" y2="118" stroke="#00000066" stroke-width="6"/>
+    <line x1="300" y1="118" x2="300" y2="90" stroke="#fff" stroke-width="3"/>
+    <circle cx="300" cy="86" r="7" fill="#fff"/>
+    <line x1="300" y1="118" x2="308" y2="118" stroke="#00000066" stroke-width="6"/>
+    <line x1="480" y1="118" x2="480" y2="90" stroke="#fff" stroke-width="3"/>
+    <circle cx="480" cy="86" r="7" fill="#fff"/>
+    <line x1="480" y1="118" x2="400" y2="118" stroke="#00000066" stroke-width="6"/>
+    <text x="160" y="150" text-anchor="middle" fill="#E0A800" font-size="11">Long → West</text>
+    <text x="300" y="150" text-anchor="middle" fill="#E0A800" font-size="11">Shortest</text>
+    <text x="440" y="150" text-anchor="middle" fill="#E0A800" font-size="11">Long → East</text>
+  `;
+  return svg;
+}
+
+function makeDayNightSVG(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('viewBox','0 0 600 160');
+  svg.innerHTML=`
+    <defs>
+      <radialGradient id="sun3" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="100%" stop-color="#E0A800" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="earth3" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#90caf9"/>
+        <stop offset="60%" stop-color="#1565c0"/>
+        <stop offset="100%" stop-color="#0a2a6e"/>
+      </radialGradient>
+    </defs>
+    <rect width="600" height="160" rx="14" fill="#05050f"/>
+    <circle cx="80" cy="80" r="44" fill="url(#sun3)"/>
+    <circle cx="80" cy="80" r="26" fill="#E0A800"/>
+    <text x="80" y="136" text-anchor="middle" fill="#E0A800" font-size="12">Sun</text>
+    <circle cx="340" cy="80" r="50" fill="#0a2a6e"/>
+    <path d="M340,30 A50,50 0 0,1 340,130 Z" fill="url(#earth3)" opacity=".95"/>
+    <ellipse cx="325" cy="68" rx="12" ry="8" fill="#2e7d32" opacity=".7" transform="rotate(-15,325,68)"/>
+    <ellipse cx="345" cy="95" rx="8" ry="5" fill="#2e7d32" opacity=".6" transform="rotate(10,345,95)"/>
+    <text x="330" y="78" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">DAY</text>
+    <text x="370" y="78" text-anchor="middle" fill="#90caf9" font-size="10">NIGHT</text>
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+    <path d="M340,25 A56,56 0 0,1 394,56" fill="none" stroke="#0d9488" stroke-width="2.5" marker-end="url(#arr)"/>
+    <text x="390" y="44" fill="#0d9488" font-size="11">Rotation</text>
+    <line x1="104" y1="56" x2="290" y2="68" stroke="rgba(224,168,0,0.3)" stroke-width="2"/>
+    <line x1="106" y1="80" x2="290" y2="80" stroke="rgba(224,168,0,0.3)" stroke-width="2"/>
+    <line x1="104" y1="104" x2="290" y2="92" stroke="rgba(224,168,0,0.3)" stroke-width="2"/>
+    <text x="480" y="80" text-anchor="middle" fill="#0d9488" font-size="12">24 hours = 1 full spin</text>
+  `;
+  return svg;
+}
+
+function makeSeasonalStarsSVG(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('viewBox','0 0 600 200');
+  svg.innerHTML=`
+    <defs>
+      <radialGradient id="sun4" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="100%" stop-color="#E0A800" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="e4" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#90caf9"/>
+        <stop offset="60%" stop-color="#1565c0"/>
+        <stop offset="100%" stop-color="#0a2a6e"/>
+      </radialGradient>
+    </defs>
+    <rect width="600" height="200" rx="14" fill="#05050f"/>
+    <circle cx="300" cy="100" r="32" fill="url(#sun4)"/>
+    <circle cx="300" cy="100" r="18" fill="#E0A800"/>
+    <text x="300" y="105" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Sun</text>
+    <ellipse cx="300" cy="100" rx="170" ry="78" fill="none" stroke="#ffffff22" stroke-width="1.5" stroke-dasharray="8,6"/>
+    <circle cx="470" cy="100" r="14" fill="url(#e4)"/>
+    <text x="500" y="98" fill="#90caf9" font-size="11">Winter</text>
+    <text x="500" y="112" fill="#aaa" font-size="10">Orion visible</text>
+    <circle cx="130" cy="100" r="14" fill="url(#e4)"/>
+    <text x="10" y="98" fill="#90caf9" font-size="11">Summer</text>
+    <text x="10" y="112" fill="#aaa" font-size="10">Scorpius visible</text>
+    <circle cx="300" cy="22" r="14" fill="url(#e4)"/>
+    <text x="265" y="14" fill="#90caf9" font-size="11">Spring</text>
+    <circle cx="300" cy="178" r="14" fill="url(#e4)"/>
+    <text x="262" y="196" fill="#90caf9" font-size="11">Autumn</text>
+    <circle cx="560" cy="40" r="4" fill="#fff"/>
+    <circle cx="575" cy="55" r="3" fill="#fffde7"/>
+    <circle cx="548" cy="60" r="3" fill="#e3f2fd"/>
+    <text x="560" y="32" text-anchor="middle" fill="#E0A800" font-size="10">Orion</text>
+    <circle cx="40" cy="40" r="4" fill="#fff"/>
+    <circle cx="25" cy="55" r="3" fill="#ffcdd2"/>
+    <circle cx="52" cy="60" r="3" fill="#fff"/>
+    <text x="38" y="32" text-anchor="middle" fill="#E0A800" font-size="10">Scorpius</text>
+  `;
+  return svg;
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

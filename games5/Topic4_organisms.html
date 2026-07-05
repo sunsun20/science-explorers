@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<!--
+  Topic: From Molecules to Organisms — Structures and Processes
+  Standards: 5-LS1-1 — Support an argument that plants get the materials they need for growth chiefly from air and water.
+  Teacher note: Directly addresses the "plants eat soil" misconception; reinforces photosynthesis inputs/outputs across 3 escalating rounds using a click-to-sort mechanic.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Power! — Grade 5 Science</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ---- STARFIELD background (matches Topic 3 family) ---- */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(160deg, #050e1d 0%, #0c2a50 50%, #050e1d 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 8%  12%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20% 65%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 33% 28%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 82%, rgba(255,255,255,.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67% 18%, rgba(255,255,255,.55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 72%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(2px 2px at 90% 40%, rgba(255,255,255,.45) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+body > * { position: relative; z-index: 1; }
+
+.screen { display: none; width: 100%; max-width: 720px; padding: 20px; }
+.screen.active { display: block; }
+
+/* PILL LABEL */
+.pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(224,168,0,.15);
+  border: 1px solid rgba(224,168,0,.4);
+  border-radius: 50px;
+  padding: 6px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #E0A800;
+  letter-spacing: 0.4px;
+  margin-bottom: 14px;
+}
+
+/* PERMANENT HOME BUTTON */
+.btn-home {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 9999;
+  background: rgba(12,42,80,.88);
+  border: 1px solid rgba(224,168,0,.5);
+  color: #E0A800;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background .15s, transform .1s;
+  line-height: 1;
+}
+.btn-home:hover { background: rgba(12,42,80,1); transform: scale(1.04); }
+
+/* TITLE SCREEN */
+.title-screen { text-align: center; }
+.game-title {
+  font-size: 2.6em;
+  font-weight: 900;
+  color: #E0A800;
+  text-shadow: 0 0 28px rgba(224,168,0,0.55), 0 4px 8px rgba(0,0,0,0.6);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+.game-subtitle {
+  font-size: 1.2em;
+  color: #7ecdc8;
+  margin-bottom: 20px;
+}
+.how-to-play {
+  background: rgba(13,148,136,0.08);
+  border: 2px solid rgba(13,148,136,0.5);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin: 16px 0 22px;
+  text-align: left;
+  font-size: 1.05em;
+  line-height: 1.8;
+}
+.how-to-play h3 { color: #E0A800; margin-bottom: 10px; font-size: 1.2em; }
+.how-to-play p { margin-bottom: 4px; }
+.btn-start {
+  background: linear-gradient(135deg, #E0A800, #b88800);
+  color: #0c2a50;
+  border: none;
+  border-radius: 50px;
+  padding: 20px 60px;
+  font-size: 1.5em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(224,168,0,0.45);
+  transition: all 0.2s;
+}
+.btn-start:hover { transform: scale(1.06); box-shadow: 0 12px 36px rgba(224,168,0,0.65); }
+
+/* GAME SCREEN */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.score-display { color: #E0A800; font-weight: 900; font-size: 1.4em; }
+.lives-display { font-size: 1.5em; letter-spacing: 2px; }
+.round-display {
+  background: rgba(13,148,136,0.2);
+  border: 1px solid rgba(13,148,136,0.55);
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-weight: 700;
+  color: #7ecdc8;
+  font-size: 1em;
+}
+.progress-bar-bg {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  height: 8px;
+  margin-bottom: 18px;
+}
+.progress-bar {
+  background: linear-gradient(90deg, #E0A800, #0d9488);
+  height: 8px;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+.round-header { text-align: center; margin-bottom: 14px; }
+.round-title { font-size: 1.35em; font-weight: 900; color: #E0A800; }
+.round-desc { font-size: 0.95em; color: #7ecdc8; margin-top: 4px; }
+.item-card {
+  background: rgba(255,255,255,.06);
+  border: 2px solid rgba(224,168,0,.3);
+  border-radius: 20px;
+  padding: 26px 20px;
+  text-align: center;
+  margin-bottom: 18px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transition: border-color 0.3s;
+}
+.item-icon { font-size: 3.5em; margin-bottom: 10px; line-height: 1; }
+.item-label { font-size: 1.55em; font-weight: 800; overflow-wrap: break-word; word-break: break-word; }
+.item-sub { font-size: 0.95em; color: #7ecdc8; margin-top: 6px; }
+.category-buttons {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cat-btn {
+  padding: 18px 10px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  font-size: 1.1em;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  line-height: 1.3;
+  color: #fff;
+  overflow-wrap: break-word; word-break: break-word; hyphens: auto;
+}
+.cat-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+.cat-btn:disabled { opacity: 0.75; cursor: not-allowed; transform: none !important; }
+/* Round 1: Air / Water / Neither */
+.cat-btn.cat-air    { background: linear-gradient(135deg, #0c3d5e, #1e6091); border-color: #4fc3e8; }
+.cat-btn.cat-water  { background: linear-gradient(135deg, #0c2a50, #1a4070); border-color: #5b8ccc; }
+.cat-btn.cat-neither{ background: linear-gradient(135deg, #1a1a3e, #252560); border-color: rgba(255,255,255,.35); }
+/* Round 2: Input / Output */
+.cat-btn.cat-input  { background: linear-gradient(135deg, #5a3c00, #8a5c00); border-color: #E0A800; }
+.cat-btn.cat-output { background: linear-gradient(135deg, #0b3535, #0d7070); border-color: #0d9488; }
+/* Round 3: True / False */
+.cat-btn.cat-true   { background: linear-gradient(135deg, #0b3535, #0d7070); border-color: #0d9488; }
+.cat-btn.cat-false  { background: linear-gradient(135deg, #5a0000, #8a1010); border-color: #cc4444; }
+/* Flash states */
+.cat-btn.flash-correct { background: linear-gradient(135deg, #0d9488, #0f766e) !important; border-color: #5eead4 !important; box-shadow: 0 0 24px rgba(94,234,212,.5); }
+.cat-btn.flash-wrong   { background: linear-gradient(135deg, #7f0000, #c62828) !important; border-color: #ff4444 !important; box-shadow: 0 0 24px rgba(255,68,68,.5); }
+.feedback-box {
+  background: rgba(0,0,0,0.45);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 1em;
+  text-align: center;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255,255,255,0.1);
+  transition: border-color 0.3s, color 0.3s;
+  line-height: 1.5;
+}
+.feedback-box.fb-correct { border-color: #0d9488; color: #5eead4; }
+.feedback-box.fb-wrong   { border-color: #cc4444; color: #fca5a5; }
+
+/* END SCREEN */
+.end-screen { text-align: center; }
+.end-title { font-size: 2.4em; font-weight: 900; color: #E0A800; margin-bottom: 12px; text-shadow: 0 0 20px rgba(224,168,0,.5); }
+.final-score { font-size: 4.5em; font-weight: 900; color: #E0A800; margin: 12px 0; text-shadow: 0 4px 16px rgba(224,168,0,0.5); }
+.score-label { font-size: 1.1em; color: #7ecdc8; }
+.star-rating { font-size: 2.8em; margin: 8px 0; }
+.end-message {
+  font-size: 1.1em;
+  color: #e2f0f0;
+  margin: 16px 0 20px;
+  line-height: 1.7;
+  background: rgba(13,148,136,0.12);
+  border: 1px solid rgba(13,148,136,0.5);
+  border-radius: 14px;
+  padding: 16px;
+}
+.btn-replay {
+  background: linear-gradient(135deg, #E0A800, #b88800);
+  color: #0c2a50;
+  border: none;
+  border-radius: 50px;
+  padding: 18px 50px;
+  font-size: 1.3em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(224,168,0,0.45);
+  transition: all 0.2s;
+}
+.btn-replay:hover { transform: scale(1.06); box-shadow: 0 12px 32px rgba(224,168,0,0.65); }
+
+@media (max-width: 480px) {
+  .game-title { font-size: 2em; }
+  .item-label { font-size: 1.3em; }
+  .cat-btn { font-size: 1em; padding: 14px 8px; }
+}
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn-start{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    .cat-btn-grid,.cat-btn{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* Topic4: category button grid → single column (overrides JS inline style) */
+    .category-buttons{grid-template-columns:1fr !important}
+    .cat-btn{min-height:48px !important;font-size:1rem !important}
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TITLE SCREEN ===== -->
+<div class="screen active" id="titleScreen">
+  <div class="title-screen">
+
+    <!-- Inline SVG: Generic garden plant with photosynthesis arrows (no UAE) -->
+    <svg width="300" height="230" viewBox="0 0 300 230" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 14px;">
+      <defs>
+        <radialGradient id="sunG4" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff9c4"/>
+          <stop offset="60%" stop-color="#E0A800"/>
+          <stop offset="100%" stop-color="#b88800" stop-opacity="0.5"/>
+        </radialGradient>
+        <linearGradient id="trunkG4" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4e342e"/>
+          <stop offset="50%" stop-color="#795548"/>
+          <stop offset="100%" stop-color="#5d4037"/>
+        </linearGradient>
+        <linearGradient id="groundG4" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#2d5a1b"/>
+          <stop offset="100%" stop-color="#1a3a0d"/>
+        </linearGradient>
+        <marker id="mBlue4" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#7ecdc8"/>
+        </marker>
+        <marker id="mWater4" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#5b8ccc"/>
+        </marker>
+        <marker id="mO24" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#7ecdc8"/>
+        </marker>
+      </defs>
+
+      <!-- Sky background -->
+      <rect width="300" height="200" fill="#050e1d" rx="12"/>
+      <!-- Ground strip -->
+      <rect x="0" y="188" width="300" height="42" fill="url(#groundG4)" rx="8"/>
+
+      <!-- Sun -->
+      <circle cx="248" cy="38" r="22" fill="url(#sunG4)"/>
+      <g stroke="#E0A800" stroke-width="2.2" stroke-linecap="round" opacity=".85">
+        <line x1="248" y1="10" x2="248" y2="5"/>
+        <line x1="269" y1="17" x2="273" y2="13"/>
+        <line x1="276" y1="38" x2="281" y2="38"/>
+        <line x1="269" y1="59" x2="273" y2="63"/>
+        <line x1="227" y1="59" x2="223" y2="63"/>
+        <line x1="220" y1="38" x2="215" y2="38"/>
+        <line x1="227" y1="17" x2="223" y2="13"/>
+      </g>
+      <!-- Sunlight beam to leaf -->
+      <line x1="230" y1="55" x2="165" y2="95" stroke="#E0A800" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+      <text x="185" y="77" fill="#E0A800" font-size="11" font-weight="bold" opacity=".9">☀️ light</text>
+
+      <!-- Tree trunk -->
+      <path d="M148 190 Q150 160 152 130 Q154 100 155 70" stroke="url(#trunkG4)" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <!-- Trunk rings texture -->
+      <path d="M149 178 Q152 176 154 178" stroke="#4e342e" stroke-width="1.8" fill="none"/>
+      <path d="M150 162 Q153 160 155 162" stroke="#4e342e" stroke-width="1.8" fill="none"/>
+      <path d="M151 146 Q154 144 156 146" stroke="#4e342e" stroke-width="1.8" fill="none"/>
+
+      <!-- Canopy (broad leaf tree — oak style) -->
+      <ellipse cx="155" cy="70" rx="55" ry="38" fill="#1b5e20" opacity=".9"/>
+      <ellipse cx="130" cy="60" rx="32" ry="24" fill="#2e7d32"/>
+      <ellipse cx="178" cy="58" rx="30" ry="22" fill="#2e7d32"/>
+      <ellipse cx="155" cy="48" rx="28" ry="20" fill="#388e3c"/>
+      <!-- Highlight -->
+      <ellipse cx="148" cy="52" rx="14" ry="10" fill="#43a047" opacity=".55"/>
+
+      <!-- Roots -->
+      <path d="M148 192 Q132 202 118 198" stroke="#5d4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M148 192 Q140 208 134 212" stroke="#4e342e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M152 193 Q160 207 166 210" stroke="#5d4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M152 192 Q166 200 176 197" stroke="#4e342e" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- Water droplets near roots -->
+      <path d="M116 200 Q118 195 120 200 Q118 205 116 200" fill="#5b8ccc" opacity=".9"/>
+      <path d="M126 208 Q128 203 130 208 Q128 213 126 208" fill="#5b8ccc" opacity=".85"/>
+      <path d="M170 202 Q172 197 174 202 Q172 207 170 202" fill="#5b8ccc" opacity=".85"/>
+
+      <!-- CO2 arrow from left into canopy -->
+      <text x="5" y="68" fill="#7ecdc8" font-size="12" font-weight="bold">CO₂</text>
+      <text x="5" y="82" fill="#7ecdc8" font-size="10">from air</text>
+      <path d="M42 70 L92 68" stroke="#7ecdc8" stroke-width="2.5" fill="none" marker-end="url(#mBlue4)"/>
+
+      <!-- Water arrow upward through trunk -->
+      <path d="M130 195 Q122 178 124 158" stroke="#5b8ccc" stroke-width="2.5" fill="none" stroke-dasharray="5,4" marker-end="url(#mWater4)"/>
+      <text x="54" y="172" fill="#5b8ccc" font-size="11" font-weight="bold">H₂O</text>
+      <text x="50" y="185" fill="#5b8ccc" font-size="10">roots→leaves</text>
+
+      <!-- O2 arrow out from canopy right -->
+      <path d="M210" y1="60" x2="237" y2="54"/>
+      <path d="M210 62 L236 56" stroke="#7ecdc8" stroke-width="2" fill="none" marker-end="url(#mO24)"/>
+      <text x="238" y="58" fill="#7ecdc8" font-size="11">O₂ out</text>
+    </svg>
+
+    <div class="pill-label">🌱 Grade 5 · Topic 4 · From Molecules to Organisms</div>
+    <div class="game-title">🌿 Plant Power!</div>
+    <div class="game-subtitle">Where do plants REALLY get their food?</div>
+
+    <div class="how-to-play">
+      <h3>📋 How to Play</h3>
+      <p>🌱 <strong>3 Rounds, 17 questions</strong> — each round gets harder!</p>
+      <p>❤️ <strong>3 lives total</strong> — every wrong answer costs one life.</p>
+      <p>👆 Read each item and <strong>tap the correct category button</strong>.</p>
+      <p>📖 Every answer shows an explanation — right or wrong!</p>
+      <p>🌴 <strong>Score 10 pts per correct answer. Aim for 170!</strong></p>
+    </div>
+
+    <button class="btn-start" onclick="startGame()">🚀 Start Game!</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACcUlEQVR4nO1ZQYrjQAysdhtybP9gn6L8LMzP2k/xD9rHgTZaSupcFtYJLEssGGEySfpSrZRKJU1SnMUxnR4DP+f/lh9o42tu0CYoFUVVay/+s0gPkF9RVUDSgrw9dLsDuDVkVV7tAvhenqdEzLmtzD9WAN8LsKf5IvjOYh5/S52LHolvjxm5XwXf9Ob5nphzu0jWej18fw1t5D/ZrlW15lHOYvyXHkZ/5I/HDiUA/hHMfIe4inaqKCMA/iZerFkrwcOeMt73APmvHdIJ2K/AEmZTaOglQv7Va5bMsRJW8ocnkgPU74T97tlOCw6TUN0eZE754sfP4zuPCUWPhW1Mtd62x5HuaSGFbnREV8D3ItQ4T6qDhZytHKx+EUN/dPDfVYjKaeLPcm7X5z8s+SxY77ygc6YcdfPSQfIvjpn5d/JQhTSI/it5QrXEeAx81ppj8F/drT27mLCWiV9j+DclT1yFzPIoZ0mz0BoDfyVa009nvnPJr9ZD+M8GiqfRxpSH/DcjqhHwVxNPczvev8y/uQXtMeYXsfwTuafd+Y8o+S9UGwrmuIvJqStSAP/5ANYxvLN/YS51Bvp+5yD/eXwvQjmwsAVw82DksUFy6GoPsX9oY4q3tksVeg6VEgS/cHK04cuY7/MXgtSvhVkg72L0PzZO5hD9q/HVnZtbIN+iZPtdepT9W/PJxQf5sQjqAfg/c//MnQ/ylnLn2v9YZMbqX+LT+Ka3z9Mi2Dm8z5y8atYvtrPr4Ds/L/TP38vq4k/msK9dB987+2cdMzureNRC/zS+6fX5mlLCzictz13odj9+2S7xAvhOI/38//Q0/nf+fwN9XAZxfPIcxwAAAABJRU5ErkJggg==" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div class="screen" id="gameScreen">
+  <div class="hud">
+    <div class="score-display">⭐ <span id="scoreDisplay">0</span></div>
+    <div class="round-display">Round <span id="roundDisplay">1</span>/3</div>
+    <div class="lives-display" id="livesDisplay">❤️❤️❤️</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="round-header">
+    <div class="round-title" id="roundTitle">Round 1</div>
+    <div class="round-desc" id="roundDesc"></div>
+  </div>
+  <div class="item-card">
+    <div class="item-icon" id="itemIcon">🌱</div>
+    <div class="item-label" id="itemLabel">Loading...</div>
+    <div class="item-sub" id="itemSub"></div>
+  </div>
+  <div class="category-buttons" id="categoryButtons"></div>
+  <div class="feedback-box" id="feedbackBox">Choose the correct category above!</div>
+</div>
+
+<!-- ===== END SCREEN ===== -->
+<div class="screen" id="endScreen">
+  <div class="end-screen">
+    <div id="endDiagram"></div>
+    <div class="end-title">Game Complete! 🎉</div>
+    <div class="score-label">Your Final Score</div>
+    <div class="final-score" id="finalScore">0</div>
+    <div class="star-rating" id="starRating">⭐⭐⭐</div>
+    <div class="end-message" id="endMessage"></div>
+    <button class="btn-replay" onclick="resetGame()">🔄 Play Again!</button>
+  </div>
+</div>
+
+<!-- Permanent home/restart button (always visible) -->
+<button class="btn-home" onclick="resetGame()">🏠 Restart</button>
+
+<script>
+// ============================================================
+// ROUND DATA — 17 items total
+// ============================================================
+var rounds = [
+  {
+    title: "Round 1: What Do Plants Really Need? 🌱",
+    desc: "Sort each item: is it where plants get their MASS from?",
+    cols: "1fr 1fr 1fr",
+    categories: [
+      { key:"air",     label:"☁️ FROM THE AIR",         cls:"cat-air" },
+      { key:"water",   label:"💧 FROM WATER / Roots",   cls:"cat-water" },
+      { key:"neither", label:"❌ NOT the Main Source",  cls:"cat-neither" }
+    ],
+    items: [
+      { icon:"🌬️", label:"Carbon Dioxide", sub:"(CO₂ — an invisible gas)",
+        answer:"air",
+        feedback:"✅ Correct! CO₂ enters leaves through tiny holes called stomata. It is the main building block of plant bodies!" },
+      { icon:"💧", label:"Water (H₂O)", sub:"absorbed by roots underground",
+        answer:"water",
+        feedback:"✅ Correct! Water travels from roots up through the stem. Plants split it apart to get hydrogen atoms for making glucose." },
+      { icon:"🪨", label:"Soil / Dirt", sub:"sand and rock particles",
+        answer:"neither",
+        feedback:"❌ Surprising! Van Helmont grew a willow 164 lbs heavier — but soil lost only 2 oz. Most plant mass comes from air & water, NOT soil!" },
+      { icon:"☀️", label:"Sunlight", sub:"energy from the sun",
+        answer:"neither",
+        feedback:"❌ Sunlight is ENERGY, not a material. Plants use it to power photosynthesis but they don't turn light into body mass!" },
+      { icon:"🧂", label:"Soil Minerals & Fertiliser", sub:"nitrogen, potassium etc.",
+        answer:"neither",
+        feedback:"❌ Minerals are needed in tiny amounts for health, but they make up almost none of the plant's mass. Mass comes from CO₂ + H₂O!" }
+    ]
+  },
+  {
+    title: "Round 2: Photosynthesis Lab ⚗️",
+    desc: "CO₂ + H₂O + Sunlight → Glucose + Oxygen. Sort into INPUTS or OUTPUTS!",
+    cols: "1fr 1fr",
+    categories: [
+      { key:"input",  label:"📥 INPUT — goes INTO the leaf",    cls:"cat-input" },
+      { key:"output", label:"📤 OUTPUT — comes OUT of the leaf", cls:"cat-output" }
+    ],
+    items: [
+      { icon:"🌬️", label:"Carbon Dioxide (CO₂)", sub:"from the surrounding air",
+        answer:"input",
+        feedback:"✅ CO₂ is an input! It enters through stomata on the underside of leaves. Without it, the plant cannot build anything." },
+      { icon:"💧", label:"Water (H₂O)", sub:"pulled up from roots via xylem",
+        answer:"input",
+        feedback:"✅ Water is an input! It travels up xylem tubes from roots to leaves, where it gets split by sunlight energy." },
+      { icon:"☀️", label:"Light Energy", sub:"from the sun or lamps",
+        answer:"input",
+        feedback:"✅ Light energy is an input! Chlorophyll in leaves absorbs it to power the reaction — without light, photosynthesis stops." },
+      { icon:"🍬", label:"Glucose (Sugar C₆H₁₂O₆)", sub:"the plant's own food",
+        answer:"output",
+        feedback:"✅ Glucose is an output! The plant builds this sugar from CO₂ and H₂O. It stores energy for growth, movement, and repair." },
+      { icon:"🫧", label:"Oxygen (O₂)", sub:"released through stomata",
+        answer:"output",
+        feedback:"✅ O₂ is an output — a by-product of splitting water molecules. This is the very oxygen you breathe right now!" }
+    ]
+  },
+  {
+    title: "Round 3: True or False? 🧠",
+    desc: "Some of these sound right but are classic MISTAKES. Think carefully!",
+    cols: "1fr 1fr",
+    categories: [
+      { key:"true",  label:"✅ TRUE",  cls:"cat-true" },
+      { key:"false", label:"❌ FALSE", cls:"cat-false" }
+    ],
+    items: [
+      { icon:"🌳", label:"Plants get most of their mass from the soil.", sub:"",
+        answer:"false",
+        feedback:"❌ FALSE! This is the most common misconception in science. Experiments prove plants build their body from CO₂ (air) and H₂O (water)." },
+      { icon:"🔬", label:"Stomata are tiny holes in leaves that let CO₂ enter the plant.", sub:"",
+        answer:"true",
+        feedback:"✅ TRUE! Stomata open and close like tiny mouths. CO₂ enters, water vapour and O₂ exit — critical to photosynthesis." },
+      { icon:"🚿", label:"Water moves upward through a plant from roots to leaves.", sub:"",
+        answer:"true",
+        feedback:"✅ TRUE! Xylem tubes transport water upwards against gravity using capillary action and transpiration pull — like a natural pump." },
+      { icon:"🌳", label:"An oak tree grows big mainly because it absorbs soil particles from the ground.", sub:"",
+        answer:"false",
+        feedback:"❌ FALSE! Oak trees grow huge by pulling CO₂ from the air and water through their roots — NOT from soil particles. Van Helmont's famous experiment proved this!" },
+      { icon:"🌱", label:"Sunlight is one of the MATERIALS that becomes part of the plant's body.", sub:"",
+        answer:"false",
+        feedback:"❌ FALSE! Sunlight is energy, not matter. It powers the reaction but does not become part of the plant. CO₂ and H₂O provide the atoms." },
+      { icon:"🌊", label:"Water plants like seagrass can use CO₂ dissolved in ocean water for photosynthesis.", sub:"",
+        answer:"true",
+        feedback:"✅ TRUE! Aquatic plants get CO₂ from water instead of air, but they use it exactly the same way — CO₂ + H₂O + light → glucose + O₂. Both air and water are CO₂ sources!" },
+      { icon:"💨", label:"If a plant has plenty of water but NO air (CO₂), it cannot grow new mass.", sub:"",
+        answer:"true",
+        feedback:"✅ TRUE! Without CO₂ from air, there is no carbon to build glucose or new cells. Both air AND water are essential — neither alone is enough." }
+    ]
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+var state = { round:0, item:0, score:0, lives:3, answered:false, total:0 };
+
+function countTotal() {
+  return rounds.reduce(function(s,r){ return s + r.items.length; }, 0);
+}
+
+function startGame() {
+  state = { round:0, item:0, score:0, lives:3, answered:false, total:countTotal() };
+  showScreen("gameScreen");
+  loadRound();
+}
+
+function loadRound() {
+  var r = rounds[state.round];
+  document.getElementById("roundDisplay").textContent = state.round + 1;
+  document.getElementById("roundTitle").textContent = r.title;
+  document.getElementById("roundDesc").textContent = r.desc;
+  renderButtons(r);
+  loadItem();
+}
+
+function renderButtons(r) {
+  var container = document.getElementById("categoryButtons");
+  container.style.gridTemplateColumns = r.cols;
+  container.innerHTML = "";
+  r.categories.forEach(function(cat) {
+    var btn = document.createElement("button");
+    btn.className = "cat-btn " + cat.cls;
+    btn.dataset.key = cat.key;
+    btn.dataset.baseCls = "cat-btn " + cat.cls;
+    btn.textContent = cat.label;
+    btn.onclick = function(){ handleAnswer(cat.key); };
+    container.appendChild(btn);
+  });
+}
+
+function loadItem() {
+  var r = rounds[state.round];
+  if (state.item >= r.items.length) {
+    if (state.round < rounds.length - 1) {
+      state.round++;
+      state.item = 0;
+      loadRound();
+    } else {
+      showEndScreen();
+    }
+    return;
+  }
+  state.answered = false;
+  var itm = r.items[state.item];
+  document.getElementById("itemIcon").textContent = itm.icon;
+  document.getElementById("itemLabel").textContent = itm.label;
+  document.getElementById("itemSub").textContent = itm.sub || "";
+  var fb = document.getElementById("feedbackBox");
+  fb.textContent = "👆 Tap the correct category!";
+  fb.className = "feedback-box";
+  // Re-enable buttons
+  document.querySelectorAll(".cat-btn").forEach(function(b) {
+    b.disabled = false;
+    b.className = b.dataset.baseCls;
+  });
+  // Progress bar
+  var done = 0;
+  for (var i = 0; i < state.round; i++) done += rounds[i].items.length;
+  done += state.item;
+  document.getElementById("progressBar").style.width = Math.round((done / state.total) * 100) + "%";
+  updateHUD();
+}
+
+function handleAnswer(chosenKey) {
+  if (state.answered) return;
+  state.answered = true;
+  var r = rounds[state.round];
+  var itm = r.items[state.item];
+  var correct = chosenKey === itm.answer;
+
+  document.querySelectorAll(".cat-btn").forEach(function(btn) {
+    btn.disabled = true;
+    if (btn.dataset.key === itm.answer) btn.classList.add("flash-correct");
+    else if (btn.dataset.key === chosenKey && !correct) btn.classList.add("flash-wrong");
+  });
+
+  var fb = document.getElementById("feedbackBox");
+  fb.textContent = itm.feedback;
+  fb.className = "feedback-box " + (correct ? "fb-correct" : "fb-wrong");
+
+  if (correct) {
+    state.score += 10;
+  } else {
+    state.lives = Math.max(0, state.lives - 1);
+    updateHUD();
+    if (state.lives === 0) {
+      setTimeout(showEndScreen, 1800);
+      return;
+    }
+  }
+  updateHUD();
+  setTimeout(function() {
+    state.item++;
+    loadItem();
+  }, 2100);
+}
+
+function updateHUD() {
+  document.getElementById("scoreDisplay").textContent = state.score;
+  var h = "";
+  for (var i = 0; i < state.lives; i++) h += "❤️";
+  for (var j = state.lives; j < 3; j++) h += "🖤";
+  document.getElementById("livesDisplay").textContent = h;
+}
+
+function showEndScreen() {
+  document.getElementById("progressBar").style.width = "100%";
+  showScreen("endScreen");
+  var maxScore = state.total * 10;
+  var pct = state.score / maxScore;
+  var stars, msg;
+  if (pct >= 0.88) {
+    stars = "⭐⭐⭐";
+    msg = "Outstanding! You are a plant science expert! You understand that plants build their entire body from invisible CO₂ gas and water — not from soil. Van Helmont would be proud!";
+  } else if (pct >= 0.6) {
+    stars = "⭐⭐";
+    msg = "Great effort! Remember the key idea: plants are CO₂ collectors. They pull carbon from the air and hydrogen from water to build glucose — their own food. The soil provides almost none of their mass!";
+  } else {
+    stars = "⭐";
+    msg = "Keep going! The big reveal: plants don’t eat soil — they build themselves from invisible gas (CO₂) and water. Play again and you’ll master it!";
+  }
+  document.getElementById("finalScore").textContent = state.score;
+  document.getElementById("starRating").textContent = stars;
+  document.getElementById("endMessage").textContent = msg;
+
+  // Inline photosynthesis equation SVG
+  document.getElementById("endDiagram").innerHTML =
+    '<svg width="310" height="120" viewBox="0 0 310 120" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 16px;">' +
+    '<rect x="0" y="0" width="310" height="120" rx="16" fill="rgba(0,100,0,0.25)" stroke="#4caf50" stroke-width="2"/>' +
+    '<text x="155" y="24" text-anchor="middle" fill="#7fff7f" font-size="14" font-weight="bold">Photosynthesis Summary</text>' +
+    '<text x="16" y="58" fill="#80deea" font-size="24" font-weight="bold">CO₂</text>' +
+    '<text x="16" y="76" fill="#80deea" font-size="11">from AIR</text>' +
+    '<text x="66" y="62" fill="white" font-size="22" font-weight="bold">+</text>' +
+    '<text x="82" y="58" fill="#29b6f6" font-size="24" font-weight="bold">H₂O</text>' +
+    '<text x="82" y="76" fill="#29b6f6" font-size="11">from ROOTS</text>' +
+    '<text x="138" y="62" fill="white" font-size="22" font-weight="bold">+</text>' +
+    '<text x="152" y="56" fill="#fbc02d" font-size="24">☀️</text>' +
+    '<text x="152" y="76" fill="#fbc02d" font-size="11">LIGHT energy</text>' +
+    '<text x="192" y="62" fill="#7fff7f" font-size="22" font-weight="bold">→</text>' +
+    '<text x="210" y="54" fill="#a5d6a7" font-size="18" font-weight="bold">Glucose</text>' +
+    '<text x="218" y="72" fill="#a5d6a7" font-size="14">+ O₂</text>' +
+    '<text x="155" y="105" text-anchor="middle" fill="#b8ffb8" font-size="12">Plant mass = AIR + WATER, not soil!</text>' +
+    '</svg>';
+}
+
+function resetGame() {
+  state = { round:0, item:0, score:0, lives:3, answered:false, total:countTotal() };
+  showScreen("titleScreen");
+}
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+  document.getElementById(id).classList.add("active");
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

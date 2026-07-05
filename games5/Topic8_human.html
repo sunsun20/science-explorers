@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<!--
+  Topic: Earth and Human Activity (Topic 8)
+  Standards: 5-ESS3-1 — Obtain and combine information about ways individual communities
+             use science ideas to protect the Earth's resources and environment.
+  Teacher note: Three escalating rounds; Round 1 sorts actions, Round 2 picks best solutions,
+                Round 3 sequences a community plan — correct answers include a one-line explanation.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Guardian – Topic 8</title>
+<style>
+  :root {
+    --navy:#0c2a50; --gold:#E0A800; --teal:#0d9488; --dark:#0a1e3c;
+    --btn-radius:14px; --shadow:0 4px 18px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:linear-gradient(160deg,#0c2a50 0%,#0a1e3c 60%,#071428 100%);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    overflow-x:hidden;
+  }
+  #app{width:min(820px,98vw);margin:auto;padding:12px}
+
+  /* ── SCREENS ── */
+  .screen{display:none;animation:fadeIn .4s ease}
+  .screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* ── TOPIC PILL ── */
+  .topic-pill{
+    display:inline-block;
+    background:rgba(13,148,136,0.18);
+    border:1.5px solid rgba(13,148,136,0.55);
+    border-radius:999px;
+    padding:7px 22px;
+    font-size:0.97rem;
+    color:#5eead4;
+    font-weight:600;
+    margin-bottom:18px;
+    letter-spacing:0.2px;
+  }
+
+  /* ── PERMANENT RESTART ── */
+  .btn-restart{
+    position:fixed;top:12px;right:12px;
+    background:rgba(224,168,0,0.18);
+    border:1.5px solid rgba(224,168,0,0.5);
+    color:#fff;padding:8px 16px;border-radius:20px;
+    cursor:pointer;font-size:0.9rem;font-weight:700;
+    z-index:500;transition:background .2s;
+  }
+  .btn-restart:hover{background:rgba(224,168,0,0.38);}
+
+  /* ── GOLD GLITTER ── */
+  @keyframes glitter-fall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1}
+    100%{transform:translateY(110vh) rotate(540deg);opacity:0}
+  }
+
+  /* ── TITLE ── */
+  #title-screen{
+    background:rgba(255,255,255,0.07);border-radius:24px;
+    border:2px solid rgba(255,255,255,0.18);backdrop-filter:blur(6px);
+    padding:30px 24px; text-align:center; color:#fff;
+  }
+  #title-screen h1{font-size:clamp(26px,6vw,46px);line-height:1.2;
+    text-shadow:0 2px 12px #000a;color:#E0A800}
+  #title-screen .subtitle{font-size:20px;margin:8px 0 18px;color:#5eead4}
+  .how-box{background:rgba(0,0,0,0.28);border-radius:14px;padding:16px 20px;
+    text-align:left;font-size:17px;line-height:1.7;margin:14px 0}
+  .how-box li{margin-left:18px}
+  .btn-start{
+    background:linear-gradient(135deg,#0d9488,#0a7567);
+    color:#fff;font-size:22px;font-weight:700;border:none;
+    padding:16px 48px;border-radius:var(--btn-radius);cursor:pointer;
+    box-shadow:var(--shadow);margin-top:10px;letter-spacing:1px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .btn-start:hover{transform:scale(1.06);box-shadow:0 6px 26px rgba(13,148,136,.5)}
+
+  /* ── HUD ── */
+  #hud{
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(0,0,0,0.4);border-radius:14px;padding:10px 18px;
+    margin-bottom:12px;color:#fff;font-size:18px;font-weight:600;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  #hud .lives span{font-size:22px}
+  #round-label{color:#E0A800;font-size:16px;letter-spacing:1px}
+
+  /* ── QUESTION CARD ── */
+  #game-screen{color:#fff}
+  #question-card{
+    background:rgba(255,255,255,0.09);border-radius:20px;
+    border:2px solid rgba(255,255,255,0.2);padding:22px 20px;
+    margin-bottom:14px;min-height:160px;
+  }
+  #q-text{font-size:clamp(17px,3.2vw,22px);line-height:1.5;margin-bottom:14px;
+    font-weight:600}
+  #q-context{font-size:15px;color:#5eead4;margin-bottom:14px;font-style:italic}
+
+  /* ── SVG SCENE ── */
+  #svg-area{text-align:center;margin:6px 0 14px}
+  #svg-area svg{border-radius:12px;max-width:100%;height:auto}
+
+  /* ── ANSWER BUTTONS ── */
+  #answers{display:grid;gap:10px}
+  .ans-btn{
+    background:rgba(255,255,255,0.13);border:2px solid rgba(255,255,255,0.3);
+    color:#fff;font-size:17px;padding:14px 18px;border-radius:var(--btn-radius);
+    cursor:pointer;text-align:left;transition:background .2s,border-color .2s,transform .1s;
+    line-height:1.4;overflow-wrap:break-word;word-break:break-word;
+  }
+  .ans-btn:hover:not(:disabled){background:rgba(255,255,255,0.24);
+    border-color:#E0A800;transform:translateX(4px)}
+  .ans-btn.correct{background:rgba(13,148,136,0.4);border-color:#0d9488}
+  .ans-btn.wrong{background:rgba(183,28,28,0.35);border-color:#ef5350}
+  .ans-btn:disabled{cursor:default}
+
+  /* ── SORT MECHANIC (R1) ── */
+  #sort-area{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+  .sort-zone{
+    background:rgba(0,0,0,0.3);border:2.5px dashed rgba(255,255,255,0.3);
+    border-radius:16px;min-height:120px;padding:12px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .sort-zone h3{font-size:16px;margin-bottom:8px;text-align:center}
+  .sort-zone.good{border-color:#0d9488}
+  .sort-zone.bad{border-color:#ef5350}
+  .sort-cards{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+  .sort-card{
+    background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.25);
+    border-radius:10px;padding:10px 8px;font-size:14px;cursor:pointer;
+    text-align:center;transition:all .2s;
+    overflow-wrap:break-word;word-break:break-word;
+  }
+  .sort-card:hover{background:rgba(255,255,255,0.22);transform:scale(1.04)}
+  .sort-card.placed-good{background:rgba(13,148,136,0.35);border-color:#0d9488;cursor:default}
+  .sort-card.placed-bad{background:rgba(183,28,28,0.35);border-color:#ef5350;cursor:default}
+  .sort-card.wrong-place{background:rgba(183,28,28,0.5);animation:shake .3s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  #sort-submit{
+    display:block;margin:14px auto 0;padding:13px 36px;font-size:18px;
+    background:linear-gradient(135deg,#0d9488,#0a7567);color:#fff;
+    border:none;border-radius:var(--btn-radius);cursor:pointer;font-weight:700;
+    box-shadow:var(--shadow);
+  }
+
+  /* ── FEEDBACK ── */
+  #feedback{
+    display:none;border-radius:14px;padding:13px 18px;
+    font-size:16px;margin-top:10px;line-height:1.5;font-weight:600;
+  }
+  #feedback.correct{background:rgba(13,148,136,0.25);border:2px solid #0d9488;color:#5eead4}
+  #feedback.wrong{background:rgba(183,28,28,0.3);border:2px solid #ef5350;color:#ffaaaa}
+  #next-btn{
+    display:none;margin:12px auto 0;padding:13px 38px;font-size:18px;
+    background:linear-gradient(135deg,#E0A800,#b07d00);color:#fff;
+    border:none;border-radius:var(--btn-radius);cursor:pointer;font-weight:700;
+    box-shadow:var(--shadow);transition:transform .15s;
+  }
+  #next-btn:hover{transform:scale(1.06)}
+
+  /* ── PROGRESS BAR ── */
+  #progress-wrap{background:rgba(0,0,0,0.3);border-radius:99px;height:10px;margin-bottom:12px}
+  #progress-bar{background:linear-gradient(90deg,#0d9488,#E0A800);
+    height:10px;border-radius:99px;transition:width .4s ease}
+
+  /* ── END SCREEN ── */
+  #end-screen{
+    background:rgba(255,255,255,0.07);border-radius:24px;
+    border:2px solid rgba(255,255,255,0.18);padding:32px 24px;
+    text-align:center;color:#fff;
+  }
+  #end-screen h2{font-size:36px;color:#E0A800;margin-bottom:10px}
+  #final-score{font-size:52px;font-weight:900;color:#5eead4;margin:10px 0}
+  #end-msg{font-size:20px;margin:10px 0 22px;line-height:1.5}
+  #end-screen svg{margin:14px auto;display:block}
+  .btn-again{
+    background:linear-gradient(135deg,#0d9488,#0a7567);
+    color:#fff;font-size:20px;font-weight:700;border:none;
+    padding:15px 44px;border-radius:var(--btn-radius);cursor:pointer;
+    box-shadow:var(--shadow);margin-top:8px;
+    transition:transform .15s;
+  }
+  .btn-again:hover{transform:scale(1.07)}
+
+  /* ── ROUND TRANSITION ── */
+  #round-splash{
+    display:none;position:fixed;inset:0;background:rgba(0,15,30,0.90);
+    z-index:100;flex-direction:column;align-items:center;justify-content:center;color:#fff;
+    font-size:clamp(28px,6vw,54px);font-weight:900;text-align:center;
+    animation:fadeIn .3s ease;
+  }
+  #round-splash.active{display:flex}
+  #round-splash .rs-sub{font-size:clamp(16px,3vw,24px);color:#E0A800;margin-top:12px}
+
+  /* two-col answers for R2/R3 */
+  .grid2{grid-template-columns:1fr 1fr}
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn-start{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    #sort-area,.sort-cards,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<!-- PERMANENT RESTART (visible on every screen) -->
+<button class="btn-restart" onclick="goHome()">🏠 Restart</button>
+
+<div id="app">
+
+  <!-- TITLE -->
+  <div id="title-screen" class="screen active">
+    <div class="topic-pill">♻️ Grade 5 · Topic 8 · Earth and Human Activity</div>
+    <svg width="110" height="90" viewBox="0 0 110 90">
+      <!-- Globe -->
+      <ellipse cx="55" cy="48" rx="38" ry="38" fill="#1a4a2e"/>
+      <ellipse cx="55" cy="48" rx="38" ry="38" fill="none" stroke="#0d9488" stroke-width="2"/>
+      <!-- Ocean patches -->
+      <ellipse cx="42" cy="40" rx="13" ry="18" fill="#0c2a50" opacity=".85"/>
+      <ellipse cx="68" cy="55" rx="9" ry="13" fill="#0c2a50" opacity=".85"/>
+      <!-- Landmass -->
+      <path d="M50 32 Q60 28 68 35 Q70 44 62 48 Q54 52 48 44 Z" fill="#DEB887" opacity=".85"/>
+      <!-- Bird silhouette -->
+      <path d="M75 18 Q82 12 90 16 Q86 22 78 24 Z" fill="#7f8c8d"/>
+      <path d="M78 24 Q80 30 77 34 Q74 30 72 26 Z" fill="#5d6d7e"/>
+      <!-- Sun -->
+      <circle cx="88" cy="15" r="7" fill="#E0A800"/>
+      <line x1="88" y1="5" x2="88" y2="2" stroke="#E0A800" stroke-width="2"/>
+      <line x1="96" y1="10" x2="99" y2="8" stroke="#E0A800" stroke-width="2"/>
+      <line x1="98" y1="18" x2="101" y2="18" stroke="#E0A800" stroke-width="2"/>
+    </svg>
+    <h1>🌍 Earth Guardian</h1>
+    <div class="subtitle">Earth &amp; Human Activity · Grade 5</div>
+    <div class="how-box">
+      <b>How to play:</b>
+      <ul>
+        <li>🔵 <b>Round 1</b> — Sort actions: Helpful or Harmful?</li>
+        <li>🟡 <b>Round 2</b> — Pick the <em>best</em> solution for each problem</li>
+        <li>🔴 <b>Round 3</b> — Choose what comes NEXT in a community plan</li>
+      </ul>
+      <br>You have <b>3 lives ❤️</b>. Wrong answers cost a life but teach you why.<br>
+      Standard: <b>5-ESS3-1</b>
+    </div>
+    <button class="btn-start" onclick="startGame()">🚀 Start Game</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACiElEQVR4nO1ZbarjMAwcx4H8tG/Qoyg3eEd69GALzlF6gAfOz4KNlpGTLiy7aWFZGsPTj3xYFKbySBo5TnFkdTh0A9/+f4sPNPPqVX2GakJQr6mEti1Szh5faBY18PwXWUrQbUX5cHr8AwDnZkB8lhqB1Y0hbQ84B77X/PVyRbiOQGnIf/c/+/17/eFK/t8+AamX1JLiTPj+ZiNTgDepMY9f8F8f01f0BQiK9f34huf+xTmHdfa3eV8UrHN1zsVT4Ds2bZbhNbX6w8iHbbl0Uz9l7wKCkOw5IfSAX7VASkiaxatlLvGLZpQu8Ge7kTCp9SzrZUIWQTqJP6gcIAy7UaiE1HakvBvf8NS/uimLc5/A4jMqezHjP7V9eT++J6ZWeVq1aSsF2OKvPfBfk89UbsRPzK2KJpIq98F/byWoJUJLW1j80U/98VbtWXCYtvZqirQD/MppxdiyTTFteGlTTOmh/xZOLnvO8pUqopP5BZa2+hi7inUuaiH24k7wwzSPsehBHhYl7YE/SuT7v1BjkelPCrku8GsJjLYVItYc/6uRSRf4QbUpWxfgKcomp7UD/gzAohkuokb4vLhLqm6+R5K/uvkM+I5NM3nC4mPKuXXhVkK1j/jLGK4cdU08jOtsI9iVJypu7uL8wd9i4X1BZA7XS8bt48fqzoBveKH/+m3mtfnRVOjulNLN+YNsyt8kXKtIpS/9iQf4bVO0A/0wtJm3bcSUl8mQu8i9qB2cXw37+TOvBXKPyz0uPJSLlttnwPeaX/MCYDLZg5C8Xkmt8+B76g9p78J8KzzRPRW+P5vuX1t25WZjo+W19pG/Szt/rnG5u1kzKH4yvwLgHPgOzX1/Pz20/x3/n23R9Gol7gr2AAAAAElFTkSuQmCC" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen" class="screen">
+    <div id="hud">
+      <div id="round-label">ROUND 1 / 3</div>
+      <div>⭐ <span id="score-val">0</span></div>
+      <div class="lives">❤️ <span id="lives-val">3</span></div>
+    </div>
+    <div id="progress-wrap"><div id="progress-bar" style="width:0%"></div></div>
+    <div id="question-card">
+      <div id="q-text"></div>
+      <div id="q-context"></div>
+      <div id="svg-area"></div>
+      <div id="answers"></div>
+      <div id="sort-area" style="display:none">
+        <div class="sort-zone good" id="zone-good">
+          <h3>✅ Helpful to Earth</h3>
+        </div>
+        <div class="sort-zone bad" id="zone-bad">
+          <h3>❌ Harmful to Earth</h3>
+        </div>
+      </div>
+      <div class="sort-cards" id="sort-cards" style="display:none"></div>
+      <button id="sort-submit" style="display:none" onclick="checkSort()">Check My Sorting ✔️</button>
+    </div>
+    <div id="feedback"></div>
+    <button id="next-btn" onclick="nextQuestion()">Next ➡️</button>
+  </div>
+
+  <!-- END -->
+  <div id="end-screen" class="screen">
+    <h2>Mission Complete! 🌿</h2>
+    <!-- Coastal mangroves SVG -->
+    <svg width="180" height="120" viewBox="0 0 180 120">
+      <rect width="180" height="120" rx="12" fill="#0b3d2e"/>
+      <rect y="80" width="180" height="40" rx="0" fill="#0c2a50" opacity=".8"/>
+      <ellipse cx="90" cy="80" rx="90" ry="6" fill="#0d9488" opacity=".4"/>
+      <line x1="40" y1="80" x2="40" y2="50" stroke="#5d4037" stroke-width="4"/>
+      <ellipse cx="40" cy="46" rx="18" ry="14" fill="#0d9488"/>
+      <ellipse cx="40" cy="42" rx="12" ry="10" fill="#38a89d"/>
+      <line x1="40" y1="80" x2="28" y2="100" stroke="#5d4037" stroke-width="2"/>
+      <line x1="40" y1="80" x2="52" y2="100" stroke="#5d4037" stroke-width="2"/>
+      <line x1="90" y1="80" x2="90" y2="40" stroke="#5d4037" stroke-width="5"/>
+      <ellipse cx="90" cy="35" rx="22" ry="16" fill="#0d9488"/>
+      <ellipse cx="90" cy="30" rx="15" ry="11" fill="#38a89d"/>
+      <line x1="90" y1="80" x2="74" y2="105" stroke="#5d4037" stroke-width="2"/>
+      <line x1="90" y1="80" x2="106" y2="105" stroke="#5d4037" stroke-width="2"/>
+      <line x1="140" y1="80" x2="140" y2="52" stroke="#5d4037" stroke-width="4"/>
+      <ellipse cx="140" cy="48" rx="17" ry="13" fill="#0d9488"/>
+      <ellipse cx="140" cy="44" rx="11" ry="9" fill="#38a89d"/>
+      <line x1="140" y1="80" x2="128" y2="100" stroke="#5d4037" stroke-width="2"/>
+      <line x1="140" y1="80" x2="152" y2="100" stroke="#5d4037" stroke-width="2"/>
+      <circle cx="155" cy="18" r="12" fill="#E0A800"/>
+      <text x="90" y="115" text-anchor="middle" fill="#5eead4" font-size="11" font-weight="bold">Coastal Mangroves</text>
+    </svg>
+    <div id="final-score">0 / 15</div>
+    <div id="end-msg"></div>
+    <button class="btn-again" onclick="restartGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<!-- Round splash -->
+<div id="round-splash">
+  <div id="rs-title"></div>
+  <div class="rs-sub" id="rs-sub"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  GAME DATA
+// ═══════════════════════════════════════════════════════
+const QUESTIONS = [
+
+  // ─── ROUND 1: Sort mechanic ───
+  {
+    round:1, type:'sort',
+    qtext:'Sort these community actions: which HELP protect Earth\'s resources and which HARM them?',
+    context:'Communities around the world use science ideas to decide which actions protect land, water, and air.',
+    cards:[
+      {label:'🌱 Plant native trees along the coast', correct:'good'},
+      {label:'🚗 Idle car engines for 30 min daily', correct:'bad'},
+      {label:'♻️ Recycle plastic at school', correct:'good'},
+      {label:'🏭 Dump factory waste into streams', correct:'bad'},
+    ],
+    explain:'Planting trees & recycling protect ecosystems; idling engines waste fuel & dumping factory waste into streams pollutes freshwater.'
+  },
+  {
+    round:1, type:'sort',
+    qtext:'Sort these actions from a desert community:',
+    context:'Deserts are fragile ecosystems. Small human choices add up to big impacts.',
+    cards:[
+      {label:'☀️ Install solar panels on homes', correct:'good'},
+      {label:'🪣 Leave water taps running', correct:'bad'},
+      {label:'🌿 Protect bird nesting areas', correct:'good'},
+      {label:'🔥 Burn tyres in open areas', correct:'bad'},
+    ],
+    explain:'Solar panels use renewable energy; protecting nesting birds preserves biodiversity. Wasting water and burning tyres harm air and scarce resources.'
+  },
+  {
+    round:1, type:'sort',
+    qtext:'A market community debates these actions. Sort them:',
+    context:'Even shopping choices affect the environment!',
+    cards:[
+      {label:'🛍️ Use reusable cloth bags', correct:'good'},
+      {label:'🐠 Buy coral reef fish illegally', correct:'bad'},
+      {label:'💧 Collect rainwater on rooftops', correct:'good'},
+      {label:'🗑️ Dump food waste in the sea', correct:'bad'},
+    ],
+    explain:'Reusable bags cut plastic; rooftop water saves treated water. Illegal fishing destroys reefs; dumping food in the sea reduces oxygen for marine life.'
+  },
+
+  // ─── ROUND 2: Multiple-choice — best solution ───
+  {
+    round:2, type:'mcq',
+    qtext:'Many cities use treated wastewater to irrigate parks. What science idea does this community action BEST show?',
+    context:'Freshwater is extremely scarce in dry regions — some areas receive less than 100 mm of rain per year.',
+    svg:'water',
+    answers:[
+      {text:'💧 Conserving freshwater by reusing treated water', correct:true},
+      {text:'🌊 Making the sea less salty', correct:false},
+      {text:'🏗️ Building more desalination plants only', correct:false},
+      {text:'🌧️ Making it rain more using cloud seeding only', correct:false},
+    ],
+    explain:'Reusing treated wastewater directly conserves limited freshwater resources — a key science-based community strategy.'
+  },
+  {
+    round:2, type:'mcq',
+    qtext:'Coastal mangrove parks are created to protect shorelines. Which benefit is MOST supported by science?',
+    context:'Mangroves grow along tropical and subtropical coastlines around the world.',
+    svg:'mangrove',
+    answers:[
+      {text:'🌱 Mangroves absorb CO₂ and protect shores from erosion', correct:true},
+      {text:'🏖️ They make beaches look prettier', correct:false},
+      {text:'🦟 They reduce mosquitoes only', correct:false},
+      {text:'🐪 Large animals use them for shade only', correct:false},
+    ],
+    explain:'Science shows mangroves store large amounts of carbon (blue carbon) and their roots prevent coastal erosion — both critical for the environment.'
+  },
+  {
+    round:2, type:'mcq',
+    qtext:'A Grade 5 class surveys local birds to check ecosystem health. This is an example of:',
+    context:'Monitoring wildlife helps communities detect environmental changes early.',
+    svg:'bird',
+    answers:[
+      {text:'🔭 Using science (data collection) to monitor the environment', correct:true},
+      {text:'🎮 A fun hobby with no science purpose', correct:false},
+      {text:'🏆 Competing to find the most birds', correct:false},
+      {text:'📸 Taking photos for social media only', correct:false},
+    ],
+    explain:'Collecting data on bird populations is citizen science — communities use it to detect pollution, habitat loss, and climate shifts early.'
+  },
+  {
+    round:2, type:'mcq',
+    qtext:'Many governments limit plastic bag use in supermarkets. Which Earth resource does this MOST protect?',
+    context:'Plastic takes 400+ years to decompose and is found in 90% of seabirds worldwide.',
+    svg:'plastic',
+    answers:[
+      {text:'🌊 Marine ecosystems (oceans and sea animals)', correct:true},
+      {text:'🪨 Rock minerals underground', correct:false},
+      {text:'🌬️ Wind patterns', correct:false},
+      {text:'🌋 Volcanic activity', correct:false},
+    ],
+    explain:'Reducing plastic bags directly protects oceans — plastic fragments harm fish, turtles, and seabirds that mistake them for food.'
+  },
+  {
+    round:2, type:'mcq',
+    qtext:'A farmer switches from diesel pumps to solar-powered pumps for irrigation. The MAIN environmental benefit is:',
+    context:'Farms in dry regions use large amounts of groundwater, which can be non-renewable.',
+    svg:'solar',
+    answers:[
+      {text:'☀️ Reduces fossil fuel burning, cutting air pollution', correct:true},
+      {text:'🌧️ Makes crops grow faster automatically', correct:false},
+      {text:'🚿 Creates more underground water', correct:false},
+      {text:'🌡️ Cools the surrounding air', correct:false},
+    ],
+    explain:'Solar pumps use renewable energy, eliminating diesel combustion — this reduces CO₂ and particulate air pollution.'
+  },
+  {
+    round:2, type:'mcq',
+    qtext:'Schools reduce energy use by switching off AC in empty rooms. This community action protects:',
+    context:'Electricity is often generated from fossil fuels like natural gas and coal.',
+    svg:'energy',
+    answers:[
+      {text:'⚡ Non-renewable fossil fuel resources and reduces emissions', correct:true},
+      {text:'🧊 Ice in the Arctic only', correct:false},
+      {text:'🎒 Students\' school bags', correct:false},
+      {text:'🏟️ Sports stadiums', correct:false},
+    ],
+    explain:'Saving electricity reduces fossil fuels burned at power plants, preserving a finite resource and cutting greenhouse gases.'
+  },
+
+  // ─── ROUND 3: Sequence / "What comes NEXT?" ───
+  {
+    round:3, type:'mcq',
+    qtext:'🔴 ROUND 3 — A community finds a polluted stream. Step 1: test the water. Step 2: identify the source of pollution. What is the BEST Step 3?',
+    context:'Communities use science to plan clean-up in the correct order.',
+    svg:'wadi',
+    answers:[
+      {text:'🛑 Report the source and remove the pollutant safely', correct:true},
+      {text:'🏊 Swim in the stream to check if it feels clean', correct:false},
+      {text:'🌿 Plant flowers next to it immediately', correct:false},
+      {text:'📢 Announce the stream is clean without removing pollution', correct:false},
+    ],
+    explain:'After identifying the source, the science-based step is safe removal/containment — acting on evidence is the heart of 5-ESS3-1.'
+  },
+  {
+    round:3, type:'mcq',
+    qtext:'A school plans to reduce waste: Step 1: measure current waste. Step 2: separate recyclables. Step 3: compost food scraps. What should the school do in Step 4?',
+    context:'Community environmental plans need monitoring to know if they are working.',
+    svg:'recycle',
+    answers:[
+      {text:'📊 Measure waste again and compare — did it decrease?', correct:true},
+      {text:'🗑️ Throw all waste together again to save time', correct:false},
+      {text:'🏖️ Celebrate and stop the programme', correct:false},
+      {text:'📦 Buy more bins with no further action', correct:false},
+    ],
+    explain:'Step 4 must be monitoring — comparing new data with old data tells the community if their science-based actions are actually working.'
+  },
+  {
+    round:3, type:'mcq',
+    qtext:'A coastal community bans fishing near sea turtle nesting beaches. What else should science suggest they do NEXT?',
+    context:'Protecting one species requires understanding its whole ecosystem.',
+    svg:'turtle',
+    answers:[
+      {text:'🔭 Monitor turtle nesting numbers each season to track recovery', correct:true},
+      {text:'🎣 Increase fishing in deeper water with no monitoring', correct:false},
+      {text:'🏗️ Build a hotel on the nesting beach', correct:false},
+      {text:'🐠 Release farmed fish into the nesting area', correct:false},
+    ],
+    explain:'After a protective action, scientists and communities must collect data (monitor nesting numbers) to confirm the action is working and adjust if needed.'
+  },
+  {
+    round:3, type:'mcq',
+    qtext:'A region plants millions of trees along its coast. Which measurement BEST tells the community whether this project is protecting the environment?',
+    context:'Science requires evidence — not just doing an action, but measuring its effect.',
+    svg:'mangrove',
+    answers:[
+      {text:'🌱 Count surviving trees AND measure CO₂ absorbed over time', correct:true},
+      {text:'📸 Take photos for social media each week', correct:false},
+      {text:'🌡️ Check if the weather feels cooler personally', correct:false},
+      {text:'🐪 Count how many large animals visit the area', correct:false},
+    ],
+    explain:'Counting surviving trees AND measuring CO₂ gives quantitative evidence that the trees are actually storing carbon — this is science-based community monitoring.'
+  },
+  {
+    round:3, type:'mcq',
+    qtext:'FINAL CHALLENGE — A city reduces car traffic by building public transport. Which combination of effects BEST shows how this protects Earth\'s resources?',
+    context:'Human activity affects multiple Earth systems at once.',
+    svg:'city',
+    answers:[
+      {text:'🌬️ Less air pollution + less fossil fuel use + quieter streets', correct:true},
+      {text:'🌧️ More rain + cooler sun + bigger rivers', correct:false},
+      {text:'🏝️ New islands form + sea level rises', correct:false},
+      {text:'🦅 Birds fly faster + more sand dunes form', correct:false},
+    ],
+    explain:'Public transport reduces individual car trips → less petrol burned → less CO₂ and particulates in the air. This protects both air quality and finite fossil fuel reserves — a triple Earth benefit!'
+  },
+];
+
+// ═══════════════════════════════════════════════════════
+//  SVG SCENES
+// ═══════════════════════════════════════════════════════
+function getSVG(key){
+  const svgs={
+    water:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect x="30" y="40" width="80" height="12" rx="4" fill="#7f8c8d"/>
+      <rect x="130" y="40" width="80" height="12" rx="4" fill="#0d9488"/>
+      <text x="70" y="36" text-anchor="middle" fill="#ef5350" font-size="11">Wastewater</text>
+      <text x="170" y="36" text-anchor="middle" fill="#5eead4" font-size="11">Treated → Parks</text>
+      <ellipse cx="120" cy="68" rx="6" ry="8" fill="#1565c0"/>
+      <ellipse cx="135" cy="72" rx="5" ry="7" fill="#0c2a50" stroke="#1565c0" stroke-width="1"/>
+      <ellipse cx="108" cy="74" rx="4" ry="6" fill="#0d9488"/>
+      <text x="120" y="95" text-anchor="middle" fill="#5eead4" font-size="10">💧 Water Reuse System</text>
+    </svg>`,
+
+    mangrove:`<svg width="240" height="110" viewBox="0 0 240 110">
+      <rect width="240" height="110" rx="10" fill="#083d1e"/>
+      <rect y="72" width="240" height="38" fill="#0c2a50" opacity=".8"/>
+      <line x1="50" y1="72" x2="50" y2="44" stroke="#6d4c41" stroke-width="5"/>
+      <ellipse cx="50" cy="40" rx="20" ry="15" fill="#0d9488"/>
+      <ellipse cx="50" cy="35" rx="13" ry="10" fill="#38a89d"/>
+      <line x1="50" y1="72" x2="36" y2="95" stroke="#6d4c41" stroke-width="2.5"/>
+      <line x1="50" y1="72" x2="64" y2="95" stroke="#6d4c41" stroke-width="2.5"/>
+      <line x1="120" y1="72" x2="120" y2="36" stroke="#6d4c41" stroke-width="6"/>
+      <ellipse cx="120" cy="30" rx="26" ry="18" fill="#0d9488"/>
+      <ellipse cx="120" cy="24" rx="17" ry="12" fill="#38a89d"/>
+      <line x1="120" y1="72" x2="102" y2="100" stroke="#6d4c41" stroke-width="2.5"/>
+      <line x1="120" y1="72" x2="138" y2="100" stroke="#6d4c41" stroke-width="2.5"/>
+      <line x1="190" y1="72" x2="190" y2="46" stroke="#6d4c41" stroke-width="5"/>
+      <ellipse cx="190" cy="42" rx="19" ry="14" fill="#0d9488"/>
+      <ellipse cx="190" cy="37" rx="12" ry="9" fill="#38a89d"/>
+      <line x1="190" y1="72" x2="177" y2="95" stroke="#6d4c41" stroke-width="2"/>
+      <line x1="190" y1="72" x2="203" y2="95" stroke="#6d4c41" stroke-width="2"/>
+      <text x="120" y="108" text-anchor="middle" fill="#5eead4" font-size="10">🌊 Coastal Mangrove Forest</text>
+    </svg>`,
+
+    bird:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect width="240" height="60" rx="10" fill="#1a3a5c"/>
+      <ellipse cx="120" cy="38" rx="14" ry="9" fill="#8d6e63"/>
+      <ellipse cx="130" cy="36" rx="6" ry="5" fill="#6d4c41"/>
+      <path d="M115 38 Q100 52 88 48 Q102 44 112 42Z" fill="#795548"/>
+      <path d="M125 38 Q142 50 154 46 Q140 42 128 42Z" fill="#795548"/>
+      <circle cx="132" cy="34" r="2.5" fill="#212121"/>
+      <rect x="60" y="68" width="16" height="10" rx="3" fill="#424242"/>
+      <rect x="78" y="68" width="16" height="10" rx="3" fill="#424242"/>
+      <rect x="74" y="70" width="6" height="6" rx="1" fill="#616161"/>
+      <circle cx="68" cy="73" r="4" fill="#78909c"/>
+      <circle cx="86" cy="73" r="4" fill="#78909c"/>
+      <text x="120" y="95" text-anchor="middle" fill="#5eead4" font-size="10">🔭 Citizen Science Bird Survey</text>
+    </svg>`,
+
+    plastic:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect y="55" width="240" height="45" rx="0" fill="#1565c0" opacity=".8"/>
+      <ellipse cx="80" cy="70" rx="18" ry="12" fill="#388e3c"/>
+      <ellipse cx="80" cy="70" rx="14" ry="9" fill="#43a047"/>
+      <ellipse cx="94" cy="66" rx="7" ry="5" fill="#2e7d32"/>
+      <line x1="68" y1="78" x2="60" y2="85" stroke="#388e3c" stroke-width="3"/>
+      <line x1="92" y1="78" x2="100" y2="85" stroke="#388e3c" stroke-width="3"/>
+      <path d="M140 55 Q148 48 160 54 Q162 65 154 70 Q144 68 140 58Z" fill="rgba(255,255,255,0.4)" stroke="#fff" stroke-width="1.5"/>
+      <text x="150" y="46" text-anchor="middle" fill="#ef5350" font-size="11">⚠️ Plastic</text>
+      <text x="120" y="95" text-anchor="middle" fill="#5eead4" font-size="10">🌊 Protecting Marine Life</text>
+    </svg>`,
+
+    solar:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#5d4037"/>
+      <rect y="70" width="240" height="30" fill="#c8a46a"/>
+      <line x1="40" y1="70" x2="40" y2="38" stroke="#6d4c41" stroke-width="5"/>
+      <ellipse cx="40" cy="34" rx="18" ry="12" fill="#2e7d32"/>
+      <ellipse cx="40" cy="30" rx="12" ry="8" fill="#388e3c"/>
+      <rect x="130" y="52" width="80" height="14" rx="3" fill="#1565c0"/>
+      <line x1="150" y1="52" x2="150" y2="66" stroke="#0d47a1" stroke-width="1.5"/>
+      <line x1="170" y1="52" x2="170" y2="66" stroke="#0d47a1" stroke-width="1.5"/>
+      <line x1="190" y1="52" x2="190" y2="66" stroke="#0d47a1" stroke-width="1.5"/>
+      <line x1="130" y1="59" x2="210" y2="59" stroke="#0d47a1" stroke-width="1.5"/>
+      <rect x="140" y="62" width="70" height="8" rx="2" fill="#E0A800" opacity=".5"/>
+      <circle cx="25" cy="20" r="14" fill="#E0A800"/>
+      <text x="120" y="95" text-anchor="middle" fill="#E0A800" font-size="10">☀️ Solar Power – Desert Farm</text>
+    </svg>`,
+
+    energy:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect x="80" y="30" width="80" height="60" fill="#34495e"/>
+      <rect x="80" y="30" width="80" height="10" fill="#2c3e50"/>
+      <rect x="92" y="45" width="14" height="10" rx="2" fill="#1a252f"/>
+      <rect x="114" y="45" width="14" height="10" rx="2" fill="#1a252f"/>
+      <rect x="136" y="45" width="14" height="10" rx="2" fill="#1a252f"/>
+      <rect x="92" y="62" width="14" height="10" rx="2" fill="#1a252f"/>
+      <rect x="114" y="62" width="14" height="10" rx="2" fill="#E0A800" opacity=".8"/>
+      <rect x="136" y="62" width="14" height="10" rx="2" fill="#1a252f"/>
+      <path d="M170 20 L162 42 L170 42 L158 65 L178 38 L168 38 Z" fill="#E0A800"/>
+      <text x="120" y="97" text-anchor="middle" fill="#5eead4" font-size="10">⚡ Switch Off = Save Energy</text>
+    </svg>`,
+
+    wadi:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#3e2723"/>
+      <ellipse cx="30" cy="72" rx="28" ry="18" fill="#5d4037"/>
+      <ellipse cx="210" cy="68" rx="28" ry="20" fill="#5d4037"/>
+      <path d="M0 58 Q60 48 120 55 Q180 62 240 52" stroke="#7b4f00" stroke-width="14" fill="none"/>
+      <circle cx="100" cy="55" r="10" fill="rgba(100,60,0,0.6)"/>
+      <circle cx="115" cy="52" r="8" fill="rgba(80,40,0,0.6)"/>
+      <path d="M170 30 L180 48 L160 48 Z" fill="#ef5350"/>
+      <text x="170" y="45" text-anchor="middle" fill="#fff" font-size="9">!</text>
+      <text x="120" y="97" text-anchor="middle" fill="#E0A800" font-size="10">⚠️ Polluted Stream</text>
+    </svg>`,
+
+    recycle:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#083d1e"/>
+      <rect x="30" y="50" width="35" height="40" rx="4" fill="#0c2a50"/>
+      <rect x="30" y="45" width="35" height="8" rx="2" fill="#0a1e3c"/>
+      <text x="47" y="75" text-anchor="middle" fill="#fff" font-size="10">♻️</text>
+      <rect x="102" y="50" width="35" height="40" rx="4" fill="#0d9488"/>
+      <rect x="102" y="45" width="35" height="8" rx="2" fill="#0a7567"/>
+      <text x="119" y="75" text-anchor="middle" fill="#fff" font-size="10">🌿</text>
+      <rect x="174" y="50" width="35" height="40" rx="4" fill="#E0A800"/>
+      <rect x="174" y="45" width="35" height="8" rx="2" fill="#b07d00"/>
+      <text x="191" y="75" text-anchor="middle" fill="#fff" font-size="10">📊</text>
+      <path d="M 80 28 A 36 36 0 1 1 160 28" stroke="#5eead4" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+      <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6Z" fill="#5eead4"/></marker></defs>
+      <text x="120" y="97" text-anchor="middle" fill="#5eead4" font-size="10">🏫 School Waste Reduction Plan</text>
+    </svg>`,
+
+    turtle:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect y="60" width="240" height="40" fill="#1565c0" opacity=".8"/>
+      <rect y="52" width="240" height="12" fill="#c8a46a"/>
+      <ellipse cx="100" cy="56" rx="26" ry="16" fill="#388e3c"/>
+      <ellipse cx="100" cy="56" rx="20" ry="12" fill="#43a047"/>
+      <path d="M90 50 Q100 46 110 50 Q110 62 100 66 Q90 62 90 50Z" fill="#2e7d32" opacity=".5"/>
+      <ellipse cx="118" cy="52" rx="9" ry="6" fill="#2e7d32"/>
+      <line x1="80" y1="64" x2="68" y2="72" stroke="#388e3c" stroke-width="3"/>
+      <line x1="120" y1="64" x2="132" y2="72" stroke="#388e3c" stroke-width="3"/>
+      <ellipse cx="155" cy="57" rx="7" ry="5" fill="#f5e6c8"/>
+      <ellipse cx="167" cy="59" rx="6" ry="4.5" fill="#f5e6c8"/>
+      <ellipse cx="161" cy="52" rx="5.5" ry="4" fill="#f5e6c8"/>
+      <text x="120" y="97" text-anchor="middle" fill="#5eead4" font-size="10">🐢 Sea Turtle Nesting</text>
+    </svg>`,
+
+    city:`<svg width="240" height="100" viewBox="0 0 240 100">
+      <rect width="240" height="100" rx="10" fill="#0c2a50"/>
+      <rect width="240" height="70" fill="#1a2a4e"/>
+      <rect x="95" y="10" width="18" height="70" fill="#2c3e50"/>
+      <rect x="96" y="8" width="16" height="6" rx="1" fill="#34495e"/>
+      <polygon points="104,2 108,8 100,8" fill="#7f8c8d"/>
+      <rect x="60" y="35" width="28" height="45" fill="#2c3e50"/>
+      <rect x="145" y="25" width="24" height="55" fill="#34495e"/>
+      <rect x="25" y="48" width="22" height="32" fill="#2c3e50"/>
+      <rect x="193" y="42" width="22" height="38" fill="#2c3e50"/>
+      <rect x="0" y="78" width="240" height="14" fill="#424242"/>
+      <rect x="30" y="72" width="50" height="18" rx="5" fill="#0d9488"/>
+      <rect x="35" y="74" width="10" height="8" rx="1" fill="#5eead4"/>
+      <rect x="50" y="74" width="10" height="8" rx="1" fill="#5eead4"/>
+      <rect x="65" y="74" width="10" height="8" rx="1" fill="#5eead4"/>
+      <circle cx="200" cy="18" r="5" fill="#E0A800"/>
+      <circle cx="210" cy="12" r="2" fill="#fff" opacity=".7"/>
+      <circle cx="185" cy="10" r="1.5" fill="#fff" opacity=".7"/>
+      <text x="120" y="97" text-anchor="middle" fill="#5eead4" font-size="10">🚇 Public Transit – Less Cars, Cleaner Air</text>
+    </svg>`,
+  };
+  return svgs[key]||'';
+}
+
+// ═══════════════════════════════════════════════════════
+//  GOLD GLITTER
+// ═══════════════════════════════════════════════════════
+function spawnGlitter(){
+  const golds=['#E0A800','#FFD700','#FFC107','#F59E0B','#FBBF24','#D97706'];
+  for(let i=0;i<28;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      const size=4+Math.random()*7;
+      p.style.cssText='position:fixed;pointer-events:none;z-index:9999;'+
+        'width:'+size+'px;height:'+size+'px;'+
+        'background:'+golds[Math.floor(Math.random()*golds.length)]+';'+
+        'border-radius:'+(Math.random()>.5?'50%':'2px')+';'+
+        'left:'+(5+Math.random()*90)+'vw;top:-10px;'+
+        'animation:glitter-fall '+(1.1+Math.random()*1.8)+'s linear forwards;';
+      document.body.appendChild(p);
+      setTimeout(()=>{if(p.parentNode)p.parentNode.removeChild(p);},3500);
+    },i*55);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════
+let state={
+  qi:0, score:0, lives:3, answered:false,
+  sortState:{},
+};
+const TOTAL_Q = QUESTIONS.length;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome(){
+  state={qi:0,score:0,lives:3,answered:false,sortState:{}};
+  sortCycle={};
+  show('title-screen');
+}
+
+function startGame(){
+  state={qi:0,score:0,lives:3,answered:false,sortState:{}};
+  sortCycle={};
+  show('game-screen');
+  renderQuestion();
+}
+
+function restartGame(){startGame();}
+
+function renderQuestion(){
+  const q=QUESTIONS[state.qi];
+  if(!q){endGame();return;}
+
+  document.getElementById('round-label').textContent=`ROUND ${q.round} / 3`;
+  document.getElementById('score-val').textContent=state.score;
+  document.getElementById('lives-val').textContent='❤️'.repeat(state.lives);
+
+  const pct=Math.round((state.qi/TOTAL_Q)*100);
+  document.getElementById('progress-bar').style.width=pct+'%';
+
+  document.getElementById('q-text').textContent=q.qtext;
+  document.getElementById('q-context').textContent=q.context||'';
+
+  const svgArea=document.getElementById('svg-area');
+  svgArea.innerHTML = q.svg ? getSVG(q.svg) : '';
+
+  const fb=document.getElementById('feedback');
+  fb.style.display='none'; fb.className='';
+  document.getElementById('next-btn').style.display='none';
+  state.answered=false;
+
+  document.getElementById('answers').style.display='none';
+  document.getElementById('sort-area').style.display='none';
+  document.getElementById('sort-cards').style.display='none';
+  document.getElementById('sort-submit').style.display='none';
+
+  if(q.type==='sort'){
+    buildSort(q);
+  } else {
+    buildMCQ(q);
+  }
+}
+
+// ── MCQ ──
+function buildMCQ(q){
+  const cont=document.getElementById('answers');
+  cont.style.display='grid';
+  cont.className='';
+  if(q.answers && q.answers.length===4) cont.classList.add('grid2');
+  cont.innerHTML='';
+  q.answers.forEach((a,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';
+    btn.textContent=a.text;
+    btn.onclick=()=>answerMCQ(a,btn,q);
+    cont.appendChild(btn);
+  });
+}
+
+function answerMCQ(a,btn,q){
+  if(state.answered) return;
+  state.answered=true;
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  const nxt=document.getElementById('next-btn');
+  if(a.correct){
+    btn.classList.add('correct');
+    state.score+=5;
+    fb.className='correct';
+    fb.textContent='✅ Correct! '+q.explain;
+    spawnGlitter();
+  } else {
+    btn.classList.add('wrong');
+    state.lives--;
+    document.getElementById('lives-val').textContent='❤️'.repeat(Math.max(0,state.lives));
+    document.querySelectorAll('.ans-btn').forEach(b=>{
+      if(q.answers.find(a2=>a2.correct && b.textContent===a2.text)) b.classList.add('correct');
+    });
+    fb.className='wrong';
+    fb.textContent='❌ Not quite. '+q.explain;
+  }
+  fb.style.display='block';
+  document.getElementById('score-val').textContent=state.score;
+  nxt.style.display='block';
+  if(state.lives<=0){
+    nxt.textContent='Continue (No lives left) ➡️';
+  }
+}
+
+// ── SORT ──
+function buildSort(q){
+  state.sortState={};
+  sortCycle={};
+  const cardsDiv=document.getElementById('sort-cards');
+  cardsDiv.style.display='grid';
+  cardsDiv.innerHTML='';
+  const sortArea=document.getElementById('sort-area');
+  sortArea.style.display='grid';
+  const zg=document.getElementById('zone-good');
+  const zb=document.getElementById('zone-bad');
+  [...zg.querySelectorAll('.sort-card')].forEach(c=>c.remove());
+  [...zb.querySelectorAll('.sort-card')].forEach(c=>c.remove());
+
+  q.cards.forEach((c,i)=>{
+    const card=document.createElement('div');
+    card.className='sort-card';
+    card.id='sc'+i;
+    card.textContent=c.label;
+    card.dataset.correct=c.correct;
+    card.dataset.idx=i;
+    card.onclick=()=>cycleSort(card,q);
+    cardsDiv.appendChild(card);
+  });
+  document.getElementById('sort-submit').style.display='block';
+}
+
+let sortCycle={};
+function cycleSort(card,q){
+  if(card.classList.contains('placed-good')||card.classList.contains('placed-bad')) return;
+  const idx=card.dataset.idx;
+  const cur=sortCycle[idx]||'none';
+  if(cur==='none'){
+    sortCycle[idx]='good';
+    card.classList.add('placed-good');
+    card.classList.remove('placed-bad');
+    card.title='Marked as Helpful (click again to change)';
+  } else if(cur==='good'){
+    sortCycle[idx]='bad';
+    card.classList.remove('placed-good');
+    card.classList.add('placed-bad');
+    card.title='Marked as Harmful (click again to reset)';
+  } else {
+    sortCycle[idx]='none';
+    card.classList.remove('placed-good','placed-bad');
+    card.title='';
+  }
+}
+
+function checkSort(){
+  if(state.answered) return;
+  const q=QUESTIONS[state.qi];
+  let allCorrect=true;
+  let allSet=true;
+  q.cards.forEach((c,i)=>{
+    const chosen=sortCycle[i]||'none';
+    if(chosen==='none'){allSet=false;}
+    if(chosen!==c.correct) allCorrect=false;
+  });
+  if(!allSet){
+    const fb=document.getElementById('feedback');
+    fb.style.display='block';
+    fb.className='wrong';
+    fb.textContent='⚠️ Please sort ALL cards first — click each card once for Helpful, twice for Harmful, three times to reset.';
+    return;
+  }
+  state.answered=true;
+  document.getElementById('sort-submit').disabled=true;
+  q.cards.forEach((c,i)=>{
+    const card=document.getElementById('sc'+i);
+    const chosen=sortCycle[i]||'none';
+    if(chosen===c.correct){
+      card.style.boxShadow='0 0 0 3px #0d9488';
+    } else {
+      card.style.boxShadow='0 0 0 3px #ef5350';
+      allCorrect=false;
+    }
+  });
+  const fb=document.getElementById('feedback');
+  const nxt=document.getElementById('next-btn');
+  if(allCorrect){
+    state.score+=5;
+    fb.className='correct';
+    fb.textContent='✅ Perfect sorting! '+q.explain;
+    spawnGlitter();
+  } else {
+    state.lives--;
+    document.getElementById('lives-val').textContent='❤️'.repeat(Math.max(0,state.lives));
+    fb.className='wrong';
+    fb.textContent='❌ Some cards were in the wrong group. '+q.explain;
+  }
+  fb.style.display='block';
+  document.getElementById('score-val').textContent=state.score;
+  nxt.style.display='block';
+  sortCycle={};
+}
+
+// ── NEXT ──
+function nextQuestion(){
+  state.qi++;
+  state.answered=false;
+  sortCycle={};
+  if(state.qi>=TOTAL_Q){endGame();return;}
+  const prev=QUESTIONS[state.qi-1];
+  const cur=QUESTIONS[state.qi];
+  if(cur && cur.round!==prev.round){
+    showRoundSplash(cur.round, ()=>{renderQuestion();});
+  } else {
+    renderQuestion();
+  }
+}
+
+function showRoundSplash(round, cb){
+  const labels=['','Sorting Actions','Best Solutions','Community Planning'];
+  const subs=[
+    '',
+    'Decide: Helpful ✅ or Harmful ❌?',
+    'Pick the BEST science-based solution',
+    'What comes NEXT in the plan?'
+  ];
+  const splash=document.getElementById('round-splash');
+  document.getElementById('rs-title').textContent=`🔵 Round ${round} — ${labels[round]}`;
+  document.getElementById('rs-sub').textContent=subs[round];
+  splash.classList.add('active');
+  setTimeout(()=>{splash.classList.remove('active');cb();},2200);
+}
+
+// ── END ──
+function endGame(){
+  show('end-screen');
+  const pct=Math.round((state.score/(TOTAL_Q*5))*100);
+  document.getElementById('final-score').textContent=`${state.score} pts`;
+  let msg='';
+  if(pct>=80) msg='🏆 Outstanding Earth Guardian! You showed deep understanding of how communities protect our planet.';
+  else if(pct>=55) msg='🌿 Good work, Guardian! Review the explanations above and try again to reach expert level.';
+  else msg='💪 Keep learning! Each wrong answer taught you something new. Try again — you can do it!';
+  document.getElementById('end-msg').textContent=msg;
+}
+
+// ── INIT ──
+show('title-screen');
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  Topic: Matter and Its Interactions
+  Standards: 5-PS1-1 (particles too small to see), 5-PS1-2 (conservation of mass),
+             5-PS1-3 (identify materials by properties), 5-PS1-4 (mixing substances)
+  Teacher note: 3 escalating rounds; drag-and-drop mechanic; 12+ questions;
+                works fully offline — just open the file in any browser.
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matter Lab — Science G5</title>
+<style>
+  :root {
+    --gold:#f5c518; --blue:#1565c0; --teal:#00897b;
+    --red:#c62828; --green:#2e7d32; --bg:#0a1628;
+    --panel:#112240; --text:#e8f0fe; --accent:#4dd0e1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Arial,sans-serif;
+       min-height:100vh;overflow-x:hidden;font-size:18px}
+  h1{font-size:2.2rem;color:var(--gold);text-shadow:0 0 18px #f5c51888}
+  h2{font-size:1.5rem;color:var(--accent)}
+  .screen{display:none;flex-direction:column;align-items:center;justify-content:center;
+          min-height:100vh;padding:24px;text-align:center}
+  .screen.active{display:flex}
+
+  /* ── TITLE ── */
+  #title-screen{background:radial-gradient(ellipse at 50% 30%,#1a2f5a 0%,#0a1628 70%)}
+  .title-svg{margin:18px auto}
+  .how-box{background:var(--panel);border:2px solid var(--accent);border-radius:16px;
+           padding:20px 28px;max-width:580px;text-align:left;margin:18px 0;line-height:1.9}
+  .how-box li{margin-left:22px}
+  .btn{display:inline-block;padding:16px 40px;border-radius:50px;border:none;
+       font-size:1.2rem;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;
+       box-shadow:0 4px 18px #0006}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px #0009}
+  .btn-gold{background:linear-gradient(135deg,#f5c518,#e6a800);color:#1a0a00}
+  .btn-teal{background:linear-gradient(135deg,#00bcd4,#00897b);color:#fff}
+  .btn-red{background:linear-gradient(135deg,#ef5350,#b71c1c);color:#fff}
+
+  /* ── HUD ── */
+  #hud{display:none;position:fixed;top:0;left:0;right:0;z-index:100;
+       background:#091120ee;padding:10px 24px;
+       display:flex;justify-content:space-between;align-items:center;
+       border-bottom:2px solid var(--accent);backdrop-filter:blur(4px)}
+  #hud.hidden{display:none!important}
+  .hud-stat{font-size:1rem;font-weight:700}
+  .hud-lives span{font-size:1.3rem}
+  .round-badge{background:var(--teal);padding:4px 16px;border-radius:20px;font-size:.95rem}
+
+  /* ── GAME SCREEN ── */
+  #game-screen{padding-top:80px;padding-bottom:32px;justify-content:flex-start}
+  .challenge-card{background:var(--panel);border:2px solid var(--accent);border-radius:20px;
+                  padding:28px 32px;max-width:720px;width:100%;margin:0 auto 20px}
+  .q-text{font-size:1.25rem;line-height:1.7;margin-bottom:18px;color:#cfe8ff}
+  .q-label{font-size:.85rem;color:var(--gold);text-transform:uppercase;
+            letter-spacing:1px;margin-bottom:6px}
+
+  /* drag zone */
+  .drag-area{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:12px 0}
+  .drag-item{background:linear-gradient(135deg,#1e3a5f,#0d2137);border:2px solid #4dd0e188;
+             border-radius:12px;padding:12px 22px;font-size:1.05rem;cursor:grab;
+             user-select:none;transition:transform .12s,box-shadow .12s;touch-action:none;
+             overflow-wrap:break-word;word-break:break-word;text-align:center;}
+  .drag-item:active{cursor:grabbing}
+  .drag-item.dragging{opacity:.45;transform:scale(.97)}
+  .drag-item.placed{opacity:.5;pointer-events:none;border-color:#ffffff33}
+
+  .drop-zone{min-height:60px;border:2.5px dashed #4dd0e166;border-radius:14px;
+             padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+             justify-content:center;transition:background .2s;position:relative}
+  .drop-zone.over{background:#4dd0e122;border-color:#4dd0e1}
+  .drop-zone .zone-label{position:absolute;top:-13px;left:14px;background:var(--panel);
+                         padding:0 8px;font-size:.78rem;color:var(--accent);font-weight:700}
+  .drop-zone .chip{background:#1b4f72;border:2px solid var(--accent);border-radius:10px;
+                   padding:8px 16px;font-size:.95rem;overflow-wrap:break-word;word-break:break-word;}
+
+  /* MC buttons */
+  .mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .mc-btn{padding:14px;border-radius:14px;border:2.5px solid #4dd0e144;
+          background:#0d2137;color:var(--text);font-size:1rem;cursor:pointer;
+          text-align:left;transition:background .15s,border-color .15s;
+          overflow-wrap:break-word;word-break:break-word;}
+  .mc-btn:hover{background:#1a3a5c;border-color:var(--accent)}
+  .mc-btn.correct{background:#1b5e20;border-color:#66bb6a;color:#c8e6c9}
+  .mc-btn.wrong{background:#7f0000;border-color:#ef5350;color:#ffcdd2}
+
+  /* feedback */
+  #feedback-box{max-width:720px;width:100%;margin:0 auto 12px;padding:14px 22px;
+                border-radius:14px;font-size:1rem;line-height:1.6;display:none}
+  #feedback-box.show{display:block}
+  #feedback-box.ok{background:#1b5e2088;border:2px solid #66bb6a}
+  #feedback-box.bad{background:#7f000088;border:2px solid #ef5350}
+
+  .next-btn-wrap{margin:10px auto;max-width:720px;width:100%;text-align:right}
+
+  /* scale mechanic */
+  .scale-wrap{display:flex;align-items:flex-end;justify-content:center;gap:0;margin:10px 0}
+  .pan{width:160px;min-height:64px;background:#0d2137;border:2.5px solid var(--accent);
+       border-radius:10px;display:flex;flex-wrap:wrap;gap:6px;padding:10px;
+       align-items:center;justify-content:center;transition:transform .4s}
+  .beam{width:20px;height:180px;background:linear-gradient(#8d6e63,#5d4037);
+        border-radius:4px;align-self:flex-end}
+  .pivot{width:18px;height:18px;background:#ffca28;border-radius:50%;
+         position:relative;bottom:2px}
+  .scale-chip{background:#1b4f72;border:2px solid var(--gold);border-radius:8px;
+              padding:6px 12px;font-size:.9rem;cursor:grab;user-select:none}
+
+  /* END screen */
+  #end-screen{background:radial-gradient(ellipse at 50% 40%,#1a2f5a,#0a1628)}
+  .score-ring{width:180px;height:180px;position:relative;margin:24px auto}
+  .score-ring svg{width:180px;height:180px}
+  .score-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+                font-size:2.2rem;font-weight:900;color:var(--gold)}
+  .grade-msg{font-size:1.4rem;margin:12px 0;color:var(--accent)}
+  .medal{font-size:3.5rem;display:block;margin:8px 0}
+  .summary-tbl{border-collapse:collapse;margin:16px auto;min-width:280px}
+  .summary-tbl td,.summary-tbl th{padding:8px 18px;border:1px solid #4dd0e144;font-size:1rem}
+  .summary-tbl th{color:var(--gold);font-weight:700}
+
+  /* particle animation bg */
+  #particles{position:fixed;top:0;left:0;width:100%;height:100%;
+             pointer-events:none;z-index:0;overflow:hidden}
+  .particle{position:absolute;border-radius:50%;animation:float linear infinite}
+  @keyframes float{0%{transform:translateY(100vh) scale(0)}
+                   100%{transform:translateY(-120px) scale(1)}}
+  .screen{position:relative;z-index:1}
+  #hud{z-index:200}
+
+  /* responsive */
+  @media(max-width:540px){
+    h1{font-size:1.6rem} .mc-grid{grid-template-columns:1fr}
+    .challenge-card{padding:18px 14px}
+  }
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn,.btn-gold,.btn-teal,.btn-red{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    .mc-grid{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+<button onclick="restartGame()" title="Return to title screen" style="position:fixed;bottom:18px;right:18px;z-index:999;background:linear-gradient(135deg,#f5c518,#e6a800);color:#1a0a00;border:none;border-radius:50px;padding:9px 20px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #0007;letter-spacing:.2px">🏠 Restart</button>
+
+<!-- ═══════════════ HUD ═══════════════ -->
+<div id="hud" class="hidden">
+  <div class="hud-stat">⚗️ Matter Lab</div>
+  <div class="round-badge" id="hud-round">Round 1</div>
+  <div class="hud-stat">Score: <span id="hud-score">0</span></div>
+  <div class="hud-stat hud-lives">Lives: <span id="hud-lives">❤️❤️❤️</span></div>
+</div>
+
+<!-- ═══════════════ TITLE ═══════════════ -->
+<div id="title-screen" class="screen active">
+  <!-- Inline SVG: desert lab scene -->
+  <svg class="title-svg" width="340" height="160" viewBox="0 0 340 160">
+    <!-- sky gradient -->
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1565c0"/>
+        <stop offset="100%" stop-color="#0a1628"/>
+      </linearGradient>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#4dd0e155"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+    </defs>
+    <rect width="340" height="160" fill="url(#sky)" rx="14"/>
+    <!-- ground / grass -->
+    <rect x="0" y="140" width="340" height="20" fill="#1b5e20"/>
+    <!-- beaker left -->
+    <rect x="30" y="70" width="50" height="65" rx="6" fill="#a5d6f7" fill-opacity=".25" stroke="#4dd0e1" stroke-width="2"/>
+    <rect x="34" y="100" width="42" height="32" rx="4" fill="#1565c0" fill-opacity=".5"/>
+    <!-- bubbles in beaker -->
+    <circle cx="48" cy="108" r="4" fill="#4dd0e1" fill-opacity=".7"/>
+    <circle cx="62" cy="115" r="3" fill="#4dd0e1" fill-opacity=".6"/>
+    <circle cx="55" cy="98" r="2.5" fill="#80deea"/>
+    <!-- beaker label -->
+    <text x="55" y="148" text-anchor="middle" font-size="9" fill="#cfe8ff">H₂O</text>
+    <!-- balance scale middle -->
+    <line x1="170" y1="50" x2="170" y2="130" stroke="#8d6e63" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="170" cy="50" r="7" fill="#ffca28"/>
+    <line x1="120" y1="90" x2="220" y2="90" stroke="#8d6e63" stroke-width="4" stroke-linecap="round"/>
+    <rect x="100" y="90" width="40" height="28" rx="6" fill="#1b4f72" stroke="#4dd0e1" stroke-width="1.5"/>
+    <text x="120" y="109" text-anchor="middle" font-size="8" fill="#4dd0e1">Salt</text>
+    <rect x="200" y="90" width="40" height="28" rx="6" fill="#1b5e20" stroke="#66bb6a" stroke-width="1.5"/>
+    <text x="220" y="109" text-anchor="middle" font-size="8" fill="#a5d6a7">Sand</text>
+    <!-- molecule / atom symbol right -->
+    <circle cx="305" cy="82" r="14" fill="none" stroke="#4dd0e1" stroke-width="2"/>
+    <circle cx="305" cy="82" r="5" fill="#f5c518"/>
+    <circle cx="291" cy="76" r="5" fill="#4dd0e1"/>
+    <circle cx="319" cy="76" r="5" fill="#4dd0e1"/>
+    <circle cx="305" cy="96" r="5" fill="#4dd0e1"/>
+    <line x1="291" y1="76" x2="300" y2="82" stroke="#ffffff55" stroke-width="1.5"/>
+    <line x1="319" y1="76" x2="310" y2="82" stroke="#ffffff55" stroke-width="1.5"/>
+    <line x1="305" y1="96" x2="305" y2="87" stroke="#ffffff55" stroke-width="1.5"/>
+    <!-- glow under title area -->
+    <ellipse cx="170" cy="30" rx="100" ry="24" fill="url(#glow)"/>
+    <!-- particle dots -->
+    <circle cx="80" cy="30" r="3" fill="#4dd0e1" fill-opacity=".8"/>
+    <circle cx="95" cy="20" r="2" fill="#80deea" fill-opacity=".6"/>
+    <circle cx="72" cy="18" r="1.5" fill="#4dd0e1" fill-opacity=".5"/>
+    <circle cx="250" cy="35" r="3" fill="#ffca28" fill-opacity=".7"/>
+    <circle cx="260" cy="22" r="2" fill="#ffca28" fill-opacity=".5"/>
+    <circle cx="240" cy="25" r="1.5" fill="#ffe082"/>
+  </svg>
+
+  <div class="pill-label" style="display:inline-block;background:rgba(13,148,136,.18);border:1.5px solid #0d9488;border-radius:50px;padding:6px 22px;font-size:.95rem;color:#4dd0e1;margin-bottom:14px;letter-spacing:.3px;max-width:min(520px,calc(100vw - 24px));overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box">🧪 Grade 5 · Topic 1 · Matter and Its Interactions</div>
+  <h1>⚗️ Matter Lab</h1>
+
+  <div class="how-box">
+    <h2 style="margin-bottom:10px">How to Play</h2>
+    <ul>
+      <li>3 rounds, each harder than the last.</li>
+      <li><strong>Drag tiles</strong> into the correct drop zones — or pick the right answer.</li>
+      <li>You start with <strong>3 lives ❤️</strong>. Wrong answers cost a life.</li>
+      <li>Each correct answer earns <strong>+10 pts</strong> (Round 3: +20).</li>
+      <li>Instant explanation after every answer — read it!</li>
+      <li>12 challenges total covering particles, properties, conservation of mass, and mixing.</li>
+    </ul>
+  </div>
+
+  <button class="btn btn-gold" onclick="startGame()">🚀 Start Experiment!</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACi0lEQVR4nO1ZW4rcMBAsPWA/ZcgB5ijyzZYcaW8gH2UPEJA+F9p0qG7v/mV2IB8jhQgz2BYDJam7qrodFPfGGe9OA//n/25/oJ2/qVftNWkTVNUmxY+lyuz7C+1VVZOqFF5ciKqtRbXPjz8CCGHHCBj7Sz8+tuMMIWzACHkSfI/Ml5b6IUDSlkvzoJoJ359G/roLpWWpWZA68q9Z8MUH478DRbUzkZO2ZBmha8T/EUIAanrfMyrfjVeM/cqC+Hx894deg8xJ/iwqqDwLGwvs/9gzEDa86M8P0s6eOgQ4N+SxT4Dvm6EMdRKO8P66oRBoW0G/IkYQ1IyaSzs3aq5dB8YrWfT5+L4Z2qtpLnc7qTp+KQ2lrRH/pZ23ls0InWE3CuUp8HfMH/8ZY5MclPrVg6Wt/HgDjnN7mwFffCB/YYSZupE/LH/NhWKB/AXxW6ijuG3mWnxKlsDf6fyJmcoFGml4LaCr4BfbeaH/+ZJgaoGsgR/m2dy8UbkIu6zi33DFf6+E7RJg4kst1vn5HxRZBn8zzLb5Fv+ezrIIf4qzzfXuOghZJP6FbsE4k1nc/JFVTF8BvzJyzPM30o43UpgOWCN/O5Gb53HOtFNYKH6UzOklmBUCngVWgvU1/P950xD2PHbWXEAujetiOTwDvsf4p5D2nT9dzi5RiN/8PU7CP/D8ZfK6f7isRVyk/9DZBbLii0IAXwjWiP8QQrYukOAwITi0MxHSAvVv5Fab5/Hmc+pHUmUVBpy3NgO+h/rPOLJdfDf4GDak9/nr3/h580n7qM6i2g8S6TT47ukv2G2QLy96ebm6hv/p/v3FLYT3onkWyUR5Bfzw71+X4fz0/7KGfrHzc2ecz8YX//H5368dBu4qAN6yAAAAAElFTkSuQmCC" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+</div>
+
+<!-- ═══════════════ GAME ═══════════════ -->
+<div id="game-screen" class="screen">
+  <div class="challenge-card" id="challenge-card">
+    <div class="q-label" id="q-label">Challenge 1 of 12</div>
+    <div class="q-text" id="q-text"></div>
+    <div id="q-body"></div>
+  </div>
+  <div id="feedback-box"></div>
+  <div class="next-btn-wrap" id="next-wrap" style="display:none">
+    <button class="btn btn-teal" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ END ═══════════════ -->
+<div id="end-screen" class="screen">
+  <h1>🏆 Experiment Complete!</h1>
+  <span class="medal" id="end-medal">🥇</span>
+  <div class="score-ring">
+    <svg viewBox="0 0 180 180">
+      <circle cx="90" cy="90" r="78" fill="none" stroke="#112240" stroke-width="16"/>
+      <circle id="score-arc" cx="90" cy="90" r="78" fill="none" stroke="#f5c518"
+              stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="490" stroke-dashoffset="490"
+              transform="rotate(-90 90 90)"/>
+    </svg>
+    <div class="score-center" id="end-score-num">0</div>
+  </div>
+  <div class="grade-msg" id="end-grade"></div>
+  <table class="summary-tbl">
+    <tr><th>Metric</th><th>Result</th></tr>
+    <tr><td>Score</td><td id="tbl-score">—</td></tr>
+    <tr><td>Correct</td><td id="tbl-correct">—</td></tr>
+    <tr><td>Lives left</td><td id="tbl-lives">—</td></tr>
+  </table>
+  <button class="btn btn-gold" onclick="restartGame()" style="margin-top:20px">🔄 Play Again</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   PARTICLES BACKGROUND
+══════════════════════════════════════════════════════ */
+(function(){
+  var c=['#f5c518','#e6a800','#ffd700','#ffca28','#f0b300'];
+  for(var i=0;i<28;i++){
+    var d=document.createElement('div');
+    d.className='particle';
+    var sz=4+Math.random()*8;
+    d.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(Math.random()*100)+'%;'+
+      'background:'+c[Math.floor(Math.random()*c.length)]+';opacity:'+(0.15+Math.random()*0.25)+';'+
+      'animation-duration:'+(8+Math.random()*14)+'s;animation-delay:'+(-Math.random()*14)+'s';
+    document.getElementById('particles').appendChild(d);
+  }
+})();
+
+/* ══════════════════════════════════════════════════════
+   QUESTIONS BANK  (12 questions, 3 rounds of 4)
+   Mechanic: Multiple-Choice (MC) for all rounds,
+             Round 2 adds a drag-to-zone mini, Round 3 a balance comparison.
+   We implement a unified engine: each Q has a type.
+══════════════════════════════════════════════════════ */
+var QUESTIONS = [
+  /* ── ROUND 1: Particles & Properties (4 MC) ── */
+  {
+    round:1, type:'mc',
+    q:'A grain of sand looks solid and still. According to 5-PS1-1, what are all solid objects actually made of?',
+    choices:['Particles too small to be seen','Tiny visible crystals','Hollow space only','Large atoms you can see with the naked eye'],
+    answer:0,
+    explain:'All matter — even a tiny sand grain — is made of particles far too small to see with the naked eye (5-PS1-1).'
+  },
+  {
+    round:1, type:'mc',
+    q:'Salt dissolves completely in water — you can no longer see it. Where did the salt particles go?',
+    choices:['They disappeared forever','They escaped as a gas','They spread out between water particles, still there','They turned into water particles'],
+    answer:2,
+    explain:'Salt particles spread between water particles and remain present — matter is conserved even when invisible (5-PS1-1 & 5-PS1-2).'
+  },
+  {
+    round:1, type:'mc',
+    q:'A student wants to identify an unknown liquid found on the lab shelf. Which property is MOST reliable for identifying a pure substance?',
+    choices:['Its colour in sunlight','Its boiling point','The shape of its container','How fast it evaporates on a hot day'],
+    answer:1,
+    explain:'Boiling point is a specific, measurable property used to identify pure substances (5-PS1-3). Colour and evaporation rate vary with conditions.'
+  },
+  {
+    round:1, type:'mc',
+    q:'Which of the following is a PHYSICAL property you can observe without changing the substance?',
+    choices:['Rusting of iron','Burning of wood','Density of water','Souring of milk'],
+    answer:2,
+    explain:'Density can be measured without producing a new substance — it is a physical property (5-PS1-3). The others involve chemical changes.'
+  },
+
+  /* ── ROUND 2: Conservation of Mass — Drag-to-Zone ── */
+  {
+    round:2, type:'drag',
+    q:'A student mixes baking soda and vinegar in a sealed bag in the school science lab. The bag puffs up with gas. Drag each event to "Mass Changes" or "Mass Stays the Same".',
+    zones:['Mass STAYS the Same','Mass CHANGES'],
+    items:[
+      {label:'Sealed bag before mixing',correct:0},
+      {label:'Sealed bag after reaction',correct:0},
+      {label:'Open cup — gas escapes',correct:1},
+      {label:'Open cup — water evaporates',correct:1}
+    ],
+    explain:'In a SEALED system mass is always conserved (5-PS1-2). When the system is open, matter (gas/vapour) can escape, so the measured mass changes.'
+  },
+  {
+    round:2, type:'mc',
+    q:'Before heating: a copper wire masses 12.4 g. After heating in air it turns black and masses 13.1 g. Why did the mass increase?',
+    choices:['Copper absorbed oxygen from the air','Heat added mass to the wire','Some copper turned into iron','The scale malfunctioned'],
+    answer:0,
+    explain:'Copper reacted with oxygen (a chemical change). The extra mass came from oxygen atoms joining the copper — total matter is still conserved (5-PS1-2).'
+  },
+  {
+    round:2, type:'drag',
+    q:'Sort these changes: drag each to "Physical Change" or "Chemical Change".',
+    zones:['Physical Change','Chemical Change'],
+    items:[
+      {label:'Cutting aluminium foil',correct:0},
+      {label:'Dissolving sugar in tea',correct:0},
+      {label:'Burning paper',correct:1},
+      {label:'Iron rusting on a metal fence',correct:1}
+    ],
+    explain:'Physical changes (cutting, dissolving) do not produce new substances. Chemical changes (burning, rusting) produce new substances with new properties (5-PS1-4).'
+  },
+  {
+    round:2, type:'mc',
+    q:'A student dissolves 5 g of salt in 95 g of water. What is the mass of the salt-water solution?',
+    choices:['Less than 95 g','Exactly 100 g','More than 100 g','It depends on temperature'],
+    answer:1,
+    explain:'Mass is conserved: 5 g + 95 g = 100 g. Dissolving is a physical change; no mass is gained or lost (5-PS1-2).'
+  },
+
+  /* ── ROUND 3: Mixing & New Substances — harder MC + balance ── */
+  {
+    round:3, type:'balance',
+    q:'The balance shows Before and After a reaction between iron filings and sulfur. Read the scale and decide: is mass conserved in a sealed container?',
+    leftLabel:'Iron (7 g) + Sulfur (4 g)',
+    rightLabel:'Iron sulfide product',
+    leftMass:11, rightMass:11,
+    explain:'Iron + Sulfur → Iron Sulfide. In a sealed container total mass stays 11 g — matter is conserved (5-PS1-2 & 5-PS1-4).'
+  },
+  {
+    round:3, type:'mc',
+    q:'Mixing baking soda and vinegar produces bubbles of carbon dioxide gas. This is evidence that:',
+    choices:['Only a physical change occurred','A new substance was formed','The substances just dissolved each other','Temperature rose because of friction'],
+    answer:1,
+    explain:'Producing a gas (CO₂) with new properties is evidence a NEW substance formed — a chemical change (5-PS1-4).'
+  },
+  {
+    round:3, type:'mc',
+    q:'A student mixes sand and iron filings in a bowl and then uses a magnet to separate them. What type of change occurred?',
+    choices:['Chemical — a new substance formed','Physical — no new substance formed','Nuclear — atoms changed','Biological — living organisms reacted'],
+    answer:1,
+    explain:'Mixing sand and iron filings is a physical change; they can be separated and no new substance is made (5-PS1-4).'
+  },
+  {
+    round:3, type:'mc',
+    q:'Which observation is the BEST evidence that a chemical reaction has occurred when mixing two liquids?',
+    choices:['The mixture changes colour slightly','A permanent colour change AND a gas is produced that cannot be separated back','The liquids are different densities','One liquid floats on top of the other'],
+    answer:1,
+    explain:'Permanent colour change combined with gas production (new substance) that cannot be reversed is strong evidence of a chemical change (5-PS1-4).'
+  }
+];
+
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+var state = {
+  qi: 0, score: 0, lives: 3, correct: 0,
+  answered: false,
+  dragState: {}  // for drag questions
+};
+
+function pts(round){ return round === 3 ? 20 : 10; }
+
+/* ══════════════════════════════════════════════════════
+   SCREENS
+══════════════════════════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+}
+function startGame(){
+  state.qi=0; state.score=0; state.lives=3; state.correct=0;
+  showScreen('game-screen');
+  document.getElementById('hud').classList.remove('hidden');
+  renderQuestion();
+}
+function restartGame(){
+  state.qi=0; state.score=0; state.lives=3; state.correct=0;
+  document.getElementById('hud').classList.add('hidden');
+  showScreen('title-screen');
+}
+
+/* ══════════════════════════════════════════════════════
+   HUD
+══════════════════════════════════════════════════════ */
+function updateHUD(){
+  var q = QUESTIONS[state.qi];
+  document.getElementById('hud-round').textContent = 'Round ' + q.round;
+  document.getElementById('hud-score').textContent = state.score;
+  var hearts = '';
+  for(var i=0;i<state.lives;i++) hearts += '❤️';
+  for(var i=state.lives;i<3;i++) hearts += '🖤';
+  document.getElementById('hud-lives').textContent = hearts;
+}
+
+/* ══════════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════════ */
+function renderQuestion(){
+  if(state.qi >= QUESTIONS.length){ endGame(); return; }
+  var q = QUESTIONS[state.qi];
+  state.answered = false;
+  state.dragState = {};
+
+  document.getElementById('q-label').textContent =
+    'Challenge ' + (state.qi+1) + ' of ' + QUESTIONS.length + '  ·  Round ' + q.round;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-body').innerHTML = '';
+  hideFeedback();
+  document.getElementById('next-wrap').style.display = 'none';
+  updateHUD();
+
+  if(q.type === 'mc')    renderMC(q);
+  else if(q.type==='drag') renderDrag(q);
+  else if(q.type==='balance') renderBalance(q);
+}
+
+/* ── MC ── */
+function renderMC(q){
+  var grid = document.createElement('div');
+  grid.className = 'mc-grid';
+  q.choices.forEach(function(c, i){
+    var btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = ['A','B','C','D'][i] + '. ' + c;
+    btn.onclick = function(){ answerMC(i, q, grid); };
+    grid.appendChild(btn);
+  });
+  document.getElementById('q-body').appendChild(grid);
+}
+
+function answerMC(chosen, q, grid){
+  if(state.answered) return;
+  state.answered = true;
+  var btns = grid.querySelectorAll('.mc-btn');
+  btns.forEach(function(b,i){
+    b.onclick = null;
+    if(i === q.answer) b.classList.add('correct');
+    else if(i === chosen) b.classList.add('wrong');
+  });
+  if(chosen === q.answer){
+    state.score += pts(q.round); state.correct++;
+    showFeedback(true, '✅ Correct! ' + q.explain);
+  } else {
+    state.lives = Math.max(0, state.lives-1);
+    showFeedback(false, '❌ Not quite. ' + q.explain);
+  }
+  updateHUD();
+  document.getElementById('next-wrap').style.display = 'block';
+  if(state.lives === 0) setTimeout(function(){ endGame(); }, 2200);
+}
+
+/* ── DRAG ── */
+function renderDrag(q){
+  var body = document.getElementById('q-body');
+
+  // Shuffle items
+  var items = q.items.slice().sort(function(){ return Math.random()-.5; });
+  state.dragState = { placed: {}, items: items, q: q };
+
+  // Source pool
+  var poolLabel = document.createElement('div');
+  poolLabel.innerHTML = '<div class="q-label" style="margin-bottom:6px">Drag from here:</div>';
+  var pool = document.createElement('div');
+  pool.className = 'drag-area';
+  pool.id = 'drag-pool';
+  items.forEach(function(item, idx){
+    var tile = makeDragTile(item.label, idx);
+    pool.appendChild(tile);
+  });
+  body.appendChild(poolLabel);
+  body.appendChild(pool);
+
+  // Drop zones
+  var zonesWrap = document.createElement('div');
+  zonesWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:14px';
+  q.zones.forEach(function(zname, zi){
+    var dz = document.createElement('div');
+    dz.className = 'drop-zone';
+    dz.dataset.zone = zi;
+    dz.innerHTML = '<span class="zone-label">' + zname + '</span>';
+    dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('over'); });
+    dz.addEventListener('dragleave', function(){ dz.classList.remove('over'); });
+    dz.addEventListener('drop', function(e){
+      e.preventDefault(); dz.classList.remove('over');
+      var idx = parseInt(e.dataTransfer.getData('text'));
+      dropItem(idx, zi, dz);
+    });
+    zonesWrap.appendChild(dz);
+  });
+  body.appendChild(zonesWrap);
+
+  // Check button
+  var checkBtn = document.createElement('button');
+  checkBtn.className = 'btn btn-gold'; checkBtn.textContent = '🔬 Check Answers';
+  checkBtn.style.marginTop = '16px';
+  checkBtn.id = 'drag-check-btn';
+  checkBtn.onclick = function(){ checkDrag(q); };
+  body.appendChild(checkBtn);
+}
+
+function makeDragTile(label, idx){
+  var tile = document.createElement('div');
+  tile.className = 'drag-item';
+  tile.textContent = label;
+  tile.draggable = true;
+  tile.dataset.idx = idx;
+  tile.addEventListener('dragstart', function(e){
+    e.dataTransfer.setData('text', idx);
+    tile.classList.add('dragging');
+  });
+  tile.addEventListener('dragend', function(){
+    tile.classList.remove('dragging');
+  });
+  return tile;
+}
+
+function dropItem(itemIdx, zoneIdx, dz){
+  // Mark in state
+  state.dragState.placed[itemIdx] = zoneIdx;
+  // Create chip in zone
+  var chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.textContent = state.dragState.items[itemIdx].label;
+  chip.dataset.itemidx = itemIdx;
+  dz.appendChild(chip);
+  // Grey out pool tile
+  var poolTile = document.querySelector('#drag-pool [data-idx="'+itemIdx+'"]');
+  if(poolTile) poolTile.classList.add('placed');
+}
+
+function checkDrag(q){
+  if(state.answered) return;
+  var items = state.dragState.items;
+  var placed = state.dragState.placed;
+  // Check all placed
+  var allCorrect = true;
+  var numPlaced = Object.keys(placed).length;
+  if(numPlaced < items.length){
+    showFeedback(false, '⚠️ Place all tiles before checking!');
+    return;
+  }
+  for(var i=0;i<items.length;i++){
+    if(placed[i] !== items[i].correct){ allCorrect = false; break; }
+  }
+  state.answered = true;
+  document.getElementById('drag-check-btn').disabled = true;
+  if(allCorrect){
+    state.score += pts(q.round)*2; state.correct++;
+    showFeedback(true, '✅ Perfect sort! ' + q.explain);
+  } else {
+    state.lives = Math.max(0, state.lives-1);
+    showFeedback(false, '❌ Not all correct. ' + q.explain);
+    // Highlight right/wrong chips
+    var zones = document.querySelectorAll('.drop-zone');
+    zones.forEach(function(dz){
+      var zi = parseInt(dz.dataset.zone);
+      dz.querySelectorAll('.chip').forEach(function(chip){
+        var ii = parseInt(chip.dataset.itemidx);
+        chip.style.borderColor = (items[ii].correct === zi) ? '#66bb6a' : '#ef5350';
+      });
+    });
+  }
+  updateHUD();
+  document.getElementById('next-wrap').style.display = 'block';
+  if(state.lives === 0) setTimeout(function(){ endGame(); }, 2200);
+}
+
+/* ── BALANCE ── */
+function renderBalance(q){
+  var body = document.getElementById('q-body');
+  // Draw SVG balance
+  var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','340'); svg.setAttribute('height','180');
+  svg.setAttribute('viewBox','0 0 340 180');
+  svg.style.cssText='display:block;margin:0 auto';
+  svg.innerHTML =
+    '<defs><linearGradient id="panG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#0d2137"/></linearGradient></defs>'+
+    // base
+    '<rect x="155" y="155" width="30" height="20" rx="4" fill="#5d4037"/>'+
+    // pole
+    '<rect x="167" y="55" width="6" height="100" rx="3" fill="#8d6e63"/>'+
+    // pivot circle
+    '<circle cx="170" cy="55" r="9" fill="#ffca28" stroke="#f5c518" stroke-width="2"/>'+
+    // beam (level)
+    '<line x1="60" y1="100" x2="280" y2="100" stroke="#8d6e63" stroke-width="5" stroke-linecap="round"/>'+
+    // left pan
+    '<rect x="30" y="100" width="90" height="44" rx="8" fill="url(#panG)" stroke="#4dd0e1" stroke-width="2"/>'+
+    '<text x="75" y="118" text-anchor="middle" font-size="9" fill="#cfe8ff" textLength="82" lengthAdjust="spacingAndGlyphs">'+q.leftLabel+'</text>'+
+    '<text x="75" y="135" text-anchor="middle" font-size="15" fill="#f5c518" font-weight="bold">'+q.leftMass+' g</text>'+
+    // right pan
+    '<rect x="220" y="100" width="90" height="44" rx="8" fill="url(#panG)" stroke="#4dd0e1" stroke-width="2"/>'+
+    '<text x="265" y="118" text-anchor="middle" font-size="9" fill="#cfe8ff" textLength="82" lengthAdjust="spacingAndGlyphs">'+q.rightLabel+'</text>'+
+    '<text x="265" y="135" text-anchor="middle" font-size="15" fill="#f5c518" font-weight="bold">'+q.rightMass+' g</text>'+
+    // chains
+    '<line x1="75" y1="100" x2="75" y2="80" stroke="#8d6e63" stroke-width="2"/>'+
+    '<line x1="265" y1="100" x2="265" y2="80" stroke="#8d6e63" stroke-width="2"/>';
+  body.appendChild(svg);
+
+  var prompt = document.createElement('div');
+  prompt.style.cssText='font-size:1.1rem;margin:14px 0 8px;color:#cfe8ff';
+  prompt.textContent = 'Is mass conserved in this sealed reaction?';
+  body.appendChild(prompt);
+
+  var grid = document.createElement('div');
+  grid.className = 'mc-grid';
+  var opts = ['Yes — both pans show ' + q.leftMass + ' g, mass is conserved',
+              'No — the product weighs less than the reactants',
+              'No — energy was added so mass increased',
+              'Cannot tell — we need to open the container'];
+  opts.forEach(function(c, i){
+    var btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = ['A','B','C','D'][i]+'. '+c;
+    btn.onclick = function(){ answerBalance(i, q, grid); };
+    grid.appendChild(btn);
+  });
+  body.appendChild(grid);
+}
+
+function answerBalance(chosen, q, grid){
+  if(state.answered) return;
+  state.answered = true;
+  var correct = 0; // answer A
+  var btns = grid.querySelectorAll('.mc-btn');
+  btns.forEach(function(b,i){
+    b.onclick = null;
+    if(i===correct) b.classList.add('correct');
+    else if(i===chosen) b.classList.add('wrong');
+  });
+  if(chosen===correct){
+    state.score+=pts(q.round); state.correct++;
+    showFeedback(true,'✅ Correct! '+q.explain);
+  } else {
+    state.lives=Math.max(0,state.lives-1);
+    showFeedback(false,'❌ Not quite. '+q.explain);
+  }
+  updateHUD();
+  document.getElementById('next-wrap').style.display='block';
+  if(state.lives===0) setTimeout(function(){ endGame(); },2200);
+}
+
+/* ══════════════════════════════════════════════════════
+   FEEDBACK
+══════════════════════════════════════════════════════ */
+function showFeedback(ok, msg){
+  var box = document.getElementById('feedback-box');
+  box.textContent = msg;
+  box.className = 'show ' + (ok ? 'ok' : 'bad');
+}
+function hideFeedback(){
+  var box = document.getElementById('feedback-box');
+  box.className = '';
+}
+
+/* ══════════════════════════════════════════════════════
+   NEXT / END
+══════════════════════════════════════════════════════ */
+function nextQuestion(){
+  state.qi++;
+  if(state.qi >= QUESTIONS.length || state.lives === 0){ endGame(); return; }
+  renderQuestion();
+}
+
+function endGame(){
+  document.getElementById('hud').classList.add('hidden');
+  showScreen('end-screen');
+  var total = 0;
+  QUESTIONS.forEach(function(q){ total += (q.type==='drag'? pts(q.round)*2 : pts(q.round)); });
+  var pct = Math.round((state.score/total)*100);
+
+  // animate arc
+  var arc = document.getElementById('score-arc');
+  var circ = 2*Math.PI*78;
+  arc.style.transition='stroke-dashoffset 1.2s ease';
+  setTimeout(function(){
+    arc.style.strokeDashoffset = circ - (circ*(pct/100));
+  },100);
+
+  document.getElementById('end-score-num').textContent = state.score;
+  document.getElementById('tbl-score').textContent = state.score + ' / ' + total;
+  document.getElementById('tbl-correct').textContent = state.correct + ' / ' + QUESTIONS.length;
+  var hearts=''; for(var i=0;i<state.lives;i++) hearts+='❤️';
+  document.getElementById('tbl-lives').textContent = hearts || '0';
+
+  var medal, grade;
+  if(pct>=90){medal='🥇';grade='Outstanding Scientist! 🌟';}
+  else if(pct>=70){medal='🥈';grade='Great Work! Keep experimenting.';}
+  else if(pct>=50){medal='🥉';grade='Good effort — review the explanations.';}
+  else {medal='🔬';grade='Keep practising — science takes curiosity!';}
+  document.getElementById('end-medal').textContent=medal;
+  document.getElementById('end-grade').textContent=grade;
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

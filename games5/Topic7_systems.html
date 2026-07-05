@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Topic: Earth's Systems | Standards: 5-ESS2-1, 5-ESS2-2 | Teacher note: Covers the 4 Earth spheres, their interactions, and water distribution; use rounds 1-3 as pre/during/post-lesson checkpoints. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth's Systems: Sphere Quest</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #0c2a50 0%, #0a1e3c 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: #fff;
+  padding: 16px 8px;
+}
+.screen { display: none; width: 100%; max-width: 860px; }
+.screen.active { display: block; }
+
+/* ===== TOPIC PILL ===== */
+.topic-pill {
+  display: inline-block;
+  background: rgba(13,148,136,0.18);
+  border: 1.5px solid rgba(13,148,136,0.55);
+  border-radius: 999px;
+  padding: 7px 22px;
+  font-size: 0.97rem;
+  color: #5eead4;
+  font-weight: 600;
+  margin-bottom: 18px;
+  letter-spacing: 0.2px;
+}
+
+/* ===== PERMANENT RESTART BUTTON ===== */
+.btn-restart {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: rgba(224,168,0,0.18);
+  border: 1.5px solid rgba(224,168,0,0.5);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  z-index: 500;
+  transition: background 0.2s;
+}
+.btn-restart:hover { background: rgba(224,168,0,0.38); }
+
+/* ===== GOLD GLITTER ANIMATION ===== */
+@keyframes glitter-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+
+/* ===== TITLE ===== */
+#title-screen { text-align: center; }
+.title-globe { width: 180px; height: 180px; margin: 0 auto 16px; }
+h1.game-title {
+  font-size: 2.6rem; font-weight: 900;
+  color: #E0A800;
+  text-shadow: 0 2px 14px rgba(224,168,0,0.4);
+  margin-bottom: 6px;
+}
+.subtitle { font-size: 1.15rem; color: #90a4ae; margin-bottom: 20px; }
+.sphere-preview { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+.sphere-chip { padding: 7px 15px; border-radius: 20px; font-weight: 700; font-size: 0.95rem; }
+.chip-geo   { background: #6d4c41; color: #fff; }
+.chip-hydro { background: #0c2a50; color: #fff; border: 1.5px solid #0d9488; }
+.chip-bio   { background: #1b4332; color: #fff; }
+.chip-atmo  { background: #455a64; color: #fff; }
+.how-to-play {
+  background: rgba(255,255,255,0.08); border-radius: 16px;
+  padding: 18px 22px; margin: 18px auto; text-align: left;
+  max-width: 580px; border: 1px solid rgba(255,255,255,0.1);
+}
+.how-to-play h3 { color: #E0A800; font-size: 1.15rem; margin-bottom: 10px; }
+.how-to-play ul { list-style: none; }
+.how-to-play li { padding: 4px 0; font-size: 1rem; color: #cfd8dc; }
+.how-to-play li::before { content: '✦ '; color: #E0A800; }
+.btn-start {
+  background: linear-gradient(135deg, #0d9488, #0a7567);
+  color: #fff; border: none; padding: 17px 52px;
+  font-size: 1.35rem; font-weight: 800; border-radius: 50px;
+  cursor: pointer; margin-top: 18px;
+  box-shadow: 0 8px 30px rgba(13,148,136,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(13,148,136,0.6); }
+.btn-start:active { transform: translateY(0); }
+
+/* ===== HUD ===== */
+.hud {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 14px;
+  flex-wrap: wrap; gap: 8px;
+}
+.round-badge {
+  background: linear-gradient(135deg, #E0A800, #b07d00);
+  padding: 6px 18px; border-radius: 20px;
+  font-weight: 800; font-size: 0.95rem; color: #fff;
+}
+.score-display { font-size: 1.25rem; font-weight: 800; color: #E0A800; }
+.lives-display { font-size: 1.4rem; letter-spacing: 3px; min-width: 70px; text-align: right; }
+.progress-bar {
+  width: 100%; height: 8px;
+  background: rgba(255,255,255,0.12); border-radius: 4px;
+  margin-bottom: 18px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0d9488, #E0A800);
+  border-radius: 4px; transition: width 0.4s ease;
+}
+
+/* ===== QUESTION CARD ===== */
+.question-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px; padding: 22px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.round-label {
+  font-size: 0.8rem; font-weight: 700; color: #E0A800;
+  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;
+}
+.question-text {
+  font-size: 1.22rem; font-weight: 600; color: #e8f5e9;
+  line-height: 1.5; margin-bottom: 14px;
+}
+.question-svg { display: flex; justify-content: center; margin: 10px 0 18px; }
+.question-svg svg { border-radius: 12px; max-width: 100%; height: auto; }
+
+/* ===== ANSWERS ===== */
+.answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.answer-btn {
+  background: rgba(255,255,255,0.09);
+  border: 2px solid rgba(255,255,255,0.18);
+  color: #fff; padding: 15px 12px;
+  font-size: 1.02rem; font-weight: 600;
+  border-radius: 14px; cursor: pointer;
+  transition: all 0.18s; text-align: left;
+  line-height: 1.3; min-height: 60px;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.answer-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.18);
+  border-color: #0d9488; transform: translateY(-2px);
+}
+.answer-btn.correct {
+  background: rgba(46,125,50,0.55);
+  border-color: #66bb6a;
+  animation: pulse-green 0.5s;
+}
+.answer-btn.wrong {
+  background: rgba(183,28,28,0.45);
+  border-color: #ef5350;
+  animation: shake 0.4s;
+}
+@keyframes pulse-green {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* ===== FEEDBACK ===== */
+.feedback-box {
+  margin-top: 14px; padding: 13px 16px;
+  border-radius: 12px; font-size: 0.97rem;
+  font-weight: 500; line-height: 1.5; display: none;
+}
+.feedback-box.show { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.correct-fb { background: rgba(46,125,50,0.3); border: 1px solid #66bb6a; color: #a5d6a7; }
+.wrong-fb   { background: rgba(183,28,28,0.3); border: 1px solid #ef5350; color: #ef9a9a; }
+
+.btn-next {
+  display: block; margin: 14px auto 0;
+  background: linear-gradient(135deg, #E0A800, #b07d00);
+  color: #fff; border: none; padding: 13px 40px;
+  font-size: 1.15rem; font-weight: 800; border-radius: 40px;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(224,168,0,0.4);
+  transition: transform 0.15s;
+}
+.btn-next:hover { transform: translateY(-2px); }
+
+/* ===== END SCREEN ===== */
+#end-screen { text-align: center; padding-top: 10px; }
+.end-trophy { font-size: 5rem; margin: 16px 0; animation: bounce 1.2s ease-in-out infinite; }
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.end-title { font-size: 2.3rem; font-weight: 900; margin-bottom: 8px; }
+.end-score { font-size: 1.7rem; color: #E0A800; font-weight: 800; margin: 8px 0; }
+.end-stars { font-size: 2.4rem; margin: 8px 0; letter-spacing: 8px; }
+.end-message {
+  font-size: 1.05rem; color: #b0bec5;
+  max-width: 520px; margin: 10px auto 24px; line-height: 1.6;
+}
+.score-breakdown {
+  background: rgba(255,255,255,0.08); border-radius: 16px;
+  padding: 18px 22px; margin: 0 auto 24px;
+  max-width: 480px; text-align: left;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.score-breakdown h3 { color: #E0A800; margin-bottom: 12px; font-size: 1.05rem; }
+.score-row {
+  display: flex; justify-content: space-between;
+  padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: #cfd8dc; font-size: 0.95rem;
+}
+.score-row:last-child { border-bottom: none; font-weight: 700; color: #E0A800; }
+.btn-replay {
+  background: linear-gradient(135deg, #0d9488, #0a7567);
+  color: #fff; border: none; padding: 15px 50px;
+  font-size: 1.25rem; font-weight: 800; border-radius: 50px;
+  cursor: pointer; box-shadow: 0 8px 30px rgba(13,148,136,0.4);
+  transition: transform 0.15s;
+}
+.btn-replay:hover { transform: translateY(-3px); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 560px) {
+  h1.game-title { font-size: 1.9rem; }
+  .answers-grid { grid-template-columns: 1fr; }
+  .question-text { font-size: 1.08rem; }
+  .btn-start { padding: 14px 36px; font-size: 1.15rem; }
+  .btn-restart { top: 8px; right: 8px; padding: 6px 12px; font-size: 0.82rem; }
+}
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn-start{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    .answers-grid{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<!-- PERMANENT RESTART (visible on every screen) -->
+<button class="btn-restart" onclick="goHome()">🏠 Restart</button>
+
+<!-- ===== TITLE SCREEN ===== -->
+<div class="screen active" id="title-screen">
+  <div style="text-align:center;">
+    <div class="topic-pill">🌊 Grade 5 · Topic 7 · Earth's Systems</div>
+  </div>
+  <div class="title-globe">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="95" fill="#050e1a"/>
+      <circle cx="100" cy="100" r="80" fill="#1565c0"/>
+      <ellipse cx="75" cy="68" rx="33" ry="22" fill="#4caf50"/>
+      <ellipse cx="128" cy="95" rx="27" ry="18" fill="#8d6e63"/>
+      <ellipse cx="66" cy="128" rx="20" ry="14" fill="#4caf50"/>
+      <ellipse cx="108" cy="138" rx="18" ry="11" fill="#388e3c"/>
+      <ellipse cx="148" cy="60" rx="15" ry="10" fill="#81c784"/>
+      <ellipse cx="52" cy="100" rx="10" ry="8" fill="#8d6e63"/>
+      <circle cx="100" cy="100" r="80" fill="none" stroke="#80d8ff" stroke-width="3" opacity="0.5"/>
+      <circle cx="100" cy="100" r="85" fill="none" stroke="#b3e5fc" stroke-width="2" opacity="0.25"/>
+      <ellipse cx="58" cy="62" rx="17" ry="7" fill="rgba(255,255,255,0.65)"/>
+      <ellipse cx="145" cy="82" rx="14" ry="6" fill="rgba(255,255,255,0.55)"/>
+      <ellipse cx="92" cy="118" rx="11" ry="5" fill="rgba(255,255,255,0.45)"/>
+      <circle cx="12" cy="22" r="2" fill="white"/>
+      <circle cx="188" cy="28" r="1.5" fill="white"/>
+      <circle cx="8" cy="168" r="1.2" fill="white"/>
+      <circle cx="192" cy="158" r="2" fill="white"/>
+      <circle cx="18" cy="100" r="1.5" fill="white"/>
+      <circle cx="182" cy="78" r="1" fill="white"/>
+      <circle cx="155" cy="175" r="1.5" fill="white"/>
+      <circle cx="45" cy="180" r="1" fill="white"/>
+    </svg>
+  </div>
+
+  <h1 class="game-title">Sphere Quest</h1>
+  <p class="subtitle">Earth's Systems — Grade 5 Science Challenge</p>
+
+  <div class="sphere-preview">
+    <span class="sphere-chip chip-geo">🗻 Geosphere</span>
+    <span class="sphere-chip chip-hydro">💧 Hydrosphere</span>
+    <span class="sphere-chip chip-bio">🌿 Biosphere</span>
+    <span class="sphere-chip chip-atmo">💨 Atmosphere</span>
+  </div>
+
+  <div class="how-to-play">
+    <h3>How to Play</h3>
+    <ul>
+      <li>3 rounds — difficulty increases each round!</li>
+      <li>Round 1 — Know Your Spheres (4 questions)</li>
+      <li>Round 2 — Sphere Interactions (5 questions)</li>
+      <li>Round 3 — Water on Earth (5 questions)</li>
+      <li>You have 3 lives — lose one for each wrong answer</li>
+      <li>Read the explanation after each answer to learn!</li>
+      <li>10 points per correct answer — aim for 140!</li>
+    </ul>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">Start Quest!</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACQ0lEQVR4nO1ZW4rcQAyUpw372YYcwEeRr7ZHyg06R/EBFuTPgTYVSrIdyMds2CXJCLYx9mAxjLq6VHrMAHm09ttDs8iX/XP4CIz3glaAXlFMe4WIulF7AnwVIIn2YSjrcp9fy7p07gjc2hP49659GBbZ6DPXtgxzKyayDeOT+PeH9gqpr2OFbMM+feD7/9le7McoyoOoraD989//mH1kCPtj//b9Pll5m8o6STUex5ZHf0x/u5LojyCWqVQ+e21U0eMtEvhvhJriL1pA/ffX58tbBv5Uwh5ZIO6Bv9Qk/scK2pi6+JBOkoT/vZI8XRSmcOcBRgFMs/CnkC+UfY/ly6gJ/EeT2rx40PC8X/gjBf+V1U5sgVHM4ocq6qYE/oNxCjSYn4Xjzy0IC+kE/hvR5hG45568ov5R9gIp+C+exSLzev9SzJNXzYA/KD5e8/zC3y2aSH9A/jBnReclLKGRI37NG17nTBfx5tfb4aBQBvy7q2WUzZ2n0CIR9xT8Nzp8oO3K6R+4egr+mxQqPw7Y3f8IXqTgjx3zk4jcECKpefTflGHrtO9nOHgWaFnw7+f8LfC/usieg/8a5In6PzbiHRmy6E9xtY/i09PxOfyRRPMH8YL5LCFciHoO/OWaPzBmQ06PEZBm8F9xyaYHcjh/nMUtRfxq8D9k8xhE56g/L7v2bbnP7WVdopaLS57Gv3ftL6bjtuwzyrrsM7PYfXom/x7zHzH8PIdvHsLIUT+Iz5+j+I8WMqJYMvB/+Pr/9OH62/j/BDB4HSQB5ihpAAAAAElFTkSuQmCC" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div class="screen" id="game-screen">
+  <div class="hud">
+    <div class="round-badge" id="round-badge">Round 1</div>
+    <div class="score-display">Score: <span id="score-display">0</span></div>
+    <div class="lives-display" id="lives-display">❤️❤️❤️</div>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <div class="question-card" id="question-card">
+    <div class="round-label" id="q-round-label">Round 1 — Know Your Spheres</div>
+    <div class="question-text" id="q-text"></div>
+    <div class="question-svg" id="q-svg"></div>
+    <div class="answers-grid" id="answers-grid"></div>
+    <div class="feedback-box" id="feedback-box"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()" style="display:none">Next →</button>
+  </div>
+</div>
+
+<!-- ===== END SCREEN ===== -->
+<div class="screen" id="end-screen">
+  <div class="end-trophy" id="end-trophy">🏆</div>
+  <div class="end-title" id="end-title">Quest Complete!</div>
+  <div class="end-score">Score: <span id="final-score">0</span> / 140</div>
+  <div class="end-stars" id="end-stars">⭐⭐⭐</div>
+  <p class="end-message" id="end-message"></p>
+  <div class="score-breakdown">
+    <h3>Results by Round</h3>
+    <div class="score-row"><span>Round 1 — Know Your Spheres</span><span id="r1-score">—</span></div>
+    <div class="score-row"><span>Round 2 — Sphere Interactions</span><span id="r2-score">—</span></div>
+    <div class="score-row"><span>Round 3 — Water on Earth</span><span id="r3-score">—</span></div>
+    <div class="score-row"><span>Total</span><span id="total-score-end">—</span></div>
+  </div>
+  <button class="btn-replay" onclick="startGame()">Play Again</button>
+</div>
+
+<script>
+// ===== SVG SCENE FUNCTIONS =====
+function svgDesert() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#87CEEB"/>' +
+    '<circle cx="245" cy="25" r="20" fill="#FFD700"/>' +
+    '<path d="M0 88 Q70 68 140 88 Q210 108 280 83 L280 130 L0 130 Z" fill="#DEB887"/>' +
+    '<path d="M0 100 Q40 62 80 90 Q50 92 0 100 Z" fill="#C8A96E"/>' +
+    '<path d="M140 95 Q190 57 242 84 Q200 93 140 95 Z" fill="#C8A96E"/>' +
+    '<polygon points="195,88 228,28 260,88" fill="#9E8065"/>' +
+    '<polygon points="210,88 235,44 255,88" fill="#8d6e63"/>' +
+    '<ellipse cx="108" cy="84" rx="25" ry="11" fill="#DEB887" stroke="#A0763A" stroke-width="1.5"/>' +
+    '<circle cx="124" cy="73" r="10" fill="#DEB887" stroke="#A0763A" stroke-width="1.5"/>' +
+    '<line x1="94" y1="95" x2="91" y2="112" stroke="#A0763A" stroke-width="3"/>' +
+    '<line x1="106" y1="95" x2="103" y2="112" stroke="#A0763A" stroke-width="3"/>' +
+    '<line x1="117" y1="95" x2="114" y2="112" stroke="#A0763A" stroke-width="3"/>' +
+    '<line x1="127" y1="94" x2="125" y2="112" stroke="#A0763A" stroke-width="3"/>' +
+    '<path d="M104 80 Q112 64 121 77" fill="none" stroke="#A0763A" stroke-width="3"/>' +
+    '<text x="5" y="125" fill="#6d4c41" font-size="12" font-family="Arial" font-weight="bold">Rocky Mountain Desert</text>' +
+    '</svg>';
+}
+
+function svgOcean() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="60" fill="#87CEEB"/>' +
+    '<rect y="60" width="280" height="70" fill="#1565c0"/>' +
+    '<path d="M0 68 Q35 62 70 68 Q105 74 140 68 Q175 62 210 68 Q245 74 280 68" fill="none" stroke="#42a5f5" stroke-width="2.5"/>' +
+    '<path d="M0 82 Q35 76 70 82 Q105 88 140 82 Q175 76 210 82 Q245 88 280 82" fill="none" stroke="#42a5f5" stroke-width="1.5"/>' +
+    '<path d="M118 63 L162 63 L157 74 L123 74 Z" fill="#795548"/>' +
+    '<rect x="133" y="52" width="3" height="13" fill="#5d4037"/>' +
+    '<polygon points="136,53 136,60 148,60" fill="#c62828"/>' +
+    '<ellipse cx="58" cy="105" rx="15" ry="7" fill="#4caf50" opacity="0.7"/>' +
+    '<ellipse cx="200" cy="110" rx="20" ry="9" fill="#4caf50" opacity="0.6"/>' +
+    '<ellipse cx="100" cy="95" rx="12" ry="5" fill="#ff9800"/>' +
+    '<polygon points="112,95 120,90 120,100" fill="#ff9800"/>' +
+    '<text x="5" y="125" fill="#90caf9" font-size="12" font-family="Arial" font-weight="bold">Open Ocean</text>' +
+    '<ellipse cx="35" cy="38" rx="7" ry="12" fill="#42a5f5" opacity="0.6"/>' +
+    '<ellipse cx="220" cy="32" rx="6" ry="10" fill="#42a5f5" opacity="0.55"/>' +
+    '</svg>';
+}
+
+function svgForestBirds() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#87CEEB"/>' +
+    '<ellipse cx="140" cy="52" rx="35" ry="17" fill="#8d6e63" transform="rotate(-12 140 52)"/>' +
+    '<circle cx="163" cy="38" r="14" fill="#8d6e63"/>' +
+    '<path d="M174 38 L186 43 L174 47 Z" fill="#FFD700"/>' +
+    '<circle cx="167" cy="36" r="3.5" fill="#222"/>' +
+    '<circle cx="168" cy="35" r="1.5" fill="white"/>' +
+    '<path d="M138 52 Q98 17 68 37 Q88 52 118 57 Z" fill="#6d4c41"/>' +
+    '<path d="M144 58 Q118 88 98 100 Q118 84 138 73 Z" fill="#795548"/>' +
+    '<path d="M106 60 Q93 80 88 90 Q103 75 118 70 Z" fill="#6d4c41"/>' +
+    '<rect x="25" y="100" width="7" height="30" fill="#5d4037"/>' +
+    '<ellipse cx="28" cy="98" rx="22" ry="14" fill="#2e7d32"/>' +
+    '<line x1="25" y1="118" x2="16" y2="130" stroke="#5d4037" stroke-width="2"/>' +
+    '<line x1="28" y1="120" x2="28" y2="130" stroke="#5d4037" stroke-width="2"/>' +
+    '<line x1="32" y1="118" x2="40" y2="130" stroke="#5d4037" stroke-width="2"/>' +
+    '<rect x="190" y="78" width="82" height="48" rx="8" fill="rgba(0,0,0,0.35)"/>' +
+    '<text x="195" y="93" fill="#ffe082" font-size="11" font-family="Arial" font-weight="bold">Living things:</text>' +
+    '<text x="195" y="107" fill="#a5d6a7" font-size="10" font-family="Arial">Eagles, wolves,</text>' +
+    '<text x="195" y="120" fill="#a5d6a7" font-size="10" font-family="Arial">trees, bacteria</text>' +
+    '</svg>';
+}
+
+function svgClouds() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#1a237e"/>' +
+    '<rect y="95" width="280" height="35" fill="#0d47a1" opacity="0.45"/>' +
+    '<circle cx="22" cy="15" r="2" fill="white"/>' +
+    '<circle cx="65" cy="9" r="1.5" fill="white"/>' +
+    '<circle cx="108" cy="22" r="1" fill="white"/>' +
+    '<circle cx="248" cy="14" r="2" fill="white"/>' +
+    '<circle cx="270" cy="30" r="1.5" fill="white"/>' +
+    '<circle cx="180" cy="10" r="1" fill="white"/>' +
+    '<path d="M0 108 Q140 88 280 108 L280 130 L0 130 Z" fill="#2e7d32"/>' +
+    '<circle cx="100" cy="100" r="90" fill="none" stroke="#80d8ff" stroke-width="2" opacity="0.35"/>' +
+    '<circle cx="100" cy="100" r="95" fill="none" stroke="#b3e5fc" stroke-width="1.5" opacity="0.2"/>' +
+    '<ellipse cx="80" cy="52" rx="38" ry="17" fill="white" opacity="0.9"/>' +
+    '<ellipse cx="60" cy="56" rx="25" ry="13" fill="white" opacity="0.9"/>' +
+    '<ellipse cx="104" cy="54" rx="22" ry="13" fill="white" opacity="0.9"/>' +
+    '<ellipse cx="210" cy="42" rx="34" ry="14" fill="#b0bec5" opacity="0.82"/>' +
+    '<ellipse cx="190" cy="46" rx="20" ry="11" fill="#b0bec5" opacity="0.82"/>' +
+    '<text x="145" y="72" fill="#80d8ff" font-size="14" font-family="Arial" font-weight="bold">O₂</text>' +
+    '<text x="176" y="84" fill="#ff8f00" font-size="13" font-family="Arial">CO₂</text>' +
+    '<text x="133" y="90" fill="#90a4ae" font-size="12" font-family="Arial">N₂</text>' +
+    '<text x="5" y="125" fill="#80d8ff" font-size="12" font-family="Arial" font-weight="bold">Atmosphere: gases around Earth</text>' +
+    '</svg>';
+}
+
+function svgRainErosion() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#37474f"/>' +
+    '<ellipse cx="100" cy="28" rx="62" ry="24" fill="#546e7a"/>' +
+    '<ellipse cx="78" cy="34" rx="42" ry="20" fill="#607d8b"/>' +
+    '<ellipse cx="132" cy="30" rx="45" ry="20" fill="#546e7a"/>' +
+    '<line x1="58"  y1="55" x2="53"  y2="75" stroke="#42a5f5" stroke-width="2"/>' +
+    '<line x1="78"  y1="58" x2="73"  y2="78" stroke="#42a5f5" stroke-width="2"/>' +
+    '<line x1="98"  y1="54" x2="93"  y2="74" stroke="#42a5f5" stroke-width="2"/>' +
+    '<line x1="118" y1="57" x2="113" y2="77" stroke="#42a5f5" stroke-width="2"/>' +
+    '<line x1="138" y1="55" x2="133" y2="75" stroke="#42a5f5" stroke-width="2"/>' +
+    '<line x1="68"  y1="60" x2="63"  y2="80" stroke="#42a5f5" stroke-width="1.5"/>' +
+    '<line x1="88"  y1="63" x2="83"  y2="83" stroke="#42a5f5" stroke-width="1.5"/>' +
+    '<line x1="108" y1="59" x2="103" y2="79" stroke="#42a5f5" stroke-width="1.5"/>' +
+    '<polygon points="0,130 38,60 76,130"  fill="#8d6e63"/>' +
+    '<polygon points="58,130 108,48 158,130" fill="#9e8065"/>' +
+    '<polygon points="128,130 178,68 228,130" fill="#8d6e63"/>' +
+    '<path d="M108 128 Q128 110 148 128" fill="#42a5f5" opacity="0.55"/>' +
+    '<circle cx="92"  cy="95"  r="4"   fill="#8d6e63" opacity="0.8"/>' +
+    '<circle cx="128" cy="100" r="3"   fill="#8d6e63" opacity="0.7"/>' +
+    '<circle cx="158" cy="108" r="3.5" fill="#795548" opacity="0.8"/>' +
+    '<rect x="170" y="10" width="105" height="44" rx="8" fill="rgba(0,0,0,0.45)"/>' +
+    '<text x="178" y="27" fill="#80d8ff" font-size="11" font-family="Arial" font-weight="bold">Atmosphere (rain)</text>' +
+    '<text x="178" y="42" fill="#b0bec5" font-size="10" font-family="Arial">erodes and carries</text>' +
+    '<text x="178" y="55" fill="#d7ccc8" font-size="10" font-family="Arial">Geosphere (rock)</text>' +
+    '</svg>';
+}
+
+function svgCoastalForest() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="58" fill="#80deea"/>' +
+    '<rect y="58" width="280" height="72" fill="#1565c0" opacity="0.85"/>' +
+    '<rect y="112" width="280" height="18" fill="#6d4c41"/>' +
+    '<rect x="55" y="38" width="9" height="72" fill="#5d4037"/>' +
+    '<ellipse cx="59" cy="36" rx="30" ry="20" fill="#2e7d32"/>' +
+    '<ellipse cx="42" cy="44" rx="20" ry="14" fill="#388e3c"/>' +
+    '<ellipse cx="78" cy="42" rx="18" ry="12" fill="#43a047"/>' +
+    '<line x1="57"  y1="78" x2="38"  y2="104" stroke="#5d4037" stroke-width="3"/>' +
+    '<line x1="62"  y1="80" x2="50"  y2="110" stroke="#5d4037" stroke-width="3"/>' +
+    '<line x1="68"  y1="78" x2="80"  y2="106" stroke="#5d4037" stroke-width="3"/>' +
+    '<line x1="62"  y1="85" x2="62"  y2="112" stroke="#5d4037" stroke-width="2.5"/>' +
+    '<rect x="162" y="32" width="9" height="80" fill="#5d4037"/>' +
+    '<ellipse cx="166" cy="30" rx="35" ry="22" fill="#1b5e20"/>' +
+    '<ellipse cx="148" cy="38" rx="22" ry="15" fill="#2e7d32"/>' +
+    '<ellipse cx="185" cy="36" rx="20" ry="14" fill="#388e3c"/>' +
+    '<line x1="162" y1="80" x2="144" y2="108" stroke="#5d4037" stroke-width="3"/>' +
+    '<line x1="168" y1="82" x2="156" y2="112" stroke="#5d4037" stroke-width="3"/>' +
+    '<line x1="172" y1="80" x2="184" y2="107" stroke="#5d4037" stroke-width="3"/>' +
+    '<rect x="0" y="112" width="90" height="18" fill="#6d4c41"/>' +
+    '<text x="5" y="127" fill="#d7ccc8" font-size="11" font-family="Arial">Geosphere (sediment)</text>' +
+    '<text x="95" y="52" fill="#a5d6a7" font-size="11" font-family="Arial" font-weight="bold">Biosphere protects</text>' +
+    '<text x="95" y="65" fill="#80cbc4" font-size="10" font-family="Arial">tree roots trap</text>' +
+    '<text x="95" y="77" fill="#80cbc4" font-size="10" font-family="Arial">sediment &amp; shores</text>' +
+    '</svg>';
+}
+
+function svgSpring() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="80" fill="#87CEEB"/>' +
+    '<circle cx="248" cy="24" r="20" fill="#FFD700"/>' +
+    '<path d="M0 84 Q140 70 280 84 L280 130 L0 130 Z" fill="#DEB887"/>' +
+    '<ellipse cx="140" cy="102" rx="55" ry="22" fill="#1565c0"/>' +
+    '<ellipse cx="140" cy="100" rx="50" ry="17" fill="#42a5f5" opacity="0.5"/>' +
+    '<path d="M83 62 Q66 44 56 50" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>' +
+    '<path d="M83 62 Q70 40 76 34" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>' +
+    '<path d="M83 62 Q100 44 110 48" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>' +
+    '<rect x="80" y="62" width="6" height="38" fill="#795548"/>' +
+    '<path d="M188 58 Q205 41 215 46" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>' +
+    '<path d="M188 58 Q175 40 168 35" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>' +
+    '<rect x="185" y="58" width="6" height="42" fill="#795548"/>' +
+    '<ellipse cx="140" cy="90" rx="18" ry="10" fill="#d7ccc8"/>' +
+    '<circle cx="154" cy="83" r="9" fill="#d7ccc8"/>' +
+    '<path d="M162 84 L173 81 L164 87 Z" fill="#ffcc02"/>' +
+    '<circle cx="157" cy="81" r="2" fill="#333"/>' +
+    '<line x1="133" y1="100" x2="131" y2="112" stroke="#9e8065" stroke-width="2"/>' +
+    '<line x1="143" y1="100" x2="141" y2="112" stroke="#9e8065" stroke-width="2"/>' +
+    '<path d="M154 98 Q165 95 174 98" fill="none" stroke="#42a5f5" stroke-width="1.5"/>' +
+    '<text x="5" y="127" fill="#1565c0" font-size="11" font-family="Arial" font-weight="bold">Hydrosphere (spring water)</text>' +
+    '</svg>';
+}
+
+function svgDustStorm() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#8d6748"/>' +
+    '<rect width="280" height="130" fill="#D2691E" opacity="0.55"/>' +
+    '<path d="M0 38  Q70 28  140 43 Q210 58 280 38"  fill="#DEB887" opacity="0.5"/>' +
+    '<path d="M0 58  Q90 43  180 63 Q230 70 280 53"  fill="#C8A96E" opacity="0.6"/>' +
+    '<path d="M0 78  Q60 63  130 76 Q200 88 280 68"  fill="#DEB887" opacity="0.5"/>' +
+    '<circle cx="40"  cy="48" r="3"   fill="#C8A96E" opacity="0.8"/>' +
+    '<circle cx="82"  cy="33" r="2"   fill="#DEB887"/>' +
+    '<circle cx="122" cy="53" r="4"   fill="#C8A96E" opacity="0.7"/>' +
+    '<circle cx="162" cy="38" r="2.5" fill="#DEB887"/>' +
+    '<circle cx="202" cy="58" r="3"   fill="#C8A96E"/>' +
+    '<circle cx="242" cy="43" r="2"   fill="#DEB887"/>' +
+    '<circle cx="62"  cy="68" r="3.5" fill="#C8A96E" opacity="0.6"/>' +
+    '<circle cx="112" cy="76" r="2"   fill="#DEB887"/>' +
+    '<circle cx="182" cy="70" r="4"   fill="#C8A96E" opacity="0.7"/>' +
+    '<path d="M0 48 L24 48" stroke="white" stroke-width="2" opacity="0.6"/>' +
+    '<path d="M19 43 L24 48 L19 53" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>' +
+    '<path d="M0 70 L22 70" stroke="white" stroke-width="2" opacity="0.5"/>' +
+    '<path d="M17 65 L22 70 L17 75" stroke="white" stroke-width="2" fill="none" opacity="0.5"/>' +
+    '<path d="M0 103 Q62 83 122 98 Q182 113 242 93 Q262 88 280 93 L280 130 L0 130 Z" fill="#8d6e63"/>' +
+    '<rect x="8"   y="106" width="92" height="18" rx="5" fill="rgba(0,0,0,0.45)"/>' +
+    '<text x="13"  y="119" fill="#d7ccc8" font-size="11" font-family="Arial">Geosphere (sand)</text>' +
+    '<rect x="174" y="22" width="98" height="18" rx="5" fill="rgba(0,0,0,0.45)"/>' +
+    '<text x="179" y="35" fill="#80d8ff" font-size="11" font-family="Arial">Atmosphere (wind)</text>' +
+    '</svg>';
+}
+
+function svgAlgae() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="50" fill="#1a237e"/>' +
+    '<rect y="50" width="280" height="80" fill="#1565c0" opacity="0.88"/>' +
+    '<path d="M0 55 Q35 50 70 55 Q105 60 140 55 Q175 50 210 55 Q245 60 280 55" fill="none" stroke="#42a5f5" stroke-width="2"/>' +
+    '<text x="62"  y="20" fill="#ff8f00" font-size="13" font-family="Arial" font-weight="bold">CO₂</text>' +
+    '<line x1="74"  y1="24" x2="74"  y2="42" stroke="#ff8f00" stroke-width="2"/>' +
+    '<path d="M70 38 L74 42 L78 38" stroke="#ff8f00" stroke-width="2" fill="none"/>' +
+    '<text x="152" y="35" fill="#4caf50" font-size="13" font-family="Arial" font-weight="bold">O₂</text>' +
+    '<line x1="163" y1="42" x2="163" y2="22" stroke="#4caf50" stroke-width="2"/>' +
+    '<path d="M159 26 L163 22 L167 26" stroke="#4caf50" stroke-width="2" fill="none"/>' +
+    '<ellipse cx="70"  cy="90" rx="24" ry="10" fill="#4caf50" opacity="0.8"/>' +
+    '<ellipse cx="50"  cy="100" rx="17" ry="7" fill="#388e3c" opacity="0.8"/>' +
+    '<ellipse cx="90"  cy="100" rx="14" ry="6" fill="#4caf50" opacity="0.75"/>' +
+    '<ellipse cx="175" cy="85" rx="30" ry="12" fill="#4caf50" opacity="0.8"/>' +
+    '<ellipse cx="205" cy="98" rx="20" ry="8" fill="#388e3c" opacity="0.75"/>' +
+    '<circle cx="60"  cy="88"  r="5" fill="#66bb6a"/>' +
+    '<circle cx="72"  cy="92"  r="4" fill="#81c784"/>' +
+    '<circle cx="80"  cy="87"  r="6" fill="#66bb6a"/>' +
+    '<circle cx="178" cy="82"  r="7" fill="#66bb6a"/>' +
+    '<circle cx="165" cy="90"  r="5" fill="#81c784"/>' +
+    '<line x1="218" y1="8"  x2="200" y2="42" stroke="#FFD700" stroke-width="2" opacity="0.65"/>' +
+    '<line x1="233" y1="5"  x2="212" y2="40" stroke="#FFD700" stroke-width="1.5" opacity="0.45"/>' +
+    '<circle cx="225" cy="12" r="13" fill="#FFD700" opacity="0.75"/>' +
+    '<text x="5"  y="125" fill="#a5d6a7" font-size="11" font-family="Arial" font-weight="bold">Biosphere (ocean algae)</text>' +
+    '<text x="155" y="16" fill="#90caf9" font-size="10" font-family="Arial">Atmosphere</text>' +
+    '</svg>';
+}
+
+function svgWaterPie() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#0d2137" rx="10"/>' +
+    '<path d="M90 70 L90 10 A60 60 0 1 1 79.2 10.5 Z" fill="#1565c0"/>' +
+    '<path d="M90 70 L79.2 10.5 A60 60 0 0 1 90 10 Z" fill="#42a5f5"/>' +
+    '<circle cx="90" cy="70" r="27" fill="#0d2137"/>' +
+    '<text x="90" y="67" text-anchor="middle" fill="white" font-size="11" font-family="Arial" font-weight="bold">Earth\'s</text>' +
+    '<text x="90" y="80" text-anchor="middle" fill="white" font-size="11" font-family="Arial" font-weight="bold">Water</text>' +
+    '<rect x="162" y="28" width="14" height="14" rx="3" fill="#1565c0"/>' +
+    '<text x="182" y="40" fill="white" font-size="16" font-family="Arial" font-weight="bold">97%</text>' +
+    '<text x="182" y="55" fill="#90caf9" font-size="11" font-family="Arial">Salt water</text>' +
+    '<text x="182" y="67" fill="#90caf9" font-size="10" font-family="Arial">(Oceans &amp; Seas)</text>' +
+    '<rect x="162" y="80" width="14" height="14" rx="3" fill="#42a5f5"/>' +
+    '<text x="182" y="92" fill="white" font-size="16" font-family="Arial" font-weight="bold">3%</text>' +
+    '<text x="182" y="108" fill="#80deea" font-size="11" font-family="Arial">Fresh water</text>' +
+    '<text x="140" y="124" text-anchor="middle" fill="#E0A800" font-size="11" font-family="Arial" font-weight="bold">Distribution of Earth\'s Water</text>' +
+    '</svg>';
+}
+
+function svgGlacier() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#1a237e"/>' +
+    '<circle cx="22"  cy="15"  r="1.5" fill="white"/>' +
+    '<circle cx="80"  cy="10"  r="1"   fill="white"/>' +
+    '<circle cx="195" cy="20"  r="2"   fill="white"/>' +
+    '<circle cx="252" cy="9"   r="1.5" fill="white"/>' +
+    '<circle cx="140" cy="5"   r="1"   fill="white"/>' +
+    '<path d="M0 88 Q32 60 72 74 Q112 50 152 70 Q192 54 232 72 Q258 64 280 74 L280 130 L0 130 Z" fill="#e3f2fd"/>' +
+    '<path d="M0 88 Q32 60 72 74 Q112 50 152 70 Q192 54 232 72 Q258 64 280 74" fill="none" stroke="#90caf9" stroke-width="2"/>' +
+    '<path d="M78 100 Q90 87 102 98"  fill="none" stroke="#90caf9" stroke-width="1.5"/>' +
+    '<path d="M148 96 Q162 82 175 92" fill="none" stroke="#90caf9" stroke-width="1.5"/>' +
+    '<polygon points="38,128 52,112 66,128" fill="white"/>' +
+    '<polygon points="196,124 212,108 228,124" fill="white"/>' +
+    '<rect x="88" y="80" width="104" height="36" rx="8" fill="rgba(0,0,0,0.55)"/>' +
+    '<text x="140" y="97"  text-anchor="middle" fill="#E0A800" font-size="15" font-family="Arial" font-weight="bold">~69%</text>' +
+    '<text x="140" y="111" text-anchor="middle" fill="#e3f2fd" font-size="10" font-family="Arial">of fresh water</text>' +
+    '<text x="5"   y="24"  fill="white" font-size="18" font-family="Arial">&#10052;</text>' +
+    '<text x="232" y="44"  fill="white" font-size="16" font-family="Arial">&#10052;</text>' +
+    '</svg>';
+}
+
+function svgBarChart() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="130" fill="#0d2137" rx="10"/>' +
+    '<text x="140" y="16" text-anchor="middle" fill="#E0A800" font-size="10" font-family="Arial" font-weight="bold">Water Reservoirs — Most to Least</text>' +
+    '<line x1="34" y1="23" x2="34" y2="108" stroke="#546e7a" stroke-width="1.5"/>' +
+    '<line x1="34" y1="108" x2="272" y2="108" stroke="#546e7a" stroke-width="1.5"/>' +
+    '<rect x="44"  y="28"  width="48" height="78" fill="#1565c0" rx="4"/>' +
+    '<text x="68"  y="26"  text-anchor="middle" fill="#42a5f5" font-size="9" font-family="Arial" font-weight="bold">97%</text>' +
+    '<rect x="105" y="98"  width="40" height="10" fill="#90caf9" rx="3"/>' +
+    '<text x="125" y="96"  text-anchor="middle" fill="#90caf9" font-size="9" font-family="Arial">~2%</text>' +
+    '<rect x="158" y="102" width="40" height="6"  fill="#4fc3f7" rx="3"/>' +
+    '<text x="178" y="100" text-anchor="middle" fill="#4fc3f7" font-size="9" font-family="Arial">~0.9%</text>' +
+    '<rect x="210" y="106" width="40" height="2"  fill="#81c784" rx="2"/>' +
+    '<text x="230" y="104" text-anchor="middle" fill="#81c784" font-size="9" font-family="Arial">&lt;0.1%</text>' +
+    '<text x="68"  y="120" text-anchor="middle" fill="#b0bec5" font-size="9" font-family="Arial">Oceans</text>' +
+    '<text x="125" y="120" text-anchor="middle" fill="#b0bec5" font-size="9" font-family="Arial">Ice caps</text>' +
+    '<text x="178" y="120" text-anchor="middle" fill="#b0bec5" font-size="9" font-family="Arial">Groundwater</text>' +
+    '<text x="230" y="120" text-anchor="middle" fill="#b0bec5" font-size="9" font-family="Arial">Lakes</text>' +
+    '</svg>';
+}
+
+function svgLake() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="65" fill="#87CEEB"/>' +
+    '<polygon points="18,65  50,24  80,65"  fill="#4caf50"/>' +
+    '<polygon points="52,65  90,19 125,65"  fill="#2e7d32"/>' +
+    '<ellipse cx="168" cy="90" rx="108" ry="38" fill="#1565c0" opacity="0.88"/>' +
+    '<ellipse cx="168" cy="88" rx="102" ry="33" fill="#42a5f5" opacity="0.38"/>' +
+    '<path d="M75 82 Q168 74 260 82" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>' +
+    '<rect x="240" y="62" width="5" height="26" fill="#5d4037"/>' +
+    '<polygon points="242,38 230,65 254,65" fill="#2e7d32"/>' +
+    '<rect x="258" y="66" width="5" height="22" fill="#5d4037"/>' +
+    '<polygon points="260,44 248,68 272,68" fill="#388e3c"/>' +
+    '<rect x="108" y="77" width="118" height="28" rx="6" fill="rgba(0,0,0,0.58)"/>' +
+    '<text x="167" y="91"  text-anchor="middle" fill="#E0A800" font-size="13" font-family="Arial" font-weight="bold">Only 0.007%</text>' +
+    '<text x="167" y="103" text-anchor="middle" fill="#e3f2fd" font-size="9"  font-family="Arial">of Earth\'s total water</text>' +
+    '</svg>';
+}
+
+function svgDesalination() {
+  return '<svg width="280" height="130" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="280" height="75" fill="#87CEEB"/>' +
+    '<circle cx="242" cy="22" r="14" fill="#FFD700" opacity="0.85"/>' +
+    '<rect y="75" width="280" height="55" fill="#1565c0" opacity="0.82"/>' +
+    '<path d="M0 80 Q35 75 70 80 Q105 85 140 80 Q175 75 210 80 Q245 85 280 80" fill="none" stroke="#42a5f5" stroke-width="2"/>' +
+    '<rect x="95"  y="44" width="85" height="42" fill="#546e7a"/>' +
+    '<rect x="102" y="36" width="72" height="10" fill="#455a64"/>' +
+    '<rect x="105" y="50" width="12" height="8"  fill="#80deea"/>' +
+    '<rect x="122" y="50" width="12" height="8"  fill="#80deea"/>' +
+    '<rect x="139" y="50" width="12" height="8"  fill="#80deea"/>' +
+    '<rect x="75"  y="63" width="24" height="6"  fill="#90a4ae" rx="2"/>' +
+    '<rect x="178" y="58" width="28" height="6"  fill="#90a4ae" rx="2"/>' +
+    '<path d="M38 80 L76 66" stroke="#42a5f5" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M73 61 L76 66 L71 68" stroke="#42a5f5" stroke-width="2" fill="none"/>' +
+    '<path d="M206 61 L246 52" stroke="#4caf50" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M243 47 L246 52 L241 54" stroke="#4caf50" stroke-width="2" fill="none"/>' +
+    '<text x="5"   y="90"  fill="#42a5f5" font-size="10" font-family="Arial" font-weight="bold">Salt water in</text>' +
+    '<text x="5"   y="103" fill="#90caf9" font-size="10" font-family="Arial">97% of Earth\'s</text>' +
+    '<text x="5"   y="115" fill="#90caf9" font-size="10" font-family="Arial">water</text>' +
+    '<text x="230" y="45"  fill="#4caf50" font-size="10" font-family="Arial" font-weight="bold">Fresh</text>' +
+    '<text x="228" y="57"  fill="#a5d6a7" font-size="10" font-family="Arial">water out</text>' +
+    '<rect x="215" y="30" width="7" height="46" fill="#455a64"/>' +
+    '<polygon points="218,8 213,30 223,30" fill="#546e7a"/>' +
+    '<text x="140" y="90"  text-anchor="middle" fill="#eceff1" font-size="10" font-family="Arial" font-weight="bold">Desalination Plant</text>' +
+    '</svg>';
+}
+
+// ===== QUESTION DATA =====
+var QUESTIONS = [
+  // ROUND 1
+  {
+    round: 1, label: "Round 1 — Know Your Spheres",
+    text: "Rocky mountains, sandy deserts, ocean floors, and volcanoes are all part of which Earth sphere?",
+    svg: svgDesert(),
+    answers: ["Atmosphere", "Biosphere", "Geosphere", "Hydrosphere"],
+    correct: 2,
+    explain: "The geosphere includes all solid Earth — rocks, soil, sand, and every mountain and volcano on the planet!"
+  },
+  {
+    round: 1, label: "Round 1 — Know Your Spheres",
+    text: "The Pacific Ocean, glaciers, underground rivers, and rainfall all belong to which Earth sphere?",
+    svg: svgOcean(),
+    answers: ["Geosphere", "Hydrosphere", "Atmosphere", "Biosphere"],
+    correct: 1,
+    explain: "The hydrosphere includes ALL water on Earth — oceans, rivers, groundwater, rain, and ice caps!"
+  },
+  {
+    round: 1, label: "Round 1 — Know Your Spheres",
+    text: "An eagle soaring over a forest, kelp beds in the ocean, and tiny soil bacteria all belong to:",
+    svg: svgForestBirds(),
+    answers: ["Geosphere", "Atmosphere", "Hydrosphere", "Biosphere"],
+    correct: 3,
+    explain: "The biosphere includes ALL living things — from eagles and wolves to towering trees and microscopic bacteria!"
+  },
+  {
+    round: 1, label: "Round 1 — Know Your Spheres",
+    text: "Wind, oxygen, carbon dioxide, and water vapor surrounding Earth belong to which sphere?",
+    svg: svgClouds(),
+    answers: ["Atmosphere", "Hydrosphere", "Biosphere", "Geosphere"],
+    correct: 0,
+    explain: "The atmosphere is Earth's layer of gases — including the air we breathe and all weather systems!"
+  },
+
+  // ROUND 2
+  {
+    round: 2, label: "Round 2 — Sphere Interactions",
+    text: "Heavy rains wash sand and soil from hillsides into streams and rivers below. Which TWO spheres interact?",
+    svg: svgRainErosion(),
+    answers: ["Biosphere + Geosphere", "Atmosphere + Hydrosphere", "Atmosphere + Geosphere", "Biosphere + Atmosphere"],
+    correct: 2,
+    explain: "Rain (atmosphere) erodes and carries soil and rocks (geosphere) — this interaction carves valleys and shapes landscapes!"
+  },
+  {
+    round: 2, label: "Round 2 — Sphere Interactions",
+    text: "Coastal tree roots trap sediment and prevent shoreline erosion. Which TWO spheres interact?",
+    svg: svgCoastalForest(),
+    answers: ["Atmosphere + Hydrosphere", "Biosphere + Geosphere", "Hydrosphere + Atmosphere", "Geosphere + Atmosphere"],
+    correct: 1,
+    explain: "Living trees (biosphere) stabilize the seabed and coastline (geosphere) — biology protects geology!"
+  },
+  {
+    round: 2, label: "Round 2 — Sphere Interactions",
+    text: "A bird drinks water from a natural spring in a dry grassland. Which TWO spheres interact?",
+    svg: svgSpring(),
+    answers: ["Atmosphere + Geosphere", "Geosphere + Biosphere", "Biosphere + Hydrosphere", "Atmosphere + Biosphere"],
+    correct: 2,
+    explain: "The bird (biosphere) gets water from the spring (hydrosphere) — all living things depend on water to survive!"
+  },
+  {
+    round: 2, label: "Round 2 — Sphere Interactions",
+    text: "A powerful desert windstorm lifts billions of sand particles high into the sky. Which TWO spheres interact?",
+    svg: svgDustStorm(),
+    answers: ["Biosphere + Hydrosphere", "Geosphere + Atmosphere", "Hydrosphere + Biosphere", "Atmosphere + Biosphere"],
+    correct: 1,
+    explain: "Wind (atmosphere) picks up sand and dust (geosphere) — dust storms are a dramatic example of sphere interaction!"
+  },
+  {
+    round: 2, label: "Round 2 — Sphere Interactions",
+    text: "Ocean algae absorb CO₂ from the air and release oxygen through photosynthesis. Which TWO spheres interact?",
+    svg: svgAlgae(),
+    answers: ["Geosphere + Biosphere", "Hydrosphere + Geosphere", "Geosphere + Atmosphere", "Biosphere + Atmosphere"],
+    correct: 3,
+    explain: "Ocean algae (biosphere) exchange gases with the air (atmosphere) — they produce about 50% of Earth's oxygen!"
+  },
+
+  // ROUND 3
+  {
+    round: 3, label: "Round 3 — Water on Earth",
+    text: "About what percentage of ALL water on Earth is SALT water (in oceans and seas)?",
+    svg: svgWaterPie(),
+    answers: ["50%", "75%", "97%", "25%"],
+    correct: 2,
+    explain: "A massive 97% of Earth's water is salt water! Only 3% is fresh water — and most of that is frozen in ice caps."
+  },
+  {
+    round: 3, label: "Round 3 — Water on Earth",
+    text: "Where is MOST of Earth's fresh water found?",
+    svg: svgGlacier(),
+    answers: ["Rivers and lakes", "Underground (groundwater)", "Ice caps and glaciers", "The atmosphere"],
+    correct: 2,
+    explain: "About 69% of fresh water is frozen in glaciers and ice caps — mostly in Antarctica and Greenland!"
+  },
+  {
+    round: 3, label: "Round 3 — Water on Earth",
+    text: "Which list correctly orders Earth's water reservoirs from MOST to LEAST water?",
+    svg: svgBarChart(),
+    answers: ["Oceans → Ice caps → Groundwater → Lakes", "Ice caps → Oceans → Lakes → Groundwater", "Oceans → Lakes → Groundwater → Ice caps", "Groundwater → Oceans → Ice caps → Lakes"],
+    correct: 0,
+    explain: "Oceans hold 97% of all water. Of the 3% fresh water: ice caps hold ~69%, groundwater ~30%, then lakes and rivers!"
+  },
+  {
+    round: 3, label: "Round 3 — Water on Earth",
+    text: "Fresh water in lakes makes up only 0.007% of Earth's total water. What does this fact best show?",
+    svg: svgLake(),
+    answers: ["Lakes are mostly salt water", "Fresh water is very rare and precious", "Most water is in the atmosphere", "Groundwater is more common than oceans"],
+    correct: 1,
+    explain: "Lakes hold just 0.007% of Earth's water — this shows how incredibly rare and precious fresh water is. We must protect it!"
+  },
+  {
+    round: 3, label: "Round 3 — Water on Earth",
+    text: "Many coastal cities use desalination plants to make drinking water from seawater. Which fact BEST explains why this is needed?",
+    svg: svgDesalination(),
+    answers: ["The atmosphere has too much oxygen", "There are too many salt water fish", "Only 3% of Earth's water is fresh, and most is frozen in ice", "Ice caps are melting too slowly"],
+    correct: 2,
+    explain: "Only 3% of Earth's water is fresh, and ~69% of that is frozen! Desalination converts salt water to drinking water — a smart science solution!"
+  }
+];
+
+// ===== GAME STATE =====
+var currentQ = 0;
+var score = 0;
+var lives = 3;
+var answered = false;
+var roundScores = [0, 0, 0];
+
+// ===== GOLD GLITTER =====
+function spawnGlitter() {
+  var golds = ['#E0A800','#FFD700','#FFC107','#F59E0B','#FBBF24','#D97706'];
+  for (var i = 0; i < 28; i++) {
+    (function(delay) {
+      setTimeout(function() {
+        var p = document.createElement('div');
+        var size = 4 + Math.random() * 7;
+        p.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
+          'width:' + size + 'px;height:' + size + 'px;' +
+          'background:' + golds[Math.floor(Math.random() * golds.length)] + ';' +
+          'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';' +
+          'left:' + (5 + Math.random() * 90) + 'vw;top:-10px;' +
+          'animation:glitter-fall ' + (1.1 + Math.random() * 1.8) + 's linear forwards;';
+        document.body.appendChild(p);
+        setTimeout(function() { if (p.parentNode) p.parentNode.removeChild(p); }, 3500);
+      }, delay * 55);
+    })(i);
+  }
+}
+
+// ===== CORE FUNCTIONS =====
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  currentQ = 0; score = 0; lives = 3; answered = false; roundScores = [0, 0, 0];
+  showScreen('title-screen');
+}
+
+function startGame() {
+  currentQ = 0; score = 0; lives = 3; answered = false; roundScores = [0, 0, 0];
+  showScreen('game-screen');
+  loadQuestion();
+}
+
+function updateHUD() {
+  var q = QUESTIONS[currentQ] || QUESTIONS[QUESTIONS.length - 1];
+  document.getElementById('round-badge').textContent = 'Round ' + q.round;
+  document.getElementById('score-display').textContent = score;
+  var heartStr = lives >= 3 ? '❤️❤️❤️' : lives === 2 ? '❤️❤️' : lives === 1 ? '❤️' : '💔';
+  document.getElementById('lives-display').textContent = heartStr;
+  var pct = (currentQ / QUESTIONS.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function loadQuestion() {
+  if (currentQ >= QUESTIONS.length) { showEndScreen(); return; }
+  answered = false;
+  var q = QUESTIONS[currentQ];
+  document.getElementById('q-round-label').textContent = q.label;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-svg').innerHTML = q.svg;
+
+  var grid = document.getElementById('answers-grid');
+  grid.innerHTML = '';
+  var letters = ['A', 'B', 'C', 'D'];
+  for (var i = 0; i < q.answers.length; i++) {
+    (function(idx) {
+      var btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.innerHTML = '<span style="color:#5eead4;font-weight:900;margin-right:8px">' + letters[idx] + '</span>' + q.answers[idx];
+      btn.addEventListener('click', function() { selectAnswer(idx, btn); });
+      grid.appendChild(btn);
+    })(i);
+  }
+
+  var fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.textContent = '';
+  document.getElementById('btn-next').style.display = 'none';
+  updateHUD();
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  var q = QUESTIONS[currentQ];
+  var allBtns = document.querySelectorAll('.answer-btn');
+  for (var i = 0; i < allBtns.length; i++) allBtns[i].disabled = true;
+
+  var fb = document.getElementById('feedback-box');
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    score += 10;
+    roundScores[q.round - 1] += 10;
+    fb.className = 'feedback-box correct-fb show';
+    fb.textContent = 'Correct! ' + q.explain;
+    spawnGlitter();
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+    if (lives > 0) lives -= 1;
+    fb.className = 'feedback-box wrong-fb show';
+    fb.textContent = 'Not quite! ' + q.explain;
+  }
+  updateHUD();
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= QUESTIONS.length) showEndScreen();
+  else loadQuestion();
+}
+
+function showEndScreen() {
+  showScreen('end-screen');
+  var maxScore = QUESTIONS.length * 10;
+  var pct = score / maxScore;
+  document.getElementById('final-score').textContent = score;
+
+  var trophy, title, msg, stars;
+  if (pct >= 0.9) {
+    trophy = '🏆'; title = 'Earth Systems Expert!'; stars = '⭐⭐⭐';
+    msg = 'Outstanding! You clearly understand the 4 Earth spheres, their interactions, and the distribution of water on our planet. Well done, future geoscientist!';
+  } else if (pct >= 0.7) {
+    trophy = '🥇'; title = 'Sphere Champion!'; stars = '⭐⭐✩';
+    msg = 'Great work! You have a solid understanding of Earth\'s systems. Review any questions you missed and you\'ll be a true Earth systems master!';
+  } else if (pct >= 0.5) {
+    trophy = '🥈'; title = 'Good Explorer!'; stars = '⭐✩✩';
+    msg = 'Not bad! You know the basics. Try again to improve your understanding of sphere interactions and water distribution on Earth.';
+  } else {
+    trophy = '🔭'; title = 'Keep Exploring!'; stars = '✩✩✩';
+    msg = 'Earth\'s systems are fascinating — keep studying! Review the 4 spheres (geo, hydro, bio, atmo) and how they interact. Play again!';
+  }
+
+  document.getElementById('end-trophy').textContent = trophy;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-stars').textContent = stars;
+  document.getElementById('end-message').textContent = msg;
+  document.getElementById('r1-score').textContent = roundScores[0] + ' / 40';
+  document.getElementById('r2-score').textContent = roundScores[1] + ' / 50';
+  document.getElementById('r3-score').textContent = roundScores[2] + ' / 50';
+  document.getElementById('total-score-end').textContent = score + ' / ' + maxScore;
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

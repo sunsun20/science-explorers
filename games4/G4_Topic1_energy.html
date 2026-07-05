@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Energy Lab Quest – Grade 4</title>
+<style>
+:root{--navy:#0c2a50;--navy2:#0f3460;--gold:#E0A800;--goldd:#b88600;--teal:#0d9488;--teall:#14b8a8;--correct:#10b981;--wrong:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);font-family:'Segoe UI',Arial,sans-serif;min-height:100vh;color:#fff;overflow-x:hidden}
+#restartBtn{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.22);color:#fff;border-radius:99px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer;z-index:9000;transition:background .2s,transform .1s;backdrop-filter:blur(4px)}
+#restartBtn:hover{background:rgba(255,255,255,.22);transform:scale(1.03)}
+#glitterCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+#app{max-width:700px;margin:0 auto;padding:20px 16px 48px;min-height:100vh}
+.scr{display:none}.scr.on{display:block}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(224,168,0,.14);border:1.5px solid var(--gold);color:var(--gold);border-radius:99px;padding:8px 22px;font-size:15px;font-weight:700;letter-spacing:.3px}
+.hero{text-align:center;padding:28px 0 18px}
+.hero h1{font-size:clamp(28px,7vw,50px);font-weight:900;color:var(--gold);line-height:1.1;margin:14px 0 12px;text-shadow:0 0 40px rgba(224,168,0,.3)}
+.hero p{font-size:16px;color:rgba(255,255,255,.72);line-height:1.55;max-width:480px;margin:0 auto 22px}
+.standards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:560px;margin:0 auto 30px}
+.std-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;text-align:left}
+.std-card .code{color:var(--teall);font-weight:700;font-size:12px;margin-bottom:4px}
+.std-card p{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.4}
+.btn-gold{background:linear-gradient(135deg,var(--gold) 0%,var(--goldd) 100%);color:var(--navy);border:none;border-radius:99px;padding:15px 50px;font-size:19px;font-weight:800;cursor:pointer;box-shadow:0 4px 24px rgba(224,168,0,.4);transition:transform .15s,box-shadow .15s;display:inline-block}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(224,168,0,.5)}
+.btn-outline{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.22);border-radius:99px;padding:12px 36px;font-size:16px;font-weight:600;cursor:pointer;transition:background .2s;display:inline-block}
+.btn-outline:hover{background:rgba(255,255,255,.17)}
+.round-intro{text-align:center;padding:40px 20px;max-width:520px;margin:0 auto}
+.ri-icon{font-size:72px;display:block;margin-bottom:14px}
+.ri-num{color:var(--gold);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.ri-title{font-size:32px;font-weight:900;margin-bottom:10px}
+.ri-std{color:var(--teall);font-size:13px;font-weight:700;margin-bottom:10px}
+.ri-desc{font-size:16px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:30px}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:rgba(255,255,255,.65)}
+.hud .score-val{color:var(--gold);font-weight:700;font-size:16px}
+.round-tag{background:var(--teal);color:#fff;border-radius:99px;padding:4px 14px;font-size:12px;font-weight:700}
+.prog-bar{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .4s ease}
+.q-card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:22px 20px 14px;margin-bottom:16px}
+.q-text{font-size:clamp(16px,3.8vw,20px);font-weight:700;line-height:1.4;text-align:center;margin-bottom:14px}
+.q-svg{display:block;margin:0 auto;max-width:100%;border-radius:10px;overflow:hidden}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:480px){.choices{grid-template-columns:1fr}}
+.choice{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:14px;padding:13px 14px;font-size:14.5px;font-weight:600;color:#fff;cursor:pointer;transition:all .18s;text-align:left;display:flex;align-items:center;gap:10px;line-height:1.35;width:100%}
+.choice:hover:not([disabled]){background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
+.choice[disabled]{cursor:not-allowed}
+.choice.correct{background:rgba(16,185,129,.2)!important;border-color:#10b981!important;color:#6ee7b7!important}
+.choice.wrong{background:rgba(239,68,68,.2)!important;border-color:#ef4444!important;color:#fca5a5!important}
+.lbl{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.exp-box{background:rgba(13,148,136,.15);border:1.5px solid var(--teal);border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.9);margin-bottom:14px}
+.exp-label{color:var(--teall);font-weight:700;font-size:13px;margin-bottom:5px}
+.hidden{display:none}
+.center{text-align:center}
+.rc{text-align:center;padding:40px 20px;max-width:480px;margin:0 auto}
+.rc-score{font-size:60px;font-weight:900;color:var(--gold)}
+.end{text-align:center;max-width:560px;margin:0 auto;padding:30px 16px}
+.final-score{font-size:78px;font-weight:900;color:var(--gold);line-height:1}
+.stds-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin:0 0 26px}
+.stds-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px}
+.stds-card .code{color:var(--teall);font-weight:700;font-size:11px;margin-bottom:4px}
+.stds-card p{font-size:12px;color:rgba(255,255,255,.7);line-height:1.4}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}30%{transform:translateX(7px)}45%{transform:translateX(-5px)}60%{transform:translateX(5px)}75%{transform:translateX(-2px)}90%{transform:translateX(2px)}}
+.shake{animation:shake .42s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fadeUp{animation:fadeUp .35s ease}
+
+/* ── QR card (desktop only) ───────────────────────────────────── */
+.qr-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin:18px auto 0;
+  background:rgba(255,255,255,0.06);
+  border:1.5px solid rgba(224,168,0,0.35);
+  border-radius:14px;padding:12px 18px;
+  max-width:160px;
+}
+.qr-card img{border-radius:6px;display:block;}
+.qr-card p{color:rgba(255,255,255,0.75);font-size:11.5px;text-align:center;line-height:1.35;margin:0;}
+
+/* ── Mobile responsive (@media 820px) ─────────────────────────── */
+@media(max-width:820px){
+  /* hide QR card on small screens */
+  .qr-card{display:none!important;}
+
+  /* layout helpers */
+  #app,
+  .card{max-width:100%!important;padding:14px 10px 40px!important;}
+
+  /* stack 2-col grids to 1 col */
+  .choices,
+  .choices-grid,
+  #choicesGrid,
+  #choicesDiv,
+  .options-grid,
+  .sort-columns{
+    grid-template-columns:1fr!important;
+    flex-direction:column!important;
+  }
+
+  /* enlarge tap targets ≥48px */
+  .choice,.choice-btn,.c-btn,.opt-btn,.btn-gold,.btn-start,
+  .btn-primary,.start-btn,.btn-play,#start-btn,.btn-next,
+  .next-btn,.btn-check,.choice-btn,.play-again-btn{
+    min-height:48px!important;padding-top:12px!important;padding-bottom:12px!important;
+    font-size:16px!important;
+  }
+
+  /* standards grid → 1 col */
+  .standards-grid,.stds-summary{grid-template-columns:1fr!important;}
+
+  /* hero title size */
+  .hero h1,.title-h1,#titleScreen h1,h1.game-title{font-size:clamp(22px,7vw,36px)!important;}
+
+  /* SVG illustrations: full width */
+  .q-svg,.q-art svg,#qSvg,.svg-wrap svg,.scene-wrap svg{
+    width:100%!important;height:auto!important;
+  }
+
+  /* fixed restart button: smaller on mobile */
+  #restartBtn,#restart-btn{padding:7px 12px!important;font-size:13px!important;}
+}
+
+</style>
+</head>
+<body>
+
+<button id="restartBtn" onclick="restartGame()">&#127968; Restart</button>
+<canvas id="glitterCanvas"></canvas>
+
+<div id="app">
+
+<!-- TITLE -->
+<div class="scr on" id="scrTitle">
+  <div style="text-align:center;padding-top:24px;margin-bottom:4px">
+    <div class="pill">&#9889; Grade 4 &middot; Topic 1 &middot; Energy</div>
+  </div>
+  <div style="text-align:center;margin:10px auto 0">
+    <svg viewBox="0 0 160 180" width="110" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="glow" cx="50%" cy="55%" r="50%"><stop offset="0%" stop-color="#f5cc00" stop-opacity=".45"/><stop offset="100%" stop-color="#E0A800" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="80" cy="100" rx="68" ry="68" fill="url(#glow)"/>
+      <polygon points="92,8 38,100 70,100 58,172 122,75 86,75" fill="#E0A800"/>
+      <polygon points="92,8 38,100 70,100 58,172 122,75 86,75" fill="rgba(255,255,255,0.12)"/>
+    </svg>
+  </div>
+  <div class="hero">
+    <h1>ENERGY LAB QUEST</h1>
+    <p>Explore the science of energy — speed, transfer, collisions, and conversions! Four rounds, sixteen questions.</p>
+  </div>
+  <div class="standards-grid">
+    <div class="std-card"><div class="code">4-PS3-1</div><p>Speed and kinetic energy</p></div>
+    <div class="std-card"><div class="code">4-PS3-2</div><p>Energy transfer: sound, light, heat, electricity</p></div>
+    <div class="std-card"><div class="code">4-PS3-3</div><p>Energy changes in collisions</p></div>
+    <div class="std-card"><div class="code">4-PS3-4</div><p>Devices that convert energy forms</p></div>
+  </div>
+  
+<!-- ── QR CARD (desktop only) ───────────── -->
+<div class="qr-card">
+  <img src="data:image/png;base64,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" alt="QR code" width="96" height="96">
+  <p>&#128241; Scan to play on a phone or iPad!</p>
+</div>
+<div class="center">
+    <button class="btn-gold" id="startBtn" onclick="showRoundIntro(0)">&#9654; Start Game</button>
+  </div>
+</div>
+
+<!-- ROUND INTRO -->
+<div class="scr" id="scrRoundIntro">
+  <div class="round-intro fadeUp" id="riContent"></div>
+</div>
+
+<!-- QUESTION -->
+<div class="scr" id="scrQuestion">
+  <div class="hud">
+    <span id="hudRound" class="round-tag">Round 1</span>
+    <span>Question <span id="hudQNum">1</span> / 16</span>
+    <span>&#9889; <span id="hudScore" class="score-val">0</span> pts</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card" id="qCard">
+    <div class="q-text" id="qText"></div>
+    <svg id="qSvg" class="q-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"></svg>
+  </div>
+  <div class="choices" id="choicesGrid"></div>
+  <div class="exp-box hidden" id="expBox">
+    <div class="exp-label">&#128300; Science Fact</div>
+    <div id="expText"></div>
+  </div>
+  <div class="center hidden" id="nextWrap" style="margin-top:4px">
+    <button class="btn-gold" onclick="nextQuestion()">Next &#8594;</button>
+  </div>
+</div>
+
+<!-- ROUND COMPLETE -->
+<div class="scr" id="scrRC">
+  <div class="rc fadeUp" id="rcContent"></div>
+</div>
+
+<!-- END -->
+<div class="scr" id="scrEnd">
+  <div class="end fadeUp" id="endContent"></div>
+</div>
+
+</div>
+
+<script>
+// ── GOLD GLITTER ──────────────────────────────────────────────────────────────
+const gc=document.getElementById('glitterCanvas'),gx=gc.getContext('2d');
+let pts=[];
+function resGC(){gc.width=window.innerWidth;gc.height=window.innerHeight}
+window.addEventListener('resize',resGC);resGC();
+const GOLDS=['#E0A800','#F5CC00','#FFD700','#FFC107','#B88600','#FFECB3','#D4A017'];
+function spawnGlitter(cx,cy,n){
+  n=n||80;
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,spd=2+Math.random()*7;
+    pts.push({x:cx!=null?cx:Math.random()*gc.width,y:cy!=null?cy:gc.height*.35,
+      vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-4,sz:3+Math.random()*6,
+      color:GOLDS[Math.floor(Math.random()*GOLDS.length)],
+      rot:Math.random()*Math.PI*2,rspd:(Math.random()-.5)*.18,
+      life:1,decay:.01+Math.random()*.014,sq:Math.random()>.4});
+  }
+}
+(function anim(){
+  gx.clearRect(0,0,gc.width,gc.height);
+  pts=pts.filter(p=>p.life>0);
+  for(const p of pts){
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.13;p.vx*=.99;
+    p.rot+=p.rspd;p.life-=p.decay;
+    gx.save();gx.globalAlpha=Math.max(0,p.life);
+    gx.translate(p.x,p.y);gx.rotate(p.rot);gx.fillStyle=p.color;
+    if(p.sq)gx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz);
+    else{gx.beginPath();gx.arc(0,0,p.sz/2,0,Math.PI*2);gx.fill();}
+    gx.restore();
+  }
+  requestAnimationFrame(anim);
+})();
+
+// ── SVG HELPERS ───────────────────────────────────────────────────────────────
+function svgBg(inner){
+  return '<rect width="400" height="200" fill="#0f3460" rx="10"/>'+inner;
+}
+function T(x,y,t,fill,sz,w,anchor){
+  fill=fill||'rgba(255,255,255,0.82)';sz=sz||13;w=w||'normal';anchor=anchor||'middle';
+  return '<text x="'+x+'" y="'+y+'" fill="'+fill+'" font-size="'+sz+'" font-weight="'+w+'" text-anchor="'+anchor+'" font-family="Arial,sans-serif">'+t+'</text>';
+}
+function Arr(x1,y1,x2,y2,col,w){
+  col=col||'#E0A800';w=w||2.5;
+  var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+  if(len<1)return '';
+  var nx=dx/len,ny=dy/len,hs=9;
+  var ax=x2-nx*hs,ay=y2-ny*hs,px=-ny,py=nx;
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+ax+'" y2="'+ay+'" stroke="'+col+'" stroke-width="'+w+'"/>'+
+    '<polygon points="'+x2+','+y2+' '+(ax+px*hs*.55)+','+(ay+py*hs*.55)+' '+(ax-px*hs*.55)+','+(ay-py*hs*.55)+'" fill="'+col+'"/>';
+}
+
+// ── SVG ILLUSTRATIONS ─────────────────────────────────────────────────────────
+function svgFastSlow(){
+  var rays='';
+  [0,45,90,135,180,225,270,315].forEach(function(a){
+    var r=a*Math.PI/180,r1=38,r2=54;
+    rays+='<line x1="'+(110+r1*Math.cos(r))+'" y1="'+(100+r1*Math.sin(r))+'" x2="'+(110+r2*Math.cos(r))+'" y2="'+(100+r2*Math.sin(r))+'" stroke="#4ade80" stroke-width="2" stroke-linecap="round" opacity="0.7"/>';
+  });
+  return svgBg(
+    T(100,28,'BALL A — FAST','#4ade80',13,'bold')+
+    '<line x1="28" y1="100" x2="50" y2="100" stroke="#4ade80" stroke-width="2" opacity=".7"/>'+
+    '<line x1="32" y1="88" x2="50" y2="88" stroke="#4ade80" stroke-width="1.5" opacity=".45"/>'+
+    '<line x1="32" y1="112" x2="50" y2="112" stroke="#4ade80" stroke-width="1.5" opacity=".45"/>'+
+    '<circle cx="100" cy="100" r="36" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    '<circle cx="87" cy="89" r="5" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>'+
+    '<circle cx="113" cy="93" r="4" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>'+
+    Arr(140,100,192,100,'#E0A800',3.5)+
+    T(165,118,'FAST','#E0A800',12,'bold')+
+    '<line x1="200" y1="20" x2="200" y2="178" stroke="rgba(255,255,255,.14)" stroke-width="1" stroke-dasharray="5,5"/>'+
+    T(300,28,'BALL B — SLOW','#94a3b8',13,'bold')+
+    '<line x1="232" y1="100" x2="244" y2="100" stroke="#94a3b8" stroke-width="1.5" opacity=".5"/>'+
+    '<circle cx="300" cy="100" r="36" fill="#1d4ed8" stroke="#94a3b8" stroke-width="2" opacity=".65"/>'+
+    '<circle cx="287" cy="89" r="5" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>'+
+    '<circle cx="313" cy="93" r="4" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>'+
+    Arr(340,100,360,100,'#94a3b8',2)+
+    T(350,118,'slow','#94a3b8',12)+
+    T(200,170,'Which ball has MORE kinetic energy?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgSlope(){
+  return svgBg(
+    '<line x1="50" y1="168" x2="360" y2="52" stroke="#64748b" stroke-width="3"/>'+
+    T(85,85,'SLOW','#94a3b8',12,'bold')+T(85,100,'low energy','#94a3b8',11)+
+    '<rect x="135" y="108" width="52" height="28" rx="6" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>'+
+    '<rect x="143" y="113" width="36" height="16" rx="4" fill="#0c2a50"/>'+
+    '<circle cx="148" cy="140" r="9" fill="#475569" stroke="#94a3b8" stroke-width="1.5"/>'+
+    '<circle cx="174" cy="133" r="9" fill="#475569" stroke="#94a3b8" stroke-width="1.5"/>'+
+    '<circle cx="148" cy="140" r="3.5" fill="#94a3b8"/><circle cx="174" cy="133" r="3.5" fill="#94a3b8"/>'+
+    Arr(192,116,252,86,'#E0A800',3)+
+    T(225,78,'Speeds up!','#E0A800',12,'bold')+
+    T(315,80,'FAST','#4ade80',12,'bold')+T(315,95,'more energy!','#4ade80',11)+
+    T(200,180,'As speed increases, kinetic energy increases','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+function svgBikes(){
+  return svgBg(
+    '<rect x="28" y="52" width="162" height="108" rx="10" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>'+
+    T(109,72,'BIKE A','#94a3b8',13,'bold')+T(109,88,'5 km/h','#94a3b8',12)+
+    '<circle cx="72" cy="136" r="22" fill="none" stroke="#475569" stroke-width="3"/>'+
+    '<circle cx="146" cy="136" r="22" fill="none" stroke="#475569" stroke-width="3"/>'+
+    '<circle cx="72" cy="136" r="4" fill="#475569"/><circle cx="146" cy="136" r="4" fill="#475569"/>'+
+    '<line x1="72" y1="136" x2="146" y2="136" stroke="#475569" stroke-width="2"/>'+
+    '<line x1="109" y1="136" x2="109" y2="108" stroke="#475569" stroke-width="2"/>'+
+    '<line x1="99" y1="108" x2="119" y2="108" stroke="#475569" stroke-width="2"/>'+
+    Arr(168,136,194,136,'#94a3b8',2)+
+    '<rect x="208" y="52" width="162" height="108" rx="10" fill="rgba(224,168,0,.07)" stroke="rgba(224,168,0,.22)" stroke-width="1.5"/>'+
+    T(289,72,'BIKE B','#E0A800',13,'bold')+T(289,88,'10 km/h','#E0A800',12,'bold')+
+    '<circle cx="252" cy="136" r="22" fill="none" stroke="#1d4ed8" stroke-width="3"/>'+
+    '<circle cx="326" cy="136" r="22" fill="none" stroke="#1d4ed8" stroke-width="3"/>'+
+    '<circle cx="252" cy="136" r="4" fill="#1d4ed8"/><circle cx="326" cy="136" r="4" fill="#1d4ed8"/>'+
+    '<line x1="252" y1="136" x2="326" y2="136" stroke="#1d4ed8" stroke-width="2"/>'+
+    '<line x1="289" y1="136" x2="289" y2="108" stroke="#1d4ed8" stroke-width="2"/>'+
+    '<line x1="279" y1="108" x2="299" y2="108" stroke="#1d4ed8" stroke-width="2"/>'+
+    '<line x1="228" y1="136" x2="204" y2="136" stroke="#4ade80" stroke-width="1.5" opacity=".5"/>'+
+    Arr(354,136,376,136,'#E0A800',3)+Arr(354,122,374,122,'#E0A800',2)+
+    T(200,180,'Which bicycle has more kinetic energy?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgBallQ(){
+  return svgBg(
+    T(200,32,'How can this ball gain MORE kinetic energy?','rgba(255,255,255,.78)',13)+
+    '<circle cx="200" cy="105" r="42" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    '<circle cx="185" cy="93" r="7" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>'+
+    '<circle cx="215" cy="98" r="5" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>'+
+    Arr(248,105,288,105,'rgba(255,255,255,.28)',1.5)+
+    T(320,109,'current','rgba(255,255,255,.45)',11)+T(320,122,'speed','rgba(255,255,255,.45)',11)+
+    T(200,170,'Think about what kinetic energy depends on...','rgba(255,255,255,.5)',12)+
+    '<text x="200" y="200" fill="#E0A800" font-size="26" font-weight="900" text-anchor="middle" font-family="Arial">?</text>'
+  );
+}
+
+function svgSun(){
+  var rays='';
+  [0,45,90,135,180,225,270,315].forEach(function(a){
+    var r=a*Math.PI/180;
+    rays+='<line x1="'+(110+38*Math.cos(r))+'" y1="'+(95+38*Math.sin(r))+'" x2="'+(110+54*Math.cos(r))+'" y2="'+(95+54*Math.sin(r))+'" stroke="#FCD34D" stroke-width="3" stroke-linecap="round"/>';
+  });
+  return svgBg(
+    '<circle cx="110" cy="95" r="28" fill="#F59E0B"/>'+
+    '<circle cx="110" cy="95" r="20" fill="#FCD34D"/>'+rays+
+    Arr(158,95,222,95,'#FCD34D',2.5)+
+    Arr(158,118,222,148,'#FCD34D',2)+
+    Arr(158,72,222,50,'#FCD34D',2)+
+    '<rect x="228" y="152" width="130" height="28" rx="5" fill="#475569"/>'+
+    T(293,170,'Playground surface','rgba(255,255,255,.8)',11)+
+    T(293,110,'LIGHT energy','#FCD34D',13,'bold')+
+    T(200,28,'How does the sun warm the playground?','rgba(255,255,255,.75)',13)
+  );
+}
+
+function svgBell(){
+  var waves='';
+  for(var i=1;i<=4;i++){
+    waves+='<path d="M'+(258+i*16)+','+(92-i*6)+' Q'+(268+i*16)+','+(80-i*6)+' '+(261+i*16)+','+(66-i*6)+'" stroke="#60a5fa" stroke-width="'+(3.2-i*.5)+'" fill="none" stroke-linecap="round" opacity="'+(1-i*.18)+'"/>'+
+      '<path d="M'+(142-i*16)+','+(92-i*6)+' Q'+(132-i*16)+','+(80-i*6)+' '+(139-i*16)+','+(66-i*6)+'" stroke="#60a5fa" stroke-width="'+(3.2-i*.5)+'" fill="none" stroke-linecap="round" opacity="'+(1-i*.18)+'"/>';
+  }
+  return svgBg(
+    '<path d="M158,58 Q158,26 200,24 Q242,26 242,58 L248,122 Q200,144 152,122 Z" fill="#E0A800" opacity=".9"/>'+
+    '<rect x="184" y="122" width="32" height="10" rx="3" fill="#b88600"/>'+
+    '<circle cx="200" cy="140" r="11" fill="#b88600"/><circle cx="200" cy="140" r="7" fill="#E0A800"/>'+
+    waves+
+    T(200,175,'Sound waves carry energy through the air to your ears!','rgba(255,255,255,.55)',11.5)+
+    T(200,28,'How does a school bell signal the end of class?','rgba(255,255,255,.75)',12.5)
+  );
+}
+
+function svgFire(){
+  var heatW='';
+  for(var i=1;i<=3;i++){
+    heatW+='<path d="M'+(200+i*28)+','+(128-i*4)+' Q'+(218+i*28)+','+(116-i*4)+' '+(211+i*28)+','+(100-i*4)+'" stroke="#F97316" stroke-width="'+(2.8-i*.6)+'" fill="none" stroke-linecap="round" opacity="'+(0.9-i*.22)+'"/>'+
+      '<path d="M'+(200-i*28)+','+(128-i*4)+' Q'+(182-i*28)+','+(116-i*4)+' '+(189-i*28)+','+(100-i*4)+'" stroke="#F97316" stroke-width="'+(2.8-i*.6)+'" fill="none" stroke-linecap="round" opacity="'+(0.9-i*.22)+'"/>';
+  }
+  return svgBg(
+    '<ellipse cx="200" cy="158" rx="55" ry="10" fill="#78350f" opacity=".5"/>'+
+    '<rect x="176" y="120" width="12" height="42" rx="4" fill="#92400e" transform="rotate(-8,182,141)"/>'+
+    '<rect x="212" y="120" width="12" height="42" rx="4" fill="#92400e" transform="rotate(8,218,141)"/>'+
+    '<ellipse cx="200" cy="126" rx="20" ry="8" fill="#78350f"/>'+
+    '<path d="M188,120 Q193,78 200,58 Q207,78 194,100 Z" fill="#EF4444"/>'+
+    '<path d="M195,114 Q200,83 205,68 Q209,86 200,110 Z" fill="#F97316"/>'+
+    '<path d="M198,108 Q200,88 202,78 Q204,92 200,108 Z" fill="#FCD34D"/>'+
+    heatW+
+    T(200,28,'Sitting near a campfire — how does warmth reach you?','rgba(255,255,255,.75)',12)+
+    T(200,178,'Thermal energy radiates outward from the fire','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+function svgLamp(){
+  var rays='';
+  [0,36,72,108,144,180,216,252,288,324].forEach(function(a,i){
+    var r=a*Math.PI/180,r1=32,r2=r1+18+i%3*10;
+    rays+='<line x1="'+(200+r1*Math.cos(r))+'" y1="'+(68+r1*Math.sin(r))+'" x2="'+(200+r2*Math.cos(r))+'" y2="'+(68+r2*Math.sin(r))+'" stroke="#FCD34D" stroke-width="1.5" opacity="'+(0.7-i*.04)+'" stroke-linecap="round"/>';
+  });
+  return svgBg(
+    '<rect x="196" y="10" width="8" height="24" rx="2" fill="#94a3b8"/>'+
+    '<path d="M174,50 Q174,82 200,90 Q226,82 226,50 Z" fill="#FCD34D" opacity=".85"/>'+
+    '<ellipse cx="200" cy="50" rx="26" ry="9" fill="#FCD34D" opacity=".6"/>'+
+    '<rect x="186" y="90" width="28" height="10" rx="3" fill="#64748b"/>'+
+    '<rect x="191" y="100" width="18" height="32" rx="3" fill="#64748b"/>'+
+    '<circle cx="200" cy="68" r="8" fill="white" opacity=".9"/>'+rays+
+    '<line x1="191" y1="132" x2="145" y2="160" stroke="#64748b" stroke-width="2"/>'+
+    '<rect x="125" y="155" width="40" height="8" rx="3" fill="#475569"/>'+
+    T(70,165,'Electric in','#60a5fa',11,'bold')+
+    T(200,178,'Light energy spreads through the room','rgba(255,255,255,.5)',11.5)+
+    T(200,28,'An electric lamp lights up a dark classroom','rgba(255,255,255,.75)',13)
+  );
+}
+
+function svgBallAB(){
+  return svgBg(
+    T(92,28,'Ball A — Moving','#4ade80',13,'bold')+
+    '<line x1="28" y1="105" x2="50" y2="105" stroke="#4ade80" stroke-width="1.5" opacity=".6"/>'+
+    '<line x1="28" y1="93" x2="50" y2="93" stroke="#4ade80" stroke-width="1" opacity=".4"/>'+
+    '<circle cx="92" cy="105" r="34" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    T(92,110,'A','white',18,'bold')+
+    Arr(130,105,174,105,'#E0A800',3.5)+
+    T(152,122,'moving','#E0A800',11)+
+    T(290,28,'Ball B — At Rest','#94a3b8',13,'bold')+
+    '<circle cx="295" cy="105" r="34" fill="#334155" stroke="#94a3b8" stroke-width="2"/>'+
+    T(295,110,'B','rgba(255,255,255,.7)',18,'bold')+
+    T(295,155,'not moving','#94a3b8',11)+
+    '<text x="360" y="112" fill="#E0A800" font-size="32" font-weight="900" text-anchor="middle" font-family="Arial">?</text>'+
+    T(200,178,'What will Ball B do when Ball A hits it?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgHeadOn(){
+  return svgBg(
+    Arr(130,100,170,100,'#E0A800',3)+
+    '<circle cx="92" cy="100" r="32" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    T(92,105,'A','white',18,'bold')+
+    T(92,148,'same speed','rgba(255,255,255,.6)',11)+
+    Arr(270,100,230,100,'#EF4444',3)+
+    '<circle cx="308" cy="100" r="32" fill="#dc2626" stroke="#f87171" stroke-width="2"/>'+
+    T(308,105,'B','white',18,'bold')+
+    T(308,148,'same speed','rgba(255,255,255,.6)',11)+
+    '<text x="200" y="110" fill="#E0A800" font-size="28" font-weight="900" text-anchor="middle" font-family="Arial">?</text>'+
+    T(200,28,'Two equal balls roll at equal speeds and collide head-on','rgba(255,255,255,.75)',12)+
+    T(200,178,'What happens after the collision?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgWall(){
+  return svgBg(
+    '<rect x="338" y="38" width="30" height="144" rx="5" fill="#475569" stroke="#64748b" stroke-width="2"/>'+
+    '<line x1="338" y1="56" x2="368" y2="56" stroke="#94a3b8" stroke-width="1" opacity=".4"/>'+
+    '<line x1="338" y1="80" x2="368" y2="80" stroke="#94a3b8" stroke-width="1" opacity=".4"/>'+
+    '<line x1="338" y1="104" x2="368" y2="104" stroke="#94a3b8" stroke-width="1" opacity=".4"/>'+
+    '<line x1="338" y1="128" x2="368" y2="128" stroke="#94a3b8" stroke-width="1" opacity=".4"/>'+
+    '<line x1="338" y1="152" x2="368" y2="152" stroke="#94a3b8" stroke-width="1" opacity=".4"/>'+
+    '<circle cx="116" cy="110" r="32" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    '<line x1="52" y1="110" x2="76" y2="110" stroke="#4ade80" stroke-width="1.5" opacity=".6"/>'+
+    '<line x1="52" y1="97" x2="72" y2="97" stroke="#4ade80" stroke-width="1" opacity=".4"/>'+
+    Arr(152,110,222,110,'#E0A800',3)+
+    '<circle cx="302" cy="110" r="14" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5" opacity=".35"/>'+
+    T(290,148,'stopped','#94a3b8',11)+
+    '<path d="M332,110 Q318,96 310,82" stroke="#F97316" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/>'+
+    '<path d="M332,110 Q320,108 310,100" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>'+
+    T(200,28,'A ball rolls into a wall and stops completely','rgba(255,255,255,.75)',13)+
+    T(200,178,'Where did its kinetic energy go?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgBowling(){
+  var pins=[
+    [310,110],
+    [290,94],[290,126],
+    [270,78],[270,110],[270,142]
+  ];
+  var pinSvg=pins.map(function(p){
+    return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="12" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>'+
+      '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#cbd5e1"/>';
+  }).join('');
+  return svgBg(
+    '<circle cx="82" cy="115" r="34" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>'+
+    '<circle cx="73" cy="106" r="5.5" fill="#0c2a50"/><circle cx="91" cy="104" r="5.5" fill="#0c2a50"/>'+
+    '<circle cx="82" cy="122" r="5.5" fill="#0c2a50"/>'+
+    Arr(120,115,175,108,'#E0A800',3.5)+
+    pinSvg+
+    T(200,28,'A bowling ball strikes the pins','rgba(255,255,255,.75)',13)+
+    T(200,178,'What best describes what happens to energy here?','rgba(255,255,255,.55)',12)
+  );
+}
+
+function svgSolar(){
+  var rays='';
+  [0,45,90,135,180,225,270,315].forEach(function(a){
+    var r=a*Math.PI/180;
+    rays+='<line x1="'+(82+34*Math.cos(r))+'" y1="'+(58+34*Math.sin(r))+'" x2="'+(82+48*Math.cos(r))+'" y2="'+(58+48*Math.sin(r))+'" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/>';
+  });
+  return svgBg(
+    '<circle cx="82" cy="58" r="24" fill="#F59E0B"/>'+
+    '<circle cx="82" cy="58" r="16" fill="#FCD34D"/>'+rays+
+    Arr(118,90,164,118,'#FCD34D',2.5)+Arr(118,72,164,82,'#FCD34D',2)+
+    '<rect x="170" y="82" width="80" height="58" rx="6" fill="#0f3460" stroke="#1d4ed8" stroke-width="2"/>'+
+    '<rect x="175" y="87" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    '<rect x="213" y="87" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    '<rect x="175" y="104" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    '<rect x="213" y="104" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    '<rect x="175" y="121" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    '<rect x="213" y="121" width="32" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>'+
+    T(210,155,'Solar Panel','rgba(255,255,255,.7)',12,'bold')+
+    Arr(260,111,316,111,'#E0A800',3)+
+    '<text x="352" y="100" fill="#E0A800" font-size="28" text-anchor="middle" font-family="Arial">&#9889;</text>'+
+    T(352,122,'Electricity','#E0A800',11,'bold')+
+    T(200,28,'A solar panel sits in sunlight — what does it do?','rgba(255,255,255,.75)',12.5)+
+    T(200,178,'Light energy converts to electrical energy!','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+function svgSpeaker(){
+  var waves='';
+  for(var i=1;i<=4;i++){
+    waves+='<path d="M'+(222+i*16)+',110 Q'+(230+i*16)+','+(110-i*14)+' '+(222+i*16)+','+(110-i*28)+'" stroke="#60a5fa" stroke-width="'+(3.2-i*.55)+'" fill="none" stroke-linecap="round" opacity="'+(1-i*.18)+'"/>'+
+      '<path d="M'+(222+i*16)+',110 Q'+(230+i*16)+','+(110+i*14)+' '+(222+i*16)+','+(110+i*28)+'" stroke="#60a5fa" stroke-width="'+(3.2-i*.55)+'" fill="none" stroke-linecap="round" opacity="'+(1-i*.18)+'"/>';
+  }
+  return svgBg(
+    '<text x="62" y="106" fill="#E0A800" font-size="28" text-anchor="middle" font-family="Arial">&#9889;</text>'+
+    T(62,124,'electric','#60a5fa',11,'bold')+
+    Arr(86,110,142,110,'#E0A800',3)+
+    '<rect x="146" y="76" width="64" height="72" rx="8" fill="#334155" stroke="#475569" stroke-width="2"/>'+
+    '<circle cx="178" cy="112" r="24" fill="#1e293b" stroke="#475569" stroke-width="2"/>'+
+    '<circle cx="178" cy="112" r="16" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>'+
+    '<circle cx="178" cy="112" r="7" fill="#475569"/><circle cx="178" cy="112" r="3" fill="#94a3b8"/>'+
+    T(178,160,'Speaker','rgba(255,255,255,.7)',12,'bold')+
+    Arr(218,112,264,112,'#60a5fa',3)+
+    waves+
+    T(310,158,'Sound!','#60a5fa',12,'bold')+
+    T(200,28,'A speaker plays music — what energy conversion?','rgba(255,255,255,.75)',12)+
+    T(200,178,'Electrical energy converts to sound energy!','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+function svgWindmill(){
+  return svgBg(
+    Arr(30,100,100,100,'#94a3b8',2.5)+Arr(30,80,100,83,'#94a3b8',2)+
+    T(55,68,'Wind','#94a3b8',13)+
+    '<rect x="196" y="92" width="8" height="84" rx="3" fill="#94a3b8"/>'+
+    '<g transform="translate(200,96) rotate(-20)"><ellipse cx="0" cy="-36" rx="8" ry="30" fill="#60a5fa" opacity=".85" stroke="#3b82f6" stroke-width="1"/></g>'+
+    '<g transform="translate(200,96) rotate(100)"><ellipse cx="0" cy="-36" rx="8" ry="30" fill="#60a5fa" opacity=".85" stroke="#3b82f6" stroke-width="1"/></g>'+
+    '<g transform="translate(200,96) rotate(220)"><ellipse cx="0" cy="-36" rx="8" ry="30" fill="#60a5fa" opacity=".85" stroke="#3b82f6" stroke-width="1"/></g>'+
+    '<circle cx="200" cy="96" r="8" fill="#94a3b8"/>'+
+    '<rect x="190" y="176" width="20" height="10" rx="2" fill="#475569"/>'+
+    Arr(244,110,308,110,'#E0A800',3)+
+    '<text x="346" y="98" fill="#E0A800" font-size="28" text-anchor="middle" font-family="Arial">&#9889;</text>'+
+    T(346,118,'Electricity','#E0A800',11,'bold')+
+    T(200,28,'A wind turbine spins in a breezy field','rgba(255,255,255,.75)',13)+
+    T(200,182,'Motion (kinetic) energy converts to electrical energy!','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+function svgToaster(){
+  return svgBg(
+    '<rect x="128" y="72" width="144" height="96" rx="10" fill="#475569" stroke="#64748b" stroke-width="2"/>'+
+    '<rect x="148" y="56" width="18" height="32" rx="3" fill="#E0A800" opacity=".82"/>'+
+    '<rect x="177" y="54" width="18" height="34" rx="3" fill="#E0A800" opacity=".82"/>'+
+    '<rect x="206" y="56" width="18" height="32" rx="3" fill="#E0A800" opacity=".82"/>'+
+    '<rect x="138" y="88" width="124" height="64" rx="5" fill="#334155"/>'+
+    '<line x1="158" y1="96" x2="158" y2="148" stroke="#ef4444" stroke-width="3" opacity=".8" stroke-linecap="round"/>'+
+    '<line x1="186" y1="96" x2="186" y2="148" stroke="#ef4444" stroke-width="3" opacity=".9" stroke-linecap="round"/>'+
+    '<line x1="214" y1="96" x2="214" y2="148" stroke="#ef4444" stroke-width="3" opacity=".8" stroke-linecap="round"/>'+
+    '<line x1="200" y1="168" x2="200" y2="185" stroke="#64748b" stroke-width="2"/>'+
+    '<line x1="165" y1="185" x2="235" y2="185" stroke="#64748b" stroke-width="2"/>'+
+    '<text x="75" y="100" fill="#E0A800" font-size="26" text-anchor="middle" font-family="Arial">&#9889;</text>'+
+    Arr(96,104,122,104,'#E0A800',2.5)+
+    T(75,118,'Electric','#60a5fa',11,'bold')+
+    '<path d="M278,100 Q294,88 292,74" stroke="#EF4444" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".85"/>'+
+    '<path d="M278,110 Q300,104 302,90" stroke="#EF4444" stroke-width="2" fill="none" stroke-linecap="round" opacity=".65"/>'+
+    '<path d="M278,120 Q294,122 298,108" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>'+
+    T(335,82,'Heat!','#EF4444',13,'bold')+
+    T(200,28,'A toaster heats bread in the kitchen','rgba(255,255,255,.75)',13)+
+    T(200,185,'Electrical energy converts to heat energy!','rgba(255,255,255,.5)',11.5)
+  );
+}
+
+// ── QUESTION BANK ─────────────────────────────────────────────────────────────
+var ROUNDS=[
+  {num:1,title:'Speed and Energy',std:'4-PS3-1',icon:'🏎️',
+   desc:'Discover how the speed of an object is related to its kinetic energy!',
+   qs:[
+    {q:'Which soccer ball has MORE kinetic energy?',
+     svgF:svgFastSlow,
+     ch:['Ball A (fast-rolling)','Ball B (slow-rolling)','Both balls have equal energy','Energy depends only on ball size'],
+     cor:0,
+     ex:'Ball A has MORE kinetic energy! A faster-moving object carries more kinetic energy. Speed and kinetic energy always increase together.'},
+    {q:'A toy car rolls down a slope and speeds up. What happens to its kinetic energy?',
+     svgF:svgSlope,
+     ch:['Stays exactly the same','Disappears into the slope','Increases as the car speeds up','Decreases as the car moves'],
+     cor:2,
+     ex:'Kinetic energy INCREASES as the car speeds up! The faster an object moves, the more kinetic energy it has — they always go together.'},
+    {q:'Bicycle A rides at 5 km/h and Bicycle B rides at 10 km/h. Compare their kinetic energies.',
+     svgF:svgBikes,
+     ch:['Both bicycles have equal energy','Bicycle B has more kinetic energy','Bicycle A has more kinetic energy','Speed does not affect energy'],
+     cor:1,
+     ex:'Bicycle B has MORE kinetic energy! It is moving twice as fast, which greatly increases its kinetic energy. Speed matters a lot!'},
+    {q:'You want to give a rolling ball MORE kinetic energy without changing its mass. What should you do?',
+     svgF:svgBallQ,
+     ch:['Paint it a brighter color','Roll it on a smoother surface only','Change its shape to a cube','Make it roll faster'],
+     cor:3,
+     ex:'Make it roll FASTER! Kinetic energy depends on speed (and mass). Increasing speed is the key way to increase a moving object\'s kinetic energy.'}
+  ]},
+  {num:2,title:'Energy Transfer',std:'4-PS3-2',icon:'🔆',
+   desc:'Find out how energy travels from place to place through sound, light, heat, and electricity!',
+   qs:[
+    {q:'The sun warms the playground surface on a clear day. What type of energy transfer is happening?',
+     svgF:svgSun,
+     ch:['Sound energy transfer','Electrical energy transfer','Light energy transfer','Mechanical energy transfer'],
+     cor:2,
+     ex:'The sun transfers energy through LIGHT! Sunlight carries electromagnetic energy across space to Earth, warming anything it touches.'},
+    {q:'A school bell rings to signal the end of class. How does the energy travel from the bell to your ears?',
+     svgF:svgBell,
+     ch:['Sound energy waves','Light energy rays','Heat (thermal) energy','Electric currents through air'],
+     cor:0,
+     ex:'The bell transfers energy through SOUND! Sound waves vibrate through the air, carrying energy from the ringing bell all the way to your ears.'},
+    {q:'You sit near a campfire and feel warmth on your skin. How is the energy traveling from the fire to you?',
+     svgF:svgFire,
+     ch:['Only through sound energy','Through electrical energy in the air','Through mechanical (motion) energy','Through heat (thermal) energy radiating outward'],
+     cor:3,
+     ex:'The campfire transfers energy through HEAT (thermal energy)! Heat radiates outward in all directions from the fire, warming everything nearby.'},
+    {q:'An electric lamp turns on and lights up a dark classroom. What energy transfer is happening?',
+     svgF:svgLamp,
+     ch:['Heat energy converts to sound energy','Electrical energy converts to light energy','Sound energy converts to light energy','Light energy converts to electrical energy'],
+     cor:1,
+     ex:'The lamp converts ELECTRICAL energy into LIGHT energy! The electric current powers the bulb, which then radiates light energy throughout the room.'}
+  ]},
+  {num:3,title:'Collision Energy',std:'4-PS3-3',icon:'💥',
+   desc:'Explore what happens to energy when objects collide — and where that energy goes!',
+   qs:[
+    {q:'A moving Ball A hits Ball B which is sitting completely still. What will Ball B do?',
+     svgF:svgBallAB,
+     ch:['Stay completely still — nothing changes','Float upward from the impact force','Start moving in the direction Ball A was going','Pull Ball A backward with it'],
+     cor:2,
+     ex:'Ball B will START MOVING! When Ball A hits Ball B, kinetic energy TRANSFERS from A to B, pushing B forward. Energy moves from object to object in a collision.'},
+    {q:'Two identical balls roll toward each other at the same speed and collide head-on. What happens?',
+     svgF:svgHeadOn,
+     ch:['They bounce back at roughly the same speed','Both balls stop and stay still forever','One ball shoots off at twice the speed','Both balls stick together and roll as one'],
+     cor:0,
+     ex:'They BOUNCE BACK at roughly the same speed! In a head-on collision of equal objects at equal speeds, energy transfers make each ball bounce back with similar speed.'},
+    {q:'A ball rolls on a floor, hits a wall, and stops completely. Where did its kinetic energy go?',
+     svgF:svgWall,
+     ch:['It was permanently destroyed','Into sound and heat energy','Stored inside the wall forever','Returned to where the ball started'],
+     cor:1,
+     ex:'The kinetic energy transformed into SOUND (the thud you hear!) and HEAT (tiny warming at the impact spot). Energy is NEVER destroyed — it just changes form!'},
+    {q:'A bowling ball rolls down a lane and knocks over the pins. What best describes what happens to energy?',
+     svgF:svgBowling,
+     ch:['New energy is created at the moment of impact','Energy disappears permanently into the pins','No energy change occurs in the collision','Energy transfers from the bowling ball to the pins'],
+     cor:3,
+     ex:'Energy TRANSFERS from the bowling ball to the pins! This is why the pins fly off in different directions — they each received kinetic energy from the ball.'}
+  ]},
+  {num:4,title:'Energy Conversion',std:'4-PS3-4',icon:'⚙️',
+   desc:'See how devices convert energy from one form into another useful form!',
+   qs:[
+    {q:'A solar panel sits in bright sunlight. What energy conversion does it perform?',
+     svgF:svgSolar,
+     ch:['Heat energy → Sound energy','Electrical energy → Light energy','Light energy → Electrical energy','Sound energy → Heat energy'],
+     cor:2,
+     ex:'Solar panels convert LIGHT energy from the sun into ELECTRICAL energy! This clean technology powers homes and cities using nothing but sunlight.'},
+    {q:'A speaker plays music in the classroom. What energy conversion is happening inside it?',
+     svgF:svgSpeaker,
+     ch:['Electrical energy → Sound energy','Sound energy → Electrical energy','Heat energy → Sound energy','Light energy → Sound energy'],
+     cor:0,
+     ex:'A speaker converts ELECTRICAL energy into SOUND energy! The electrical signal vibrates the speaker cone, creating sound waves you can hear as music.'},
+    {q:'A wind turbine spins in a breezy open field. What energy conversion takes place?',
+     svgF:svgWindmill,
+     ch:['Electrical energy → Motion energy','Heat energy → Electrical energy','Sound energy → Motion energy','Motion (kinetic) energy → Electrical energy'],
+     cor:3,
+     ex:'The wind turbine converts MOTION (kinetic) energy of moving air into ELECTRICAL energy! This is how wind farms generate clean, renewable electricity.'},
+    {q:'A toaster in the kitchen heats your bread. What energy conversion is occurring?',
+     svgF:svgToaster,
+     ch:['Sound energy → Heat energy','Electrical energy → Heat energy','Light energy → Heat energy','Heat energy → Electrical energy'],
+     cor:1,
+     ex:'A toaster converts ELECTRICAL energy into HEAT energy! The electric current heats metal coils inside, which radiate heat to toast your bread perfectly.'}
+  ]}
+];
+
+// ── GAME STATE ────────────────────────────────────────────────────────────────
+var GS={ri:0,qi:0,score:0,rscore:0,answered:false};
+function curRound(){return ROUNDS[GS.ri];}
+function curQ(){return curRound().qs[GS.qi];}
+
+// ── SCREEN MANAGEMENT ─────────────────────────────────────────────────────────
+function showScr(id){
+  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+function restartGame(){
+  GS.ri=0;GS.qi=0;GS.score=0;GS.rscore=0;GS.answered=false;
+  showScr('scrTitle');
+}
+
+// ── ROUND INTRO ───────────────────────────────────────────────────────────────
+function showRoundIntro(ri){
+  GS.ri=ri;GS.qi=0;GS.rscore=0;
+  var r=ROUNDS[ri];
+  var el=document.getElementById('riContent');
+  el.classList.remove('fadeUp');void el.offsetWidth;el.classList.add('fadeUp');
+  el.innerHTML='<span class="ri-icon">'+r.icon+'</span>'+
+    '<div class="ri-num">Round '+r.num+' of 4</div>'+
+    '<div class="ri-title">'+r.title+'</div>'+
+    '<div class="ri-std">NGSS: '+r.std+'</div>'+
+    '<p class="ri-desc">'+r.desc+'</p>'+
+    '<button class="btn-gold" onclick="showQuestion()">Let\'s Go! &#8594;</button>';
+  showScr('scrRoundIntro');
+}
+
+// ── QUESTION ──────────────────────────────────────────────────────────────────
+function showQuestion(){
+  GS.answered=false;
+  var r=curRound(),q=curQ();
+  var totalQ=GS.ri*4+GS.qi+1;
+  document.getElementById('hudRound').textContent='Round '+r.num+': '+r.title;
+  document.getElementById('hudQNum').textContent=totalQ;
+  document.getElementById('hudScore').textContent=GS.score;
+  document.getElementById('progFill').style.width=((totalQ-1)/16*100)+'%';
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qSvg').innerHTML=q.svgF();
+  var LBLS=['A','B','C','D'];
+  document.getElementById('choicesGrid').innerHTML=q.ch.map(function(c,i){
+    return '<button class="choice" id="ch'+i+'" onclick="pick('+i+')">'+
+      '<span class="lbl">'+LBLS[i]+'</span><span>'+c+'</span></button>';
+  }).join('');
+  document.getElementById('expBox').classList.add('hidden');
+  document.getElementById('nextWrap').classList.add('hidden');
+  showScr('scrQuestion');
+}
+
+// ── ANSWER ────────────────────────────────────────────────────────────────────
+function pick(idx){
+  if(GS.answered)return;
+  GS.answered=true;
+  var q=curQ(),ok=idx===q.cor;
+  for(var i=0;i<4;i++){var b=document.getElementById('ch'+i);if(b)b.disabled=true;}
+  var chosen=document.getElementById('ch'+idx);
+  var correct=document.getElementById('ch'+q.cor);
+  if(ok){
+    chosen.classList.add('correct');
+    GS.score+=10;GS.rscore+=10;
+    document.getElementById('hudScore').textContent=GS.score;
+    var rect=chosen.getBoundingClientRect();
+    spawnGlitter(rect.left+rect.width/2,rect.top+rect.height/2,90);
+    setTimeout(function(){spawnGlitter(rect.left+rect.width/2,rect.top,40);},250);
+  } else {
+    chosen.classList.add('wrong');
+    chosen.classList.add('shake');
+    setTimeout(function(){chosen.classList.remove('shake');},450);
+    correct.classList.add('correct');
+  }
+  document.getElementById('expText').textContent=q.ex;
+  document.getElementById('expBox').classList.remove('hidden');
+  document.getElementById('nextWrap').classList.remove('hidden');
+}
+
+// ── NEXT ──────────────────────────────────────────────────────────────────────
+function nextQuestion(){
+  GS.qi++;
+  if(GS.qi>=4) showRoundComplete();
+  else showQuestion();
+}
+
+function showRoundComplete(){
+  var r=curRound();
+  var pct=GS.rscore/40;
+  var stars=pct>=.9?'&#11088;&#11088;&#11088;&#11088;':pct>=.7?'&#11088;&#11088;&#11088;':pct>=.5?'&#11088;&#11088;':'&#11088;';
+  var msg=pct>=.9?'Outstanding scientist!':pct>=.7?'Great work!':pct>=.5?'Good effort!':'Keep exploring!';
+  var isLast=GS.ri>=3;
+  var el=document.getElementById('rcContent');
+  el.classList.remove('fadeUp');void el.offsetWidth;el.classList.add('fadeUp');
+  el.innerHTML='<div style="font-size:60px;margin-bottom:12px">'+r.icon+'</div>'+
+    '<div style="color:#E0A800;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Round '+r.num+' Complete!</div>'+
+    '<h2 style="font-size:28px;font-weight:900;margin-bottom:8px">'+r.title+'</h2>'+
+    '<div style="font-size:44px;margin:12px 0">'+stars+'</div>'+
+    '<div class="rc-score">'+GS.rscore+'</div>'+
+    '<div style="font-size:15px;color:rgba(255,255,255,.55);margin-bottom:8px">out of 40 points this round</div>'+
+    '<div style="font-size:18px;font-weight:700;color:#14b8a8;margin-bottom:20px">'+msg+'</div>'+
+    '<div style="font-size:15px;color:rgba(255,255,255,.55);margin-bottom:26px">Total score so far: <span style="color:#E0A800;font-weight:700">'+GS.score+'</span></div>'+
+    (isLast?'<button class="btn-gold" onclick="showEnd()">See Final Score! &#127942;</button>':
+     '<button class="btn-gold" onclick="showRoundIntro('+(GS.ri+1)+')">Next Round &#8594;</button>');
+  showScr('scrRC');
+  spawnGlitter(window.innerWidth/2,window.innerHeight/3,130);
+  setTimeout(function(){spawnGlitter(window.innerWidth*.25,window.innerHeight*.4,80);},320);
+  setTimeout(function(){spawnGlitter(window.innerWidth*.75,window.innerHeight*.4,80);},640);
+}
+
+function showEnd(){
+  var pct=GS.score/160;
+  var grade=pct>=.9?'&#127942; Master Scientist!':pct>=.75?'&#129351; Expert Scientist!':pct>=.6?'&#129352; Junior Scientist!':'&#129353; Science Explorer!';
+  var stars=pct>=.9?'&#11088;&#11088;&#11088;&#11088;&#11088;':pct>=.75?'&#11088;&#11088;&#11088;&#11088;':pct>=.6?'&#11088;&#11088;&#11088;':'&#11088;&#11088;';
+  var el=document.getElementById('endContent');
+  el.innerHTML='<div style="font-size:80px;margin-bottom:12px">&#128300;</div>'+
+    '<div style="font-size:34px;font-weight:900;color:#E0A800;margin-bottom:8px">Lab Complete!</div>'+
+    '<div class="final-score">'+GS.score+'</div>'+
+    '<div style="color:rgba(255,255,255,.5);font-size:22px;margin-bottom:6px">out of 160 points</div>'+
+    '<div style="font-size:38px;margin:8px 0">'+stars+'</div>'+
+    '<div style="font-size:22px;font-weight:700;margin-bottom:20px">'+grade+'</div>'+
+    '<div style="font-size:15px;color:rgba(255,255,255,.55);margin-bottom:18px">You explored all 4 energy standards!</div>'+
+    '<div class="stds-summary">'+ROUNDS.map(function(r){
+      return '<div class="stds-card"><div class="code">'+r.std+' &#10003;</div><p>'+r.title+'</p></div>';
+    }).join('')+'</div>'+
+    '<button class="btn-gold" onclick="restartGame()">&#127968; Play Again</button>';
+  showScr('scrEnd');
+  spawnGlitter(window.innerWidth/2,window.innerHeight*.25,160);
+  setTimeout(function(){spawnGlitter(window.innerWidth*.2,window.innerHeight*.35,100);},350);
+  setTimeout(function(){spawnGlitter(window.innerWidth*.8,window.innerHeight*.35,100);},700);
+  setTimeout(function(){spawnGlitter(window.innerWidth/2,window.innerHeight*.5,90);},1050);
+}
+</script>
+</body>
+</html>

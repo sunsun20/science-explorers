@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<!--
+  Topic: Ecosystems – Interactions, Energy and Dynamics
+  Standards: 5-LS2-1 – movement of matter among plants, animals, decomposers, and the environment
+  Teacher note: 3 escalating rounds (sort roles → food chain builder → matter flow MCQ); ~15 min; zero internet needed.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosystem Explorer – Grade 5</title>
+<style>
+:root {
+  --navy:  #0c2a50;
+  --gold:  #E0A800;
+  --teal:  #0d9488;
+  --dark:  #050f1c;
+  --mid:   #071828;
+  --panel: rgba(255,255,255,0.06);
+  --wrong: #c0392b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--dark);
+  min-height: 100vh;
+  color: #fff;
+  user-select: none;
+  overflow-x: hidden;
+}
+
+/* ── Screens ──────────────────────────────────────── */
+.screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 24px; position: relative; }
+.screen.active { display: flex; }
+
+/* ── Permanent Home button ────────────────────────── */
+#home-btn {
+  position: fixed; top: 10px; right: 14px; z-index: 9999;
+  background: rgba(12,42,80,0.88);
+  border: 1.5px solid rgba(224,168,0,0.5);
+  border-radius: 24px;
+  padding: 7px 16px;
+  font-size: 14px; font-weight: 700;
+  color: var(--gold);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+#home-btn:hover { background: var(--navy); border-color: var(--gold); }
+
+/* ── Pill label ───────────────────────────────────── */
+.pill-label {
+  background: rgba(13,148,136,0.18);
+  border: 1.5px solid rgba(13,148,136,0.45);
+  border-radius: 999px;
+  padding: 6px 20px;
+  font-size: 15px; font-weight: 700;
+  color: #b2ede8;
+  margin-bottom: 16px;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+/* ── Title ────────────────────────────────────────── */
+#title {
+  background: linear-gradient(160deg, #030d1a 0%, #0c2a50 50%, #050f1c 100%);
+}
+.title-glow { font-size: 68px; filter: drop-shadow(0 0 18px #0d9488); }
+.title-main {
+  font-size: 38px; font-weight: 900; letter-spacing: 3px;
+  color: var(--gold); text-shadow: 0 0 24px rgba(224,168,0,0.55);
+  margin: 8px 0 4px;
+}
+.title-sub { font-size: 16px; color: #a8c8e8; margin-bottom: 24px; letter-spacing: 1px; }
+.how-box {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(13,148,136,0.3);
+  border-radius: 18px;
+  padding: 20px 28px;
+  max-width: 580px;
+  text-align: left;
+  margin-bottom: 26px;
+}
+.how-box h3 { color: var(--teal); font-size: 17px; margin-bottom: 10px; }
+.how-box p  { font-size: 15px; line-height: 1.8; color: #c0d8f0; }
+.how-box strong { color: #fff; }
+
+/* ── HUD ──────────────────────────────────────────── */
+#hud {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(0,0,0,0.78); backdrop-filter: blur(10px);
+  padding: 10px 20px; display: none; align-items: center; gap: 16px;
+  border-bottom: 1px solid rgba(13,148,136,0.22);
+}
+.hud-label { font-size: 13px; font-weight: 700; color: var(--teal); white-space: nowrap; }
+.hud-bar   { flex: 1; height: 8px; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden; }
+.hud-fill  { height: 100%; background: linear-gradient(90deg, var(--navy), var(--teal)); border-radius: 4px; transition: width 0.5s ease; }
+.hud-score { font-size: 20px; font-weight: 900; color: var(--gold); }
+.hud-lives { font-size: 20px; }
+
+/* ── Game screen ──────────────────────────────────── */
+#game {
+  background: linear-gradient(170deg, #030d1a 0%, #071828 50%, #050f1c 100%);
+  padding-top: 70px; justify-content: flex-start;
+}
+.qa-wrap { width: 100%; max-width: 920px; padding: 20px 10px; }
+.round-banner {
+  font-size: 22px; font-weight: 900; color: var(--gold);
+  text-align: center; margin-bottom: 8px; letter-spacing: 1px;
+}
+.prompt-box {
+  background: var(--panel);
+  border: 2px solid rgba(13,148,136,0.22);
+  border-radius: 14px; padding: 14px 22px;
+  font-size: 18px; text-align: center; color: #d0e8f8;
+  margin-bottom: 22px; line-height: 1.5;
+}
+
+/* ── Organism cards ───────────────────────────────── */
+.cards-grid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 20px; }
+.org-card {
+  background: linear-gradient(135deg, #071828, #0c2a50);
+  border: 3px solid var(--teal);
+  border-radius: 16px; padding: 16px 18px;
+  cursor: pointer; text-align: center; min-width: 120px;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.org-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(224,168,0,0.25); }
+.org-card.selected { border-color: var(--gold); background: linear-gradient(135deg, #1a1200, #071828); box-shadow: 0 0 20px rgba(224,168,0,0.45); }
+.org-card.placed { opacity: 0.35; pointer-events: none; }
+.org-em   { font-size: 38px; display: block; margin-bottom: 6px; }
+.org-name { font-size: 13px; font-weight: 700; color: #e0eeff; overflow-wrap: break-word; word-break: break-word; }
+
+/* ── Sort buckets ─────────────────────────────────── */
+.buckets { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+.bucket {
+  background: rgba(255,255,255,0.04);
+  border: 3px dashed;
+  border-radius: 16px; padding: 14px 18px;
+  min-width: 155px; min-height: 110px;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  text-align: center;
+}
+.bucket:hover { transform: scale(1.04); }
+.bucket.prod { border-color: var(--teal); }
+.bucket.cons { border-color: #3a8fc8; }
+.bucket.deco { border-color: var(--gold); }
+.bkt-title { font-size: 14px; font-weight: 900; margin-bottom: 6px; }
+.bucket.prod .bkt-title { color: var(--teal); }
+.bucket.cons .bkt-title { color: #3a8fc8; }
+.bucket.deco .bkt-title { color: var(--gold); }
+.bkt-hint  { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+.bkt-items { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+.bkt-chip  { background: rgba(255,255,255,0.12); border-radius: 8px; padding: 3px 8px; font-size: 12px; overflow-wrap: break-word; word-break: break-word; }
+
+/* ── Chain builder ────────────────────────────────── */
+.chain-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  justify-content: center; min-height: 72px;
+  background: var(--panel); border-radius: 14px; padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.chain-slot {
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,255,255,0.25);
+  border-radius: 10px; padding: 8px 14px;
+  font-size: 14px; color: rgba(255,255,255,0.4);
+  min-width: 80px; text-align: center;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.chain-slot.filled { border-color: var(--teal); color: #fff; background: rgba(13,148,136,0.1); }
+.ch-arrow  { font-size: 22px; color: var(--teal); }
+.chain-hint { font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; }
+
+/* ── MCQ ──────────────────────────────────────────── */
+.mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 720px; }
+.mcq-btn {
+  background: var(--panel);
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 14px; padding: 16px 18px;
+  font-size: 15px; color: #fff; cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+  text-align: left; line-height: 1.5;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.mcq-btn:hover:not(:disabled) { border-color: var(--teal); background: rgba(13,148,136,0.1); }
+.mcq-btn.correct { border-color: var(--teal)  !important; background: rgba(13,148,136,0.2) !important; }
+.mcq-btn.wrong   { border-color: var(--wrong) !important; background: rgba(192,57,43,0.18) !important; }
+.mcq-btn:disabled { cursor: not-allowed; }
+
+/* ── Buttons ──────────────────────────────────────── */
+.btn-big {
+  background: linear-gradient(135deg, var(--navy), var(--teal));
+  color: #fff; font-size: 22px; font-weight: 900;
+  padding: 16px 48px; border: none; border-radius: 50px;
+  cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 6px 20px rgba(13,148,136,0.45);
+}
+.btn-big:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(13,148,136,0.65); }
+.btn-next {
+  background: linear-gradient(135deg, var(--gold), #c08600);
+  color: #080400; font-size: 18px; font-weight: 900;
+  padding: 13px 38px; border: none; border-radius: 50px;
+  cursor: pointer; margin-top: 14px; display: none;
+  transition: transform 0.18s;
+}
+.btn-next.show { display: inline-block; }
+.btn-next:hover { transform: scale(1.04); }
+.btn-reset {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff; font-size: 14px; padding: 10px 24px;
+  border-radius: 50px; cursor: pointer; margin-top: 10px;
+  transition: background 0.18s;
+}
+.btn-reset:hover { background: rgba(255,255,255,0.18); }
+
+/* ── Feedback toast ───────────────────────────────── */
+#toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  background: rgba(5,15,28,0.95); border-radius: 14px;
+  padding: 13px 22px; font-size: 15px; max-width: 480px;
+  text-align: center; z-index: 300; transition: opacity 0.4s;
+  pointer-events: none; line-height: 1.5;
+}
+#toast.hidden { opacity: 0; }
+#toast.ok  { border: 2px solid var(--teal); color: #b2ede8; }
+#toast.bad { border: 2px solid var(--wrong); color: #ff9090; }
+
+/* ── End screen ───────────────────────────────────── */
+#end { background: linear-gradient(160deg, #030d1a 0%, #0c2a50 100%); }
+.end-trophy { font-size: 82px; filter: drop-shadow(0 0 16px var(--gold)); }
+.end-title  { font-size: 34px; font-weight: 900; color: var(--gold); margin: 14px 0 8px; }
+.end-score  { font-size: 26px; color: #b2ede8; margin-bottom: 8px; }
+.end-rank   { font-size: 18px; color: #a8c8e8; margin-bottom: 30px; }
+
+/* ── Animations ───────────────────────────────────── */
+@keyframes shake   { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+@keyframes floatIn { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+.float-in { animation: floatIn 0.42s ease; }
+
+/* ── Gold glitter particles ───────────────────────── */
+@keyframes glitter {
+  0%   { opacity:0; transform:translateY(0) scale(0.8) rotate(0deg); }
+  30%  { opacity:1; }
+  100% { opacity:0; transform:translateY(-70px) scale(1.3) rotate(180deg); }
+}
+.glitter-p {
+  position: fixed; pointer-events: none; z-index: 9998;
+  font-size: 13px; animation: glitter 1.3s ease forwards;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 600px) {
+  .mcq-grid  { grid-template-columns: 1fr; }
+  .buckets   { flex-direction: column; align-items: center; }
+  .title-main { font-size: 26px; }
+}
+
+  /* ── QR CARD ── */
+  .qr-card{
+    margin:20px auto 0;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:14px;
+    padding:10px 16px 8px;
+    width:fit-content;
+    display:inline-block;
+  }
+  .qr-card img.qr-img{
+    width:120px;height:120px;
+    display:block;margin:0 auto 5px;
+    border-radius:8px;
+    image-rendering:pixelated;
+  }
+  .qr-caption{
+    font-size:.68rem;
+    color:rgba(255,255,255,.52);
+    margin:0;line-height:1.3;
+    max-width:130px;
+  }
+
+  /* ── MOBILE (≤820px) ── */
+  @media (max-width:820px){
+    /* overflow protection */
+    body{overflow-x:hidden}
+    svg{max-width:100%;height:auto}
+    .pill-label,.pill-badge,.topic-pill,.subtitle,
+    [style*="inline-block"]{
+      white-space:normal !important;
+      max-width:calc(100% - 16px) !important;
+      overflow-wrap:break-word !important;
+      font-size:.8rem !important;
+    }
+    h1{white-space:normal !important}
+
+    .qr-card{display:none}          /* pointless on the phone itself */
+    body{font-size:15px;padding:0 2px}
+    h1{font-size:clamp(1.1rem,5.5vw,1.5rem) !important;max-width:100% !important;word-break:break-word !important;overflow-wrap:break-word !important;white-space:normal !important}
+    h2,h3{font-size:1.15rem !important}
+    .screen{padding:14px 10px !important}
+    .how-box{padding:14px 14px;margin:12px 0}
+    .challenge-card,.game-card,.card{padding:16px 12px !important}
+    .btn-big{
+      min-height:48px;
+      font-size:1rem !important;
+      padding:13px 24px !important;
+    }
+    .mcq-grid{
+      grid-template-columns:1fr !important;
+    }
+    .mc-grid,.mcq-grid,.choices-grid,.answers-grid,
+    #optionsGrid,.sort-cards,#sort-area,.grid2{
+      grid-template-columns:1fr !important;
+    }
+    .drag-area{gap:8px}
+    .drag-item{padding:10px 14px;font-size:.95rem}
+    .drop-zone{min-height:52px}
+    .scale-wrap{flex-direction:column;align-items:center;gap:8px}
+    .pan{width:120px}
+    .summary-tbl td,.summary-tbl th{padding:6px 10px;font-size:.9rem}
+    .score-ring{width:140px;height:140px}
+    .score-ring svg{width:140px;height:140px}
+    /* ── PILL BADGE: keep inside viewport ── */
+    .pill-label,.pill-badge,.topic-pill,.subtitle{
+      max-width:calc(100vw - 28px) !important;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      font-size:.75rem !important;
+      display:block !important;
+      margin:0 auto 10px !important;
+    }
+
+    /* ── HUD / TOOLBAR: shrink for narrow screens ── */
+    #hud,#hud-bar,[id*="hud"],[class*="hud"]{
+      padding:5px 8px !important;
+      font-size:.75rem !important;
+    }
+    .hud-stat,.hud-title,[class*="hud-stat"]{font-size:.72rem !important}
+    .round-badge,[class*="round-badge"],[class*="hud-pill"]{
+      font-size:.7rem !important;
+      padding:2px 8px !important;
+    }
+    .hud-lives span,[class*="hud-lives"] span{font-size:1rem !important}
+    /* ── scene SVG / images: always responsive ── */
+    .scene-container,.scene-container svg,
+    .game-scene,.game-scene svg,
+    .bg-canvas,.canvas-wrap{
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    .scene-container svg{height:auto !important}
+    /* ── game content screens: no side overflow ── */
+    #game-screen,#gameScreen,#game,
+    [id*="game-screen"],[id*="game_screen"]{
+      overflow-x:hidden !important;
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+
+    /* Topic5: org cards → max 2 per row on mobile */
+    .org-card{min-width:calc(45% - 7px) !important;max-width:calc(50% - 8px) !important}
+    .cards-grid{gap:8px !important}
+
+    /* ── TITLE ELEMENTS: constrain and wrap ── */
+    .title-main,.game-title,h1.game-title,
+    .title-glow,.main-title,.title-text{
+      font-size:clamp(1.15rem,6vw,1.8rem) !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+      white-space:normal !important;
+      line-height:1.2 !important;
+    }
+    .title-sub,.title-subtitle,.game-subtitle{
+      font-size:.9rem !important;
+      max-width:100% !important;
+      word-break:break-word !important;
+      overflow-wrap:break-word !important;
+    }
+    /* ── SPHERE CHIPS / FILTER BUTTONS ── */
+    .sphere-preview,.chip-row,[class*="preview"]{
+      flex-wrap:wrap !important;
+      max-width:100% !important;
+      overflow:hidden !important;
+    }
+    /* ── Ensure ALL screens clip overflow ── */
+    .screen{overflow-x:hidden !important}
+
+  }
+</style>
+</head>
+<body>
+
+<!-- Permanent Restart button — visible on every screen -->
+<button id="home-btn" onclick="goHome()">🏠 Restart</button>
+
+<!-- ══════════════════ TITLE SCREEN ══════════════════ -->
+<div id="title" class="screen active" role="main">
+  <div class="pill-label">🌍 Grade 5 · Topic 5 · Ecosystems</div>
+  <div class="title-glow">🌿</div>
+  <div class="title-main">ECOSYSTEM EXPLORER</div>
+  <div class="title-sub">Grade 5 Science &nbsp;|&nbsp; Matter Flow Through Living Things</div>
+
+  <!-- Universal ecosystem matter-cycle diagram -->
+  <svg width="320" height="140" viewBox="0 0 320 140" style="margin-bottom:18px;opacity:0.88" aria-label="Matter cycle diagram showing producer, consumer, decomposer">
+    <rect width="320" height="140" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(13,148,136,0.3)" stroke-width="1.5"/>
+    <circle cx="38" cy="70" r="22" fill="#E0A800" opacity="0.85"/>
+    <text x="38" y="76" text-anchor="middle" font-size="18" fill="#fff">☀️</text>
+    <!-- Producer -->
+    <rect x="90" y="48" width="58" height="44" rx="10" fill="rgba(13,148,136,0.22)" stroke="#0d9488" stroke-width="1.5"/>
+    <text x="119" y="68" text-anchor="middle" font-size="14" fill="#fff">🌳</text>
+    <text x="119" y="83" text-anchor="middle" font-size="9" fill="#0d9488">Producer</text>
+    <!-- Consumer -->
+    <rect x="172" y="48" width="58" height="44" rx="10" fill="rgba(58,143,200,0.2)" stroke="#3a8fc8" stroke-width="1.5"/>
+    <text x="201" y="68" text-anchor="middle" font-size="14" fill="#fff">🦌</text>
+    <text x="201" y="83" text-anchor="middle" font-size="9" fill="#3a8fc8">Consumer</text>
+    <!-- Decomposer -->
+    <rect x="254" y="48" width="58" height="44" rx="10" fill="rgba(224,168,0,0.18)" stroke="#E0A800" stroke-width="1.5"/>
+    <text x="283" y="68" text-anchor="middle" font-size="14" fill="#fff">🍄</text>
+    <text x="283" y="83" text-anchor="middle" font-size="9" fill="#E0A800">Decomposer</text>
+    <defs>
+      <marker id="ah" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#0d9488"/>
+      </marker>
+    </defs>
+    <line x1="60" y1="70" x2="88" y2="70" stroke="#0d9488" stroke-width="2" marker-end="url(#ah)"/>
+    <line x1="150" y1="70" x2="170" y2="70" stroke="#0d9488" stroke-width="2" marker-end="url(#ah)"/>
+    <line x1="232" y1="70" x2="252" y2="70" stroke="#0d9488" stroke-width="2" marker-end="url(#ah)"/>
+    <path d="M283,94 Q283,125 155,128 Q80,128 38,98" fill="none" stroke="#E0A800" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+    <text x="155" y="138" text-anchor="middle" font-size="8" fill="#E0A800">nutrients return to environment</text>
+  </svg>
+
+  <div class="how-box">
+    <h3>🎮 How to Play</h3>
+    <p>
+      <strong>Round 1 — Sort the Roles:</strong> Click an organism card, then click its correct bucket.<br>
+      <strong>Round 2 — Build the Food Chain:</strong> Click organisms in the correct order, Sun first.<br>
+      <strong>Round 3 — Matter Flow Master:</strong> Answer challenging multiple-choice questions.<br><br>
+      You start with <strong>3 lives ❤️❤️❤️</strong>. Wrong answers cost one life. Each correct answer earns points!
+    </p>
+  </div>
+  <button class="btn-big" id="start-btn" onclick="startGame()">🚀 START EXPLORING!</button>
+  <div class="qr-card">
+    <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2AQAAAADNaUdlAAACiElEQVR4nO1ZW4orIRA9tg35tOEuIEuxdzBLCrMzeymzA/0MKHU5VSZ/0wlcLqMwhXSM0lCWp0492gnOpC2n28Dv/r/ZB5L59BkISTIqopdUg11LrBPYN4pIP0gQhFSBy9fuRbgygH4v953bAayIKDtwALhfE4pbB9HvVCRHKGYQRCT5zIvwIj7D5ynwo1JuwNHcrV0JIQyn37cimfj3kiRHxXysdOfHfMG5LD+/fzjnUG5Ee9lX4EJEoTnntiH0Oxd5SAUp1OdICgqPxeXF68sA+Kn8jZwE4QCPYH5d54hfUTIvgpzD4JVspYYZ7C9Ejs+qMBh/wScP5afw3+IuqrnbIrMI0OxETvhsU/hvZrSi54rBRmEfOqPWCfCTlHCSJ5BI+0ZE5hF1CvwHBlzTH4Fe3O8lT4N/yfG+Hat67n2LNaR25RhAvxciBL88SwAFf3osxinwL6T61H1W1BF07ufAf7ISzOJXVfJR/WUO/skafO0KVPlOSpZazMD/wvqR0ZZ3oWbvFCTj42dBSCsOyWibjUOZh6dwU8RfYeX4yH+0llcWshS0zoB/r/xP59WD8DiKf0ySf8ISZq0iO//0RCIOr/+K8sFTAO1PZudH0LiKWj6SjN8/hOU5hhnLnPUWOinVKfo/QZ5ebGGrdyFkBvznaGmnVS69/2l7YQb9TYgiC8F4FjJ+AvsvKM45x+Yn4lr2NaTmbpLNhfcB9Hu3/wwcLFjKTfLRNhYCbYL4u7L/TOMflVPlz6s4HLqIH9dveXc/WuftvvGPlsOfzOKG0e9l/9xb8fLownUWXXAuywD7otlOLTsBD/gvfs5gX3cbQ7/3vn+JNXzAob3QNIP93e/301P53/b/C6gqFKj2i5qoAAAAAElFTkSuQmCC" alt="QR code to open this game">
+    <p class="qr-caption">📱 Scan to play on a phone or iPad!</p>
+  </div>
+</div>
+
+<!-- ══════════════════ HUD ════════════════════════════ -->
+<div id="hud" role="status" aria-live="polite">
+  <span class="hud-label" id="hud-round">Round 1</span>
+  <div class="hud-bar"><div class="hud-fill" id="hud-fill" style="width:0%"></div></div>
+  <span class="hud-score">⭐ <span id="hud-score">0</span></span>
+  <span class="hud-lives" id="hud-lives">❤️❤️❤️</span>
+</div>
+
+<!-- ══════════════════ GAME SCREEN ════════════════════ -->
+<div id="game" class="screen" role="main">
+  <div class="qa-wrap float-in" id="qa">
+    <div class="round-banner" id="round-banner">Round 1 of 3 — Sort the Roles</div>
+    <div class="prompt-box" id="prompt">Loading…</div>
+    <div id="gc"></div>
+    <div style="text-align:center">
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Next ➡️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ END SCREEN ═════════════════════ -->
+<div id="end" class="screen" role="main">
+  <div class="end-trophy" id="end-trophy">🏆</div>
+  <div class="end-title"  id="end-title">Ecosystem Master!</div>
+  <div class="end-score">Final Score: <strong id="end-score">0</strong> ⭐</div>
+  <div class="end-rank"   id="end-rank"></div>
+  <button class="btn-big" onclick="goHome()">🏠 Play Again</button>
+</div>
+
+<!-- Feedback toast -->
+<div id="toast" class="hidden" role="alert" aria-live="assertive"></div>
+
+<script>
+/* ================================================================
+   DATA  —  Universal ecosystems (savanna / ocean / forest / pond)
+   NGSS Standard: 5-LS2-1
+================================================================ */
+
+const SORT_Qs = [
+  {
+    prompt: "🌿 Savanna Ecosystem — Click an organism, then click its correct role bucket!",
+    orgs: [
+      { name:"Acacia Tree",   em:"🌳", role:"prod", fact:"Acacia trees use sunlight to make their own food through photosynthesis — they are producers!" },
+      { name:"Lion",          em:"🦁", role:"cons", fact:"Lions hunt and eat other animals — consumers at the top of the food chain." },
+      { name:"Dung Beetle",   em:"🪲", role:"deco", fact:"Dung beetles break down animal waste, recycling nutrients back into the soil." },
+      { name:"Zebra",         em:"🦓", role:"cons", fact:"Zebras eat grasses and plants — they are primary consumers." },
+    ]
+  },
+  {
+    prompt: "🌊 Ocean Ecosystem — Who plays which role in this underwater habitat?",
+    orgs: [
+      { name:"Seaweed",       em:"🌿", role:"prod", fact:"Seaweed photosynthezes using sunlight, converting CO₂ and water into food — producers!" },
+      { name:"Sea Turtle",    em:"🐢", role:"cons", fact:"Sea turtles eat seagrass and jellyfish — consumers in the ocean food chain." },
+      { name:"Bacteria",      em:"🦠", role:"deco", fact:"Bacteria decompose dead organisms and return minerals to the water and soil." },
+      { name:"Crab",          em:"🦀", role:"cons", fact:"Crabs eat algae, plants, and small animals — they are consumers." },
+    ]
+  },
+  {
+    prompt: "🌲 Forest Ecosystem — Sort these organisms by their ecosystem role!",
+    orgs: [
+      { name:"Oak Tree",      em:"🌳", role:"prod", fact:"Oak trees capture sunlight and CO₂ to produce their own food through photosynthesis." },
+      { name:"Squirrel",      em:"🐿️", role:"cons", fact:"Squirrels eat nuts and seeds — consumers feeding on producers." },
+      { name:"Mushroom",      em:"🍄", role:"deco", fact:"Fungi break down dead wood and leaves, releasing nutrients back to the soil." },
+      { name:"Deer",          em:"🦌", role:"cons", fact:"Deer graze on forest plants — primary consumers in the woodland." },
+    ]
+  },
+];
+
+const CHAIN_Qs = [
+  {
+    prompt: "🌿 Savanna — Click the organisms in the correct food-chain order! Start with the Sun.",
+    answer: ["☀️ Sun","🌾 Grass","🦗 Grasshopper","🐸 Frog"],
+    fact:   "Sun → Grass (producer) → Grasshopper (1° consumer) → Frog (2° consumer). Matter flows up each link!"
+  },
+  {
+    prompt: "🌊 Ocean — Build the food chain from the energy source to the top predator!",
+    answer: ["☀️ Sun","🌿 Algae","🦐 Shrimp","🐟 Fish"],
+    fact:   "Sun → Algae (producer) → Shrimp (1° consumer) → Fish (2° consumer). Carbon atoms travel through each organism!"
+  },
+  {
+    prompt: "🌲 Forest — Build the food chain step by step, starting from the Sun!",
+    answer: ["☀️ Sun","🌳 Oak Tree","🐛 Caterpillar","🐦 Robin"],
+    fact:   "Sun → Oak Tree (producer) → Caterpillar (1° consumer) → Robin (2° consumer). Energy and matter flow together!"
+  },
+  {
+    prompt: "💧 Pond — Arrange this freshwater food chain in the right sequence!",
+    answer: ["☀️ Sun","🌱 Water Plant","🐟 Small Fish","🦢 Heron"],
+    fact:   "Sun → Water Plant (producer) → Small Fish (1° consumer) → Heron (top predator). The heron's atoms once lived in water plants!"
+  },
+];
+
+const MCQ_Qs = [
+  {
+    prompt: "🌱 Where do plants get the MATTER (carbon atoms) they use to build their leaves and stems?",
+    opts: ["From minerals in the soil","From carbon dioxide (CO₂) in the air","Directly from sunlight","By absorbing dead animals"],
+    ans: 1,
+    fact: "Plants pull CO₂ from the air and combine it with water to build sugars and tissues — the carbon in leaves was once air!"
+  },
+  {
+    prompt: "🦠 What do DECOMPOSERS return to the environment when they break down dead organisms?",
+    opts: ["Oxygen and light","Sound and heat","Nutrients and minerals","New living cells"],
+    ans: 2,
+    fact: "Decomposers release nutrients (nitrogen, phosphorus, carbon) back into soil and water — matter is recycled, never lost!"
+  },
+  {
+    prompt: "🦌 A deer eats leaves from an oak tree. What happens to the carbon atoms from the leaves?",
+    opts: ["They disappear","They become part of the deer's body","They turn into sunlight","They go straight back to the soil"],
+    ans: 1,
+    fact: "Matter is conserved! Carbon atoms from the leaves become part of the deer's muscles, fat, and other tissues."
+  },
+  {
+    prompt: "💨 What gas do animals exhale, returning carbon to the atmosphere?",
+    opts: ["Oxygen (O₂)","Nitrogen (N₂)","Carbon dioxide (CO₂)","Hydrogen (H₂)"],
+    ans: 2,
+    fact: "Animals breathe out CO₂ — returning carbon atoms to the air where plants can absorb them again. It's a cycle!"
+  },
+  {
+    prompt: "🔄 In a forest ecosystem, matter...",
+    opts: ["Is created fresh by the Sun","Is destroyed when animals die","Cycles continuously through living things and the environment","Only moves from plants to animals, never back"],
+    ans: 2,
+    fact: "Matter cycles endlessly: environment → producers → consumers → decomposers → environment again. Nothing is lost!"
+  },
+  {
+    prompt: "🌳 An oak tree falls in the forest. What best describes what happens to the matter in its trunk?",
+    opts: ["It floats off into space","Decomposers break it down and nutrients return to the soil","It stays locked in the wood permanently","It turns into a new oak tree right away"],
+    ans: 1,
+    fact: "Bacteria and fungi (decomposers) break down the dead trunk, releasing carbon, nitrogen, and minerals back into the soil!"
+  },
+  {
+    prompt: "☀️ The Sun provides ENERGY to an ecosystem. What provides the MATTER that flows through organisms?",
+    opts: ["The Sun provides both energy and matter","Matter arrives from outer space","Matter is already in the environment and cycles through living things","Animals create new matter from energy"],
+    ans: 2,
+    fact: "Energy flows in from the Sun, but matter (carbon, water, minerals) is already on Earth — it just cycles through organisms!"
+  },
+];
+
+/* ================================================================
+   STATE
+================================================================ */
+let score = 0, lives = 3, round = 1, qIdx = 0;
+let qDone = 0, selCard = null, chainBuilt = [], chainLocked = false;
+
+const TOTAL_Q = SORT_Qs.length + CHAIN_Qs.length + MCQ_Qs.length; // 14
+
+/* ================================================================
+   HELPERS
+================================================================ */
+function toast(msg, ok) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = ok ? 'ok' : 'bad';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => el.classList.add('hidden'), 3200);
+}
+
+function spawnGlitter() {
+  const sym = ['✦','✧','◆','●','▪','✦'];
+  const colors = ['#E0A800','#c08600','#f5d060','#a87000','#ffc400'];
+  for (let i = 0; i < 14; i++) {
+    const g = document.createElement('div');
+    g.className = 'glitter-p';
+    g.textContent = sym[Math.floor(Math.random() * sym.length)];
+    g.style.left  = (15 + Math.random() * 70) + 'vw';
+    g.style.top   = (30 + Math.random() * 50) + 'vh';
+    g.style.color = colors[Math.floor(Math.random() * colors.length)];
+    g.style.animationDelay = (Math.random() * 0.6) + 's';
+    document.body.appendChild(g);
+    setTimeout(() => g.remove(), 2000);
+  }
+}
+
+function updateHUD() {
+  document.getElementById('hud-score').textContent = score;
+  const hearts = ['','❤️','❤️❤️','❤️❤️❤️'][Math.max(0, lives)] || '';
+  document.getElementById('hud-lives').textContent = lives > 0 ? hearts : '💀';
+  document.getElementById('hud-round').textContent = `Round ${round} of 3`;
+  document.getElementById('hud-fill').style.width = Math.min(100, (qDone / TOTAL_Q) * 100) + '%';
+}
+
+function showNext(label) {
+  const b = document.getElementById('btn-next');
+  b.textContent = label || 'Next ➡️';
+  b.classList.add('show');
+}
+
+function hideNext() {
+  document.getElementById('btn-next').classList.remove('show');
+}
+
+function animateQA() {
+  const el = document.getElementById('qa');
+  el.classList.remove('float-in');
+  void el.offsetWidth;
+  el.classList.add('float-in');
+}
+
+/* ================================================================
+   ROUND 1 — SORT
+================================================================ */
+function renderSort() {
+  const q = SORT_Qs[qIdx];
+  document.getElementById('round-banner').textContent = 'Round 1 of 3 — Sort the Roles 🗂️';
+  document.getElementById('prompt').textContent = q.prompt;
+  selCard = null;
+
+  const sorted = { prod: [], cons: [], deco: [] };
+  const remaining = q.orgs.map((o, i) => ({ ...o, idx: i }));
+
+  function draw() {
+    const gc = document.getElementById('gc');
+    gc.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid';
+    remaining.forEach((org) => {
+      const card = document.createElement('div');
+      card.className = 'org-card' + (selCard === org.idx ? ' selected' : '');
+      card.innerHTML = `<span class="org-em">${org.em}</span><span class="org-name">${org.name}</span>`;
+      card.onclick = () => { selCard = (selCard === org.idx) ? null : org.idx; draw(); };
+      grid.appendChild(card);
+    });
+    gc.appendChild(grid);
+
+    const bRow = document.createElement('div');
+    bRow.className = 'buckets';
+
+    const bucketDefs = [
+      { key: 'prod', cls: 'prod', label: '🌱 Producers',   hint: 'Make their own food' },
+      { key: 'cons', cls: 'cons', label: '🐾 Consumers',   hint: 'Eat other organisms' },
+      { key: 'deco', cls: 'deco', label: '🍄 Decomposers', hint: 'Break down dead matter' },
+    ];
+
+    bucketDefs.forEach(({ key, cls, label, hint }) => {
+      const b = document.createElement('div');
+      b.className = `bucket ${cls}`;
+      b.innerHTML = `
+        <div class="bkt-title">${label}</div>
+        <div class="bkt-hint">${hint}</div>
+        <div class="bkt-items">${sorted[key].map(n => `<span class="bkt-chip">${n}</span>`).join('')}</div>
+      `;
+      b.onclick = () => {
+        if (selCard === null) { toast('👆 Click an organism card first!', false); return; }
+        const orgIndex = remaining.findIndex(o => o.idx === selCard);
+        if (orgIndex < 0) return;
+        const org = remaining[orgIndex];
+
+        if (org.role === key) {
+          sorted[key].push(org.em + ' ' + org.name);
+          remaining.splice(orgIndex, 1);
+          selCard = null;
+          score += 10;
+          updateHUD();
+          toast('✅ Correct! ' + org.fact, true);
+          if (remaining.length === 0) {
+            qDone++;
+            updateHUD();
+            spawnGlitter();
+            const isLast = qIdx + 1 >= SORT_Qs.length;
+            const b2 = document.getElementById('btn-next');
+            b2.onclick = isLast ? toRound2 : nextQ;
+            b2.textContent = isLast ? 'Round 2 ➡️' : 'Next ➡️';
+            showNext();
+          }
+        } else {
+          lives--;
+          updateHUD();
+          toast('❌ Not quite! ' + org.fact, false);
+          selCard = null;
+          if (lives <= 0) { setTimeout(endGame, 900); return; }
+        }
+        draw();
+      };
+      bRow.appendChild(b);
+    });
+    gc.appendChild(bRow);
+  }
+  draw();
+}
+
+/* ================================================================
+   ROUND 2 — CHAIN BUILDER
+================================================================ */
+function renderChain() {
+  const q = CHAIN_Qs[qIdx];
+  document.getElementById('round-banner').textContent = 'Round 2 of 3 — Build the Food Chain 🔗';
+  document.getElementById('prompt').textContent = q.prompt;
+  chainBuilt = [];
+  chainLocked = false;
+
+  const shuffled = [...q.answer].sort(() => Math.random() - 0.5);
+
+  function draw() {
+    const gc = document.getElementById('gc');
+    gc.innerHTML = '';
+
+    const row = document.createElement('div');
+    row.className = 'chain-row';
+    if (chainBuilt.length === 0) {
+      const s = document.createElement('div');
+      s.className = 'chain-slot chain-hint';
+      s.textContent = 'Click organisms below to build the chain ↓';
+      row.appendChild(s);
+    } else {
+      chainBuilt.forEach((item, i) => {
+        if (i > 0) {
+          const a = document.createElement('span');
+          a.className = 'ch-arrow';
+          a.textContent = '→';
+          row.appendChild(a);
+        }
+        const s = document.createElement('div');
+        s.className = 'chain-slot filled';
+        s.textContent = item;
+        row.appendChild(s);
+      });
+    }
+    gc.appendChild(row);
+
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid';
+    shuffled.forEach((org) => {
+      if (chainBuilt.includes(org)) return;
+      const card = document.createElement('div');
+      card.className = 'org-card';
+      card.innerHTML = `<span class="org-em" style="font-size:32px">${org}</span>`;
+      card.onclick = () => {
+        if (chainLocked) return;
+        chainBuilt.push(org);
+        draw();
+        if (chainBuilt.length === q.answer.length) checkChain(q, draw);
+      };
+      grid.appendChild(card);
+    });
+    gc.appendChild(grid);
+
+    const rst = document.createElement('div');
+    rst.style.textAlign = 'center';
+    const rb = document.createElement('button');
+    rb.className = 'btn-reset';
+    rb.textContent = '🔄 Reset Chain';
+    rb.onclick = () => { if (!chainLocked) { chainBuilt = []; draw(); } };
+    rst.appendChild(rb);
+    gc.appendChild(rst);
+  }
+  draw();
+}
+
+function checkChain(q, draw) {
+  chainLocked = true;
+  const ok = JSON.stringify(chainBuilt) === JSON.stringify(q.answer);
+  if (ok) {
+    score += 20;
+    qDone++;
+    updateHUD();
+    spawnGlitter();
+    toast('🎉 Perfect chain! ' + q.fact, true);
+    const isLast = qIdx + 1 >= CHAIN_Qs.length;
+    const b = document.getElementById('btn-next');
+    b.onclick = isLast ? toRound3 : nextQ;
+    b.textContent = isLast ? 'Round 3 ➡️' : 'Next ➡️';
+    showNext();
+  } else {
+    lives--;
+    updateHUD();
+    toast('❌ Wrong order! ' + q.fact, false);
+    chainLocked = false;
+    chainBuilt = [];
+    if (lives <= 0) { setTimeout(endGame, 900); return; }
+    setTimeout(draw, 1600);
+  }
+}
+
+/* ================================================================
+   ROUND 3 — MCQ
+================================================================ */
+function renderMCQ() {
+  const q = MCQ_Qs[qIdx];
+  document.getElementById('round-banner').textContent = 'Round 3 of 3 — Matter Flow Master 🔬';
+  document.getElementById('prompt').textContent = q.prompt;
+
+  const gc = document.getElementById('gc');
+  gc.innerHTML = '';
+
+  const grid = document.createElement('div');
+  grid.className = 'mcq-grid';
+
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mcq-btn';
+    btn.textContent = ['A', 'B', 'C', 'D'][i] + ')  ' + opt;
+    btn.onclick = () => {
+      grid.querySelectorAll('.mcq-btn').forEach(b => { b.disabled = true; });
+      qDone++;
+      if (i === q.ans) {
+        btn.classList.add('correct');
+        score += 15;
+        updateHUD();
+        spawnGlitter();
+        toast('✅ ' + q.fact, true);
+      } else {
+        btn.classList.add('wrong');
+        grid.querySelectorAll('.mcq-btn')[q.ans].classList.add('correct');
+        lives--;
+        updateHUD();
+        toast('❌ ' + q.fact, false);
+        if (lives <= 0) { setTimeout(endGame, 900); return; }
+      }
+      const isLast = qIdx + 1 >= MCQ_Qs.length;
+      const b = document.getElementById('btn-next');
+      b.onclick = isLast ? endGame : nextQ;
+      b.textContent = isLast ? '🏁 See Results!' : 'Next ➡️';
+      showNext();
+    };
+    grid.appendChild(btn);
+  });
+  gc.appendChild(grid);
+}
+
+/* ================================================================
+   NAVIGATION
+================================================================ */
+function renderCurrent() {
+  hideNext();
+  animateQA();
+  if (round === 1) renderSort();
+  else if (round === 2) renderChain();
+  else renderMCQ();
+  updateHUD();
+}
+
+function nextQ() { qIdx++; renderCurrent(); }
+
+function toRound2() {
+  round = 2; qIdx = 0;
+  document.getElementById('btn-next').onclick = nextQ;
+  renderCurrent();
+}
+
+function toRound3() {
+  round = 3; qIdx = 0;
+  document.getElementById('btn-next').onclick = nextQ;
+  renderCurrent();
+}
+
+/* ================================================================
+   START / END / HOME
+================================================================ */
+function startGame() {
+  score = 0; lives = 3; round = 1; qIdx = 0;
+  qDone = 0; selCard = null; chainBuilt = [];
+
+  document.getElementById('title').classList.remove('active');
+  document.getElementById('end').classList.remove('active');
+  document.getElementById('game').classList.add('active');
+  document.getElementById('hud').style.display = 'flex';
+
+  updateHUD();
+  renderCurrent();
+}
+
+function goHome() {
+  score = 0; lives = 3; round = 1; qIdx = 0;
+  qDone = 0; selCard = null; chainBuilt = [];
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('title').classList.add('active');
+  document.getElementById('hud').style.display = 'none';
+}
+
+function endGame() {
+  document.getElementById('game').classList.remove('active');
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('end').classList.add('active');
+  document.getElementById('end-score').textContent = score;
+
+  /* max possible: 3×4×10 + 4×20 + 7×15 = 120+80+105 = 305 */
+  const MAX = 305;
+  const pct = score / MAX;
+  let trophy, title, rank;
+  if (pct >= 0.85) {
+    trophy = '🏆'; title = 'Ecosystem Master!';
+    rank = '🌟 Rank: Eagle — top-predator knowledge, soaring above the science!';
+  } else if (pct >= 0.6) {
+    trophy = '🥈'; title = 'Ecosystem Explorer!';
+    rank = '🦌 Rank: Deer — strong and steady through the ecosystem!';
+  } else if (pct >= 0.35) {
+    trophy = '🥉'; title = 'Keep Exploring!';
+    rank = '🐢 Rank: Tortoise — slow and steady keeps you going!';
+  } else {
+    trophy = '🌱'; title = 'Keep Growing!';
+    rank = '🌱 Rank: Seedling — review the ecosystem and try again!';
+  }
+
+  document.getElementById('end-trophy').textContent = trophy;
+  document.getElementById('end-title').textContent  = title;
+  document.getElementById('end-rank').textContent   = rank;
+  spawnGlitter();
+}
+</script>
+
+<style id="mobile-final-fix">
+@media (max-width:820px) {
+  /* Force title elements to constrain and wrap */
+  .title-main,
+  .game-title,
+  h1.game-title {
+    font-size: 20px !important;
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    line-height: 1.25 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Prevent the title SVG/scene from overflowing */
+  .title-scene, .title-scene svg {
+    max-width: calc(100vw - 20px) !important;
+    overflow: hidden !important;
+  }
+  /* Subtitle also constrained */
+  .title-sub, .game-subtitle {
+    width: calc(100vw - 28px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 13px !important;
+  }
+  /* All screens clip horizontal overflow */
+  .screen, #screen-title, [id*="screen"] {
+    overflow-x: hidden !important;
+  }
+}
+</style>
+</body>
+</html>

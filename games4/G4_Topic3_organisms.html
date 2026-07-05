@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structures &amp; Senses Explorer – Grade 4</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0c2a50;min-height:100vh;overflow-x:hidden}
+
+/* ── RESTART BTN (permanent, every screen) ─────────────────── */
+#restart-btn{
+  position:fixed;top:14px;right:14px;z-index:9999;
+  background:#E0A800;color:#0c2a50;border:none;border-radius:999px;
+  padding:8px 18px;font-size:14px;font-weight:800;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);transition:transform .12s,background .15s;
+  letter-spacing:.02em;
+}
+#restart-btn:hover{background:#f5bc00;transform:scale(1.05)}
+#restart-btn:active{transform:scale(.97)}
+
+/* ── SCREENS ───────────────────────────────────────────────── */
+.screen{display:none;min-height:100vh;width:100%}
+.screen.active{display:flex}
+
+/* ── PILL LABEL ────────────────────────────────────────────── */
+.pill-label{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(224,168,0,.13);border:1.5px solid #E0A800;
+  border-radius:999px;padding:7px 22px;
+  color:#E0A800;font-size:15px;font-weight:700;
+  letter-spacing:.02em;white-space:nowrap;flex-shrink:0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TITLE SCREEN
+   ════════════════════════════════════════════════════════════ */
+#title-screen{
+  flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(155deg,#0c2a50 55%,#0d3d6e 100%);
+  padding:28px 20px;text-align:center;
+}
+#title-screen .pill-label{margin-bottom:28px}
+
+.title-art{width:220px;height:160px;margin-bottom:20px}
+
+h1.game-title{
+  color:#fff;font-size:30px;font-weight:800;
+  margin-bottom:10px;line-height:1.25;max-width:460px;
+}
+.game-sub{
+  color:rgba(255,255,255,.7);font-size:15px;
+  margin-bottom:28px;max-width:440px;line-height:1.6;
+}
+.std-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:36px}
+.std-chip{
+  background:rgba(13,148,136,.18);border:1px solid #0d9488;
+  color:#5eead4;border-radius:6px;padding:4px 13px;
+  font-size:13px;font-weight:700;
+}
+#start-btn{
+  background:#E0A800;color:#0c2a50;border:none;border-radius:999px;
+  padding:15px 50px;font-size:20px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 22px rgba(224,168,0,.45);
+  transition:transform .15s,box-shadow .15s;letter-spacing:.03em;
+}
+#start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(224,168,0,.55)}
+#start-btn:active{transform:scale(.97)}
+
+/* ════════════════════════════════════════════════════════════
+   GAME SCREEN
+   ════════════════════════════════════════════════════════════ */
+#game-screen{
+  flex-direction:column;align-items:center;
+  background:#eef2f7;padding:74px 14px 28px;min-height:100vh;
+}
+.game-hud{
+  width:100%;max-width:680px;display:flex;
+  align-items:center;gap:10px;margin-bottom:18px;
+}
+.hud-score{font-size:15px;font-weight:800;color:#0c2a50;white-space:nowrap}
+.prog-wrap{flex:1;background:#d1d5db;border-radius:999px;height:9px;overflow:hidden}
+.prog-fill{height:100%;background:#E0A800;border-radius:999px;transition:width .4s ease}
+.lives-wrap{display:flex;gap:3px;font-size:17px}
+
+/* Question card */
+.q-card{
+  background:#fff;border-radius:18px;
+  box-shadow:0 4px 24px rgba(12,42,80,.1);
+  padding:24px;max-width:680px;width:100%;margin-bottom:16px;
+}
+.q-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.q-tag{
+  display:inline-block;background:#dbeafe;color:#1d4ed8;
+  border-radius:6px;padding:3px 11px;font-size:12px;
+  font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+}
+.q-tag.senses{background:#d1fae5;color:#065f46}
+.q-num{font-size:13px;color:#9ca3af;font-weight:600}
+.q-text{
+  font-size:19px;font-weight:700;color:#0c2a50;
+  margin-bottom:16px;line-height:1.4;
+}
+.q-art{display:flex;justify-content:center;margin-bottom:18px}
+.q-art svg{width:150px;height:120px}
+
+/* Choices */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.c-btn{
+  background:#f5f6fa;border:2px solid #d1d5db;border-radius:12px;
+  padding:13px 15px;font-size:15px;font-weight:600;color:#0c2a50;
+  cursor:pointer;text-align:left;line-height:1.35;
+  transition:border-color .14s,background .14s,transform .1s;
+}
+.c-btn:hover:not(:disabled){
+  border-color:#E0A800;background:#fffbeb;transform:translateY(-1px);
+}
+.c-btn.correct{border-color:#16a34a!important;background:#dcfce7!important;color:#15803d}
+.c-btn.wrong{border-color:#dc2626!important;background:#fee2e2!important;color:#b91c1c}
+.c-btn:disabled{cursor:default}
+
+/* Feedback bar */
+.fb-bar{
+  max-width:680px;width:100%;border-radius:11px;
+  padding:13px 18px;font-size:15px;font-weight:700;
+  margin-bottom:14px;align-items:flex-start;gap:10px;display:none;
+  line-height:1.45;
+}
+.fb-bar.ok{background:#dcfce7;color:#15803d;border:2px solid #16a34a;display:flex}
+.fb-bar.no{background:#fee2e2;color:#b91c1c;border:2px solid #dc2626;display:flex}
+
+.next-btn{
+  background:#0c2a50;color:#fff;border:none;border-radius:999px;
+  padding:12px 36px;font-size:16px;font-weight:700;cursor:pointer;
+  display:none;transition:background .15s;
+}
+.next-btn:hover{background:#0d3d6e}
+
+/* ════════════════════════════════════════════════════════════
+   END SCREEN
+   ════════════════════════════════════════════════════════════ */
+#end-screen{
+  flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(155deg,#0c2a50 55%,#0d3d6e 100%);
+  padding:28px 20px;text-align:center;min-height:100vh;
+}
+#end-screen .pill-label{margin-bottom:24px}
+.end-title{color:#E0A800;font-size:34px;font-weight:800;margin-bottom:22px}
+.score-ring{
+  width:148px;height:148px;border-radius:50%;
+  border:5px solid #E0A800;background:rgba(224,168,0,.08);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;margin:0 auto 22px;
+}
+.score-big{font-size:46px;font-weight:800;color:#E0A800;line-height:1}
+.score-of{font-size:13px;color:rgba(255,255,255,.6);margin-top:2px}
+.end-stars{font-size:38px;letter-spacing:4px;margin-bottom:14px}
+.end-msg{
+  color:rgba(255,255,255,.85);font-size:17px;
+  max-width:400px;margin:0 auto 34px;line-height:1.65;
+}
+.play-again-btn{
+  background:#E0A800;color:#0c2a50;border:none;border-radius:999px;
+  padding:14px 46px;font-size:18px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 20px rgba(224,168,0,.4);transition:transform .15s;
+}
+.play-again-btn:hover{transform:translateY(-2px)}
+
+/* ── GLITTER CANVAS ─────────────────────────────────────────── */
+#gc{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+
+/* responsive */
+@media(max-width:520px){
+  .choices{grid-template-columns:1fr}
+  h1.game-title{font-size:24px}
+  .q-text{font-size:17px}
+}
+
+/* ── QR card (desktop only) ───────────────────────────────────── */
+.qr-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin:18px auto 0;
+  background:rgba(255,255,255,0.06);
+  border:1.5px solid rgba(224,168,0,0.35);
+  border-radius:14px;padding:12px 18px;
+  max-width:160px;
+}
+.qr-card img{border-radius:6px;display:block;}
+.qr-card p{color:rgba(255,255,255,0.75);font-size:11.5px;text-align:center;line-height:1.35;margin:0;}
+
+/* ── Mobile responsive (@media 820px) ─────────────────────────── */
+@media(max-width:820px){
+  /* hide QR card on small screens */
+  .qr-card{display:none!important;}
+
+  /* layout helpers */
+  #app,
+  .card{max-width:100%!important;padding:14px 10px 40px!important;}
+
+  /* stack 2-col grids to 1 col */
+  .choices,
+  .choices-grid,
+  #choicesGrid,
+  #choicesDiv,
+  .options-grid,
+  .sort-columns{
+    grid-template-columns:1fr!important;
+    flex-direction:column!important;
+  }
+
+  /* enlarge tap targets ≥48px */
+  .choice,.choice-btn,.c-btn,.opt-btn,.btn-gold,.btn-start,
+  .btn-primary,.start-btn,.btn-play,#start-btn,.btn-next,
+  .next-btn,.btn-check,.choice-btn,.play-again-btn{
+    min-height:48px!important;padding-top:12px!important;padding-bottom:12px!important;
+    font-size:16px!important;
+  }
+
+  /* standards grid → 1 col */
+  .standards-grid,.stds-summary{grid-template-columns:1fr!important;}
+
+  /* hero title size */
+  .hero h1,.title-h1,#titleScreen h1,h1.game-title{font-size:clamp(22px,7vw,36px)!important;}
+
+  /* SVG illustrations: full width */
+  .q-svg,.q-art svg,#qSvg,.svg-wrap svg,.scene-wrap svg{
+    width:100%!important;height:auto!important;
+  }
+
+  /* fixed restart button: smaller on mobile */
+  #restartBtn,#restart-btn{padding:7px 12px!important;font-size:13px!important;}
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="gc"></canvas>
+<button id="restart-btn" onclick="restartGame()">🏠 Restart</button>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TITLE SCREEN
+     ═══════════════════════════════════════════════════════════ -->
+<div id="title-screen" class="screen active">
+
+  <div class="pill-label">🔬 Grade 4 · Topic 3 · From Molecules to Organisms</div>
+
+  <!-- central hero illustration -->
+  <svg class="title-art" viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
+    <!-- sky gradient suggestion -->
+    <rect x="0" y="0" width="220" height="160" rx="16" fill="rgba(255,255,255,0.04)"/>
+
+    <!-- === PLANT (left) === -->
+    <!-- soil -->
+    <rect x="10" y="110" width="90" height="40" rx="8" fill="#7c5c2e" opacity="0.3"/>
+    <!-- stem -->
+    <rect x="51" y="55" width="7" height="57" rx="3" fill="#0d9488"/>
+    <!-- leaves -->
+    <ellipse cx="38" cy="72" rx="18" ry="10" fill="#0d9488" opacity="0.9" transform="rotate(-20 38 72)"/>
+    <ellipse cx="68" cy="65" rx="16" ry="9" fill="#0d9488" transform="rotate(20 68 65)"/>
+    <ellipse cx="35" cy="89" rx="14" ry="8" fill="#059669" opacity="0.85" transform="rotate(-30 35 89)"/>
+    <!-- flower top -->
+    <circle cx="54" cy="45" r="14" fill="#fbbf24" opacity="0.9"/>
+    <circle cx="41" cy="38" r="10" fill="#fbbf24" opacity="0.8"/>
+    <circle cx="67" cy="38" r="10" fill="#fbbf24" opacity="0.8"/>
+    <circle cx="54" cy="32" r="9" fill="#fde68a" opacity="0.9"/>
+    <circle cx="54" cy="45" r="9" fill="#92400e"/>
+    <!-- roots -->
+    <path d="M54 112 Q44 122 36 130" stroke="#7c5c2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M54 112 Q54 124 53 135" stroke="#7c5c2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M54 112 Q65 122 72 130" stroke="#7c5c2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- label: PLANT -->
+    <text x="28" y="155" font-size="10" fill="#E0A800" font-family="Arial" font-weight="bold">PLANT STRUCTURES</text>
+
+    <!-- === ANIMAL (right) === -->
+    <!-- fox-like creature -->
+    <!-- body -->
+    <ellipse cx="168" cy="115" rx="34" ry="22" fill="#d97706"/>
+    <!-- head -->
+    <ellipse cx="148" cy="95" rx="20" ry="16" fill="#d97706"/>
+    <!-- ears -->
+    <polygon points="136,84 130,68 142,80" fill="#d97706"/>
+    <polygon points="157,83 162,67 153,80" fill="#d97706"/>
+    <polygon points="137,84 132,70 141,81" fill="#fde68a" opacity="0.7"/>
+    <polygon points="156,83 160,69 153,80" fill="#fde68a" opacity="0.7"/>
+    <!-- snout -->
+    <ellipse cx="135" cy="101" rx="10" ry="7" fill="#b45309"/>
+    <ellipse cx="133" cy="99" rx="5" ry="3" fill="#1c1917"/>
+    <!-- eye -->
+    <circle cx="143" cy="92" r="4" fill="#1c1917"/>
+    <circle cx="144" cy="91" r="1.5" fill="white"/>
+    <!-- tail -->
+    <path d="M200 112 Q218 90 212 72" stroke="#d97706" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M210 70 Q215 62 218 65" stroke="#fde68a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- legs -->
+    <rect x="145" y="130" width="8" height="18" rx="4" fill="#b45309"/>
+    <rect x="160" y="130" width="8" height="18" rx="4" fill="#b45309"/>
+    <rect x="178" y="130" width="8" height="18" rx="4" fill="#b45309"/>
+    <rect x="193" y="130" width="8" height="18" rx="4" fill="#b45309"/>
+    <!-- sense icons floating -->
+    <text x="120" y="68" font-size="11" fill="rgba(224,168,0,0.8)">👁</text>
+    <text x="104" y="80" font-size="11" fill="rgba(224,168,0,0.8)">👂</text>
+    <text x="108" y="95" font-size="11" fill="rgba(224,168,0,0.8)">👃</text>
+    <!-- label: ANIMAL -->
+    <text x="135" y="155" font-size="10" fill="#E0A800" font-family="Arial" font-weight="bold">ANIMAL SENSES</text>
+
+    <!-- divider -->
+    <line x1="110" y1="20" x2="110" y2="145" stroke="rgba(224,168,0,0.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <!-- brain icon in centre top -->
+    <text x="97" y="18" font-size="14" fill="#E0A800">🧠</text>
+  </svg>
+
+  <h1 class="game-title">Structures &amp; Senses Explorer</h1>
+  <p class="game-sub">Match plant and animal body parts to their functions — then discover how senses send signals to the brain!</p>
+
+  <div class="std-chips">
+    <span class="std-chip">4-LS1-1 · Structures &amp; Functions</span>
+    <span class="std-chip">4-LS1-2 · Senses &amp; Brain Response</span>
+  </div>
+
+
+<!-- ── QR CARD (desktop only) ───────────── -->
+<div class="qr-card">
+  <img src="data:image/png;base64,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" alt="QR code" width="96" height="96">
+  <p>&#128241; Scan to play on a phone or iPad!</p>
+</div>
+  <button id="start-btn" onclick="startGame()">▶ Start Game</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GAME SCREEN
+     ═══════════════════════════════════════════════════════════ -->
+<div id="game-screen" class="screen">
+  <div class="game-hud">
+    <div class="hud-score">Score: <span id="score-disp">0</span></div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="lives-wrap" id="lives-wrap"></div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-card-top">
+      <span class="q-tag" id="q-tag">Structures</span>
+      <span class="q-num" id="q-num">Question 1 / 10</span>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-art" id="q-art"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <div class="fb-bar" id="fb-bar">
+    <span id="fb-icon"></span>
+    <span id="fb-text"></span>
+  </div>
+
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     END SCREEN
+     ═══════════════════════════════════════════════════════════ -->
+<div id="end-screen" class="screen">
+  <div class="pill-label">🔬 Grade 4 · Topic 3 · From Molecules to Organisms</div>
+  <div class="end-title">Mission Complete!</div>
+  <div class="score-ring">
+    <div class="score-big" id="end-score">0</div>
+    <div class="score-of">out of 10</div>
+  </div>
+  <div class="end-stars" id="end-stars">⭐⭐⭐</div>
+  <div class="end-msg" id="end-msg">Great job!</div>
+  <button class="play-again-btn" onclick="restartGame()">🏠 Play Again</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────── SVG ILLUSTRATIONS ─────────────────── */
+
+function svgRoots(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="56" width="150" height="64" rx="0" fill="#c8a96e" opacity="0.25"/>
+  <text x="5" y="72" font-size="9" fill="#92400e" font-family="Arial" opacity="0.8">soil</text>
+  <rect x="70" y="12" width="8" height="46" rx="3" fill="#0d9488"/>
+  <ellipse cx="55" cy="28" rx="20" ry="12" fill="#0d9488" opacity="0.9"/>
+  <ellipse cx="90" cy="22" rx="18" ry="11" fill="#059669"/>
+  <path d="M74 56 Q62 68 52 80 Q46 88 44 96" stroke="#7c5c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M74 56 Q74 70 73 84 Q72 91 71 100" stroke="#7c5c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M74 56 Q86 68 96 78 Q103 86 105 95" stroke="#7c5c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M52 80 Q46 88 42 96" stroke="#9a7040" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M96 78 Q104 85 107 93" stroke="#9a7040" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <circle cx="135" cy="30" r="5" fill="#bfdbfe" opacity="0.8"/>
+  <path d="M135 25 L135 18" stroke="#93c5fd" stroke-width="1.5"/>
+  <path d="M135 35 L135 48 Q100 56 80 56" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+  <text x="8" y="115" font-size="9.5" fill="#0369a1" font-family="Arial">💧 absorbs water &amp; nutrients</text>
+</svg>`}
+
+function svgLeaf(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <path d="M75 115 Q22 62 32 18 Q75 2 118 18 Q128 62 75 115Z" fill="#16a34a" opacity="0.88"/>
+  <path d="M75 115 L75 18" stroke="#15803d" stroke-width="2.2" fill="none"/>
+  <path d="M75 42 Q58 35 50 24" stroke="#15803d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M75 54 Q92 47 100 36" stroke="#15803d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M75 66 Q56 58 48 49" stroke="#15803d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M75 78 Q94 70 102 61" stroke="#15803d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <circle cx="120" cy="22" r="13" fill="#E0A800" opacity="0.9"/>
+  <line x1="120" y1="5" x2="120" y2="1" stroke="#E0A800" stroke-width="2"/>
+  <line x1="133" y1="9" x2="136" y2="6" stroke="#E0A800" stroke-width="2"/>
+  <line x1="137" y1="22" x2="141" y2="22" stroke="#E0A800" stroke-width="2"/>
+  <line x1="133" y1="35" x2="136" y2="38" stroke="#E0A800" stroke-width="2"/>
+  <text x="5" y="115" font-size="9.5" fill="#15803d" font-family="Arial">☀ sunlight + CO₂ → food</text>
+</svg>`}
+
+function svgThorns(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="70" y="10" width="8" height="92" rx="3" fill="#4d7c0f"/>
+  <polygon points="78,35 92,29 80,44" fill="#84cc16"/>
+  <polygon points="70,55 56,49 68,64" fill="#84cc16"/>
+  <polygon points="78,75 94,69 80,84" fill="#84cc16"/>
+  <circle cx="74" cy="20" r="15" fill="#e11d48" opacity="0.85"/>
+  <circle cx="66" cy="13" r="11" fill="#f43f5e" opacity="0.8"/>
+  <circle cx="82" cy="13" r="11" fill="#f43f5e" opacity="0.8"/>
+  <circle cx="74" cy="9"  r="9"  fill="#fb7185" opacity="0.9"/>
+  <text x="102" y="56" font-size="20">🐇</text>
+  <text x="99" y="44" font-size="13" fill="#dc2626" font-weight="bold">✗</text>
+  <text x="5" y="115" font-size="9.5" fill="#4d7c0f" font-family="Arial">Thorns = protection from predators</text>
+</svg>`}
+
+function svgFlower(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="70" y="68" width="7" height="44" rx="3" fill="#0d9488"/>
+  <ellipse cx="73.5" cy="40" rx="12" ry="24" fill="#fbbf24" opacity="0.9"/>
+  <ellipse cx="73.5" cy="40" rx="12" ry="24" fill="#fbbf24" opacity="0.9" transform="rotate(45 73.5 40)"/>
+  <ellipse cx="73.5" cy="40" rx="12" ry="24" fill="#fbbf24" opacity="0.9" transform="rotate(90 73.5 40)"/>
+  <ellipse cx="73.5" cy="40" rx="12" ry="24" fill="#fbbf24" opacity="0.9" transform="rotate(135 73.5 40)"/>
+  <circle cx="73.5" cy="40" r="13" fill="#92400e"/>
+  <circle cx="73.5" cy="40" r="7" fill="#b45309"/>
+  <ellipse cx="118" cy="25" rx="11" ry="7" fill="#fde047"/>
+  <rect x="110" y="22" width="4" height="6" rx="1" fill="#1c1917" opacity="0.5"/>
+  <rect x="115" y="22" width="4" height="6" rx="1" fill="#1c1917" opacity="0.5"/>
+  <ellipse cx="123" cy="23" rx="5" ry="2.5" fill="#d4d4d4" opacity="0.5"/>
+  <circle cx="127" cy="22" r="2.5" fill="#1c1917"/>
+  <circle cx="95" cy="34" r="2.5" fill="#E0A800"/>
+  <circle cx="103" cy="28" r="2" fill="#E0A800" opacity="0.8"/>
+  <text x="5" y="115" font-size="9.5" fill="#92400e" font-family="Arial">Petals attract pollinators for reproduction!</text>
+</svg>`}
+
+function svgSeed(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="48" cy="58" rx="22" ry="32" fill="#a16207" opacity="0.85" transform="rotate(-20 48 58)"/>
+  <ellipse cx="48" cy="58" rx="16" ry="24" fill="#ca8a04" opacity="0.7" transform="rotate(-20 48 58)"/>
+  <ellipse cx="42" cy="48" rx="6" ry="9" fill="#78350f" transform="rotate(-20 42 48)"/>
+  <ellipse cx="50" cy="60" rx="6" ry="9" fill="#78350f" transform="rotate(-20 50 60)"/>
+  <ellipse cx="41" cy="68" rx="6" ry="9" fill="#78350f" transform="rotate(-20 41 68)"/>
+  <defs><marker id="arr2" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#0c2a50"/></marker></defs>
+  <path d="M82 58 L104 58" stroke="#0c2a50" stroke-width="2.2" marker-end="url(#arr2)"/>
+  <rect x="116" y="78" width="5" height="30" rx="2" fill="#0d9488"/>
+  <ellipse cx="108" cy="68" rx="11" ry="7" fill="#0d9488" opacity="0.85"/>
+  <ellipse cx="125" cy="62" rx="10" ry="7" fill="#059669"/>
+  <text x="5" y="115" font-size="9.5" fill="#78350f" font-family="Arial">Seeds → new plants (reproduction)</text>
+</svg>`}
+
+function svgFish(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="58" width="150" height="62" rx="0" fill="#bfdbfe" opacity="0.45"/>
+  <path d="M0 64 Q37 52 75 64 Q113 76 150 64" stroke="#93c5fd" stroke-width="1.8" fill="none"/>
+  <ellipse cx="72" cy="78" rx="38" ry="20" fill="#0d9488"/>
+  <polygon points="110,78 128,62 128,94" fill="#0d9488"/>
+  <circle cx="47" cy="72" r="5.5" fill="white"/>
+  <circle cx="46" cy="72" r="3.5" fill="#1c1917"/>
+  <circle cx="47" cy="71" r="1.2" fill="white"/>
+  <path d="M63 65 Q60 78 63 90" stroke="#E0A800" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M69 64 Q66 78 69 91" stroke="#E0A800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="52" r="3.5" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <circle cx="22" cy="40" r="4.5" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="62" y="60" font-size="8.5" fill="#b45309" font-family="Arial" font-weight="bold">← GILLS</text>
+  <text x="5" y="116" font-size="9.5" fill="#0369a1" font-family="Arial">Gills extract oxygen from water</text>
+</svg>`}
+
+function svgBear(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="75" cy="88" rx="42" ry="28" fill="#92400e"/>
+  <path d="M40 78 Q34 88 40 98" stroke="#78350f" stroke-width="2" fill="none"/>
+  <path d="M108 76 Q115 86 108 97" stroke="#78350f" stroke-width="2" fill="none"/>
+  <path d="M55 98 Q49 105 55 112" stroke="#78350f" stroke-width="1.5" fill="none"/>
+  <path d="M94 100 Q101 107 94 113" stroke="#78350f" stroke-width="1.5" fill="none"/>
+  <circle cx="75" cy="52" r="26" fill="#92400e"/>
+  <circle cx="54" cy="32" r="11" fill="#92400e"/>
+  <circle cx="96" cy="32" r="11" fill="#92400e"/>
+  <circle cx="54" cy="32" r="7"  fill="#b45309" opacity="0.55"/>
+  <circle cx="96" cy="32" r="7"  fill="#b45309" opacity="0.55"/>
+  <ellipse cx="75" cy="58" rx="15" ry="10" fill="#b45309" opacity="0.75"/>
+  <circle cx="65" cy="46" r="4"  fill="#1c1917"/>
+  <circle cx="85" cy="46" r="4"  fill="#1c1917"/>
+  <circle cx="66" cy="45" r="1.5" fill="white"/>
+  <circle cx="86" cy="45" r="1.5" fill="white"/>
+  <ellipse cx="75" cy="61" rx="6" ry="4.5" fill="#1c1917"/>
+  <text x="112" y="38" font-size="22">❄</text>
+  <text x="5" y="116" font-size="9.5" fill="#78350f" font-family="Arial">Thick fur = warmth for cold survival</text>
+</svg>`}
+
+function svgGrasshopper(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="95" width="150" height="25" rx="0" fill="#16a34a" opacity="0.3"/>
+  <ellipse cx="90" cy="72" rx="35" ry="16" fill="#4d7c0f"/>
+  <ellipse cx="62" cy="65" rx="18" ry="15" fill="#65a30d"/>
+  <ellipse cx="50" cy="62" rx="10" ry="8" fill="#4d7c0f"/>
+  <circle cx="48" cy="58" r="5" fill="white"/><circle cx="47" cy="57" r="3" fill="#1c1917"/>
+  <path d="M60 57 L52 48 L58 44" stroke="#4d7c0f" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M65 60 L60 50 L67 46" stroke="#4d7c0f" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- back jumping legs (thick + powerful) -->
+  <path d="M95 76 Q112 70 120 58 Q128 46 120 38" stroke="#4d7c0f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M120 38 Q128 30 124 24" stroke="#4d7c0f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M100 80 Q116 75 126 64 Q135 52 127 44" stroke="#4d7c0f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M127 44 Q135 36 130 30" stroke="#4d7c0f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- front legs -->
+  <path d="M70 80 L62 96" stroke="#65a30d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M80 82 L74 98" stroke="#65a30d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- arrow showing jump -->
+  <defs><marker id="jump" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#E0A800"/></marker></defs>
+  <path d="M80 50 Q60 30 40 20" stroke="#E0A800" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#jump)"/>
+  <text x="5" y="116" font-size="9.5" fill="#4d7c0f" font-family="Arial">Strong legs → jump from predators!</text>
+</svg>`}
+
+function svgDogSmell(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="90" cy="88" rx="42" ry="22" fill="#ca8a04"/>
+  <ellipse cx="50" cy="74" rx="22" ry="18" fill="#ca8a04"/>
+  <ellipse cx="32" cy="81" rx="12" ry="8" fill="#a16207"/>
+  <ellipse cx="30" cy="78" rx="6" ry="3.5" fill="#1c1917"/>
+  <circle cx="44" cy="68" r="4.5" fill="#1c1917"/>
+  <circle cx="45" cy="67" r="1.5" fill="white"/>
+  <ellipse cx="63" cy="64" rx="11" ry="16" fill="#92400e" transform="rotate(-15 63 64)"/>
+  <path d="M130 80 Q148 64 140 52" stroke="#ca8a04" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M140 52 Q148 42 142 40" stroke="#fde068" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <rect x="58" y="102" width="9" height="16" rx="3.5" fill="#a16207"/>
+  <rect x="76" y="102" width="9" height="16" rx="3.5" fill="#a16207"/>
+  <rect x="100" y="102" width="9" height="16" rx="3.5" fill="#a16207"/>
+  <rect x="116" y="102" width="9" height="16" rx="3.5" fill="#a16207"/>
+  <!-- smell waves -->
+  <path d="M20 72 Q14 62 18 52 Q22 42 15 34" stroke="#9ca3af" stroke-width="2" fill="none" stroke-dasharray="4,3" stroke-linecap="round"/>
+  <path d="M26 70 Q19 60 24 50 Q30 40 22 32" stroke="#9ca3af" stroke-width="2" fill="none" stroke-dasharray="4,3" stroke-linecap="round"/>
+  <!-- fire source -->
+  <text x="6" y="32" font-size="20">🔥</text>
+  <text x="5" y="116" font-size="9.5" fill="#92400e" font-family="Arial">Nose detects danger → brain → move away!</text>
+</svg>`}
+
+function svgTouchHot(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="82" width="106" height="14" rx="5" fill="#4b5563"/>
+  <rect x="38" y="62" width="74" height="22" rx="7" fill="#374151"/>
+  <rect x="112" y="69" width="22" height="9" rx="4" fill="#374151"/>
+  <!-- heat waves -->
+  <path d="M55 60 Q51 49 55 40" stroke="#f97316" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M70 57 Q66 44 71 35" stroke="#f97316" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M87 60 Q84 49 88 40" stroke="#f97316" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- hand hovering -->
+  <rect x="56" y="43" width="26" height="11" rx="5.5" fill="#fed7aa"/>
+  <rect x="56" y="39" width="5"  height="8"  rx="2.5" fill="#fed7aa"/>
+  <rect x="63" y="37" width="5"  height="10" rx="2.5" fill="#fed7aa"/>
+  <rect x="70" y="38" width="5"  height="9"  rx="2.5" fill="#fed7aa"/>
+  <rect x="77" y="40" width="5"  height="7"  rx="2.5" fill="#fed7aa"/>
+  <!-- pain signal lightning -->
+  <text x="91" y="40" font-size="16" fill="#dc2626">⚡</text>
+  <!-- brain signal path -->
+  <defs><marker id="ba" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#dc2626"/></marker></defs>
+  <path d="M86 40 Q108 28 124 32" stroke="#dc2626" stroke-width="1.8" fill="none" stroke-dasharray="4,3" marker-end="url(#ba)"/>
+  <text x="118" y="26" font-size="10" fill="#dc2626" font-family="Arial" font-weight="bold">BRAIN</text>
+  <text x="5" y="116" font-size="9.5" fill="#dc2626" font-family="Arial">Touch signal → brain → PULL AWAY!</text>
+</svg>`}
+
+function svgOwl(){return`<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="150" height="120" rx="0" fill="#0c2a50" opacity="0.18"/>
+  <path d="M118 16 A16 16 0 1 1 118 48 A11 11 0 1 0 118 16Z" fill="#E0A800" opacity="0.78"/>
+  <circle cx="20" cy="16" r="2.5" fill="#E0A800" opacity="0.7"/>
+  <circle cx="42" cy="8" r="2"   fill="#E0A800" opacity="0.55"/>
+  <circle cx="62" cy="20" r="1.8" fill="#E0A800" opacity="0.5"/>
+  <!-- body -->
+  <ellipse cx="75" cy="88" rx="30" ry="28" fill="#92400e"/>
+  <path d="M47 80 Q40 90 47 100" stroke="#78350f" stroke-width="2.2" fill="none"/>
+  <path d="M103 80 Q110 90 103 100" stroke="#78350f" stroke-width="2.2" fill="none"/>
+  <!-- head -->
+  <circle cx="75" cy="54" r="28" fill="#92400e"/>
+  <!-- ear tufts -->
+  <path d="M61 32 L55 14 L65 30" fill="#78350f"/>
+  <path d="M89 32 L95 14 L85 30" fill="#78350f"/>
+  <!-- BIG eyes (key structure) -->
+  <circle cx="62" cy="54" r="15" fill="#fffbeb" stroke="#E0A800" stroke-width="2.5"/>
+  <circle cx="88" cy="54" r="15" fill="#fffbeb" stroke="#E0A800" stroke-width="2.5"/>
+  <circle cx="62" cy="54" r="11" fill="#1c1917"/>
+  <circle cx="88" cy="54" r="11" fill="#1c1917"/>
+  <circle cx="66" cy="50" r="3.5" fill="white"/>
+  <circle cx="92" cy="50" r="3.5" fill="white"/>
+  <!-- beak -->
+  <polygon points="75,60 68,70 82,70" fill="#E0A800"/>
+  <!-- "sees in dark" label -->
+  <text x="5" y="116" font-size="9.5" fill="#0c2a50" font-family="Arial">Large eyes collect more light in dark!</text>
+</svg>`}
+
+/* ─────────────────── QUESTION DATA ─────────────────── */
+const QUESTIONS = [
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'What is the main job of ROOTS in a plant?',
+    art:svgRoots,
+    choices:[
+      {t:'Make food using sunlight and air', ok:false},
+      {t:'Absorb water and nutrients from the soil', ok:true},
+      {t:'Attract insects to help pollination', ok:false},
+      {t:'Produce seeds for new plants', ok:false},
+    ],
+    fb:'Correct! Roots anchor the plant underground and absorb water and nutrients — helping the plant survive and grow.',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'What do LEAVES help a plant do?',
+    art:svgLeaf,
+    choices:[
+      {t:'Absorb water from the soil', ok:false},
+      {t:'Store seeds for reproduction', ok:false},
+      {t:'Make food using sunlight and air (photosynthesis)', ok:true},
+      {t:'Protect the plant from being eaten', ok:false},
+    ],
+    fb:'Leaves capture sunlight and use it with water and carbon dioxide from the air to make food. This is called photosynthesis!',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'What is the function of THORNS on a rose plant?',
+    art:svgThorns,
+    choices:[
+      {t:'Attract butterflies and bees', ok:false},
+      {t:'Help the plant grow taller', ok:false},
+      {t:'Protect the plant from being eaten by animals', ok:true},
+      {t:'Absorb extra rainwater', ok:false},
+    ],
+    fb:'Thorns are sharp structures that defend the plant. Animals learn not to bite or step on a thorny plant — it is a survival structure!',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'Why do flowers have brightly coloured PETALS?',
+    art:svgFlower,
+    choices:[
+      {t:'To store water during dry seasons', ok:false},
+      {t:'To attract bees and butterflies for reproduction', ok:true},
+      {t:'To absorb nutrients from the soil', ok:false},
+      {t:'To block wind from breaking the stem', ok:false},
+    ],
+    fb:'Bright petals attract pollinators like bees. They carry pollen from flower to flower, allowing plants to reproduce!',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'What is the main purpose of SEEDS in a plant\'s life?',
+    art:svgSeed,
+    choices:[
+      {t:'Give the plant extra energy to grow', ok:false},
+      {t:'Attract animals to eat the plant', ok:false},
+      {t:'Allow plants to reproduce and form new plants', ok:true},
+      {t:'Help roots absorb more water', ok:false},
+    ],
+    fb:'Seeds carry everything needed to grow a new plant. They are the plant\'s main way of reproducing!',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'A fish has GILLS on the sides of its head. What do gills do?',
+    art:svgFish,
+    choices:[
+      {t:'Help the fish swim faster', ok:false},
+      {t:'Allow the fish to breathe by taking oxygen from water', ok:true},
+      {t:'Help the fish find food to eat', ok:false},
+      {t:'Protect the fish from larger predators', ok:false},
+    ],
+    fb:'Gills take dissolved oxygen out of water — just like our lungs take oxygen from air. Without gills the fish cannot survive!',
+  },
+  {
+    standard:'4-LS1-1', tag:'Structures',
+    text:'A bear has THICK FUR covering its whole body. What is the function of this fur?',
+    art:svgBear,
+    choices:[
+      {t:'Help the bear run faster through the forest', ok:false},
+      {t:'Make the bear look bigger to scare enemies', ok:false},
+      {t:'Keep the bear warm in cold weather (survival)', ok:true},
+      {t:'Help the bear smell prey from far away', ok:false},
+    ],
+    fb:'Thick fur traps body heat and keeps the bear warm. It is like a natural winter coat — an external structure for survival!',
+  },
+  {
+    standard:'4-LS1-2', tag:'Senses',
+    text:'A dog SMELLS smoke from a fire nearby. Which sense is it using, and how will its brain likely respond?',
+    art:svgDogSmell,
+    choices:[
+      {t:'Touch — the dog will lie down and rest', ok:false},
+      {t:'Smell — the brain signals the dog to move away from danger', ok:true},
+      {t:'Hearing — the dog will bark at the noise', ok:false},
+      {t:'Sight — the dog will close its eyes', ok:false},
+    ],
+    fb:'The dog uses its sense of SMELL to detect danger. The brain receives the signal and tells the body to move away — a life-saving response!',
+  },
+  {
+    standard:'4-LS1-2', tag:'Senses',
+    text:'You accidentally TOUCH a very hot pan. What happens next inside your body?',
+    art:svgTouchHot,
+    choices:[
+      {t:'Your brain tells you to hold the pan tighter', ok:false},
+      {t:'Your eyes warn you before contact happens', ok:false},
+      {t:'Touch sensors send a pain signal; the brain makes you pull your hand away', ok:true},
+      {t:'Your ears hear a sound warning you first', ok:false},
+    ],
+    fb:'Touch sensors in your skin instantly send a pain signal to your brain. The brain responds by telling your muscles to pull your hand away — protecting you from harm!',
+  },
+  {
+    standard:'4-LS1-2', tag:'Senses',
+    text:'An owl has very LARGE EYES for hunting at night. What function do large eyes serve?',
+    art:svgOwl,
+    choices:[
+      {t:'Keep the owl warm on cold nights', ok:false},
+      {t:'Collect more light so the brain can see prey in darkness', ok:true},
+      {t:'Make the owl look scary to enemies', ok:false},
+      {t:'Help the owl hear underground mice better', ok:false},
+    ],
+    fb:'Large eyes gather more light in dim conditions. The brain uses this visual information to locate and catch prey — both a structural feature AND a sense-and-respond system!',
+  },
+];
+
+/* ─────────────────── GAME STATE ─────────────────── */
+let questions=[], qIdx=0, score=0, lives=3, answered=false;
+const TOTAL=10;
+
+function shuffle(a){
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function restartGame(){
+  score=0;lives=3;qIdx=0;answered=false;
+  showScreen('title-screen');
+}
+
+function startGame(){
+  questions=shuffle([...QUESTIONS]).slice(0,TOTAL);
+  score=0;lives=3;qIdx=0;
+  showScreen('game-screen');
+  renderQ();
+}
+
+function renderLives(){
+  const w=document.getElementById('lives-wrap');
+  w.innerHTML='';
+  for(let i=0;i<3;i++){
+    const s=document.createElement('span');
+    s.textContent=i<lives?'❤️':'🖤';
+    w.appendChild(s);
+  }
+}
+
+function renderQ(){
+  answered=false;
+  const q=questions[qIdx];
+
+  document.getElementById('prog-fill').style.width=`${(qIdx/TOTAL)*100}%`;
+  document.getElementById('score-disp').textContent=score;
+  renderLives();
+
+  const tagEl=document.getElementById('q-tag');
+  tagEl.textContent=q.tag;
+  tagEl.className='q-tag'+(q.tag==='Senses'?' senses':'');
+
+  document.getElementById('q-num').textContent=`Question ${qIdx+1} / ${TOTAL}`;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('q-art').innerHTML=q.art();
+
+  const grid=document.getElementById('choices');
+  grid.innerHTML='';
+  const shuffled=shuffle([...q.choices]);
+  shuffled.forEach((c)=>{
+    const btn=document.createElement('button');
+    btn.className='c-btn';
+    btn.textContent=c.t;
+    btn.onclick=()=>pick(btn,c.ok,q.fb,shuffled);
+    grid.appendChild(btn);
+  });
+
+  // reset feedback + next
+  const fb=document.getElementById('fb-bar');
+  fb.className='fb-bar';
+  fb.style.display='none';
+  document.getElementById('next-btn').style.display='none';
+}
+
+function pick(btn,ok,fbText,shuffled){
+  if(answered)return;
+  answered=true;
+
+  const allBtns=[...document.querySelectorAll('.c-btn')];
+  allBtns.forEach(b=>b.disabled=true);
+
+  if(ok){
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('score-disp').textContent=score;
+    showFb(true,fbText);
+    launchGlitter();
+  } else {
+    btn.classList.add('wrong');
+    lives--;
+    renderLives();
+    // highlight correct
+    allBtns.forEach((b,i)=>{if(shuffled[i]&&shuffled[i].ok)b.classList.add('correct');});
+    showFb(false,fbText);
+  }
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function showFb(ok,text){
+  const fb=document.getElementById('fb-bar');
+  document.getElementById('fb-icon').textContent=ok?'✅':'❌';
+  document.getElementById('fb-text').textContent=text;
+  fb.className='fb-bar '+(ok?'ok':'no');
+  fb.style.display='flex';
+}
+
+function nextQuestion(){
+  qIdx++;
+  if(qIdx>=TOTAL||lives<=0){showEnd();}
+  else{renderQ();}
+}
+
+function showEnd(){
+  document.getElementById('prog-fill').style.width='100%';
+  showScreen('end-screen');
+  document.getElementById('end-score').textContent=score;
+  const pct=score/TOTAL;
+  let stars,msg;
+  if(pct>=0.9){
+    stars='⭐⭐⭐';
+    msg='Outstanding! You are a true Structures & Senses Explorer! You know exactly how living things are built to survive, grow, and sense their world.';
+  } else if(pct>=0.7){
+    stars='⭐⭐';
+    msg='Well done! You have a strong understanding of how plants and animals use their body parts and senses. A little more study and you\'ll be at the top!';
+  } else {
+    stars='⭐';
+    msg='Keep exploring! Structures and senses are amazing topics. Play again to strengthen what you have learned!';
+  }
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-msg').textContent=msg;
+  launchGlitter();
+}
+
+/* ─────────────────── GOLD GLITTER ─────────────────── */
+const gc=document.getElementById('gc');
+const gctx=gc.getContext('2d');
+let particles=[],animId=null;
+const GOLDS=['#E0A800','#f5bc00','#fde047','#ca8a04','#d97706','#fbbf24','#f59e0b'];
+
+function resizeGC(){gc.width=window.innerWidth;gc.height=window.innerHeight;}
+window.addEventListener('resize',resizeGC);resizeGC();
+
+function launchGlitter(){
+  for(let i=0;i<55;i++){
+    particles.push({
+      x:Math.random()*gc.width,y:-12,
+      vx:(Math.random()-.5)*3.2,vy:Math.random()*3.5+1.8,
+      size:Math.random()*5+2.5,
+      col:GOLDS[Math.floor(Math.random()*GOLDS.length)],
+      alpha:1,
+      shape:Math.random()<.5?'circle':'star',
+      rot:Math.random()*Math.PI*2,
+      rotV:(Math.random()-.5)*.22,
+    });
+  }
+  if(!animId)animGlitter();
+}
+
+function starPath(cx,cy,r){
+  gctx.beginPath();
+  for(let i=0;i<5;i++){
+    const oa=(i*2*Math.PI/5)-Math.PI/2;
+    const ia=oa+Math.PI/5;
+    i===0?gctx.moveTo(cx+r*Math.cos(oa),cy+r*Math.sin(oa))
+         :gctx.lineTo(cx+r*Math.cos(oa),cy+r*Math.sin(oa));
+    gctx.lineTo(cx+(r/2)*Math.cos(ia),cy+(r/2)*Math.sin(ia));
+  }
+  gctx.closePath();
+}
+
+function animGlitter(){
+  gctx.clearRect(0,0,gc.width,gc.height);
+  particles=particles.filter(p=>p.alpha>0.04&&p.y<gc.height+20);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.alpha-=0.013;p.rot+=p.rotV;
+    gctx.save();gctx.globalAlpha=p.alpha;gctx.fillStyle=p.col;
+    gctx.translate(p.x,p.y);gctx.rotate(p.rot);
+    if(p.shape==='circle'){gctx.beginPath();gctx.arc(0,0,p.size,0,Math.PI*2);gctx.fill();}
+    else{starPath(0,0,p.size);gctx.fill();}
+    gctx.restore();
+  });
+  if(particles.length>0){animId=requestAnimationFrame(animGlitter);}
+  else{animId=null;gctx.clearRect(0,0,gc.width,gc.height);}
+}
+</script>
+</body>
+</html>

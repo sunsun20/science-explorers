@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resource Ranger – G4 Earth &amp; Human Activity</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0c2a50;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+.pill {
+  background: rgba(224,168,0,0.15);
+  border: 1.5px solid #E0A800;
+  border-radius: 999px;
+  padding: 8px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #E0A800;
+  margin: 20px 0 0;
+  display: inline-block;
+  text-align: center;
+}
+#restartBtn {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  background: #E0A800;
+  color: #0c2a50;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background 0.2s;
+}
+#restartBtn:hover { background: #c9960a; }
+.screen { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 780px; padding: 20px 16px 50px; }
+.screen.active { display: flex; }
+
+/* ── Title ── */
+#titleScreen h1 { font-size: 38px; font-weight: 800; color: #E0A800; text-align: center; margin: 22px 0 10px; }
+#titleScreen .subtitle { font-size: 18px; color: #b8d4f0; text-align: center; max-width: 520px; line-height: 1.5; margin-bottom: 24px; }
+.standards-box {
+  background: rgba(13,148,136,0.14);
+  border: 1.5px solid #0d9488;
+  border-radius: 14px;
+  padding: 16px 22px;
+  max-width: 540px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+.standards-box h3 { font-size: 12px; color: #0d9488; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.standards-box p { font-size: 13px; color: #b8d4f0; line-height: 1.6; }
+.btn-primary {
+  background: #E0A800;
+  color: #0c2a50;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 52px;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-primary:hover { background: #c9960a; transform: scale(1.04); }
+
+/* ── Game ── */
+#gameScreen { padding-top: 72px; }
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+.hud-score { font-size: 18px; font-weight: 700; color: #E0A800; }
+.hud-qnum { font-size: 14px; color: #b8d4f0; }
+.hud-lives { font-size: 22px; }
+.question-card {
+  background: #102d52;
+  border: 2px solid #1a4a7a;
+  border-radius: 20px;
+  padding: 26px 26px 20px;
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 18px;
+}
+.q-standard { font-size: 11px; color: #0d9488; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
+.q-text { font-size: 20px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 14px; }
+.q-illustration { display: flex; justify-content: center; margin-bottom: 4px; }
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 720px;
+}
+.choice-btn {
+  background: #163a6b;
+  border: 2px solid #1a4a7a;
+  border-radius: 14px;
+  padding: 16px 14px;
+  font-size: 16px;
+  color: #e0e8f4;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  transition: background 0.18s, border-color 0.18s, transform 0.1s;
+  line-height: 1.35;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.choice-btn:hover:not(:disabled) { background: #1e4d8c; border-color: #E0A800; transform: scale(1.02); }
+.choice-btn.correct { background: #0d5c4c; border-color: #0d9488; color: #7fffd4; }
+.choice-btn.wrong { background: #5c1a1a; border-color: #c0392b; color: #ffaaaa; }
+.choice-btn:disabled { cursor: default; }
+.feedback-msg { font-size: 16px; font-weight: 600; text-align: center; margin-top: 14px; min-height: 24px; max-width: 680px; line-height: 1.4; }
+.feedback-msg.correct-msg { color: #7fffd4; }
+.feedback-msg.wrong-msg { color: #ff9999; }
+.next-btn {
+  display: none;
+  margin-top: 18px;
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 40px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.next-btn:hover { background: #0a7a70; }
+
+/* ── End ── */
+#endScreen { padding-top: 72px; text-align: center; }
+#endScreen h2 { font-size: 34px; font-weight: 800; color: #E0A800; margin: 26px 0 8px; }
+.end-score { font-size: 72px; font-weight: 800; color: #fff; margin: 8px 0; }
+.end-score span { font-size: 28px; color: #b8d4f0; }
+.end-msg { font-size: 17px; color: #b8d4f0; max-width: 500px; line-height: 1.6; margin: 10px auto 28px; }
+
+/* ── Glitter canvas ── */
+#glitter { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 999; }
+
+/* ── QR card (desktop only) ───────────────────────────────────── */
+.qr-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin:18px auto 0;
+  background:rgba(255,255,255,0.06);
+  border:1.5px solid rgba(224,168,0,0.35);
+  border-radius:14px;padding:12px 18px;
+  max-width:160px;
+}
+.qr-card img{border-radius:6px;display:block;}
+.qr-card p{color:rgba(255,255,255,0.75);font-size:11.5px;text-align:center;line-height:1.35;margin:0;}
+
+/* ── Mobile responsive (@media 820px) ─────────────────────────── */
+@media(max-width:820px){
+  /* hide QR card on small screens */
+  .qr-card{display:none!important;}
+
+  /* layout helpers */
+  #app,
+  .card{max-width:100%!important;padding:14px 10px 40px!important;}
+
+  /* stack 2-col grids to 1 col */
+  .choices,
+  .choices-grid,
+  #choicesGrid,
+  #choicesDiv,
+  .options-grid,
+  .sort-columns{
+    grid-template-columns:1fr!important;
+    flex-direction:column!important;
+  }
+
+  /* enlarge tap targets ≥48px */
+  .choice,.choice-btn,.c-btn,.opt-btn,.btn-gold,.btn-start,
+  .btn-primary,.start-btn,.btn-play,#start-btn,.btn-next,
+  .next-btn,.btn-check,.choice-btn,.play-again-btn{
+    min-height:48px!important;padding-top:12px!important;padding-bottom:12px!important;
+    font-size:16px!important;
+  }
+
+  /* standards grid → 1 col */
+  .standards-grid,.stds-summary{grid-template-columns:1fr!important;}
+
+  /* hero title size */
+  .hero h1,.title-h1,#titleScreen h1,h1.game-title{font-size:clamp(22px,7vw,36px)!important;}
+
+  /* SVG illustrations: full width */
+  .q-svg,.q-art svg,#qSvg,.svg-wrap svg,.scene-wrap svg{
+    width:100%!important;height:auto!important;
+  }
+
+  /* fixed restart button: smaller on mobile */
+  #restartBtn,#restart-btn{padding:7px 12px!important;font-size:13px!important;}
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="glitter"></canvas>
+<button id="restartBtn">&#127968; Restart</button>
+
+<!-- ═══════════════════ TITLE SCREEN ═══════════════════ -->
+<div class="screen active" id="titleScreen">
+  <div class="pill">&#127757; Grade 4 &middot; Topic 6 &middot; Earth and Human Activity</div>
+
+  <svg width="340" height="190" viewBox="0 0 340 190" style="margin:22px 0 10px" aria-hidden="true">
+    <!-- Background -->
+    <rect width="340" height="190" fill="#0a1e3a" rx="16"/>
+    <!-- Earth globe -->
+    <circle cx="130" cy="100" r="72" fill="#1a6b3c"/>
+    <ellipse cx="98" cy="78" rx="28" ry="20" fill="#1060a0" opacity="0.85"/>
+    <ellipse cx="158" cy="110" rx="24" ry="17" fill="#1060a0" opacity="0.8"/>
+    <ellipse cx="122" cy="130" rx="19" ry="11" fill="#1060a0" opacity="0.65"/>
+    <circle cx="130" cy="100" r="72" fill="none" stroke="#0d9488" stroke-width="2" opacity="0.5"/>
+    <!-- Orbit ring -->
+    <ellipse cx="130" cy="100" rx="72" ry="20" fill="none" stroke="#E0A800" stroke-width="1.5" opacity="0.35"/>
+    <!-- Sun -->
+    <circle cx="278" cy="42" r="24" fill="#E0A800"/>
+    <line x1="278" y1="12" x2="278" y2="5"  stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="278" y1="72" x2="278" y2="79" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="248" y1="42" x2="241" y2="42" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="308" y1="42" x2="315" y2="42" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="257" y1="21" x2="252" y2="16" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="299" y1="63" x2="304" y2="68" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="257" y1="63" x2="252" y2="68" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <line x1="299" y1="21" x2="304" y2="16" stroke="#E0A800" stroke-width="3" stroke-linecap="round"/>
+    <!-- Wind turbine on globe -->
+    <line x1="165" y1="140" x2="165" y2="90" stroke="#ccc" stroke-width="3"/>
+    <circle cx="165" cy="90" r="4" fill="#bbb"/>
+    <line x1="165" y1="90" x2="177" y2="74" stroke="#bbb" stroke-width="2.5"/>
+    <line x1="165" y1="90" x2="151" y2="76" stroke="#bbb" stroke-width="2.5"/>
+    <line x1="165" y1="90" x2="161" y2="107" stroke="#bbb" stroke-width="2.5"/>
+    <!-- Solar panel on globe -->
+    <rect x="88" y="115" width="28" height="18" rx="3" fill="#0d4a7a"/>
+    <line x1="102" y1="115" x2="102" y2="133" stroke="#0d9488" stroke-width="1"/>
+    <line x1="88"  y1="124" x2="116" y2="124" stroke="#0d9488" stroke-width="1"/>
+    <!-- Factory/smoke (problem) -->
+    <rect x="240" y="120" width="55" height="48" rx="2" fill="#444"/>
+    <rect x="258" y="95" width="10" height="28" fill="#555"/>
+    <rect x="273" y="90" width="10" height="33" fill="#555"/>
+    <circle cx="263" cy="90" r="9" fill="#888" opacity="0.7"/>
+    <circle cx="275" cy="82" r="11" fill="#777" opacity="0.6"/>
+    <circle cx="285" cy="76" r="9" fill="#888" opacity="0.55"/>
+    <!-- Flood waves at bottom -->
+    <path d="M30 168 Q60 160 90 168 Q120 176 150 168 Q180 160 210 168 Q240 176 270 168 Q300 160 330 168" stroke="#1a80cc" stroke-width="2.5" fill="none"/>
+  </svg>
+
+  <h1>Resource Ranger</h1>
+  <p class="subtitle">Explore how Earth's natural resources power our world — and how we can protect communities from natural hazards!</p>
+
+  <div class="standards-box">
+    <h3>What you'll learn</h3>
+    <p>
+      <strong>4-ESS3-1:</strong> Energy and fuels come from natural resources — and their use affects the environment.<br><br>
+      <strong>4-ESS3-2:</strong> There are many solutions to reduce the impact of natural Earth processes on people.
+    </p>
+  </div>
+
+
+<!-- ── QR CARD (desktop only) ───────────── -->
+<div class="qr-card">
+  <img src="data:image/png;base64,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" alt="QR code" width="96" height="96">
+  <p>&#128241; Scan to play on a phone or iPad!</p>
+</div>
+  <button class="btn-primary" id="startBtn">&#9654; Start Game</button>
+</div>
+
+<!-- ═══════════════════ GAME SCREEN ═══════════════════ -->
+<div class="screen" id="gameScreen">
+  <div class="hud">
+    <div class="hud-score">&#11088; Score: <span id="scoreDisplay">0</span></div>
+    <div class="hud-qnum">Question <span id="qNum">1</span> of 10</div>
+    <div class="hud-lives" id="livesDisplay">&#10084;&#65039;&#10084;&#65039;&#10084;&#65039;</div>
+  </div>
+  <div class="question-card">
+    <div class="q-standard" id="qStandard"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-illustration" id="qIllustration"></div>
+  </div>
+  <div class="choices" id="choicesGrid"></div>
+  <div class="feedback-msg" id="feedbackMsg"></div>
+  <button class="next-btn" id="nextBtn">Next &#8594;</button>
+</div>
+
+<!-- ═══════════════════ END SCREEN ═══════════════════ -->
+<div class="screen" id="endScreen">
+  <div class="pill">&#127757; Grade 4 &middot; Topic 6 &middot; Earth and Human Activity</div>
+  <h2 id="endTitle">Mission Complete!</h2>
+  <div class="end-score"><span id="finalScore">0</span><span> / 10</span></div>
+  <div class="end-msg" id="endMsg"></div>
+  <button class="btn-primary" id="playAgainBtn">&#8635; Play Again</button>
+</div>
+
+<script>
+// ─── SVG Illustrations ──────────────────────────────────────────────────────
+function svgFossilFuel() {
+  return `<svg width="210" height="118" viewBox="0 0 210 118" aria-hidden="true">
+    <rect width="210" height="118" fill="#12243a" rx="10"/>
+    <rect y="58" width="210" height="60" fill="#4a3020" rx="0 0 10 10"/>
+    <rect y="68" width="210" height="14" fill="#2d1f14" opacity="0.65"/>
+    <rect y="88" width="210" height="11" fill="#1a1008" opacity="0.7"/>
+    <ellipse cx="65" cy="82" rx="24" ry="9" fill="#111"/>
+    <ellipse cx="148" cy="94" rx="19" ry="8" fill="#111"/>
+    <ellipse cx="100" cy="92" rx="9" ry="13" fill="#2a1a00"/>
+    <rect y="50" width="210" height="10" fill="#1a5c2a"/>
+    <rect x="88" y="8" width="8" height="48" fill="#999"/>
+    <polygon points="84,56 92,67 100,56" fill="#777"/>
+    <text x="22" y="38" fill="#E0A800" font-size="12" font-family="Arial,sans-serif" font-weight="bold">Underground</text>
+    <text x="22" y="52" fill="#E0A800" font-size="12" font-family="Arial,sans-serif" font-weight="bold">fossil fuels</text>
+    <text x="145" y="108" fill="#b8d4f0" font-size="10" font-family="Arial,sans-serif">coal &amp; oil</text>
+  </svg>`;
+}
+
+function svgSolarPanel() {
+  return `<svg width="210" height="118" viewBox="0 0 210 118" aria-hidden="true">
+    <rect width="210" height="118" fill="#0c2a50" rx="10"/>
+    <circle cx="178" cy="30" r="22" fill="#E0A800"/>
+    <line x1="178" y1="4"  x2="178" y2="0"  stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="178" y1="56" x2="178" y2="60" stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="152" y1="30" x2="148" y2="30" stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="204" y1="30" x2="208" y2="30" stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="160" y1="12" x2="157" y2="9"  stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="196" y1="48" x2="199" y2="51" stroke="#E0A800" stroke-width="2.5"/>
+    <rect x="12" y="48" width="128" height="56" rx="4" fill="#0d3d6b"/>
+    <line x1="55"  y1="48" x2="55"  y2="104" stroke="#0d9488" stroke-width="1.5"/>
+    <line x1="98"  y1="48" x2="98"  y2="104" stroke="#0d9488" stroke-width="1.5"/>
+    <line x1="12"  y1="68" x2="140" y2="68"  stroke="#0d9488" stroke-width="1.5"/>
+    <line x1="12"  y1="87" x2="140" y2="87"  stroke="#0d9488" stroke-width="1.5"/>
+    <rect y="106" width="210" height="12" fill="#1a6b3c" rx="0 0 10 10"/>
+    <line x1="50"  y1="104" x2="44"  y2="116" stroke="#aaa" stroke-width="3"/>
+    <line x1="98"  y1="104" x2="98"  y2="116" stroke="#aaa" stroke-width="3"/>
+    <path d="M162 30 Q158 62 144 72" stroke="#E0A800" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+    <polygon points="141,67 147,67 144,74" fill="#E0A800"/>
+    <text x="148" y="96" fill="#0d9488" font-size="11" font-family="Arial,sans-serif" font-weight="bold">Solar</text>
+    <text x="144" y="107" fill="#0d9488" font-size="11" font-family="Arial,sans-serif" font-weight="bold">energy</text>
+  </svg>`;
+}
+
+function svgPollution() {
+  return `<svg width="210" height="118" viewBox="0 0 210 118" aria-hidden="true">
+    <rect width="210" height="118" fill="#18283a" rx="10"/>
+    <rect y="88" width="210" height="30" fill="#2d4a20" rx="0 0 10 10"/>
+    <rect x="18" y="50" width="70" height="42" fill="#444"/>
+    <rect x="10" y="62" width="22" height="30" fill="#333"/>
+    <rect x="38" y="28" width="13" height="26" fill="#555"/>
+    <rect x="58" y="22" width="13" height="32" fill="#555"/>
+    <circle cx="44" cy="24" r="11" fill="#888" opacity="0.72"/>
+    <circle cx="57" cy="15" r="13" fill="#777" opacity="0.65"/>
+    <circle cx="71" cy="10" r="11" fill="#888" opacity="0.62"/>
+    <circle cx="86" cy="12" r="10" fill="#999" opacity="0.52"/>
+    <circle cx="100" cy="18" r="12" fill="#888" opacity="0.56"/>
+    <circle cx="114" cy="24" r="10" fill="#777" opacity="0.4"/>
+    <text x="76" y="36" fill="#ff9955" font-size="12" font-family="Arial,sans-serif" font-weight="bold">CO&#x2082;</text>
+    <rect x="148" y="68" width="38" height="24" fill="#5a3a2a"/>
+    <polygon points="145,70 167,50 189,70" fill="#7a4a2a"/>
+    <text x="153" y="86" fill="#ff5555" font-size="18" font-weight="bold">&#9888;</text>
+    <text x="128" y="108" fill="#ff9955" font-size="10" font-family="Arial,sans-serif">air pollution</text>
+  </svg>`;
+}
+
+function svgEnergyChoice() {
+  return `<svg width="250" height="118" viewBox="0 0 250 118" aria-hidden="true">
+    <rect width="250" height="118" fill="#0c2a50" rx="10"/>
+    <rect y="94" width="250" height="24" fill="#2d4a20" rx="0 0 10 10"/>
+    <!-- Wind turbines (clean) -->
+    <line x1="188" y1="94" x2="188" y2="38" stroke="#ddd" stroke-width="3"/>
+    <circle cx="188" cy="38" r="4" fill="#bbb"/>
+    <line x1="188" y1="38" x2="202" y2="20" stroke="#bbb" stroke-width="2"/>
+    <line x1="188" y1="38" x2="172" y2="22" stroke="#bbb" stroke-width="2"/>
+    <line x1="188" y1="38" x2="184" y2="56" stroke="#bbb" stroke-width="2"/>
+    <line x1="218" y1="94" x2="218" y2="48" stroke="#ddd" stroke-width="3"/>
+    <circle cx="218" cy="48" r="4" fill="#bbb"/>
+    <line x1="218" y1="48" x2="232" y2="32" stroke="#bbb" stroke-width="2"/>
+    <line x1="218" y1="48" x2="202" y2="34" stroke="#bbb" stroke-width="2"/>
+    <line x1="218" y1="48" x2="214" y2="65" stroke="#bbb" stroke-width="2"/>
+    <circle cx="202" cy="108" r="11" fill="#0d9488"/>
+    <text x="196" y="113" fill="#fff" font-size="12" font-weight="bold">&#x2713;</text>
+    <!-- Coal plant (dirty) -->
+    <rect x="18" y="52" width="78" height="45" fill="#555"/>
+    <rect x="32" y="26" width="13" height="30" fill="#666"/>
+    <rect x="54" y="21" width="13" height="35" fill="#666"/>
+    <circle cx="38" cy="22" r="10" fill="#888" opacity="0.75"/>
+    <circle cx="52" cy="14" r="12" fill="#777" opacity="0.65"/>
+    <circle cx="66" cy="10" r="10" fill="#888" opacity="0.6"/>
+    <circle cx="56" cy="108" r="11" fill="#c0392b"/>
+    <text x="51" y="113" fill="#fff" font-size="12" font-weight="bold">&#x2717;</text>
+    <text x="22" y="112" fill="#ff8888" font-size="9" font-family="Arial,sans-serif">coal</text>
+    <text x="180" y="112" fill="#7fffd4" font-size="9" font-family="Arial,sans-serif">wind</text>
+  </svg>`;
+}
+
+function svgForest() {
+  return `<svg width="220" height="118" viewBox="0 0 220 118" aria-hidden="true">
+    <rect width="220" height="118" fill="#0d3d1f" rx="10"/>
+    <rect y="82" width="220" height="36" fill="#1a5c2a" rx="0 0 10 10"/>
+    <polygon points="22,82 44,28 66,82" fill="#1a8c3a"/>
+    <rect x="41" y="77" width="6" height="10" fill="#5a3a1a"/>
+    <polygon points="66,82 90,20 114,82" fill="#1a7c2a"/>
+    <rect x="87" y="76" width="6" height="11" fill="#5a3a1a"/>
+    <!-- Stump -->
+    <rect x="122" y="76" width="20" height="12" fill="#7a4a1a"/>
+    <circle cx="132" cy="76" r="10" fill="#5a3a1a"/>
+    <line x1="122" y1="72" x2="142" y2="80" stroke="#3a2010" stroke-width="2"/>
+    <line x1="132" y1="68" x2="132" y2="80" stroke="#3a2010" stroke-width="1.5"/>
+    <!-- New sapling -->
+    <line x1="170" y1="88" x2="170" y2="62" stroke="#5a3a1a" stroke-width="3"/>
+    <polygon points="155,65 170,42 185,65" fill="#22cc55"/>
+    <text x="148" y="100" fill="#E0A800" font-size="10" font-family="Arial,sans-serif" font-weight="bold">New tree!</text>
+    <!-- Axe near stump -->
+    <line x1="148" y1="88" x2="162" y2="72" stroke="#888" stroke-width="2"/>
+    <rect x="159" y="68" width="8" height="5" fill="#777" transform="rotate(45 163 70)"/>
+  </svg>`;
+}
+
+function svgFlood() {
+  return `<svg width="240" height="118" viewBox="0 0 240 118" aria-hidden="true">
+    <rect width="240" height="118" fill="#0c2a50" rx="10"/>
+    <rect width="240" height="65" fill="#1a3a5c" rx="10 10 0 0"/>
+    <!-- Cloud -->
+    <ellipse cx="82" cy="24" rx="34" ry="17" fill="#555"/>
+    <ellipse cx="62" cy="28" rx="22" ry="14" fill="#666"/>
+    <ellipse cx="100" cy="27" rx="25" ry="15" fill="#555"/>
+    <!-- Rain -->
+    <line x1="60" y1="43" x2="55" y2="53" stroke="#5af" stroke-width="2"/>
+    <line x1="72" y1="44" x2="67" y2="54" stroke="#5af" stroke-width="2"/>
+    <line x1="84" y1="42" x2="79" y2="52" stroke="#5af" stroke-width="2"/>
+    <line x1="96" y1="43" x2="91" y2="53" stroke="#5af" stroke-width="2"/>
+    <!-- Flood water -->
+    <path d="M0 64 Q60 54 120 64 Q180 74 240 64 L240 118 L0 118 Z" fill="#1a5fa0" opacity="0.88"/>
+    <!-- Flooded house -->
+    <rect x="22" y="48" width="42" height="25" fill="#7a4a2a" opacity="0.65"/>
+    <polygon points="18,54 43,34 68,54" fill="#9a5a2a" opacity="0.7"/>
+    <!-- Levee -->
+    <rect x="162" y="54" width="18" height="62" fill="#8a6a3a"/>
+    <rect x="182" y="60" width="18" height="56" fill="#9a7a4a"/>
+    <!-- Trees on levee -->
+    <line x1="202" y1="72" x2="202" y2="48" stroke="#5a3a1a" stroke-width="2"/>
+    <circle cx="202" cy="44" r="11" fill="#1a7c2a"/>
+    <line x1="218" y1="72" x2="218" y2="50" stroke="#5a3a1a" stroke-width="2"/>
+    <circle cx="218" cy="46" r="10" fill="#1a8c3a"/>
+    <text x="155" y="116" fill="#E0A800" font-size="10" font-family="Arial,sans-serif" font-weight="bold">levee</text>
+  </svg>`;
+}
+
+function svgEarthquake() {
+  return `<svg width="250" height="118" viewBox="0 0 250 118" aria-hidden="true">
+    <rect width="250" height="118" fill="#2d1a0a" rx="10"/>
+    <rect y="78" width="250" height="40" fill="#4a3020" rx="0 0 10 10"/>
+    <path d="M0 78 L28 84 L50 76 L80 86 L112 78 L144 85 L175 76 L205 83 L250 78" stroke="#1a0a00" stroke-width="3" fill="none"/>
+    <!-- Rigid crumbling building -->
+    <rect x="16" y="32" width="52" height="48" fill="#888"/>
+    <rect x="11" y="27" width="62" height="8" fill="#777"/>
+    <line x1="30" y1="38" x2="42" y2="58" stroke="#1a1a1a" stroke-width="2"/>
+    <line x1="52" y1="42" x2="46" y2="64" stroke="#1a1a1a" stroke-width="2"/>
+    <rect x="8"  y="72" width="8" height="6" fill="#666" transform="rotate(20 12 75)"/>
+    <rect x="66" y="74" width="6" height="5" fill="#777" transform="rotate(-15 69 76)"/>
+    <circle cx="42" cy="18" r="11" fill="#c0392b"/>
+    <text x="36" y="23" fill="#fff" font-size="13" font-weight="bold">&#x2717;</text>
+    <!-- Flexible safe building -->
+    <rect x="170" y="36" width="62" height="44" fill="#1a5c8a"/>
+    <rect x="165" y="30" width="72" height="9" fill="#1a4a78"/>
+    <line x1="174" y1="80" x2="177" y2="37" stroke="#0d9488" stroke-width="2.5"/>
+    <line x1="228" y1="80" x2="225" y2="37" stroke="#0d9488" stroke-width="2.5"/>
+    <path d="M163 56 Q158 62 163 68" stroke="#E0A800" stroke-width="2" fill="none"/>
+    <path d="M238 56 Q243 62 238 68" stroke="#E0A800" stroke-width="2" fill="none"/>
+    <circle cx="201" cy="18" r="11" fill="#0d9488"/>
+    <text x="195" y="23" fill="#fff" font-size="13" font-weight="bold">&#x2713;</text>
+    <!-- Seismic waves -->
+    <path d="M105 100 L114 91 L124 109 L134 91 L144 109 L153 100" stroke="#ff8855" stroke-width="2" fill="none"/>
+    <text x="108" y="116" fill="#ff8855" font-size="9" font-family="Arial,sans-serif">seismic waves</text>
+  </svg>`;
+}
+
+function svgCoastalErosion() {
+  return `<svg width="240" height="118" viewBox="0 0 240 118" aria-hidden="true">
+    <rect width="240" height="118" fill="#0c3a5c" rx="10"/>
+    <rect width="240" height="60" fill="#1a3a5c" rx="10 10 0 0"/>
+    <!-- Ocean -->
+    <path d="M0 60 Q60 50 120 60 Q180 70 240 60 L240 118 L0 118 Z" fill="#0d5c8a"/>
+    <path d="M0 70 Q30 64 60 70 Q90 76 120 70" stroke="#5af" stroke-width="1.5" fill="none"/>
+    <path d="M120 75 Q150 68 180 75 Q210 82 240 75" stroke="#5af" stroke-width="1.5" fill="none"/>
+    <!-- Eroding cliff -->
+    <path d="M0 60 L88 60 L95 100 L0 100 Z" fill="#c4a265"/>
+    <circle cx="86" cy="70" r="4" fill="#b09050"/>
+    <circle cx="90" cy="82" r="3" fill="#a08040"/>
+    <!-- Sea grass -->
+    <line x1="148" y1="80" x2="143" y2="64" stroke="#1a8c3a" stroke-width="2"/>
+    <line x1="154" y1="82" x2="151" y2="65" stroke="#1a8c3a" stroke-width="2"/>
+    <line x1="160" y1="80" x2="158" y2="63" stroke="#1a8c3a" stroke-width="2"/>
+    <line x1="166" y1="82" x2="165" y2="66" stroke="#1a8c3a" stroke-width="2"/>
+    <line x1="172" y1="80" x2="172" y2="64" stroke="#1a8c3a" stroke-width="2"/>
+    <!-- Seawall -->
+    <rect x="190" y="58" width="14" height="52" fill="#8a7a6a"/>
+    <rect x="206" y="62" width="12" height="48" fill="#9a8a7a"/>
+    <text x="138" y="112" fill="#0d9488" font-size="10" font-family="Arial,sans-serif" font-weight="bold">sea grass</text>
+    <text x="190" y="112" fill="#E0A800" font-size="10" font-family="Arial,sans-serif" font-weight="bold">wall</text>
+  </svg>`;
+}
+
+function svgDrought() {
+  return `<svg width="240" height="118" viewBox="0 0 240 118" aria-hidden="true">
+    <rect width="240" height="118" fill="#5a3a10" rx="10"/>
+    <rect width="240" height="60" fill="#6a4510" rx="10 10 0 0"/>
+    <!-- Hot sun -->
+    <circle cx="200" cy="28" r="22" fill="#E0A800"/>
+    <line x1="200" y1="2"  x2="200" y2="0"  stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="176" y1="10" x2="172" y2="6"  stroke="#E0A800" stroke-width="2.5"/>
+    <line x1="224" y1="10" x2="228" y2="6"  stroke="#E0A800" stroke-width="2.5"/>
+    <!-- Cracked ground -->
+    <rect y="60" width="240" height="58" fill="#8a5a20" rx="0 0 10 10"/>
+    <path d="M15 65 L28 82 L14 96" stroke="#5a3a10" stroke-width="2" fill="none"/>
+    <path d="M54 68 L70 88 L52 102" stroke="#5a3a10" stroke-width="2" fill="none"/>
+    <path d="M96 64 L108 86 L92 100" stroke="#5a3a10" stroke-width="2" fill="none"/>
+    <!-- Wilting plant -->
+    <line x1="38" y1="60" x2="38" y2="36" stroke="#7a5a20" stroke-width="2.5"/>
+    <path d="M38 40 Q52 34 48 22" stroke="#7a5a20" stroke-width="1.5" fill="none"/>
+    <line x1="68" y1="60" x2="68" y2="38" stroke="#7a5a20" stroke-width="2.5"/>
+    <path d="M68 42 Q56 36 60 24" stroke="#7a5a20" stroke-width="1.5" fill="none"/>
+    <!-- Drip irrigation -->
+    <line x1="142" y1="28" x2="222" y2="28" stroke="#5af" stroke-width="2"/>
+    <line x1="152" y1="28" x2="152" y2="62" stroke="#5af" stroke-width="1.5"/>
+    <circle cx="152" cy="62" r="3" fill="#5af"/>
+    <line x1="172" y1="28" x2="172" y2="62" stroke="#5af" stroke-width="1.5"/>
+    <circle cx="172" cy="62" r="3" fill="#5af"/>
+    <line x1="192" y1="28" x2="192" y2="62" stroke="#5af" stroke-width="1.5"/>
+    <circle cx="192" cy="62" r="3" fill="#5af"/>
+    <!-- Water tank -->
+    <rect x="200" y="8" width="26" height="28" rx="4" fill="#0d5c8a"/>
+    <text x="203" y="28" fill="#5af" font-size="10" font-family="Arial,sans-serif">tank</text>
+    <text x="142" y="110" fill="#5af" font-size="9" font-family="Arial,sans-serif">drip irrigation</text>
+  </svg>`;
+}
+
+function svgWildfire() {
+  return `<svg width="240" height="118" viewBox="0 0 240 118" aria-hidden="true">
+    <rect width="240" height="118" fill="#2d1a00" rx="10"/>
+    <rect width="240" height="74" fill="#3d2800" rx="10 10 0 0"/>
+    <rect y="74" width="240" height="44" fill="#4a3010" rx="0 0 10 10"/>
+    <!-- Flames (amber/gold only — no rainbow) -->
+    <path d="M22 74 Q12 54 28 38 Q22 53 38 48 Q28 33 48 12 Q44 36 60 32 Q52 48 70 42 Q60 56 64 74 Z" fill="#E0A800"/>
+    <path d="M28 74 Q24 58 36 46 Q30 57 44 53 Q36 42 50 28 Q48 44 60 40 Q54 54 62 50 Q58 62 62 74 Z" fill="#ff8800" opacity="0.72"/>
+    <path d="M35 74 Q40 60 36 50 Q46 55 38 44 Q48 46 44 60 Z" fill="#ffcc00" opacity="0.5"/>
+    <!-- Burned trees -->
+    <line x1="96"  y1="74" x2="96"  y2="36" stroke="#2a1a00" stroke-width="4"/>
+    <line x1="96"  y1="50" x2="80"  y2="36" stroke="#2a1a00" stroke-width="2"/>
+    <line x1="96"  y1="44" x2="112" y2="32" stroke="#2a1a00" stroke-width="2"/>
+    <line x1="128" y1="74" x2="128" y2="40" stroke="#2a1a00" stroke-width="4"/>
+    <line x1="128" y1="54" x2="112" y2="42" stroke="#2a1a00" stroke-width="2"/>
+    <!-- Firebreak (cleared area) -->
+    <rect x="152" y="58" width="28" height="18" fill="#8a7a5a"/>
+    <text x="146" y="90" fill="#E0A800" font-size="10" font-family="Arial,sans-serif" font-weight="bold">firebreak</text>
+    <!-- Safe house beyond firebreak -->
+    <rect x="186" y="50" width="38" height="26" fill="#5a3a2a"/>
+    <polygon points="183,53 205,36 227,53" fill="#7a4a2a"/>
+    <circle cx="205" cy="68" r="9" fill="#0d9488"/>
+    <text x="199" y="73" fill="#fff" font-size="11" font-weight="bold">&#x2713;</text>
+  </svg>`;
+}
+
+function svgRenewableSort() {
+  return `<svg width="230" height="118" viewBox="0 0 230 118" aria-hidden="true">
+    <rect width="230" height="118" fill="#0c2a50" rx="10"/>
+    <!-- Left: sun + wind = renewable -->
+    <text x="16" y="22" fill="#0d9488" font-size="11" font-family="Arial,sans-serif" font-weight="bold">RENEWABLE</text>
+    <circle cx="35" cy="58" r="18" fill="#E0A800"/>
+    <line x1="35" y1="36" x2="35" y2="32" stroke="#E0A800" stroke-width="2"/>
+    <line x1="35" y1="80" x2="35" y2="84" stroke="#E0A800" stroke-width="2"/>
+    <line x1="13" y1="58" x2="9"  y2="58" stroke="#E0A800" stroke-width="2"/>
+    <line x1="57" y1="58" x2="61" y2="58" stroke="#E0A800" stroke-width="2"/>
+    <text x="28" y="100" fill="#b8d4f0" font-size="10" font-family="Arial,sans-serif">Sun</text>
+    <line x1="82" y1="88" x2="82" y2="50" stroke="#ddd" stroke-width="2.5"/>
+    <circle cx="82" cy="50" r="3" fill="#ccc"/>
+    <line x1="82" y1="50" x2="92" y2="38" stroke="#ccc" stroke-width="2"/>
+    <line x1="82" y1="50" x2="70" y2="40" stroke="#ccc" stroke-width="2"/>
+    <line x1="82" y1="50" x2="79" y2="64" stroke="#ccc" stroke-width="2"/>
+    <text x="74" y="100" fill="#b8d4f0" font-size="10" font-family="Arial,sans-serif">Wind</text>
+    <!-- Divider -->
+    <line x1="118" y1="10" x2="118" y2="108" stroke="#1a4a7a" stroke-width="2" stroke-dasharray="5,4"/>
+    <!-- Right: coal = non-renewable -->
+    <text x="126" y="22" fill="#ff8855" font-size="10" font-family="Arial,sans-serif" font-weight="bold">NON-RENEWABLE</text>
+    <ellipse cx="178" cy="78" rx="24" ry="10" fill="#111"/>
+    <rect x="166" y="48" width="24" height="32" fill="#222"/>
+    <text x="164" y="100" fill="#b8d4f0" font-size="10" font-family="Arial,sans-serif">Coal (fossil fuel)</text>
+    <text x="170" y="65" fill="#555" font-size="10" font-family="Arial,sans-serif">coal</text>
+  </svg>`;
+}
+
+// ─── Questions ───────────────────────────────────────────────────────────────
+const questions = [
+  {
+    standard: "4-ESS3-1",
+    text: "Coal, oil, and natural gas are fossil fuels found underground. Which type of natural resource are they?",
+    illustration: svgFossilFuel(),
+    choices: ["Renewable resource", "Non-renewable resource", "Living resource", "Water resource"],
+    correct: 1,
+    explanation: "Fossil fuels are non-renewable — they take millions of years to form and can run out."
+  },
+  {
+    standard: "4-ESS3-1",
+    text: "Solar panels collect energy from the Sun. The Sun's energy is classified as a _______ resource.",
+    illustration: svgSolarPanel(),
+    choices: ["Non-renewable", "Fossil fuel", "Renewable", "Underground"],
+    correct: 2,
+    explanation: "The Sun keeps shining — solar energy is renewable because it will not run out."
+  },
+  {
+    standard: "4-ESS3-1",
+    text: "Burning fossil fuels releases gases into the air. How does this affect the environment?",
+    illustration: svgPollution(),
+    choices: ["It cleans the water supply", "It causes air pollution and warms Earth's climate", "It makes soil richer", "It has no effect at all"],
+    correct: 1,
+    explanation: "Burning fossil fuels releases CO₂ and other gases that pollute the air and warm the climate."
+  },
+  {
+    standard: "4-ESS3-1",
+    text: "A town wants clean electricity with no air pollution. Which energy source should they choose?",
+    illustration: svgEnergyChoice(),
+    choices: ["Coal power plant", "Oil-burning generator", "Wind turbines", "Gas station generator"],
+    correct: 2,
+    explanation: "Wind turbines generate electricity from wind — a clean, renewable source with no pollution."
+  },
+  {
+    standard: "4-ESS3-1",
+    text: "Trees are a natural resource used for wood and paper. Which action helps keep this resource available for future generations?",
+    illustration: svgForest(),
+    choices: ["Cut all trees as fast as possible", "Plant new trees when old ones are harvested", "Burn the forest to clear land", "Stop using paper forever"],
+    correct: 1,
+    explanation: "Replanting trees keeps forests renewable — so future generations also have wood and paper."
+  },
+  {
+    standard: "4-ESS3-2",
+    text: "A river floods every spring and destroys homes nearby. Which solution best reduces this natural hazard risk?",
+    illustration: svgFlood(),
+    choices: ["Build houses right on the riverbank", "Build levees and plant trees along the river", "Remove all the bridges", "Dig deeper wells nearby"],
+    correct: 1,
+    explanation: "Levees hold back floodwater, and trees absorb extra water — both protect homes from floods."
+  },
+  {
+    standard: "4-ESS3-2",
+    text: "Earthquakes can seriously damage buildings. Which building design best survives an earthquake?",
+    illustration: svgEarthquake(),
+    choices: ["Very tall, rigid concrete walls", "Flexible frame that can sway without breaking", "Made entirely of glass panels", "No underground foundation"],
+    correct: 1,
+    explanation: "Flexible building frames can sway without breaking, making them much safer in earthquakes."
+  },
+  {
+    standard: "4-ESS3-2",
+    text: "A coastal town is losing beach sand to ocean waves every year. Which solution reduces this erosion?",
+    illustration: svgCoastalErosion(),
+    choices: ["Remove the ocean water", "Plant sea grasses and build a seawall", "Pave the entire beach with concrete", "Stop all fishing in the area"],
+    correct: 1,
+    explanation: "Sea grass roots anchor sand and seawalls block waves — both reduce coastal erosion."
+  },
+  {
+    standard: "4-ESS3-2",
+    text: "A severe drought brings very little rain for two years. Which action best helps a farm survive a drought?",
+    illustration: svgDrought(),
+    choices: ["Water crops more than usual every day", "Use drip irrigation and collect rainwater in storage tanks", "Plant only crops that need lots of water", "Leave crops completely unwatered"],
+    correct: 1,
+    explanation: "Drip irrigation uses water efficiently and rainwater storage saves water for dry spells."
+  },
+  {
+    standard: "4-ESS3-2",
+    text: "Wildfires spread fast in dry forests near a community. What is the BEST way to protect nearby homes?",
+    illustration: svgWildfire(),
+    choices: ["Clear dry brush and create firebreaks around the community", "Plant more dry grass around homes for decoration", "Remove every single tree for miles around", "Rely only on firefighters to stop any fire that starts"],
+    correct: 0,
+    explanation: "Creating firebreaks by clearing dry brush removes the fuel wildfires need to reach homes."
+  }
+];
+
+// ─── Game State ───────────────────────────────────────────────────────────────
+let currentQ = 0;
+let score    = 0;
+let lives    = 3;
+let answered = false;
+let particles = [];
+let rafId    = null;
+
+// ─── Canvas ───────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('glitter');
+const ctx    = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+const goldShades = ['#E0A800','#FFD700','#F4C430','#B8860B','#DAA520','#FFC107','#FFEC6E'];
+
+function spawnGlitter() {
+  for (let i = 0; i < 45; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: -10,
+      size: 3 + Math.random() * 5,
+      vx: (Math.random() - 0.5) * 3.2,
+      vy: 1.8 + Math.random() * 3.2,
+      alpha: 1,
+      color: goldShades[Math.floor(Math.random() * goldShades.length)],
+      square: Math.random() > 0.4,
+      rot: Math.random() * Math.PI * 2,
+      rs: (Math.random() - 0.5) * 0.18
+    });
+  }
+  if (!rafId) animLoop();
+}
+
+function animLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.alpha > 0.04);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.rs; p.alpha -= 0.011;
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle   = p.color;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    if (p.square) ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+    else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+    ctx.restore();
+  });
+  if (particles.length > 0) { rafId = requestAnimationFrame(animLoop); }
+  else { rafId = null; ctx.clearRect(0,0,canvas.width,canvas.height); }
+}
+
+// ─── Screen Management ────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── Restart ─────────────────────────────────────────────────────────────────
+function restart() {
+  currentQ = 0; score = 0; lives = 3; answered = false;
+  particles = [];
+  if (rafId) { cancelAnimationFrame(rafId); rafId = null; ctx.clearRect(0,0,canvas.width,canvas.height); }
+  showScreen('titleScreen');
+}
+
+// ─── Start ────────────────────────────────────────────────────────────────────
+function startGame() {
+  currentQ = 0; score = 0; lives = 3; answered = false;
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+// ─── Load Question ────────────────────────────────────────────────────────────
+function loadQuestion() {
+  if (currentQ >= questions.length) { showEndScreen(); return; }
+  const q = questions[currentQ];
+  answered = false;
+
+  document.getElementById('qStandard').textContent = q.standard;
+  document.getElementById('qText').textContent     = q.text;
+  document.getElementById('qIllustration').innerHTML = q.illustration;
+  document.getElementById('qNum').textContent      = currentQ + 1;
+  document.getElementById('scoreDisplay').textContent = score;
+  updateLives();
+
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'choice-btn';
+    btn.textContent = c;
+    btn.addEventListener('click', () => selectAnswer(i, btn));
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedbackMsg').textContent = '';
+  document.getElementById('feedbackMsg').className   = 'feedback-msg';
+  document.getElementById('nextBtn').style.display   = 'none';
+}
+
+// ─── Answer Selection ─────────────────────────────────────────────────────────
+function selectAnswer(index, btn) {
+  if (answered) return;
+  answered = true;
+  const q      = questions[currentQ];
+  const allBtn = document.querySelectorAll('.choice-btn');
+  allBtn.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedbackMsg');
+  if (index === q.correct) {
+    score++;
+    btn.classList.add('correct');
+    fb.textContent = '❆ Correct! ' + q.explanation;
+    fb.className   = 'feedback-msg correct-msg';
+    spawnGlitter();
+  } else {
+    btn.classList.add('wrong');
+    allBtn[q.correct].classList.add('correct');
+    lives--;
+    updateLives();
+    fb.textContent = '✗ Not quite. ' + q.explanation;
+    fb.className   = 'feedback-msg wrong-msg';
+    if (lives <= 0) { setTimeout(showEndScreen, 1600); return; }
+  }
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('nextBtn').style.display    = 'inline-block';
+}
+
+// ─── Next ─────────────────────────────────────────────────────────────────────
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length || lives <= 0) showEndScreen();
+  else loadQuestion();
+}
+
+// ─── Lives ────────────────────────────────────────────────────────────────────
+function updateLives() {
+  const safe   = Math.max(0, lives);
+  const lost   = Math.max(0, 3 - lives);
+  document.getElementById('livesDisplay').textContent =
+    '❤️'.repeat(safe) + '\u{1F5A4}'.repeat(lost);
+}
+
+// ─── End Screen ───────────────────────────────────────────────────────────────
+function showEndScreen() {
+  showScreen('endScreen');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score / questions.length;
+  let title, msg;
+  if (pct >= 0.9) {
+    title = 'Earth Champion!';
+    msg   = 'Outstanding! You understand how natural resources power our world and how communities protect themselves from Earth\'s forces.';
+    spawnGlitter(); setTimeout(spawnGlitter, 400);
+  } else if (pct >= 0.7) {
+    title = 'Great Work, Ranger!';
+    msg   = 'You know a lot about Earth\'s resources and natural hazards. Keep exploring to become a full Earth Champion!';
+  } else if (pct >= 0.5) {
+    title = 'Good Effort!';
+    msg   = 'You\'re learning about how Earth\'s resources and natural hazards affect our world. Try again to boost your score!';
+  } else {
+    title = 'Keep Exploring!';
+    msg   = 'Earth and human activity is a big topic. Play again to discover more about natural resources and protecting communities!';
+  }
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('endMsg').textContent   = msg;
+}
+
+// ─── Wire Up Buttons ──────────────────────────────────────────────────────────
+document.getElementById('restartBtn').addEventListener('click', restart);
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+document.getElementById('playAgainBtn').addEventListener('click', restart);
+</script>
+</body>
+</html>
