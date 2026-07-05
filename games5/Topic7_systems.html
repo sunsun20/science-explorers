@@ -311,13 +311,15 @@ h1.game-title {
     /* ── PILL BADGE: keep inside viewport ── */
     .pill-label,.pill-badge,.topic-pill,.subtitle{
       max-width:calc(100vw - 28px) !important;
-      white-space:nowrap !important;
-      overflow:hidden !important;
-      text-overflow:ellipsis !important;
+      white-space:normal !important;
+      overflow-wrap:break-word !important;
+      overflow:visible !important;
       font-size:.75rem !important;
       display:block !important;
       margin:0 auto 10px !important;
     }
+    /* push pill-label below the fixed home/restart button on small screens */
+    .pill-label,.topic-pill{margin-top:50px !important;}
 
     /* ── HUD / TOOLBAR: shrink for narrow screens ── */
     #hud,#hud-bar,[id*="hud"],[class*="hud"]{
