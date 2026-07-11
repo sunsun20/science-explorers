@@ -222,8 +222,9 @@
   .expandbtn{position:absolute;top:9px;right:9px;z-index:6;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:9px;cursor:pointer;font:inherit;font-weight:800;font-size:.78rem;padding:6px 11px;color:var(--blue-d)}
   .expandbtn:hover{background:#fff}
   body.deck-fs{overflow:hidden}
-  .deck.fs{position:fixed;inset:14px;z-index:80;display:flex;flex-direction:column;box-shadow:0 0 0 9999px rgba(8,16,40,.62);overflow:auto;margin:0}
-  .deck.fs .slide{flex:1;min-height:auto;padding:34px clamp(26px,6vw,88px);font-size:1.12rem}
+  .deck.fs{position:fixed;inset:14px;z-index:80;display:flex;flex-direction:column;box-shadow:0 0 0 9999px rgba(8,16,40,.62);overflow:hidden;margin:0}
+  .deck.fs .slide{flex:1;min-height:auto;padding:30px clamp(24px,5vw,80px);font-size:1.12rem;display:flex;align-items:flex-start;justify-content:center;overflow:hidden}
+.deck.fs .sfit{transform-origin:top center;width:100%;max-width:1080px}
   .deck.fs .slide h3{font-size:clamp(1.6rem,3.2vw,2.2rem)}
   .deck.fs .deck-bar{position:sticky;bottom:0}
 
@@ -1841,7 +1842,7 @@ function vUnits(){
     ${gamesSection()}</section>`;
 }
 function openUnit(id){cur.unit=gUnits().find(u=>u.id===id);cur.std=null;cur.li=0;go('unit');}
-function openDemo(){cur.grade=5;cur.unit=UNITS.find(u=>u.id==='matter');cur.std=0;cur.li=0;go('lesson');}
+function openDemo(){cur.grade=4;cur.unit=gradeUnits(4).find(u=>u.id==='g4en');cur.std=0;cur.li=0;go('lesson');}
 function pickStd(i){cur.std=i;cur.li=0;go('unit');}
 function vUnit(){
   const u=cur.unit;if(!u)return go('units');
@@ -1904,7 +1905,7 @@ function vLesson(){
     const taskBtns=(!sl.intro&&/Elaborate/i.test(sl.tag)&&L.tasks)?'<div class="lfoot" style="margin-top:14px;flex-wrap:wrap">'+[['bronze','b','🥉 Bronze'],['silver','s','🥈 Silver'],['gold','g','🥇 Gold'],['gt','gt','⭐ G&T']].filter(t=>L.tasks[t[0]]).map(t=>'<button class="medal '+t[1]+'" onclick="openSheet('+cur.li+",'"+t[0]+"')\">"+t[2]+' sheet ▸</button>').join('')+'</div>':'';
     document.getElementById('deck').innerHTML=`
       <button class="expandbtn" onclick="toggleDeckFS()">${document.getElementById('deck').classList.contains('fs')?'✕ Close':'⛶ Expand'}</button>
-      <div class="slide"><span class="stag">${sl.tag}</span><h3>${sl.h}</h3>${sl.intro?sl.body:withIcons(sl.body)}${taskBtns}${wg?'<div class="widget" id="slideWidget"></div>':''}</div>
+      <div class="slide"><div class="sfit"><span class="stag">${sl.tag}</span><h3>${sl.h}</h3>${sl.intro?sl.body:withIcons(sl.body)}${taskBtns}${wg?'<div class="widget" id="slideWidget"></div>':''}</div></div>
       <div class="deck-bar">
         <button class="btn gray sm" onclick="go('unit')">← Back</button>
         <button class="btn gray sm" ${s===0?'disabled style=opacity:.4':''} onclick="window.__pd(-1)">‹ Prev</button>
@@ -1912,6 +1913,7 @@ function vLesson(){
         <button class="btn sm" ${s===SLIDES.length-1?'disabled style=opacity:.4':''} onclick="window.__pd(1)">Next ›</button>
       </div>`;
     if(wg)mountWidget(document.getElementById('slideWidget'),wg);
+    fitSlide();
   }
   window.__pd=(d)=>{s=Math.max(0,Math.min(SLIDES.length-1,s+d));render();};
   render();
@@ -2452,9 +2454,11 @@ function vResources(){
   </section>`;
 }
 /* expand the slide deck to full screen */
-function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';}
+function fitSlide(){const d=document.getElementById('deck');if(!d)return;const sfit=d.querySelector('.sfit'),slide=d.querySelector('.slide');if(!sfit||!slide)return;sfit.style.transform='';if(!d.classList.contains('fs'))return;const availH=slide.clientHeight-6,needH=sfit.scrollHeight;if(needH>availH)sfit.style.transform='scale('+Math.max(0.35,availH/needH)+')';}
+function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';requestAnimationFrame(fitSlide);}
 function exitDeckFS(){const d=document.getElementById('deck');if(d)d.classList.remove('fs');document.body.classList.remove('deck-fs');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')exitDeckFS();});
+window.addEventListener('resize',function(){if(typeof fitSlide==='function')fitSlide();});
 window.MCQS_EXTRA={
  g4ea:[{q:'A ball rolls across the floor. What kind of energy does the ball have?',options:['heat energy','motion energy','sound energy','stored energy'],answer:1},{q:'Which of these objects has the MOST energy of motion?',options:['A heavy ball rolling fast','A heavy ball rolling slowly','A light ball rolling fast','A light ball rolling slowly'],answer:0},{q:'Which sentence best describes what energy is?',options:['the shape of an object','the weight of an object','the color of an object','the ability to make things happen or move'],answer:3},{q:'A bowling ball rolls down the lane and hits the pins. This event is called a...',options:['transfer','speed','collision','source'],answer:2},{q:'You roll two identical balls — one fast and one slow. Which ball has MORE energy of motion?',options:['the slow ball','the fast ball','they have equal energy','neither ball has energy'],answer:1},{q:'Which word means how fast an object is moving?',options:['energy','collision','motion','speed'],answer:3},{q:'Which TWO things would give a moving object the MOST energy of motion?',options:['Moving faster and being heavier','Moving slower and being heavier','Moving faster and being lighter','Moving slower and being lighter'],answer:0},{q:'When a rolling ball hits a stack of blocks, what happens to the energy?',options:['It disappears completely','It stays only in the ball','Some energy transfers to the blocks','The blocks lose energy'],answer:2},{q:'A heavy truck and a small toy car move at the same speed. Which has MORE energy of motion?',options:['the toy car','the heavy truck','they have the same energy','it depends on the road'],answer:1},{q:'Which TWO of the following are examples of motion energy?',options:['a parked car and a sleeping cat','a turned-off lamp and a rock on a shelf','a charged battery and a glowing bulb','a rolling cart and a kicked football'],answer:3}],
  g4eb:[{q:'A bulb lights up when connected to a battery with wires. What carries energy from the battery to the bulb?',options:['electricity','sound','wind','heat'],answer:0},{q:'A ball rolls and bumps into a toy car, making the car move. This is an example of energy...',options:['disappearing','being stored','transferring','being created from nothing'],answer:2},{q:'Which of the following is a natural source of energy?',options:['a battery','the sun','a power station','a fuel tank'],answer:1},{q:'Wood and oil can be burned to release energy. What do we call these materials?',options:['sources','transfers','electricity','fuels'],answer:3},{q:'Which of these is NOT a natural energy source?',options:['a battery','the sun','wind','moving water'],answer:0},{q:'A wind turbine spins in the wind and makes electricity for homes. What is happening to the energy?',options:['It is being created from nothing','It is disappearing','It is transferring from wind to electricity','It is staying in the wind'],answer:2},{q:'Which word means where energy comes from?',options:['transfer','source','electricity','fuel'],answer:1},{q:'Which TWO of the following are natural sources of energy?',options:['a battery and a power cord','a generator and an engine','petrol and coal only','the sun and wind'],answer:3},{q:'How does energy from the sun reach a solar panel on a roof?',options:['through electrical wires','through underground pipes','by light traveling through the air','by heat rising from the ground'],answer:2},{q:'Which TWO show energy being transferred from one place to another?',options:['a ball hitting a bat and making it move and a bulb lighting up from a battery','a rock sitting still and a turned-off lamp','a sleeping cat and a parked car','a book on a shelf and a closed battery'],answer:0}],
