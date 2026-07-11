@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Star Chasers — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Star Chasers, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#4f46e5; --main-d:#4338ca; --tint:#e0e7ff; --line:#c7d2fe; --text-c:#3730a3;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌟</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌟 Grade 5 · Unit 7 · Space Systems</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌟</div>
+      <h1 id="titleName">Star Chasers</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,117 +166,117 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌟",
+  "name": "Star Chasers",
+  "tag": "Spin, shine, and chase shadows across the sky!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Which star is closest to Earth?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "☀️",
+            "t": "The Sun",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "⭐",
+            "t": "Polaris",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Air",
+            "e": "🌕",
+            "t": "The Moon",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "Why does the Sun look bigger than other stars?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "📍",
+            "t": "It's nearest",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Raindrop",
+            "e": "🔥",
+            "t": "It's hottest",
+            "ok": false
+          },
+          {
+            "e": "✨",
+            "t": "It's brightest",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Which landform is very tall and rocky?",
+        "q": "What causes day and night on Earth?",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountain",
+            "e": "🌍",
+            "t": "Earth spinning",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Desert Flat",
+            "e": "☁️",
+            "t": "Clouds blocking",
             "ok": false
           },
           {
-            "e": "🌊",
-            "t": "Ocean",
+            "e": "🌙",
+            "t": "Moon moving",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things that are true about shadows.",
         "choices": [
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "☀️",
+            "t": "Need light",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🔄",
+            "t": "Change size",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "🌙",
+            "t": "Glow at night",
             "ok": false
           },
           {
-            "e": "🧊",
-            "t": "Ice",
+            "e": "⏰",
+            "t": "Change through day",
             "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "When the Sun is high at noon, your shadow is __.",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "🔸",
+            "t": "Short",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "📏",
+            "t": "Very long",
+            "ok": false
+          },
+          {
+            "e": "❌",
+            "t": "Gone",
             "ok": false
           }
         ]
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "Stars look tiny because they are very __.",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "🌌",
+            "t": "Far away",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🤏",
+            "t": "Small",
+            "ok": false
+          },
+          {
+            "e": "😴",
+            "t": "Dim",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Order shadows from LONGEST to SHORTEST during the day.",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "🌅",
+            "t": "Morning"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🌤️",
+            "t": "Noon"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
+            "e": "🌆",
+            "t": "Evening"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Weathering means rocks are…",
+        "q": "The UAE is HOT in summer because Earth is tilted toward the Sun. This is called a __.",
         "choices": [
           {
-            "e": "🔨",
-            "t": "Broken Down",
+            "e": "🍂",
+            "t": "Season",
             "ok": true
           },
           {
-            "e": "🚚",
-            "t": "Moved Away",
+            "e": "🌦️",
+            "t": "Weather",
             "ok": false
           },
           {
-            "e": "🔥",
-            "t": "Melted",
+            "e": "🌑",
+            "t": "Eclipse",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL things the Sun gives Earth.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "💡",
+            "t": "Light",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🔥",
+            "t": "Heat",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
-            "ok": true
-          },
-          {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🌧️",
+            "t": "Rain",
             "ok": false
+          },
+          {
+            "e": "🌱",
+            "t": "Plant energy",
+            "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "Which side of Earth has NIGHT right now?",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "🌑",
+            "t": "Away from Sun",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "☀️",
+            "t": "Facing the Sun",
+            "ok": false
+          },
+          {
+            "e": "🌍",
+            "t": "Top of Earth",
             "ok": false
           }
         ]
@@ -393,120 +393,115 @@ var GAME = {
     ],
     "gold": [
       {
-        "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
-        "choices": [
-          {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
-            "ok": true
-          },
-          {
-            "e": "↔️",
-            "t": "Same Age",
-            "ok": false
-          }
-        ]
-      },
-      {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order the shadow from LONGEST to SHORTEST as the Sun rises higher.",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "🌄",
+            "t": "Sunrise shadow"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "⏰",
+            "t": "Mid-morning"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
+            "e": "🕛",
+            "t": "Noon shadow"
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A camel standing outside in Abu Dhabi has NO shadow. What is most likely true?",
+        "choices": [
+          {
+            "e": "🌞",
+            "t": "Sun is overhead",
+            "ok": true
+          },
+          {
+            "e": "🌙",
+            "t": "It is night",
+            "ok": false
+          },
+          {
+            "e": "☁️",
+            "t": "Very cloudy",
+            "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL true facts about fossils!",
+        "q": "Tap ALL correct reasons why the Sun looks different from other stars.",
         "choices": [
           {
-            "e": "🦴",
-            "t": "Old Remains",
+            "e": "📍",
+            "t": "Much closer",
             "ok": true
           },
           {
-            "e": "📖",
-            "t": "Tell History",
+            "e": "🔆",
+            "t": "Looks biggest",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Made by Rain",
+            "e": "⭐",
+            "t": "Only star",
             "ok": false
           },
           {
-            "e": "🪨",
-            "t": "Found in Rock",
+            "e": "👁️",
+            "t": "Visible by day",
             "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "Dubai has longer days in June than in December. This is because Earth is __.",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "↗️",
+            "t": "Tilted toward Sun",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
+            "e": "↙️",
+            "t": "Tilted away from Sun",
+            "ok": false
+          },
+          {
+            "e": "⏸️",
+            "t": "Not spinning",
             "ok": false
           }
         ]
       },
       {
-        "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "type": "one",
+        "q": "If Earth stopped spinning, what would happen?",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
+            "e": "🌓",
+            "t": "No day or night",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Deserts",
-            "ok": true
+            "e": "🌗",
+            "t": "Faster seasons",
+            "ok": false
           },
           {
-            "e": "🌊",
-            "t": "Rivers",
-            "ok": true
-          },
-          {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "☀️",
+            "t": "Sun gets closer",
             "ok": false
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-space"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

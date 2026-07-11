@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Sun Power — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Sun Power, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#d97706; --main-d:#b45309; --tint:#fef3c7; --line:#fde68a; --text-c:#92400e;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌞</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌞 Grade 5 · Unit 3 · Energy</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌞</div>
+      <h1 id="titleName">Sun Power</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,18 +166,18 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌞",
+  "name": "Sun Power",
+  "tag": "Trace every bite back to the blazing Sun!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Where does your body get energy to run and play?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "🍎",
+            "t": "Food",
             "ok": true
           },
           {
@@ -186,97 +186,97 @@ var GAME = {
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Air",
+            "e": "😴",
+            "t": "Sleep",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "Which gives our bodies energy to grow?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
+            "e": "🍚",
+            "t": "Rice",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Rock",
             "ok": false
           },
           {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "🌬️",
+            "t": "Wind",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Plants use sunlight to make their own ___.",
+        "choices": [
+          {
+            "e": "🍃",
+            "t": "Food",
             "ok": true
           },
           {
             "e": "💧",
-            "t": "Raindrop",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Desert Flat",
+            "t": "Rain",
             "ok": false
           },
           {
-            "e": "🌊",
-            "t": "Ocean",
+            "e": "🌙",
+            "t": "Moonlight",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things our bodies use food energy for.",
         "choices": [
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🏃",
+            "t": "Moving",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🌡️",
+            "t": "Warmth",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "📏",
+            "t": "Growing",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Making rocks",
             "ok": false
-          },
-          {
-            "e": "🧊",
-            "t": "Ice",
-            "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "The Sun gives plants energy as ___.",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "☀️",
+            "t": "Light",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "❄️",
+            "t": "Cold",
+            "ok": false
+          },
+          {
+            "e": "🌑",
+            "t": "Darkness",
             "ok": false
           }
         ]
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "A camel eats dates 🌴. Where did the energy in dates come from first?",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "☀️",
+            "t": "The Sun",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🌊",
+            "t": "The sea",
+            "ok": false
+          },
+          {
+            "e": "🌙",
+            "t": "The Moon",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Put in order: how energy travels from Sun to YOU.",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "☀️",
+            "t": "Sunlight"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🌿",
+            "t": "Plant"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
+            "e": "🧒",
+            "t": "You eat"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Weathering means rocks are…",
+        "q": "Which part of the plant traps sunlight energy?",
         "choices": [
           {
-            "e": "🔨",
-            "t": "Broken Down",
+            "e": "🍃",
+            "t": "Leaves",
             "ok": true
           },
           {
-            "e": "🚚",
-            "t": "Moved Away",
+            "e": "🌱",
+            "t": "Roots",
             "ok": false
           },
           {
-            "e": "🔥",
-            "t": "Melted",
+            "e": "🌸",
+            "t": "Flowers",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL foods that store energy that once came from the Sun.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🍞",
+            "t": "Bread",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🥕",
+            "t": "Carrot",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
+            "e": "🍌",
+            "t": "Banana",
             "ok": true
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🪨",
+            "t": "Pebble",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "You feel warm after running. That warmth energy came from ___.",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "🍽️",
+            "t": "Your food",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "🌬️",
+            "t": "The wind",
+            "ok": false
+          },
+          {
+            "e": "🛏️",
+            "t": "Your bed",
             "ok": false
           }
         ]
@@ -393,120 +393,119 @@ var GAME = {
     ],
     "gold": [
       {
-        "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
-        "choices": [
-          {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
-            "ok": true
-          },
-          {
-            "e": "↔️",
-            "t": "Same Age",
-            "ok": false
-          }
-        ]
-      },
-      {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order the energy chain: Sun → plant → animal → you.",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "☀️",
+            "t": "Sun"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "🌿",
+            "t": "Plant"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL true facts about fossils!",
-        "choices": [
-          {
-            "e": "🦴",
-            "t": "Old Remains",
-            "ok": true
+            "e": "🐔",
+            "t": "Chicken"
           },
           {
-            "e": "📖",
-            "t": "Tell History",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Made by Rain",
-            "ok": false
-          },
-          {
-            "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
+            "e": "🧒",
+            "t": "Child"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "A falcon eats a fish. The fish ate seaweed. Where did the energy START?",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "☀️",
+            "t": "The Sun",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
+            "e": "🌊",
+            "t": "The water",
+            "ok": false
+          },
+          {
+            "e": "🐟",
+            "t": "The fish",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "q": "Tap ALL true statements about food energy and the Sun.",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
+            "e": "🌿",
+            "t": "Plants trap sunlight",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Deserts",
+            "e": "🍽️",
+            "t": "We eat plant energy",
             "ok": true
           },
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "☀️",
+            "t": "Sun is the source",
             "ok": true
           },
           {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "🌙",
+            "t": "Moon makes food energy",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "If there were NO sunlight, plants could not make food. What would happen to animals?",
+        "choices": [
+          {
+            "e": "😰",
+            "t": "No energy",
+            "ok": true
+          },
+          {
+            "e": "✅",
+            "t": "Still fine",
+            "ok": false
+          },
+          {
+            "e": "🍔",
+            "t": "More food",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Energy for your growth traces ALL the way back to ___.",
+        "choices": [
+          {
+            "e": "☀️",
+            "t": "The Sun",
+            "ok": true
+          },
+          {
+            "e": "🛒",
+            "t": "The shop",
+            "ok": false
+          },
+          {
+            "e": "🌧️",
+            "t": "The rain",
             "ok": false
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-energy"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

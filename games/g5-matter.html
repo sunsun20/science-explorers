@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Matter Lab — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Matter Lab, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#2563eb; --main-d:#1d4ed8; --tint:#e7effe; --line:#c7dbfd; --text-c:#1e40af;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🧪</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🧪 Grade 5 · Unit 1 · Matter</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🧪</div>
+      <h1 id="titleName">Matter Lab</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,118 +166,113 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🧪",
+  "name": "Matter Lab",
+  "tag": "Solids, liquids, gases — and how matter changes!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Which one is a SOLID?",
         "choices": [
           {
             "e": "🪨",
-            "t": "Minerals",
+            "t": "Rock",
             "ok": true
           },
           {
             "e": "💧",
-            "t": "Water",
-            "ok": false
+            "t": "Water"
           },
           {
-            "e": "🌬️",
-            "t": "Air",
-            "ok": false
+            "e": "💨",
+            "t": "Steam"
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "Which one is a LIQUID?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "🥤",
+            "t": "Juice",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Raindrop",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
+            "e": "🧱",
+            "t": "Brick"
           },
           {
-            "e": "🏜️",
-            "t": "Desert Flat",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Ocean",
-            "ok": false
+            "e": "🎈",
+            "t": "Balloon"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL the solids.",
         "choices": [
           {
+            "e": "🪨",
+            "t": "Rock",
+            "ok": true
+          },
+          {
+            "e": "🔑",
+            "t": "Key",
+            "ok": true
+          },
+          {
             "e": "💧",
-            "t": "Water",
-            "ok": true
-          },
-          {
-            "e": "🌬️",
-            "t": "Wind",
-            "ok": true
-          },
-          {
-            "e": "🍎",
-            "t": "Apple",
-            "ok": false
+            "t": "Water"
           },
           {
             "e": "🧊",
             "t": "Ice",
             "ok": true
+          },
+          {
+            "e": "💨",
+            "t": "Steam"
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "A gas, like air…",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "💨",
+            "t": "Fills the space",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
-            "ok": false
+            "e": "🧱",
+            "t": "Keeps its shape"
+          },
+          {
+            "e": "✋",
+            "t": "You can hold it"
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which one can you POUR?",
+        "choices": [
+          {
+            "e": "🥛",
+            "t": "Milk",
+            "ok": true
+          },
+          {
+            "e": "🪵",
+            "t": "Wood"
+          },
+          {
+            "e": "🪨",
+            "t": "Rock"
           }
         ]
       }
@@ -285,108 +280,100 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "A magnet PULLS which one?",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "🔩",
+            "t": "Iron nail",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
-        "items": [
-          {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "🧴",
+            "t": "Plastic bottle"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
-          },
-          {
-            "e": "🟡",
-            "t": "Newest Layer"
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Weathering means rocks are…",
-        "choices": [
-          {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
-          },
-          {
-            "e": "🚚",
-            "t": "Moved Away",
-            "ok": false
-          },
-          {
-            "e": "🔥",
-            "t": "Melted",
-            "ok": false
+            "e": "🧽",
+            "t": "Sponge"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap everything that FLOATS on water.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🍃",
+            "t": "Leaf",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🪵",
+            "t": "Wood",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
-            "ok": true
+            "e": "🔩",
+            "t": "Nail"
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
-            "ok": false
+            "e": "🪨",
+            "t": "Rock"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "Which one DISSOLVES in water?",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "🧂",
+            "t": "Salt",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
-            "ok": false
+            "e": "🪨",
+            "t": "Pebble"
+          },
+          {
+            "e": "🔑",
+            "t": "Key"
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which one is SEE-THROUGH?",
+        "choices": [
+          {
+            "e": "🪟",
+            "t": "Glass",
+            "ok": true
+          },
+          {
+            "e": "🧱",
+            "t": "Brick"
+          },
+          {
+            "e": "🪵",
+            "t": "Wood"
+          }
+        ]
+      },
+      {
+        "type": "order",
+        "q": "Put in order: LIGHTEST ➜ HEAVIEST.",
+        "items": [
+          {
+            "e": "🪶",
+            "t": "Feather"
+          },
+          {
+            "e": "🍎",
+            "t": "Apple"
+          },
+          {
+            "e": "🪨",
+            "t": "Rock"
           }
         ]
       }
@@ -394,119 +381,107 @@ var GAME = {
     "gold": [
       {
         "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
+        "q": "When ice MELTS, it turns into…",
         "choices": [
           {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
+            "e": "💧",
+            "t": "Water",
             "ok": true
           },
           {
-            "e": "↔️",
-            "t": "Same Age",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "order",
-        "q": "Put the erosion journey in order:",
-        "items": [
-          {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "💨",
+            "t": "Gas"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
-          },
-          {
-            "e": "🏖️",
-            "t": "Sediment Drops"
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL true facts about fossils!",
-        "choices": [
-          {
-            "e": "🦴",
-            "t": "Old Remains",
-            "ok": true
-          },
-          {
-            "e": "📖",
-            "t": "Tell History",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Made by Rain",
-            "ok": false
-          },
-          {
-            "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
+            "e": "🧊",
+            "t": "More ice"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "When water BOILS, it turns into…",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "💨",
+            "t": "Steam",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
-            "ok": false
+            "e": "🧊",
+            "t": "Ice"
+          },
+          {
+            "e": "🪨",
+            "t": "Rock"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "q": "Tap the changes we can REVERSE.",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
+            "e": "🧊",
+            "t": "Melting ice",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Deserts",
+            "e": "💧",
+            "t": "Freezing water",
             "ok": true
           },
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🔥",
+            "t": "Burning paper"
+          },
+          {
+            "e": "🍳",
+            "t": "Cooking egg"
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Sand stirred into water makes a…",
+        "choices": [
+          {
+            "e": "🥣",
+            "t": "Mixture",
             "ok": true
           },
           {
-            "e": "🎒",
-            "t": "School Bag",
-            "ok": false
+            "e": "🪨",
+            "t": "New rock"
+          },
+          {
+            "e": "💨",
+            "t": "Gas"
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "How do we get SALT back from salty water?",
+        "choices": [
+          {
+            "e": "☀️",
+            "t": "Dry the water",
+            "ok": true
+          },
+          {
+            "e": "🧊",
+            "t": "Freeze it"
+          },
+          {
+            "e": "🧲",
+            "t": "Use a magnet"
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-matter"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

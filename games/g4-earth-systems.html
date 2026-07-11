@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Earth Shapers — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Earth Shapers, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#92400e; --main-d:#78350f; --tint:#f5ecdf; --line:#e7d3b8; --text-c:#713f12;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🏔️</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🏔️ Grade 4 · Unit 6 · Earth's Systems</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🏔️</div>
+      <h1 id="titleName">Earth Shapers</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,77 +166,77 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🏔️",
+  "name": "Earth Shapers",
+  "tag": "Wind, water, ice — who shapes the land?",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Which force BREAKS rocks into smaller pieces?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "⛏️",
+            "t": "Weathering",
             "ok": true
-          },
-          {
-            "e": "💧",
-            "t": "Water",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Air",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "A fossil is the remains of a…",
-        "choices": [
-          {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
-            "ok": true
-          },
-          {
-            "e": "💧",
-            "t": "Raindrop",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Desert Flat",
-            "ok": false
           },
           {
             "e": "🌊",
-            "t": "Ocean",
+            "t": "Deposition",
+            "ok": false
+          },
+          {
+            "e": "🌴",
+            "t": "Planting",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Wind carries sand and drops it to build…",
+        "choices": [
+          {
+            "e": "🏔️",
+            "t": "Mountains",
+            "ok": false
+          },
+          {
+            "e": "🏜️",
+            "t": "Sand Dunes",
+            "ok": true
+          },
+          {
+            "e": "🌊",
+            "t": "Waves",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which agent of erosion moves soil the MOST in a desert?",
+        "choices": [
+          {
+            "e": "❄️",
+            "t": "Ice",
+            "ok": false
+          },
+          {
+            "e": "💨",
+            "t": "Wind",
+            "ok": true
+          },
+          {
+            "e": "🌱",
+            "t": "Roots",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things that can WEATHER rocks!",
         "choices": [
           {
             "e": "💧",
@@ -244,40 +244,40 @@ var GAME = {
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
-            "ok": true
-          },
-          {
-            "e": "🍎",
-            "t": "Apple",
-            "ok": false
-          },
-          {
-            "e": "🧊",
+            "e": "❄️",
             "t": "Ice",
             "ok": true
+          },
+          {
+            "e": "🌱",
+            "t": "Plant Roots",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Rock Itself",
+            "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "When a river slows down, it DROPS its load. This is called…",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
+            "e": "💨",
             "t": "Erosion",
-            "ok": true
+            "ok": false
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "⛏️",
+            "t": "Weathering",
             "ok": false
+          },
+          {
+            "e": "🏖️",
+            "t": "Deposition",
+            "ok": true
           }
         ]
       }
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "Water gets into a rock crack, freezes and EXPANDS. This causes…",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
+            "e": "🏖️",
+            "t": "Deposition",
             "ok": false
           },
           {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "⛏️",
+            "t": "Weathering",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🌊",
+            "t": "Flooding",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Put in order: how water shapes land step by step",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "⛏️",
+            "t": "Weathering"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🌊",
+            "t": "Erosion"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
+            "e": "🏖️",
+            "t": "Deposition"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Weathering means rocks are…",
+        "q": "On a map, long chains of mountains usually run…",
         "choices": [
           {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
-          },
-          {
-            "e": "🚚",
-            "t": "Moved Away",
+            "e": "🔵",
+            "t": "In circles",
             "ok": false
           },
           {
-            "e": "🔥",
-            "t": "Melted",
+            "e": "➡️",
+            "t": "In long lines",
+            "ok": true
+          },
+          {
+            "e": "🔀",
+            "t": "Randomly",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL things EROSION can move!",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🪨",
+            "t": "Rock bits",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🏝️",
+            "t": "Sand",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
+            "e": "🌱",
+            "t": "Soil",
             "ok": true
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🌞",
+            "t": "Sunlight",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "Plant roots can BREAK rocks apart slowly. This is…",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
+            "e": "🌊",
+            "t": "Erosion",
             "ok": false
           },
           {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "⛏️",
+            "t": "Weathering",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "🏖️",
+            "t": "Deposition",
             "ok": false
           }
         ]
@@ -394,119 +394,114 @@ var GAME = {
     "gold": [
       {
         "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
+        "q": "Erosion is DIFFERENT from weathering because erosion…",
         "choices": [
           {
-            "e": "⬆️",
-            "t": "Deep = Newer",
+            "e": "⛏️",
+            "t": "Breaks rocks",
             "ok": false
           },
           {
-            "e": "⬇️",
-            "t": "Deep = Older",
+            "e": "🚚",
+            "t": "Moves material",
             "ok": true
           },
           {
-            "e": "↔️",
-            "t": "Same Age",
+            "e": "🌱",
+            "t": "Grows plants",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order from LARGEST to SMALLEST Earth feature:",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "🏔️",
+            "t": "Mountain"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "🏜️",
+            "t": "Sand Dune"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
+            "e": "🪨",
+            "t": "Pebble"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL true facts about fossils!",
+        "q": "Tap ALL true facts about deposition!",
         "choices": [
           {
-            "e": "🦴",
-            "t": "Old Remains",
+            "e": "🏖️",
+            "t": "Builds landforms",
             "ok": true
           },
           {
-            "e": "📖",
-            "t": "Tell History",
+            "e": "🐪",
+            "t": "Builds dunes",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Made by Rain",
+            "e": "⛏️",
+            "t": "Breaks rocks",
             "ok": false
           },
           {
-            "e": "🪨",
-            "t": "Found in Rock",
+            "e": "🌊",
+            "t": "Needs slow water",
             "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "A map shows most DESERTS and most MOUNTAIN CHAINS. A scientist spots a …",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
+            "e": "🔀",
+            "t": "Random pattern",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "📏",
+            "t": "Line pattern",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
+            "e": "⭕",
+            "t": "Circle pattern",
             "ok": false
           }
         ]
       },
       {
-        "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "type": "one",
+        "q": "A camel 🐪 crosses a desert dune. The wind built that dune using…",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Deserts",
-            "ok": true
-          },
-          {
             "e": "🌊",
-            "t": "Rivers",
-            "ok": true
+            "t": "River water",
+            "ok": false
           },
           {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "❄️",
+            "t": "Ice",
             "ok": false
+          },
+          {
+            "e": "🏖️",
+            "t": "Deposition",
+            "ok": true
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g4-earth-systems"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

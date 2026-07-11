@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Earth Mix — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Earth Mix, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#92400e; --main-d:#78350f; --tint:#f5ecdf; --line:#e7d3b8; --text-c:#713f12;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌍</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌍 Grade 5 · Unit 6 · Earth's Interactions</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌍</div>
+      <h1 id="titleName">Earth Mix</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,117 +166,117 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌍",
+  "name": "Earth Mix",
+  "tag": "Land, water, air, and life — they all work together!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Which sphere is made of LAND and rocks?",
         "choices": [
           {
             "e": "🪨",
-            "t": "Minerals",
+            "t": "Geosphere",
             "ok": true
           },
           {
             "e": "💧",
-            "t": "Water",
+            "t": "Hydrosphere",
             "ok": false
           },
           {
             "e": "🌬️",
-            "t": "Air",
+            "t": "Atmosphere",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "The air all around Earth belongs to which sphere?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "🌫️",
+            "t": "Atmosphere",
             "ok": true
-          },
-          {
-            "e": "💧",
-            "t": "Raindrop",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Desert Flat",
-            "ok": false
           },
           {
             "e": "🌊",
-            "t": "Ocean",
+            "t": "Hydrosphere",
+            "ok": false
+          },
+          {
+            "e": "🌱",
+            "t": "Biosphere",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things that belong to the BIOSPHERE.",
         "choices": [
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🐪",
+            "t": "Camel",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🌴",
+            "t": "Palm tree",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "🪨",
+            "t": "Rock",
             "ok": false
           },
           {
-            "e": "🧊",
-            "t": "Ice",
+            "e": "🐟",
+            "t": "Fish",
             "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "Most of Earth's water is found in the …",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
             "e": "🌊",
-            "t": "Erosion",
+            "t": "Ocean",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "🏔️",
+            "t": "Ice caps",
+            "ok": false
+          },
+          {
+            "e": "🚰",
+            "t": "Rivers",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Ocean water is mostly …",
+        "choices": [
+          {
+            "e": "🧂",
+            "t": "Salty",
+            "ok": true
+          },
+          {
+            "e": "🍬",
+            "t": "Sweet",
+            "ok": false
+          },
+          {
+            "e": "🫙",
+            "t": "Fresh",
             "ok": false
           }
         ]
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "A camel drinks from a desert spring. Which TWO spheres are interacting?",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "🐪💧",
+            "t": "Bio + Hydro",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🪨🌬️",
+            "t": "Geo + Atmo",
+            "ok": false
+          },
+          {
+            "e": "💧🌬️",
+            "t": "Hydro + Atmo",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Order Earth's water: MOST amount to LEAST amount.",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "🌊",
+            "t": "Salt ocean"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🧊",
+            "t": "Ice & snow"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Weathering means rocks are…",
-        "choices": [
-          {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
-          },
-          {
-            "e": "🚚",
-            "t": "Moved Away",
-            "ok": false
-          },
-          {
-            "e": "🔥",
-            "t": "Melted",
-            "ok": false
+            "e": "🚰",
+            "t": "Fresh rivers"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL spheres that interact when rain falls on a desert sand dune.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🌫️",
+            "t": "Atmosphere",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "💧",
+            "t": "Hydrosphere",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
+            "e": "🪨",
+            "t": "Geosphere",
             "ok": true
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🔥",
+            "t": "Fire",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "Why can humans NOT drink most of Earth's water?",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "🧂",
+            "t": "Too salty",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "🌡️",
+            "t": "Too hot",
+            "ok": false
+          },
+          {
+            "e": "🎨",
+            "t": "Wrong colour",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A falcon flies through the air and catches a fish from the sea. How many spheres does this involve?",
+        "choices": [
+          {
+            "e": "3️⃣",
+            "t": "Three",
+            "ok": true
+          },
+          {
+            "e": "1️⃣",
+            "t": "One",
+            "ok": false
+          },
+          {
+            "e": "4️⃣",
+            "t": "Four",
             "ok": false
           }
         ]
@@ -393,120 +393,119 @@ var GAME = {
     ],
     "gold": [
       {
-        "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
-        "choices": [
-          {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
-            "ok": true
-          },
-          {
-            "e": "↔️",
-            "t": "Same Age",
-            "ok": false
-          }
-        ]
-      },
-      {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order the four spheres from the one with the MOST water to the one with NO water.",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "💧",
+            "t": "Hydrosphere"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
-          },
-          {
-            "e": "🏖️",
-            "t": "Sediment Drops"
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL true facts about fossils!",
-        "choices": [
-          {
-            "e": "🦴",
-            "t": "Old Remains",
-            "ok": true
-          },
-          {
-            "e": "📖",
-            "t": "Tell History",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Made by Rain",
-            "ok": false
+            "e": "🌱",
+            "t": "Biosphere"
           },
           {
             "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
+            "t": "Geosphere"
+          },
+          {
+            "e": "🌬️",
+            "t": "Atmosphere"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "A date palm tree roots into soil, breathes air, and drinks groundwater. It uses which spheres?",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "🌍",
+            "t": "All four",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
+            "e": "2️⃣",
+            "t": "Two only",
+            "ok": false
+          },
+          {
+            "e": "1️⃣",
+            "t": "One only",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "q": "Tap ALL true facts about Earth's water.",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
+            "e": "🌊",
+            "t": "Most is salty",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Deserts",
+            "e": "💧",
+            "t": "Little is fresh",
             "ok": true
+          },
+          {
+            "e": "🏔️",
+            "t": "Some is frozen",
+            "ok": true
+          },
+          {
+            "e": "🍹",
+            "t": "Most is drinkable",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Wind carries sand from a desert dune and drops it into the sea. Which spheres interact?",
+        "choices": [
+          {
+            "e": "🌬️🪨🌊",
+            "t": "Atmo+Geo+Hydro",
+            "ok": true
+          },
+          {
+            "e": "🌱🔥",
+            "t": "Bio+Fire",
+            "ok": false
+          },
+          {
+            "e": "💧🌱",
+            "t": "Hydro+Bio",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "An oryx eats desert grass, breathes air, and stands on rocky ground. If the geosphere disappears, which sphere is DIRECTLY affected first?",
+        "choices": [
+          {
+            "e": "🌱",
+            "t": "Biosphere",
+            "ok": true
+          },
+          {
+            "e": "🌫️",
+            "t": "Atmosphere",
+            "ok": false
           },
           {
             "e": "🌊",
-            "t": "Rivers",
-            "ok": true
-          },
-          {
-            "e": "🎒",
-            "t": "School Bag",
+            "t": "Hydrosphere",
             "ok": false
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-earth"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

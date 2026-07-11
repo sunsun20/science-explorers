@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Eco Quest — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Eco Quest, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#0d9488; --main-d:#0f766e; --tint:#ccfbf1; --line:#99f6e4; --text-c:#115e59;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌿</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌿 Grade 5 · Unit 5 · Ecosystems & Sustainability</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌿</div>
+      <h1 id="titleName">Eco Quest</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,117 +166,114 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌿",
+  "name": "Eco Quest",
+  "tag": "Follow the energy — from sun to soil and back again!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Where does a food chain ALWAYS start?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "☀️",
+            "t": "The Sun",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🐪",
+            "t": "A camel",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Air",
+            "e": "🌧️",
+            "t": "Rain",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "Which living thing makes its OWN food from sunlight?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "🌵",
+            "t": "Cactus",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Raindrop",
+            "e": "🦅",
+            "t": "Falcon",
+            "ok": false
+          },
+          {
+            "e": "🐛",
+            "t": "Caterpillar",
             "ok": false
           }
         ]
       },
       {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
+        "type": "order",
+        "q": "Put the food chain in the right order.",
+        "items": [
           {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
+            "e": "☀️",
+            "t": "Sun"
           },
           {
-            "e": "🏜️",
-            "t": "Desert Flat",
-            "ok": false
+            "e": "🌾",
+            "t": "Grass"
           },
           {
-            "e": "🌊",
-            "t": "Ocean",
-            "ok": false
+            "e": "🐪",
+            "t": "Camel"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL the PLANTS in this group.",
         "choices": [
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🌴",
+            "t": "Date palm",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🌵",
+            "t": "Cactus",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "🦎",
+            "t": "Lizard",
             "ok": false
           },
           {
-            "e": "🧊",
-            "t": "Ice",
+            "e": "🌿",
+            "t": "Seagrass",
             "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "What do decomposers do to dead leaves?",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "♻️",
+            "t": "Break them down",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "🍳",
+            "t": "Cook them",
+            "ok": false
+          },
+          {
+            "e": "🚀",
+            "t": "Launch them",
             "ok": false
           }
         ]
@@ -285,107 +282,111 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "In a food web, what happens if all the plants die?",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "📉",
+            "t": "Animals starve",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "📈",
+            "t": "Animals thrive",
+            "ok": false
+          },
+          {
+            "e": "↔️",
+            "t": "Nothing changes",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Order this desert food chain from first to last.",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "☀️",
+            "t": "Sun"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🌿",
+            "t": "Desert shrub"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Weathering means rocks are…",
-        "choices": [
-          {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
+            "e": "🐁",
+            "t": "Mouse"
           },
           {
-            "e": "🚚",
-            "t": "Moved Away",
-            "ok": false
-          },
-          {
-            "e": "🔥",
-            "t": "Melted",
-            "ok": false
+            "e": "🦅",
+            "t": "Falcon"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL the DECOMPOSERS.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "🍄",
+            "t": "Mushroom",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🦠",
+            "t": "Bacteria",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
+            "e": "🐪",
+            "t": "Camel",
+            "ok": false
+          },
+          {
+            "e": "🪱",
+            "t": "Worm",
+            "ok": true
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "What does a food WEB show that a food CHAIN does not?",
+        "choices": [
+          {
+            "e": "🕸️",
+            "t": "Many connections",
             "ok": true
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "1️⃣",
+            "t": "One path only",
+            "ok": false
+          },
+          {
+            "e": "☀️",
+            "t": "Only the Sun",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "Factories pour waste into a river. What is this called?",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "☠️",
+            "t": "Pollution",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "💧",
+            "t": "Fresh water",
+            "ok": false
+          },
+          {
+            "e": "♻️",
+            "t": "Recycling",
             "ok": false
           }
         ]
@@ -394,119 +395,124 @@ var GAME = {
     "gold": [
       {
         "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
+        "q": "Decomposers return nutrients to the soil. This helps which part of the cycle next?",
         "choices": [
           {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
+            "e": "🌱",
+            "t": "Plants grow",
             "ok": true
           },
           {
-            "e": "↔️",
-            "t": "Same Age",
+            "e": "🌧️",
+            "t": "Rain falls",
+            "ok": false
+          },
+          {
+            "e": "🔥",
+            "t": "Fire spreads",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL actions that PROTECT ecosystems.",
+        "choices": [
+          {
+            "e": "♻️",
+            "t": "Recycle waste",
+            "ok": true
+          },
+          {
+            "e": "🌱",
+            "t": "Plant trees",
+            "ok": true
+          },
+          {
+            "e": "🏭",
+            "t": "Dump chemicals",
+            "ok": false
+          },
+          {
+            "e": "💧",
+            "t": "Save water",
+            "ok": true
+          },
+          {
+            "e": "🔥",
+            "t": "Burn rubbish",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order how MATTER cycles: from dead animal back to new plant.",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "💀",
+            "t": "Animal dies"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "🍄",
+            "t": "Decomposer breaks it down"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL true facts about fossils!",
-        "choices": [
-          {
-            "e": "🦴",
-            "t": "Old Remains",
-            "ok": true
-          },
-          {
-            "e": "📖",
-            "t": "Tell History",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Made by Rain",
-            "ok": false
-          },
-          {
-            "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
+            "e": "🌱",
+            "t": "Nutrients feed plant"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "The Arabian oryx eats grass. A falcon eats the oryx. The oryx is a ___.",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
-            "ok": false
-          },
-          {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
+            "e": "🥩",
+            "t": "Consumer",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Heavy Rain",
+            "e": "🌿",
+            "t": "Producer",
+            "ok": false
+          },
+          {
+            "e": "🍄",
+            "t": "Decomposer",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
+        "q": "Tap ALL TRUE statements about matter in ecosystems.",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountains",
+            "e": "🔄",
+            "t": "Matter cycles",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Deserts",
+            "e": "🍄",
+            "t": "Decomposers recycle",
             "ok": true
           },
           {
-            "e": "🌊",
-            "t": "Rivers",
-            "ok": true
-          },
-          {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "❌",
+            "t": "Matter disappears",
             "ok": false
+          },
+          {
+            "e": "🌱",
+            "t": "Plants make food",
+            "ok": true
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-ecosystems"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

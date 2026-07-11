@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Gravity Drop — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Gravity Drop, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#e11d48; --main-d:#be123c; --tint:#ffe4e6; --line:#fecdd3; --text-c:#9f1239;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌍</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌍 Grade 5 · Unit 2 · Forces</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌍</div>
+      <h1 id="titleName">Gravity Drop</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,117 +166,117 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌍",
+  "name": "Gravity Drop",
+  "tag": "Feel the pull — everything falls down!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Which way does gravity pull things?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "⬇️",
+            "t": "Down",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "⬆️",
+            "t": "Up",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Air",
+            "e": "➡️",
+            "t": "Sideways",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "You drop a ball. What makes it fall?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "🌍",
+            "t": "Gravity",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Raindrop",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Which landform is very tall and rocky?",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountain",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Desert Flat",
+            "e": "💨",
+            "t": "Wind",
             "ok": false
           },
           {
-            "e": "🌊",
-            "t": "Ocean",
+            "e": "🔥",
+            "t": "Heat",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things that fall DOWN when dropped!",
         "choices": [
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🪨",
+            "t": "Rock",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🌴",
+            "t": "Date",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "⚽",
+            "t": "Football",
+            "ok": true
+          },
+          {
+            "e": "🚀",
+            "t": "Rocket on",
             "ok": false
-          },
-          {
-            "e": "🧊",
-            "t": "Ice",
-            "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "Gravity pulls things toward…",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "🌍",
+            "t": "Earth centre",
             "ok": true
           },
           {
-            "e": "🌡️",
-            "t": "Temperature",
+            "e": "☀️",
+            "t": "The Sun",
+            "ok": false
+          },
+          {
+            "e": "🌙",
+            "t": "The Moon",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A camel stands still. Its weight pushes…",
+        "choices": [
+          {
+            "e": "⬇️",
+            "t": "Downward",
+            "ok": true
+          },
+          {
+            "e": "⬆️",
+            "t": "Upward",
+            "ok": false
+          },
+          {
+            "e": "↔️",
+            "t": "Sideways",
             "ok": false
           }
         ]
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "Which feels a BIGGER pull of gravity?",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "🪨",
+            "t": "Heavy rock",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🪶",
+            "t": "Feather",
+            "ok": false
+          },
+          {
+            "e": "🎈",
+            "t": "Balloon",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A book sits still on a table. The forces are…",
+        "choices": [
+          {
+            "e": "⚖️",
+            "t": "Balanced",
+            "ok": true
+          },
+          {
+            "e": "💥",
+            "t": "Unbalanced",
+            "ok": false
+          },
+          {
+            "e": "🚫",
+            "t": "No forces",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Order: lightest to heaviest (gravity pull)!",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "🪶",
+            "t": "Feather"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🍎",
+            "t": "Apple"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Weathering means rocks are…",
-        "choices": [
-          {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
-          },
-          {
-            "e": "🚚",
-            "t": "Moved Away",
-            "ok": false
-          },
-          {
-            "e": "🔥",
-            "t": "Melted",
-            "ok": false
+            "e": "🪨",
+            "t": "Boulder"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL examples of BALANCED forces!",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "📚",
+            "t": "Book on desk",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "🐪",
+            "t": "Camel resting",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
-            "ok": true
+            "e": "⚽",
+            "t": "Ball rolling",
+            "ok": false
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🪂",
+            "t": "Skydiver falling",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "A falcon drops from the sky. What force pulls it down?",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "🌍",
+            "t": "Gravity",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "🧲",
+            "t": "Magnetism",
+            "ok": false
+          },
+          {
+            "e": "💨",
+            "t": "Wind push",
             "ok": false
           }
         ]
@@ -394,119 +394,114 @@ var GAME = {
     "gold": [
       {
         "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
+        "q": "An oryx runs at steady speed. The forces on it are…",
         "choices": [
           {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
+            "e": "⚖️",
+            "t": "Balanced",
             "ok": true
           },
           {
-            "e": "↔️",
-            "t": "Same Age",
+            "e": "💥",
+            "t": "Unbalanced",
+            "ok": false
+          },
+          {
+            "e": "🚫",
+            "t": "Zero force",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Forces are UNBALANCED when an object…",
+        "choices": [
+          {
+            "e": "🔄",
+            "t": "Changes motion",
+            "ok": true
+          },
+          {
+            "e": "😴",
+            "t": "Stays still",
+            "ok": false
+          },
+          {
+            "e": "➡️",
+            "t": "Moves steadily",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL that show UNBALANCED forces!",
+        "choices": [
+          {
+            "e": "🏃",
+            "t": "Runner speeding",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Rock falling",
+            "ok": true
+          },
+          {
+            "e": "📖",
+            "t": "Book on shelf",
+            "ok": false
+          },
+          {
+            "e": "🐪",
+            "t": "Camel standing",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order: a date falling — what happens first to last?",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "🌴",
+            "t": "Leaves tree"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "⬇️",
+            "t": "Gravity pulls"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL true facts about fossils!",
-        "choices": [
-          {
-            "e": "🦴",
-            "t": "Old Remains",
-            "ok": true
-          },
-          {
-            "e": "📖",
-            "t": "Tell History",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Made by Rain",
-            "ok": false
-          },
-          {
-            "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
+            "e": "💥",
+            "t": "Hits ground"
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "Two equal forces push a box from opposite sides. The box…",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
+            "e": "😴",
+            "t": "Stays still",
+            "ok": true
+          },
+          {
+            "e": "➡️",
+            "t": "Slides right",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Heavy Rain",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountains",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Deserts",
-            "ok": true
-          },
-          {
-            "e": "🌊",
-            "t": "Rivers",
-            "ok": true
-          },
-          {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "⬆️",
+            "t": "Jumps up",
             "ok": false
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-forces"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){

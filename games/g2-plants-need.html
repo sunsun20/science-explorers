@@ -3,189 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Grow &amp; Pollinate — Science Explorers</title>
+<title>Plant Power — Science Explorers</title>
 <!--
-  ============================================================================
-  SCIENCE EXPLORERS — GRADE GAME TEMPLATE  (self-contained, offline, English)
-  To make another game, change ONLY these 4 things:
-    1) <title>                         2) the :root THEME colour block
-    3) the .unit-pill text + brand     4) the GAME object in <script>
-  The engine supports 3 round types:  'one' (tap the 1 right answer),
-    'all' (tap every right answer, then Check),  'order' (tap in order).
-  Keep it Grade-appropriate: short words, big pictures, gentle retries.
-  ============================================================================
+  SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
+  To clone: change Plant Power, the :root theme block, the .unit-pill text/brand emoji,
+  and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
+  UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
-    /* ---- THEME (clone: change these 5) — Unit 2 = GREEN ---- */
-    --main:#40c057; --main-d:#2f9e44; --tint:#d3f9d8; --line:#b2f2bb; --text-c:#2b8a3e;
-
-    /* ---- shared Duolingo brand tokens (do not change) ---- */
+    /* ---- THEME (clone: change these 5) ---- */
+    --main:#16a34a; --main-d:#15803d; --tint:#dcfce7; --line:#bbf7d0; --text-c:#166534;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
+    --bronze:#b06d28; --silver:#78808a; --gold:#c8971b;
     --head:'Fredoka','Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
     --body:'Nunito Sans','Varela Round','Trebuchet MS',system-ui,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
-  body{
-    font-family:var(--body);color:var(--ink);min-height:100vh;overflow-x:hidden;
-    -webkit-text-size-adjust:100%;
-    background:
-      radial-gradient(1200px 520px at 50% -8%, var(--tint) 0%, rgba(255,255,255,0) 60%),
-      radial-gradient(900px 460px at 92% 4%, #fff7d6 0%, rgba(255,247,214,0) 55%),
-      var(--snow);
-  }
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;
+    background:radial-gradient(1200px 520px at 50% -8%,var(--tint) 0%,rgba(255,255,255,0) 60%),
+      radial-gradient(900px 460px at 92% 4%,#eef4ff 0%,rgba(238,244,255,0) 55%),var(--snow);}
   h1,h2,h3{font-family:var(--head);font-weight:700;margin:0;line-height:1.15;letter-spacing:-.01em}
-  .app{max-width:760px;margin:0 auto;padding:0 16px 40px}
-
-  /* ===== top bar ===== */
-  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
-    padding:12px 0 10px;background:linear-gradient(180deg,var(--snow) 72%,rgba(255,255,255,0))}
+  .app{max-width:820px;margin:0 auto;padding:0 16px 40px}
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:12px 0 10px;background:linear-gradient(180deg,var(--snow) 72%,rgba(255,255,255,0))}
   .brand{display:flex;align-items:center;gap:9px;font-family:var(--head);font-weight:700;color:var(--main);font-size:1.12rem;white-space:nowrap}
   .brand .logo{width:38px;height:38px;border-radius:12px;background:var(--main);box-shadow:0 4px 0 var(--main-d);display:grid;place-items:center;font-size:1.25rem}
-  .unit-pill{display:inline-flex;align-items:center;gap:5px;background:var(--tint);color:var(--text-c);
-    border:1px solid var(--line);font-weight:800;font-size:.74rem;padding:5px 12px;border-radius:99px;
-    letter-spacing:.03em;white-space:nowrap}
+  .unit-pill{display:inline-flex;align-items:center;gap:5px;background:var(--tint);color:var(--text-c);border:1px solid var(--line);font-weight:800;font-size:.74rem;padding:5px 12px;border-radius:99px;letter-spacing:.03em;white-space:nowrap}
   .spacer{flex:1 1 8px}
-  .iconbtn{width:44px;height:44px;min-width:44px;border-radius:12px;border:2px solid var(--cloud);
-    background:#fff;color:var(--charcoal);font-size:1.18rem;cursor:pointer;display:grid;place-items:center;
-    transition:transform .08s,background .15s,border-color .15s}
+  .iconbtn{width:44px;height:44px;min-width:44px;border-radius:12px;border:2px solid var(--cloud);background:#fff;color:var(--charcoal);font-size:1.18rem;cursor:pointer;display:grid;place-items:center;transition:transform .08s,background .15s,border-color .15s}
   .iconbtn:hover{background:#fafafa;border-color:var(--line)}
   .iconbtn:active{transform:translateY(2px)}
   .iconbtn.off{opacity:.6}
-  .restart-btn{height:38px;border-radius:12px;border:2px solid var(--line);
-    background:var(--tint);color:var(--text-c);font-family:var(--head);font-weight:800;font-size:.76rem;
-    cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:0 12px;white-space:nowrap;
-    transition:transform .08s,background .15s}
-  .restart-btn:hover{filter:brightness(.96)}
-  .restart-btn:active{transform:translateY(2px)}
-
-  /* ===== progress + stars ===== */
   .hud{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
   .bar{flex:1;height:16px;border-radius:99px;background:#eee;overflow:hidden;border:1px solid var(--cloud)}
   .bar>i{display:block;height:100%;width:0;background:var(--good);border-radius:99px;transition:width .35s ease}
   .stars{font-weight:800;color:var(--text-c);white-space:nowrap;font-family:var(--head)}
-
-  /* ===== generic card / screens ===== */
+  .pts{font-weight:800;color:var(--gold);white-space:nowrap;font-family:var(--head)}
   .screen{display:none;animation:pop .25s ease}
   .screen.live{display:block}
   @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .panel{background:#fff;border:3px solid var(--line);border-radius:24px;padding:26px 22px;box-shadow:0 8px 0 var(--tint);text-align:center}
-
-  /* ===== title screen ===== */
-  .title-emoji{font-size:5rem;line-height:1;margin:4px 0 6px;animation:float 4s ease-in-out infinite}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .title-emoji{font-size:5rem;line-height:1;margin:4px 0 6px}
   .title h1{font-size:clamp(30px,7vw,46px);color:var(--text-c)}
   .title .tag{color:var(--graphite);font-weight:700;font-size:1.05rem;margin:10px 0 4px}
-  .how{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:18px auto 6px;text-align:left}
+  .how{display:flex;flex-direction:column;gap:8px;max-width:440px;margin:18px auto 6px;text-align:left}
   .how div{background:var(--tint);border-radius:14px;padding:11px 15px;font-weight:700;color:var(--charcoal);font-size:.98rem}
   .how div b{font-size:1.2rem;margin-right:6px}
-
-  /* ===== big pressable button ===== */
-  .btn{font-family:var(--head);font-weight:700;font-size:1.22rem;color:#fff;background:var(--main);
-    border:none;border-radius:18px;padding:15px 30px;box-shadow:0 6px 0 var(--main-d);cursor:pointer;
-    display:inline-flex;align-items:center;gap:10px;letter-spacing:.3px;transition:transform .06s}
+  .btn{font-family:var(--head);font-weight:700;font-size:1.22rem;color:#fff;background:var(--main);border:none;border-radius:18px;padding:15px 30px;box-shadow:0 6px 0 var(--main-d);cursor:pointer;display:inline-flex;align-items:center;gap:10px;letter-spacing:.3px;transition:transform .06s}
   .btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--main-d)}
   .btn.green{background:var(--good);box-shadow:0 6px 0 var(--good-d)}
   .btn.green:active{box-shadow:0 2px 0 var(--good-d)}
   .btn.ghost{background:#fff;color:var(--text-c);border:3px solid var(--line);box-shadow:0 6px 0 var(--tint)}
   .btn.ghost:active{box-shadow:0 2px 0 var(--tint)}
-
-  /* ===== question ===== */
+  /* level select */
+  .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 6px}
+  @media(max-width:560px){.levels{grid-template-columns:1fr}}
+  .lvl{border:3px solid var(--cloud);border-radius:22px;padding:20px 14px;cursor:pointer;background:#fff;box-shadow:0 6px 0 #eee;transition:transform .1s,border-color .12s}
+  .lvl:hover{transform:translateY(-3px)}
+  .lvl:active{transform:translateY(2px)}
+  .lvl .medal{font-size:3.2rem;line-height:1}
+  .lvl h3{font-size:1.35rem;margin:6px 0 2px}
+  .lvl .desc{color:var(--graphite);font-weight:700;font-size:.9rem}
+  .lvl .best{margin-top:8px;font-weight:800;font-size:.85rem}
+  .lvl.b{border-color:#e6cba3}.lvl.b h3{color:var(--bronze)} .lvl.b .best{color:var(--bronze)}
+  .lvl.s{border-color:#cfd4da}.lvl.s h3{color:var(--silver)} .lvl.s .best{color:var(--silver)}
+  .lvl.g{border-color:#f0d98a}.lvl.g h3{color:var(--gold)} .lvl.g .best{color:var(--gold)}
   .q{font-family:var(--head);font-size:clamp(20px,4.6vw,28px);color:var(--ink);margin:4px 8px 6px;line-height:1.25}
-  .show{font-size:4.2rem;line-height:1.1;margin:4px 0 10px}
-  .show .seq{display:inline-flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:3rem}
-  .show .seq .qmark{opacity:.5}
-
-  /* ===== choices grid ===== */
+  .show{font-size:4.2rem;line-height:1.1;margin:4px 0 10px;display:inline-block}
   .choices{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin:18px 0 6px}
-  .choice{background:#fff;border:3px solid var(--cloud);border-radius:20px;padding:18px 12px;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:8px;min-height:118px;justify-content:center;
-    transition:transform .08s,border-color .12s,background .12s;box-shadow:0 5px 0 #eee}
+  .choice{background:#fff;border:3px solid var(--cloud);border-radius:20px;padding:18px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:118px;justify-content:center;transition:transform .08s,border-color .12s,background .12s;box-shadow:0 5px 0 #eee}
   .choice:hover{border-color:var(--line);transform:translateY(-2px)}
   .choice:active{transform:translateY(2px);box-shadow:0 2px 0 #eee}
   .choice .ce{font-size:3rem;line-height:1}
-  .choice .ct{font-family:var(--head);font-weight:700;font-size:clamp(0.72rem,1.5vw,1.05rem);color:var(--charcoal);overflow-wrap:break-word;hyphens:auto;text-align:center;width:100%}
+  .choice .ct{font-family:var(--head);font-weight:700;font-size:1.1rem;color:var(--charcoal)}
   .choice.sel{border-color:var(--sky);background:#eaf8ff;box-shadow:0 5px 0 #cfeeff}
   .choice.right{border-color:var(--good);background:#eaffd6;box-shadow:0 5px 0 #c7f0a0;animation:bounce .4s}
   .choice.wrong{border-color:var(--bad);background:#ffecec;box-shadow:0 5px 0 #ffd0d0;animation:shake .35s}
   @keyframes bounce{0%,100%{transform:none}40%{transform:translateY(-8px)}}
   @keyframes shake{0%,100%{transform:none}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
-
-  /* order slots */
   .slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px;min-height:96px}
-  .slot{width:84px;height:84px;border-radius:18px;border:3px dashed var(--line);background:var(--tint);
-    display:grid;place-items:center;font-size:2.6rem;position:relative}
-  .slot .n{position:absolute;top:-10px;left:-8px;width:26px;height:26px;border-radius:50%;background:var(--main);
-    color:#fff;font-family:var(--head);font-weight:700;font-size:.82rem;display:grid;place-items:center}
-
-  /* feedback toast */
+  .slot{width:84px;height:84px;border-radius:18px;border:3px dashed var(--line);background:var(--tint);display:grid;place-items:center;font-size:2.6rem;position:relative}
+  .slot .n{position:absolute;top:-10px;left:-8px;width:26px;height:26px;border-radius:50%;background:var(--main);color:#fff;font-family:var(--head);font-weight:700;font-size:.82rem;display:grid;place-items:center}
   .toast{min-height:34px;margin:8px 0 2px;font-family:var(--head);font-weight:700;font-size:1.25rem}
-  .toast.good{color:var(--good-d)}
-  .toast.try{color:#e8590c}
-
+  .toast.good{color:var(--good-d)} .toast.try{color:#e8590c}
   .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
-
-  /* win screen */
-  .win-emoji{font-size:5rem;animation:bounce 1s infinite}
+  .win-emoji{font-size:5rem}
   .win h1{font-size:clamp(28px,6vw,42px);color:var(--text-c);margin-top:6px}
   .win .score{font-family:var(--head);font-weight:700;font-size:1.4rem;color:var(--charcoal);margin:12px 0}
-  .win .starline{font-size:2rem;letter-spacing:4px;margin:6px 0 14px}
-
-  /* credit footer */
-  footer.credit{max-width:760px;margin:24px auto 30px;padding:16px 22px;background:#f4f5f8;border:1px solid #e8eaf1;
-    border-radius:20px;text-align:center;font-family:var(--head);color:#5b6472;font-weight:700;line-height:1.55;font-size:.92rem}
-
+  .win .starline{font-size:2rem;letter-spacing:4px;margin:6px 0 6px}
+  footer.credit{max-width:820px;margin:24px auto 30px;padding:16px 22px;background:#f4f5f8;border:1px solid #e8eaf1;border-radius:20px;text-align:center;font-family:var(--head);color:#5b6472;font-weight:700;line-height:1.55;font-size:.92rem}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-  @media (max-width:480px){.choice .ce{font-size:2.5rem}.title-emoji{font-size:4rem}}
-
-  /* ===== extra cute animations ===== */
-  @keyframes wiggle{0%,100%{transform:rotate(-5deg) scale(1)}50%{transform:rotate(5deg) scale(1.07)}}
-  @keyframes popIn{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
-  @keyframes pulseGlow{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
-  @keyframes tada{0%{transform:scale(1)}20%{transform:scale(1.25) rotate(8deg)}40%{transform:scale(1.25) rotate(-8deg)}60%{transform:scale(1.2) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
   @keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(400deg);opacity:.85}}
-  .title-emoji{animation:wiggle 2.4s ease-in-out infinite!important}
-  .show{display:inline-block;animation:wiggle 2.1s ease-in-out infinite}
-  .win-emoji{animation:pulseGlow .8s ease-in-out infinite!important}
-  .choice{animation:popIn .34s cubic-bezier(.34,1.56,.64,1) both}
-  .choice:nth-child(2){animation-delay:.05s}.choice:nth-child(3){animation-delay:.1s}.choice:nth-child(4){animation-delay:.15s}.choice:nth-child(5){animation-delay:.2s}
-  .choice .ce{transition:transform .15s}
-  .choice:hover .ce{transform:scale(1.18) rotate(-4deg)}
-  .choice.right .ce{animation:tada .6s}
   .confetti{position:fixed;top:-44px;z-index:95;pointer-events:none;will-change:transform,opacity;animation:fall linear forwards}
+  .choice{animation:pop .3s both}
 </style>
 </head>
 <body>
 <div class="app">
-
   <header class="topbar">
     <div class="brand"><span class="logo">🌱</span><span>Science Explorers</span></div>
     <span class="unit-pill">🌱 Grade 2 · Unit 2 · What Plants Need</span>
     <span class="spacer"></span>
-    <button class="iconbtn" id="homeBtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
-    <button class="restart-btn" id="restartBtn" title="Restart game — return to title" aria-label="Restart game" onclick="location.reload()">🏠 Restart</button>
+    <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
   </header>
 
-  <!-- TITLE -->
   <section class="screen live" id="sTitle">
     <div class="panel title">
       <div class="title-emoji" id="titleEmoji">🌱</div>
-      <h1 id="titleName">Grow &amp; Pollinate</h1>
-      <div class="tag" id="titleTag">What do plants need? How do animals help them?</div>
+      <h1 id="titleName">Plant Power</h1>
+      <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
     </div>
   </section>
 
-  <!-- PLAY -->
+  <section class="screen" id="sLevel">
+    <div class="panel">
+      <h1 style="color:var(--text-c);font-size:clamp(24px,5vw,34px)">Choose a Level</h1>
+      <div class="tag" style="color:var(--graphite);font-weight:700;margin-top:6px">Start at Bronze, then climb to Gold!</div>
+      <div class="levels" id="levelCards"></div>
+      <div class="actions"><button class="btn ghost" onclick="show('sTitle')">← Back</button></div>
+    </div>
+  </section>
+
   <section class="screen" id="sPlay">
     <div class="hud">
       <div class="bar"><i id="barFill"></i></div>
       <div class="stars" id="starCount">⭐ 0</div>
+      <div class="pts" id="ptsCount">🏅 0</div>
     </div>
     <div class="panel">
       <div class="q" id="qText"></div>
@@ -197,17 +146,13 @@
     </div>
   </section>
 
-  <!-- WIN -->
   <section class="screen" id="sWin">
     <div class="panel win">
-      <div class="win-emoji">🎉</div>
-      <h1>You did it!</h1>
+      <div class="win-emoji" id="winEmoji">🎉</div>
+      <h1 id="winTitle">Level Complete!</h1>
       <div class="starline" id="winStars"></div>
       <div class="score" id="winScore"></div>
-      <div class="actions">
-        <button class="btn green" id="againBtn">↺ Play again</button>
-        <button class="btn ghost" onclick="window.location.href='index.html'">🏠 Menu</button>
-      </div>
+      <div class="actions" id="winActions"></div>
     </div>
   </section>
 
@@ -221,82 +166,412 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  emoji:"🌱", name:"Grow & Pollinate",
-  tag:"What do plants need? How do animals help them?",
-  how:[{e:"👆",t:"Tap the right answer."},{e:"✅",t:"Some rounds: tap ALL that fit, then Check."},{e:"⭐",t:"Get a star for every round you finish!"}],
-  rounds:[
-    {type:"all",q:"Tap what a plant NEEDS to grow.",choices:[{e:"💧",t:"Water",ok:true},{e:"☀️",t:"Sunlight",ok:true},{e:"🍬",t:"Candy"},{e:"📺",t:"TV"}]},
-    {type:"one",q:"A plant with NO water will…",show:"🥀",choices:[{e:"🥀",t:"Wilt and dry up",ok:true},{e:"🌳",t:"Grow huge"},{e:"🏃",t:"Run away"}]},
-    {type:"one",q:"A plant kept in a dark box will grow…",show:"📦",choices:[{e:"😟",t:"Weak and pale",ok:true},{e:"🌸",t:"Big and bright"},{e:"🎵",t:"Loud"}]},
-    {type:"one",q:"Which animal carries POLLEN flower to flower?",show:"🌸",choices:[{e:"🐝",t:"Bee",ok:true},{e:"🐘",t:"Elephant"},{e:"🐍",t:"Snake"}]},
-    {type:"one",q:"Carrying pollen helps a plant make…",show:"🌼",choices:[{e:"🌰",t:"Seeds & fruit",ok:true},{e:"🔊",t:"Sound"},{e:"⚡",t:"Electricity"}]},
-    {type:"one",q:"How do animals help SPREAD seeds?",show:"🐿️",choices:[{e:"🍒",t:"Eat fruit & drop seeds",ok:true},{e:"📺",t:"Watch TV"},{e:"💤",t:"Sleep"}]},
-    {type:"all",q:"Tap the animals that HELP plants.",choices:[{e:"🐝",t:"Bee",ok:true},{e:"🦋",t:"Butterfly",ok:true},{e:"🐦",t:"Bird",ok:true},{e:"🚗",t:"Car"}]},
-    {type:"one",q:"Bees visit flowers to get…",show:"🐝",choices:[{e:"🍯",t:"Nectar",ok:true},{e:"🪨",t:"Rocks"},{e:"📚",t:"Books"}]},
-    {type:"one",q:"What does a seed need to START growing?",show:"🌰",choices:[{e:"💧",t:"Water",ok:true},{e:"🔊",t:"Loud music"},{e:"🍬",t:"Candy"}]},
-    {type:"one",q:"Plants make their own food using…",show:"☀️",choices:[{e:"☀️",t:"Sunlight",ok:true},{e:"🍔",t:"Burgers"},{e:"🌙",t:"Moonlight"}]}
-  ]
+  "emoji": "🌱",
+  "name": "Plant Power",
+  "tag": "Can you help a plant grow big and strong?",
+  "levels": {
+    "bronze": [
+      {
+        "type": "one",
+        "q": "What do plants drink to grow?",
+        "choices": [
+          {
+            "e": "💧",
+            "t": "Water",
+            "ok": true
+          },
+          {
+            "e": "🥛",
+            "t": "Milk",
+            "ok": false
+          },
+          {
+            "e": "🧃",
+            "t": "Juice",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Plants need this from the sky to make food.",
+        "choices": [
+          {
+            "e": "🌙",
+            "t": "Moon",
+            "ok": false
+          },
+          {
+            "e": "☀️",
+            "t": "Sunlight",
+            "ok": true
+          },
+          {
+            "e": "⭐",
+            "t": "Stars",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which part of a plant takes in water from the ground?",
+        "choices": [
+          {
+            "e": "🌸",
+            "t": "Flower",
+            "ok": false
+          },
+          {
+            "e": "🍃",
+            "t": "Leaf",
+            "ok": false
+          },
+          {
+            "e": "🌿",
+            "t": "Roots",
+            "ok": true
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL things a plant needs to grow!",
+        "choices": [
+          {
+            "e": "💧",
+            "t": "Water",
+            "ok": true
+          },
+          {
+            "e": "☀️",
+            "t": "Sunlight",
+            "ok": true
+          },
+          {
+            "e": "🎮",
+            "t": "Tablet",
+            "ok": false
+          },
+          {
+            "e": "🌬️",
+            "t": "Air",
+            "ok": true
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A plant grows from a tiny …",
+        "choices": [
+          {
+            "e": "🌰",
+            "t": "Seed",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Rock",
+            "ok": false
+          },
+          {
+            "e": "🐚",
+            "t": "Shell",
+            "ok": false
+          }
+        ]
+      }
+    ],
+    "silver": [
+      {
+        "type": "one",
+        "q": "Which part makes food for the plant using sunlight?",
+        "choices": [
+          {
+            "e": "🌿",
+            "t": "Roots",
+            "ok": false
+          },
+          {
+            "e": "🍃",
+            "t": "Leaves",
+            "ok": true
+          },
+          {
+            "e": "🌸",
+            "t": "Flower",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "order",
+        "q": "Put a plant's life in order — start to finish!",
+        "items": [
+          {
+            "e": "🌰",
+            "t": "Seed"
+          },
+          {
+            "e": "🌱",
+            "t": "Sprout"
+          },
+          {
+            "e": "🌳",
+            "t": "Plant"
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL the things plants need from the ground!",
+        "choices": [
+          {
+            "e": "🪨",
+            "t": "Soil",
+            "ok": true
+          },
+          {
+            "e": "💧",
+            "t": "Water",
+            "ok": true
+          },
+          {
+            "e": "☀️",
+            "t": "Sunlight",
+            "ok": false
+          },
+          {
+            "e": "🎈",
+            "t": "Balloon",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which animal helps move pollen between flowers?",
+        "choices": [
+          {
+            "e": "🐪",
+            "t": "Camel",
+            "ok": false
+          },
+          {
+            "e": "🐝",
+            "t": "Bee",
+            "ok": true
+          },
+          {
+            "e": "🐠",
+            "t": "Fish",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "What does the stem do for a plant?",
+        "choices": [
+          {
+            "e": "🌿",
+            "t": "Makes food",
+            "ok": false
+          },
+          {
+            "e": "💧",
+            "t": "Drinks water",
+            "ok": false
+          },
+          {
+            "e": "🪜",
+            "t": "Carries water",
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "gold": [
+      {
+        "type": "order",
+        "q": "Put pollination in the right order!",
+        "items": [
+          {
+            "e": "🌸",
+            "t": "Flower opens"
+          },
+          {
+            "e": "🐝",
+            "t": "Bee visits"
+          },
+          {
+            "e": "🌰",
+            "t": "Seed forms"
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL the helpers that spread pollen!",
+        "choices": [
+          {
+            "e": "🐝",
+            "t": "Bee",
+            "ok": true
+          },
+          {
+            "e": "🌬️",
+            "t": "Wind",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Rock",
+            "ok": false
+          },
+          {
+            "e": "🦋",
+            "t": "Butterfly",
+            "ok": true
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "A plant in the dark with no sunlight will …",
+        "choices": [
+          {
+            "e": "💪",
+            "t": "Grow strong",
+            "ok": false
+          },
+          {
+            "e": "😔",
+            "t": "Wilt & die",
+            "ok": true
+          },
+          {
+            "e": "🌸",
+            "t": "Bloom fast",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "all",
+        "q": "Tap ALL plant parts that help it make more plants!",
+        "choices": [
+          {
+            "e": "🌸",
+            "t": "Flower",
+            "ok": true
+          },
+          {
+            "e": "🌰",
+            "t": "Seed",
+            "ok": true
+          },
+          {
+            "e": "🌿",
+            "t": "Roots",
+            "ok": false
+          },
+          {
+            "e": "🍃",
+            "t": "Leaves",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Desert plants like cactus store water in their …",
+        "choices": [
+          {
+            "e": "🌿",
+            "t": "Roots only",
+            "ok": false
+          },
+          {
+            "e": "🍃",
+            "t": "Leaves only",
+            "ok": false
+          },
+          {
+            "e": "🌵",
+            "t": "Thick stem",
+            "ok": true
+          }
+        ]
+      }
+    ]
+  },
+  "id": "g2-plants-need"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){
-  var idx=0, stars=0, rounds=GAME.rounds, total=rounds.length;
   var $=function(id){return document.getElementById(id)};
+  var LKEY='sx_'+(GAME.id||GAME.name).replace(/\W+/g,'_');
+  var LEVELS=[['bronze','🥉','Bronze','Warm-up'],['silver','🥈','Silver','Getting tricky'],['gold','🥇','Gold','Challenge!']];
+  var curLevel=null, rounds=[], total=0, idx=0, stars=0, points=0;
 
-  /* ---- audio ---- */
+  /* audio */
   var muted=false,ac=null;
   try{muted=localStorage.getItem('sx_muted')==='1'}catch(e){}
   function ctx(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(e){ac=null}}return ac}
   function blip(f,d){if(muted)return;var a=ctx();if(!a)return;if(a.state==='suspended'){try{a.resume()}catch(e){}}
     try{var o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(f,a.currentTime);
       g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.16,a.currentTime+.012);
-      g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(g);g.connect(a.destination);
-      o.start();o.stop(a.currentTime+d+.02)}catch(e){}}
+      g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+d+.02)}catch(e){}}
   function yay(){blip(523.25,.10);setTimeout(function(){blip(783.99,.14)},90);confetti(10)}
   function nope(){blip(196,.18)}
-  function win(){[523,659,784,1047].forEach(function(f,i){setTimeout(function(){blip(f,.16)},i*120)});confetti(60)}
-  function confetti(n){var chars=['✦','◆','◇','✧','⬟','✴','⬡','✸'];var golds=['#E0A800','#F5C518','#D4A017','#C9A227','#B8860B','#FFD700','#FFC125','#DAA520'];for(var i=0;i<n;i++){(function(){var s=document.createElement('div');s.className='confetti';s.textContent=chars[Math.floor(Math.random()*chars.length)];s.style.color=golds[Math.floor(Math.random()*golds.length)];s.style.left=(Math.random()*100)+'vw';s.style.fontSize=(12+Math.random()*16)+'px';s.style.animationDuration=(1.3+Math.random()*1.3)+'s';s.style.animationDelay=(Math.random()*0.25)+'s';document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},2800)})()}}
-
+  function fanfare(){[523,659,784,1047].forEach(function(f,i){setTimeout(function(){blip(f,.16)},i*120)});confetti(60)}
+  function confetti(n){var em=['🎉','⭐','✨','🌟','🎊','💛','💫','🏅'];for(var i=0;i<n;i++){(function(){var s=document.createElement('div');s.className='confetti';s.textContent=em[Math.floor(Math.random()*em.length)];s.style.left=(Math.random()*100)+'vw';s.style.fontSize=(16+Math.random()*22)+'px';s.style.animationDuration=(1.3+Math.random()*1.3)+'s';s.style.animationDelay=(Math.random()*0.25)+'s';document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},2800)})()}}
   var mute=$('muteBtn');
   function renderMute(){mute.textContent=muted?'🔇':'🔊';mute.classList.toggle('off',muted);mute.setAttribute('aria-pressed',muted?'true':'false')}
   renderMute();
   mute.addEventListener('click',function(){muted=!muted;try{localStorage.setItem('sx_muted',muted?'1':'0')}catch(e){}renderMute();if(!muted)blip(660,.1)});
 
-  /* ---- title ---- */
-  $('titleEmoji').textContent=GAME.emoji;
-  $('titleName').textContent=GAME.name;
-  $('titleTag').textContent=GAME.tag;
-  var how=$('howList');how.innerHTML='';
-  GAME.how.forEach(function(h){var d=document.createElement('div');d.innerHTML='<b>'+h.e+'</b>'+h.t;how.appendChild(d)});
+  /* title */
+  $('titleName').textContent=GAME.name; $('titleTag').textContent=GAME.tag||'';
+  $('titleEmoji').textContent=GAME.emoji||'🔬';
+  var how=$('howList'); (GAME.how||[{e:'👆',t:'Tap the right answer.'},{e:'🏅',t:'Earn points for every correct round.'},{e:'🥉',t:'Beat Bronze, Silver and Gold!'}]).forEach(function(h){var d=document.createElement('div');d.innerHTML='<b>'+h.e+'</b>'+h.t;how.appendChild(d)});
 
-  function show(id){['sTitle','sPlay','sWin'].forEach(function(s){$(s).classList.toggle('live',s===id)});window.scrollTo(0,0)}
+  window.show=function(id){['sTitle','sLevel','sPlay','sWin'].forEach(function(s){$(s).classList.toggle('live',s===id)});window.scrollTo(0,0)};
+  function best(lvl){try{return +localStorage.getItem(LKEY+'_'+lvl)||0}catch(e){return 0}}
+  function setBest(lvl,v){try{if(v>best(lvl))localStorage.setItem(LKEY+'_'+lvl,v)}catch(e){}}
 
+  function renderLevels(){
+    var box=$('levelCards');box.innerHTML='';
+    LEVELS.forEach(function(L){
+      var key=L[0];var card=document.createElement('button');card.className='lvl '+key[0];
+      var b=best(key);
+      card.innerHTML='<div class="medal">'+L[1]+'</div><h3>'+L[2]+'</h3><div class="desc">'+L[3]+'</div>'+
+        '<div class="best">'+(b?('★ Best: '+b+' pts'):'Not played yet')+'</div>';
+      card.addEventListener('click',function(){playLevel(key)});
+      box.appendChild(card);
+    });
+  }
   function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 
-  function start(){idx=0;stars=0;show('sPlay');render()}
-  function progress(){$('barFill').style.width=Math.round(idx/total*100)+'%';$('starCount').textContent='⭐ '+stars}
+  function playLevel(lvl){curLevel=lvl;rounds=(GAME.levels&&GAME.levels[lvl])||[];total=rounds.length;idx=0;stars=0;points=0;show('sPlay');render()}
+  function progress(){$('barFill').style.width=Math.round(idx/Math.max(1,total)*100)+'%';$('starCount').textContent='⭐ '+stars;$('ptsCount').textContent='🏅 '+points}
+  function award(){stars++;points+=10;progress()}
 
   function render(){
-    progress();
-    var r=rounds[idx];
+    progress();var r=rounds[idx];
     $('qText').textContent=r.q;
     var sh=$('qShow');
     if(r.type==='order'){sh.innerHTML='';sh.style.display='none';}
     else if(r.show){sh.style.display='';sh.innerHTML=r.show;}
     else{sh.style.display='none';sh.textContent='';}
-    $('toast').textContent='';$('toast').className='toast';
-    $('playActions').innerHTML='';
+    $('toast').textContent='';$('toast').className='toast';$('playActions').innerHTML='';
     var slots=$('slots');slots.style.display='none';slots.innerHTML='';
     var box=$('choices');box.innerHTML='';box.style.display='';
-
-    if(r.type==='one'){renderOne(r,box);}
-    else if(r.type==='all'){renderAll(r,box);}
-    else if(r.type==='order'){renderOrder(r,box,slots);}
+    if(r.type==='one')renderOne(r,box);else if(r.type==='all')renderAll(r,box);else if(r.type==='order')renderOrder(r,box,slots);
   }
-
   function next(){idx++;if(idx>=total){finish()}else{render()}}
-  function award(){stars++;progress()}
 
-  /* ---- type: one ---- */
   function renderOne(r,box){
     shuffle(r.choices).forEach(function(c){
       var el=document.createElement('button');el.className='choice';
@@ -304,70 +579,57 @@ var GAME = {
       el.addEventListener('click',function(){
         if(el.classList.contains('right'))return;
         if(c.ok){el.classList.add('right');award();yay();$('toast').textContent='Yes! 🎉';$('toast').className='toast good';
-          Array.prototype.forEach.call(box.children,function(b){b.style.pointerEvents='none'});
-          setTimeout(next,800);}
-        else{el.classList.add('wrong');nope();$('toast').textContent='Try again 🙂';$('toast').className='toast try';
-          setTimeout(function(){el.classList.remove('wrong')},400);}
-      });
-      box.appendChild(el);
+          Array.prototype.forEach.call(box.children,function(b){b.style.pointerEvents='none'});setTimeout(next,780);}
+        else{el.classList.add('wrong');nope();$('toast').textContent='Try again 🙂';$('toast').className='toast try';setTimeout(function(){el.classList.remove('wrong')},400);}
+      });box.appendChild(el);
     });
   }
-
-  /* ---- type: all ---- */
   function renderAll(r,box){
     shuffle(r.choices).forEach(function(c){
       var el=document.createElement('button');el.className='choice';el._ok=!!c.ok;el._sel=false;
       el.innerHTML='<span class="ce">'+c.e+'</span><span class="ct">'+c.t+'</span>';
-      el.addEventListener('click',function(){if(el.classList.contains('right'))return;el._sel=!el._sel;el.classList.toggle('sel',el._sel)});
-      box.appendChild(el);
+      el.addEventListener('click',function(){if(el.classList.contains('right'))return;el._sel=!el._sel;el.classList.toggle('sel',el._sel)});box.appendChild(el);
     });
     var check=document.createElement('button');check.className='btn';check.textContent='✓ Check';
     check.addEventListener('click',function(){
-      var ok=true;
-      Array.prototype.forEach.call(box.children,function(b){if(!!b._sel!==!!b._ok)ok=false});
-      if(ok){Array.prototype.forEach.call(box.children,function(b){if(b._ok)b.classList.add('right')});
-        award();yay();$('toast').textContent='Perfect! 🎉';$('toast').className='toast good';
-        check.style.display='none';setTimeout(next,900);}
-      else{nope();$('toast').textContent='Almost — check again 🙂';$('toast').className='toast try';
-        Array.prototype.forEach.call(box.children,function(b){if(b._sel&&!b._ok){b.classList.add('wrong');(function(x){setTimeout(function(){x.classList.remove('wrong')},400)})(b)}});}
-    });
-    $('playActions').appendChild(check);
+      var ok=true;Array.prototype.forEach.call(box.children,function(b){if(!!b._sel!==!!b._ok)ok=false});
+      if(ok){Array.prototype.forEach.call(box.children,function(b){if(b._ok)b.classList.add('right')});award();yay();$('toast').textContent='Perfect! 🎉';$('toast').className='toast good';check.style.display='none';setTimeout(next,900);}
+      else{nope();$('toast').textContent='Almost — check again 🙂';$('toast').className='toast try';Array.prototype.forEach.call(box.children,function(b){if(b._sel&&!b._ok){b.classList.add('wrong');(function(x){setTimeout(function(){x.classList.remove('wrong')},400)})(b)}});}
+    });$('playActions').appendChild(check);
   }
-
-  /* ---- type: order ---- */
   function renderOrder(r,box,slots){
-    slots.style.display='flex';
-    var picked=[];
+    slots.style.display='flex';var picked=[];
     r.items.forEach(function(_,i){var s=document.createElement('div');s.className='slot';s.innerHTML='<span class="n">'+(i+1)+'</span>';slots.appendChild(s)});
     function redraw(){Array.prototype.forEach.call(slots.children,function(s,i){var n=s.querySelector('.n');s.textContent='';s.appendChild(n);if(picked[i]!=null)s.insertAdjacentText('beforeend',r.items[picked[i]].e)})}
     shuffle(r.items.map(function(_,i){return i})).forEach(function(origIndex){
-      var c=r.items[origIndex];
-      var el=document.createElement('button');el.className='choice';
+      var c=r.items[origIndex];var el=document.createElement('button');el.className='choice';
       el.innerHTML='<span class="ce">'+c.e+'</span><span class="ct">'+c.t+'</span>';
       el.addEventListener('click',function(){
         if(el.disabled)return;el.disabled=true;el.classList.add('sel');picked.push(origIndex);redraw();
         if(picked.length===r.items.length){
           var ok=picked.every(function(v,i){return v===i});
           if(ok){award();yay();$('toast').textContent='Great order! 🎉';$('toast').className='toast good';setTimeout(next,950);}
-          else{nope();$('toast').textContent='Not quite — try again 🙂';$('toast').className='toast try';
-            setTimeout(function(){picked=[];redraw();Array.prototype.forEach.call(box.children,function(b){b.disabled=false;b.classList.remove('sel')})},900);}
+          else{nope();$('toast').textContent='Not quite — try again 🙂';$('toast').className='toast try';setTimeout(function(){picked=[];redraw();Array.prototype.forEach.call(box.children,function(b){b.disabled=false;b.classList.remove('sel')})},900);}
         }
-      });
-      box.appendChild(el);
+      });box.appendChild(el);
     });
   }
-
   function finish(){
-    idx=total;progress();
-    var pct=Math.round(stars/total*100);
-    var s=pct>=90?3:pct>=60?2:1;
-    $('winStars').textContent='⭐⭐⭐'.slice(0,s)+'☆☆☆'.slice(0,3-s);
-    $('winScore').textContent='You finished '+stars+' of '+total+' rounds!';
-    show('sWin');win();
+    idx=total;progress();setBest(curLevel,points);
+    var pct=Math.round(stars/Math.max(1,total)*100);var st=pct>=90?3:pct>=60?2:1;
+    $('winStars').textContent='⭐⭐⭐'.slice(0,st)+'☆☆☆'.slice(0,3-st);
+    var medal=curLevel==='bronze'?'🥉':curLevel==='silver'?'🥈':'🥇';
+    $('winEmoji').textContent=st===3?'🏆':medal;
+    $('winTitle').textContent=(curLevel.charAt(0).toUpperCase()+curLevel.slice(1))+' Complete!';
+    $('winScore').textContent='You scored '+points+' points  ·  '+stars+' of '+total+' rounds!';
+    var wa=$('winActions');wa.innerHTML='';
+    var order=['bronze','silver','gold'],ni=order.indexOf(curLevel)+1;
+    if(ni<order.length){var nx=document.createElement('button');nx.className='btn green';nx.textContent='▶ '+order[ni].charAt(0).toUpperCase()+order[ni].slice(1)+' level';nx.addEventListener('click',function(){playLevel(order[ni])});wa.appendChild(nx);}
+    var ag=document.createElement('button');ag.className='btn';ag.textContent='↺ Play again';ag.addEventListener('click',function(){playLevel(curLevel)});wa.appendChild(ag);
+    var mn=document.createElement('button');mn.className='btn ghost';mn.textContent='🎖 Levels';mn.addEventListener('click',function(){renderLevels();show('sLevel')});wa.appendChild(mn);
+    show('sWin');fanfare();
   }
-
-  $('startBtn').addEventListener('click',start);
-  $('againBtn').addEventListener('click',start);
+  $('startBtn').addEventListener('click',function(){renderLevels();show('sLevel')});
 })();
 </script>
 </body>

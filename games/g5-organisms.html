@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rock Detectives — Science Explorers</title>
+<title>Leaf Factory — Science Explorers</title>
 <!--
   SCIENCE EXPLORERS — LEVELLED GAME TEMPLATE (self-contained, offline, English)
-  To clone: change Rock Detectives, the :root theme block, the .unit-pill text/brand emoji,
+  To clone: change Leaf Factory, the :root theme block, the .unit-pill text/brand emoji,
   and the GAME object. Levels: bronze / silver / gold. Round types: one / all / order.
   UAE-appropriate: NO pig/pork, NO alcohol, NO rainbow. Realistic emoji/SVG pictures.
 -->
 <style>
   :root{
     /* ---- THEME (clone: change these 5) ---- */
-    --main:#ea580c; --main-d:#c2410c; --tint:#ffedd5; --line:#fed7aa; --text-c:#9a3412;
+    --main:#16a34a; --main-d:#15803d; --tint:#dcfce7; --line:#bbf7d0; --text-c:#166534;
     --duo:#58cc02; --sky:#1cb0f6; --ink:#3c3c3c; --charcoal:#4b4b4b;
     --graphite:#777; --cloud:#e5e5e5; --snow:#fff;
     --good:#58cc02; --good-d:#46a302; --bad:#ff7a7a;
@@ -104,8 +104,8 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">🪨</span><span>Science Explorers</span></div>
-    <span class="unit-pill">🪨 Grade 4 · Unit 4 · Earth's Surface & History</span>
+    <div class="brand"><span class="logo">🌿</span><span>Science Explorers</span></div>
+    <span class="unit-pill">🌿 Grade 5 · Unit 4 · Organisms & Processes</span>
     <span class="spacer"></span>
     <button class="iconbtn" title="Back to menu" aria-label="Back to games menu" onclick="if(confirm('Leave the game and go back to the menu?')){window.location.href='index.html';}">🏠</button>
     <button class="iconbtn" id="muteBtn" aria-pressed="false" title="Sound on / off" aria-label="Toggle sound">🔊</button>
@@ -113,8 +113,8 @@
 
   <section class="screen live" id="sTitle">
     <div class="panel title">
-      <div class="title-emoji" id="titleEmoji">🪨</div>
-      <h1 id="titleName">Rock Detectives</h1>
+      <div class="title-emoji" id="titleEmoji">🌿</div>
+      <h1 id="titleName">Leaf Factory</h1>
       <div class="tag" id="titleTag"></div>
       <div class="how" id="howList"></div>
       <div class="actions"><button class="btn green" id="startBtn">▶ Play</button></div>
@@ -166,117 +166,117 @@
 "use strict";
 /* ===================== GAME CONFIG (clone: edit this object) ===================== */
 var GAME = {
-  "emoji": "🪨",
-  "name": "Rock Detectives",
-  "tag": "Dig into Earth's amazing story — one layer at a time!",
+  "emoji": "🌿",
+  "name": "Leaf Factory",
+  "tag": "Sunlight, air, and water — plants cook their own food!",
   "levels": {
     "bronze": [
       {
         "type": "one",
-        "q": "Rocks are made of tiny pieces called…",
+        "q": "Where does a plant make its food?",
         "choices": [
           {
-            "e": "🪨",
-            "t": "Minerals",
+            "e": "🍃",
+            "t": "Leaf",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Water",
+            "e": "🌱",
+            "t": "Root",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Air",
+            "e": "🌸",
+            "t": "Flower",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "A fossil is the remains of a…",
+        "q": "What does a plant need from the sky to make food?",
         "choices": [
           {
-            "e": "🌟",
-            "t": "Star",
-            "ok": false
-          },
-          {
-            "e": "🦴",
-            "t": "Living Thing",
+            "e": "☀️",
+            "t": "Sunlight",
             "ok": true
           },
           {
-            "e": "💧",
-            "t": "Raindrop",
+            "e": "⭐",
+            "t": "Starlight",
+            "ok": false
+          },
+          {
+            "e": "🌙",
+            "t": "Moonlight",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Which landform is very tall and rocky?",
+        "q": "Plants drink water through their __.",
         "choices": [
           {
-            "e": "🏔️",
-            "t": "Mountain",
+            "e": "🌱",
+            "t": "Roots",
             "ok": true
           },
           {
-            "e": "🏜️",
-            "t": "Desert Flat",
+            "e": "🍃",
+            "t": "Leaves",
             "ok": false
           },
           {
-            "e": "🌊",
-            "t": "Ocean",
+            "e": "🌸",
+            "t": "Flowers",
             "ok": false
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that can break rocks apart!",
+        "q": "Tap ALL things a plant needs to make its own food.",
         "choices": [
+          {
+            "e": "☀️",
+            "t": "Sunlight",
+            "ok": true
+          },
           {
             "e": "💧",
             "t": "Water",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "💨",
+            "t": "Air (CO₂)",
             "ok": true
           },
           {
-            "e": "🍎",
-            "t": "Apple",
+            "e": "🪨",
+            "t": "Soil",
             "ok": false
-          },
-          {
-            "e": "🧊",
-            "t": "Ice",
-            "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "What do we call it when water moves broken rock pieces away?",
+        "q": "A plant's leaf is like a __.",
         "choices": [
           {
-            "e": "🌋",
-            "t": "Eruption",
-            "ok": false
-          },
-          {
-            "e": "🌊",
-            "t": "Erosion",
+            "e": "🏭",
+            "t": "Food factory",
             "ok": true
           },
           {
+            "e": "🚰",
+            "t": "Water pump",
+            "ok": false
+          },
+          {
             "e": "🌡️",
-            "t": "Temperature",
+            "t": "Thermometer",
             "ok": false
           }
         ]
@@ -285,107 +285,107 @@ var GAME = {
     "silver": [
       {
         "type": "one",
-        "q": "Rock layers at the BOTTOM are usually…",
+        "q": "Plants get most of their materials from __.",
         "choices": [
           {
-            "e": "🆕",
-            "t": "Newest",
-            "ok": false
-          },
-          {
-            "e": "🕰️",
-            "t": "Oldest",
+            "e": "💨",
+            "t": "Air & water",
             "ok": true
           },
           {
-            "e": "🟡",
-            "t": "Softest",
+            "e": "🪨",
+            "t": "Soil & rocks",
+            "ok": false
+          },
+          {
+            "e": "🐛",
+            "t": "Insects",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Which gas does a plant take from the air to make food?",
+        "choices": [
+          {
+            "e": "🫧",
+            "t": "Carbon dioxide",
+            "ok": true
+          },
+          {
+            "e": "💨",
+            "t": "Oxygen",
+            "ok": false
+          },
+          {
+            "e": "💭",
+            "t": "Nitrogen",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Order rock layers oldest to newest (bottom to top):",
+        "q": "Put in order: how a plant makes its food.",
         "items": [
           {
-            "e": "🟤",
-            "t": "Oldest Layer"
+            "e": "☀️",
+            "t": "Sunlight caught"
           },
           {
-            "e": "🟠",
-            "t": "Middle Layer"
+            "e": "🍃",
+            "t": "Leaf makes food"
           },
           {
-            "e": "🟡",
-            "t": "Newest Layer"
-          }
-        ]
-      },
-      {
-        "type": "one",
-        "q": "Weathering means rocks are…",
-        "choices": [
-          {
-            "e": "🔨",
-            "t": "Broken Down",
-            "ok": true
-          },
-          {
-            "e": "🚚",
-            "t": "Moved Away",
-            "ok": false
-          },
-          {
-            "e": "🔥",
-            "t": "Melted",
-            "ok": false
+            "e": "🌴",
+            "t": "Plant grows"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL things that cause erosion!",
+        "q": "Tap ALL TRUE facts about where plants get their materials.",
         "choices": [
           {
-            "e": "🌊",
-            "t": "Rivers",
+            "e": "💨",
+            "t": "From air",
             "ok": true
           },
           {
-            "e": "🌬️",
-            "t": "Wind",
+            "e": "💧",
+            "t": "From water",
             "ok": true
           },
           {
-            "e": "🧊",
-            "t": "Glaciers",
-            "ok": true
+            "e": "🪨",
+            "t": "Mostly from soil",
+            "ok": false
           },
           {
-            "e": "🌴",
-            "t": "Palm Tree",
+            "e": "🐪",
+            "t": "From animals",
             "ok": false
           }
         ]
       },
       {
         "type": "one",
-        "q": "Maps show mountains with…",
+        "q": "A date palm grows big and tall. Most of this new material comes from __.",
         "choices": [
           {
-            "e": "🔵",
-            "t": "Blue Circles",
-            "ok": false
-          },
-          {
-            "e": "🟤",
-            "t": "Brown Lines",
+            "e": "☁️",
+            "t": "Air & rain",
             "ok": true
           },
           {
-            "e": "🟢",
-            "t": "Green Dots",
+            "e": "🏜️",
+            "t": "Desert sand",
+            "ok": false
+          },
+          {
+            "e": "🌡️",
+            "t": "Desert heat",
             "ok": false
           }
         ]
@@ -394,119 +394,114 @@ var GAME = {
     "gold": [
       {
         "type": "one",
-        "q": "A scientist finds a fossil deep in a rock layer. The rock above it has a newer fossil. What does this tell us?",
+        "q": "A plant is grown in soil with no water or sunlight. What happens?",
         "choices": [
           {
-            "e": "⬆️",
-            "t": "Deep = Newer",
-            "ok": false
-          },
-          {
-            "e": "⬇️",
-            "t": "Deep = Older",
+            "e": "💀",
+            "t": "It dies",
             "ok": true
           },
           {
-            "e": "↔️",
-            "t": "Same Age",
+            "e": "🌿",
+            "t": "Grows fine",
+            "ok": false
+          },
+          {
+            "e": "🍂",
+            "t": "Grows slowly",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "type": "one",
+        "q": "Scientists weighed soil before and after a tree grew in it for years. The soil weight barely changed. What does this prove?",
+        "choices": [
+          {
+            "e": "💨",
+            "t": "Plant grew from air & water",
+            "ok": true
+          },
+          {
+            "e": "🪨",
+            "t": "Plant ate the soil",
+            "ok": false
+          },
+          {
+            "e": "🌱",
+            "t": "Roots made new soil",
             "ok": false
           }
         ]
       },
       {
         "type": "order",
-        "q": "Put the erosion journey in order:",
+        "q": "Order the steps of photosynthesis from start to finish.",
         "items": [
           {
-            "e": "🔨",
-            "t": "Rock Breaks"
+            "e": "🌞",
+            "t": "Sun shines"
           },
           {
-            "e": "🌊",
-            "t": "Water Carries"
+            "e": "🍃",
+            "t": "Leaf absorbs CO₂ & water"
           },
           {
-            "e": "🏖️",
-            "t": "Sediment Drops"
+            "e": "🍬",
+            "t": "Sugar (food) made"
           }
         ]
       },
       {
         "type": "all",
-        "q": "Tap ALL true facts about fossils!",
+        "q": "Tap ALL correct reasons why leaves are shaped flat and wide.",
         "choices": [
           {
-            "e": "🦴",
-            "t": "Old Remains",
+            "e": "☀️",
+            "t": "Catch sunlight",
             "ok": true
           },
           {
-            "e": "📖",
-            "t": "Tell History",
+            "e": "💨",
+            "t": "Absorb more air",
             "ok": true
           },
           {
-            "e": "🌧️",
-            "t": "Made by Rain",
+            "e": "💧",
+            "t": "Collect rain",
+            "ok": true
+          },
+          {
+            "e": "🐦",
+            "t": "Attract birds",
             "ok": false
-          },
-          {
-            "e": "🪨",
-            "t": "Found in Rock",
-            "ok": true
           }
         ]
       },
       {
         "type": "one",
-        "q": "Wind erosion in the UAE carves desert rocks into strange shapes. What causes this?",
+        "q": "A plant makes food but has NO leaves. Which part must take over as the food factory?",
         "choices": [
           {
-            "e": "🦅",
-            "t": "Falcons Pecking",
+            "e": "🌵",
+            "t": "Green stem",
+            "ok": true
+          },
+          {
+            "e": "🌱",
+            "t": "Root",
             "ok": false
           },
           {
-            "e": "🌬️",
-            "t": "Sand-Blasting Wind",
-            "ok": true
-          },
-          {
-            "e": "🌧️",
-            "t": "Heavy Rain",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "type": "all",
-        "q": "Tap ALL landforms shown on a map!",
-        "choices": [
-          {
-            "e": "🏔️",
-            "t": "Mountains",
-            "ok": true
-          },
-          {
-            "e": "🏜️",
-            "t": "Deserts",
-            "ok": true
-          },
-          {
-            "e": "🌊",
-            "t": "Rivers",
-            "ok": true
-          },
-          {
-            "e": "🎒",
-            "t": "School Bag",
+            "e": "🌸",
+            "t": "Flower",
             "ok": false
           }
         ]
       }
     ]
   },
-  "id": "g4-earth-surface"
+  "id": "g5-organisms"
 };
 /* ============================ ENGINE (do not change) ============================ */
 (function(){
