@@ -1718,11 +1718,12 @@ const UNITS=[
      {n:4,text:'Use measurements and graphs to provide evidence that the total weight remains the same when substances are heated, cooled, or mixed, regardless of the type of change.',lessons:MATTER_S4},
      {n:5,text:'Use observations and measurements to identify and classify materials according to their physical properties.',lessons:MATTER_S5}
    ]},
-  {n:2,id:'forces',title:'Forces',live:true,standards:[{n:1,text:'Support the idea that gravity is a force that pulls objects toward the Earth.',lessons:FORCES}]},
-  {n:3,id:'energy',title:'Energy',live:true,standards:[{n:1,text:'Use models to demonstrate that the energy animals need for body functions, growth and movement began as energy from the Sun.',lessons:ENERGY}]},
-  {n:4,id:'organisms',title:'Organisms and Processes',live:true,standards:[{n:1,text:'Use evidence from investigations to show that plants mainly get the materials they need to grow from air and water.',lessons:ORGANISMS}]},
-  {n:5,id:'ecosystems',title:'Ecosystems and Sustainability',live:true,standards:[{n:1,text:'Develop and use models to describe how matter and energy move among producers, consumers, decomposers and the environment, and explain how people can help keep ecosystems healthy.',lessons:ECOSYSTEMS}]},
-  {n:6,id:'earth',title:"Earth's Interactions",live:true,standards:[{n:1,text:'Describe how Earth\'s four systems — the geosphere, hydrosphere, atmosphere and biosphere — interact, and describe where water is found on Earth.',lessons:EARTH}]}
+  {n:2,id:'forces',title:'Forces',live:true,standards:[{n:1,text:'Support an argument that the gravitational force from Earth on objects is directed down, toward the centre of the planet. (5-PS2-1)',lessons:FORCES}]},
+  {n:3,id:'energy',title:'Energy',live:true,standards:[{n:1,text:'Use models to describe that the energy the body uses for repair, growth, motion and warmth was once energy from the Sun. (5-PS3-1)',lessons:ENERGY}]},
+  {n:4,id:'organisms',title:'Organisms and Processes',live:true,standards:[{n:1,text:'Support an argument that plants get the materials they need for growth chiefly from air and water. (5-LS1-1)',lessons:ORGANISMS}]},
+  {n:5,id:'ecosystems',title:'Ecosystems and Sustainability',live:true,standards:[{n:1,text:'Develop a model to describe the movement of matter among plants, animals, decomposers and the environment. (5-LS2-1)',lessons:ECOSYSTEMS},{n:2,text:'Obtain and combine information about ways communities use science ideas to protect the resources and environment of Earth. (5-ESS3-1)',lessons:[]}]},
+  {n:6,id:'earth',title:"Earth's Interactions",live:true,standards:[{n:1,text:'Develop a model using an example to describe ways the geosphere, biosphere, hydrosphere and atmosphere interact. (5-ESS2-1)',lessons:EARTH},{n:2,text:'Describe and graph the amounts of salt water and fresh water in different reservoirs to show how water is distributed on the planet. (5-ESS2-2)',lessons:[]}]},
+  {n:7,id:'space',title:'Space Systems: Sun, Stars & Shadows',live:true,standards:[{n:1,text:'Support an argument that the Sun looks brighter and larger than other stars because it is much closer to Earth. (5-ESS1-1)',lessons:[]},{n:2,text:'Represent data to show daily and yearly patterns — changes in the length of shadows, day and night, and which stars appear in different seasons. (5-ESS1-2)',lessons:[]}]}
 ];
 
 /* =====================================================================
@@ -1733,6 +1734,7 @@ let cur={unit:null,std:null,grade:5};
 function setCrumb(t){crumb.textContent=t||'';}
 /* per-unit colour themes (Deenish: a different colour for each unit) */
 const THEME={
+ space:{a:'#6366f1',d:'#4338ca',deep:'#312e81',soft:'#eef2ff'},
  g4en:{a:'#ea7317',d:'#b45309',deep:'#6e3406',soft:'#fdeede'},
  g4wv:{a:'#2563eb',d:'#1d4ed8',deep:'#16307a',soft:'#e6edfd'},
  g4ls:{a:'#e11d6b',d:'#be185d',deep:'#6e0e38',soft:'#fce8f1'},
@@ -1834,7 +1836,7 @@ function vUnits(){
   setCrumb('Grade '+cur.grade+' · All units');
   app.innerHTML=`<section><button class="btn gray sm" onclick="go('home')">← Change grade</button>
     <div class="eyebrow" style="margin-top:12px">Grade ${cur.grade} Science · Choose a unit</div><h2 style="font-size:1.6rem">Grade ${cur.grade} Units</h2>
-    ${units.length?`<div class="grid">${units.map(u=>{const has=u.live&&u.standards.some(s=>s.lessons.length);const t=THEME[u.id]||THEME.matter;
+    ${units.length?`<div class="grid">${units.map(u=>{const has=u.live&&u.standards.length>0;const t=THEME[u.id]||THEME.matter;
       return `<div class="ucard ${has?'live':''}" style="--uc:${t.a};--ucd:${t.d};--ucs:${t.soft}" ${has?`onclick="openUnit('${u.id}')"`:''}>
         <span class="u-n">Unit ${u.n}</span><h3 style="color:${t.d}">${u.title}</h3>
         <p>${u.standards.length?u.standards.length+' standard'+(u.standards.length>1?'s':''):'Coming soon'}</p>
