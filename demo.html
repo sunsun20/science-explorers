@@ -224,7 +224,9 @@
   body.deck-fs{overflow:hidden}
   .deck.fs{position:fixed;inset:14px;z-index:80;display:flex;flex-direction:column;box-shadow:0 0 0 9999px rgba(8,16,40,.62);overflow:hidden;margin:0}
   .deck.fs .slide{flex:1;min-height:auto;padding:30px clamp(24px,5vw,80px);font-size:1.12rem;display:flex;align-items:flex-start;justify-content:center;overflow:hidden}
-.deck.fs .sfit{transform-origin:top center;width:100%;max-width:1080px}
+.deck.fs .sfit{transform-origin:top center;width:100%;max-width:1400px}
+.deck.fs .vgrid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.deck.fs .vcard{min-height:190px}
   .deck.fs .slide h3{font-size:clamp(1.6rem,3.2vw,2.2rem)}
   .deck.fs .deck-bar{position:sticky;bottom:0}
 
@@ -2456,7 +2458,7 @@ function vResources(){
   </section>`;
 }
 /* expand the slide deck to full screen */
-function fitSlide(){const d=document.getElementById('deck');if(!d)return;const sfit=d.querySelector('.sfit'),slide=d.querySelector('.slide');if(!sfit||!slide)return;sfit.style.transform='';if(!d.classList.contains('fs'))return;const availH=slide.clientHeight-6,needH=sfit.scrollHeight;if(needH>availH)sfit.style.transform='scale('+Math.max(0.35,availH/needH)+')';}
+function fitSlide(){const d=document.getElementById('deck');if(!d)return;const sfit=d.querySelector('.sfit'),slide=d.querySelector('.slide');if(!sfit||!slide)return;sfit.style.transform='';if(!d.classList.contains('fs'))return;const availH=slide.clientHeight-4,availW=slide.clientWidth-4,needH=sfit.scrollHeight,needW=sfit.scrollWidth;let k=Math.min(availH/needH,availW/needW);k=Math.max(0.4,Math.min(1.8,k));sfit.style.transform='scale('+k+')';}
 function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';requestAnimationFrame(fitSlide);}
 function exitDeckFS(){const d=document.getElementById('deck');if(d)d.classList.remove('fs');document.body.classList.remove('deck-fs');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')exitDeckFS();});
