@@ -1917,7 +1917,7 @@ function vLesson(){
         <button class="btn sm" ${s===SLIDES.length-1?'disabled style=opacity:.4':''} onclick="window.__pd(1)">Next ›</button>
       </div>`;
     if(wg)mountWidget(document.getElementById('slideWidget'),wg);
-    fitSlide();
+    requestAnimationFrame(function(){requestAnimationFrame(fitSlide);});setTimeout(fitSlide,150);setTimeout(fitSlide,400);
   }
   window.__pd=(d)=>{s=Math.max(0,Math.min(SLIDES.length-1,s+d));render();};
   render();
@@ -2458,8 +2458,8 @@ function vResources(){
   </section>`;
 }
 /* expand the slide deck to full screen */
-function fitSlide(){const d=document.getElementById('deck');if(!d)return;const sfit=d.querySelector('.sfit'),slide=d.querySelector('.slide');if(!sfit||!slide)return;sfit.style.transform='';if(!d.classList.contains('fs'))return;const availH=slide.clientHeight-4,availW=slide.clientWidth-4,needH=sfit.scrollHeight,needW=sfit.scrollWidth;let k=Math.min(availH/needH,availW/needW);k=Math.max(0.4,Math.min(1.8,k));sfit.style.transform='scale('+k+')';}
-function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';requestAnimationFrame(fitSlide);}
+function fitSlide(){const d=document.getElementById('deck');if(!d)return;const sfit=d.querySelector('.sfit'),slide=d.querySelector('.slide');if(!sfit||!slide)return;sfit.style.transform='';if(!d.classList.contains('fs'))return;const availH=slide.clientHeight-12,availW=slide.clientWidth-12,needH=sfit.scrollHeight,needW=sfit.scrollWidth;let k=Math.min(availH/needH,availW/needW);k=Math.max(0.2,Math.min(1.7,k));sfit.style.transform='scale('+k+')';}
+function toggleDeckFS(){const d=document.getElementById('deck');if(!d)return;const on=d.classList.toggle('fs');document.body.classList.toggle('deck-fs',on);const b=d.querySelector('.expandbtn');if(b)b.textContent=on?'✕ Close':'⛶ Expand';requestAnimationFrame(function(){requestAnimationFrame(fitSlide);});setTimeout(fitSlide,150);}
 function exitDeckFS(){const d=document.getElementById('deck');if(d)d.classList.remove('fs');document.body.classList.remove('deck-fs');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')exitDeckFS();});
 window.addEventListener('resize',function(){if(typeof fitSlide==='function')fitSlide();});
