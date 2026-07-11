@@ -1880,15 +1880,16 @@ function vLesson(){
   const L=lessonsOf()[cur.li];if(!L)return go('unit');
   setCrumb('Unit '+cur.unit.n+' · '+L.title);
   let s=0;
+  const INTRO='<h3>🎯 Learning Objective</h3><p>'+L.lo+'</p>'
+    +'<h3 style="margin-top:14px">✅ Success Criteria <span style="font-weight:600;color:var(--muted);font-size:.9rem">(Bloom\'s Taxonomy)</span></h3>'
+    +'<div class="sc">'+L.sc.map(function(x){return '<div class="band">'+x.band+'</div><ul>'+x.items.map(function(it){return '<li>'+it+'</li>';}).join('')+'</ul>';}).join('')+'</div>'
+    +'<h3 style="margin-top:14px">🔑 Key Vocabulary</h3>'
+    +'<div class="vhead">Tap a word to flip it over and see what it means.</div>'
+    +'<div class="vgrid">'+L.vocab.map(function(v){var g=GLOSSARY[v]||{e:'🔹',m:'A key science word for this lesson.'};var fico=VOCAB_ICON[v]?ICONS[VOCAB_ICON[v]]:('<span class="ve">'+g.e+'</span>');return '<div class="vcard" onclick="this.classList.toggle(\'flip\')"><div class="vinner"><div class="vface vfront">'+fico+'<span class="vw">'+v+'</span><span class="vhint">tap to flip</span></div><div class="vface vback">'+g.m+'</div></div></div>';}).join('')+'</div>';
+  const SLIDES=[{tag:'Learning Goal',h:L.title,body:INTRO,intro:true}].concat(L.slides);
   app.innerHTML=`<section><button class="btn gray sm" onclick="go('unit')">← Back to unit</button>
     <h2 style="font-size:1.4rem;margin:14px 0 4px">${L.title}</h2>
     <div style="color:var(--muted);font-weight:700;margin-bottom:14px">${L.grade}</div>
-    <div class="panel"><h3>🎯 Learning Objective</h3><p>${L.lo}</p>
-      <h3 style="margin-top:14px">✅ Success Criteria <span style="font-weight:600;color:var(--muted);font-size:.9rem">(Bloom's Taxonomy)</span></h3>
-      <div class="sc">${L.sc.map(s=>`<div class="band">${s.band}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join('')}</ul>`).join('')}</div>
-      <h3 style="margin-top:14px">🔑 Key Vocabulary</h3>
-      <div class="vhead">Tap a word to flip it over and see what it means.</div>
-      <div class="vgrid">${L.vocab.map(v=>{const g=GLOSSARY[v]||{e:'🔹',m:'A key science word for this lesson.'};const fico=VOCAB_ICON[v]?ICONS[VOCAB_ICON[v]]:('<span class="ve">'+g.e+'</span>');return `<div class="vcard" onclick="this.classList.toggle('flip')"><div class="vinner"><div class="vface vfront">${fico}<span class="vw">${v}</span><span class="vhint">tap to flip</span></div><div class="vface vback">${g.m}</div></div></div>`;}).join('')}</div></div>
     <div class="eyebrow">Lesson slides (5E)</div>
     <div class="deck" id="deck"></div>
     <div class="detail-actions">
@@ -1898,21 +1899,21 @@ function vLesson(){
     </div>
     <div id="checkArea"></div>`;
   function render(){
-    const sl=L.slides[s];
-    const wg=(SLIDE_WIDGETS[L.id]||[])[s];
-    const taskBtns=(/Elaborate/i.test(sl.tag)&&L.tasks)?'<div class="lfoot" style="margin-top:14px;flex-wrap:wrap">'+[['bronze','b','🥉 Bronze'],['silver','s','🥈 Silver'],['gold','g','🥇 Gold'],['gt','gt','⭐ G&T']].filter(t=>L.tasks[t[0]]).map(t=>'<button class="medal '+t[1]+'" onclick="openSheet('+cur.li+",'"+t[0]+"')\">"+t[2]+' sheet ▸</button>').join('')+'</div>':'';
+    const sl=SLIDES[s];
+    const wg=sl.intro?null:(SLIDE_WIDGETS[L.id]||[])[s-1];
+    const taskBtns=(!sl.intro&&/Elaborate/i.test(sl.tag)&&L.tasks)?'<div class="lfoot" style="margin-top:14px;flex-wrap:wrap">'+[['bronze','b','🥉 Bronze'],['silver','s','🥈 Silver'],['gold','g','🥇 Gold'],['gt','gt','⭐ G&T']].filter(t=>L.tasks[t[0]]).map(t=>'<button class="medal '+t[1]+'" onclick="openSheet('+cur.li+",'"+t[0]+"')\">"+t[2]+' sheet ▸</button>').join('')+'</div>':'';
     document.getElementById('deck').innerHTML=`
       <button class="expandbtn" onclick="toggleDeckFS()">${document.getElementById('deck').classList.contains('fs')?'✕ Close':'⛶ Expand'}</button>
-      <div class="slide"><span class="stag">${sl.tag}</span><h3>${sl.h}</h3>${withIcons(sl.body)}${taskBtns}${wg?'<div class="widget" id="slideWidget"></div>':''}</div>
+      <div class="slide"><span class="stag">${sl.tag}</span><h3>${sl.h}</h3>${sl.intro?sl.body:withIcons(sl.body)}${taskBtns}${wg?'<div class="widget" id="slideWidget"></div>':''}</div>
       <div class="deck-bar">
         <button class="btn gray sm" onclick="go('unit')">← Back</button>
         <button class="btn gray sm" ${s===0?'disabled style=opacity:.4':''} onclick="window.__pd(-1)">‹ Prev</button>
-        <div class="dots">${L.slides.map((_,k)=>`<span class="dot ${k===s?'on':''}"></span>`).join('')}</div>
-        <button class="btn sm" ${s===L.slides.length-1?'disabled style=opacity:.4':''} onclick="window.__pd(1)">Next ›</button>
+        <div class="dots">${SLIDES.map((_,k)=>`<span class="dot ${k===s?'on':''}"></span>`).join('')}</div>
+        <button class="btn sm" ${s===SLIDES.length-1?'disabled style=opacity:.4':''} onclick="window.__pd(1)">Next ›</button>
       </div>`;
     if(wg)mountWidget(document.getElementById('slideWidget'),wg);
   }
-  window.__pd=(d)=>{s=Math.max(0,Math.min(L.slides.length-1,s+d));render();};
+  window.__pd=(d)=>{s=Math.max(0,Math.min(SLIDES.length-1,s+d));render();};
   render();
 }
 function printLesson(){
